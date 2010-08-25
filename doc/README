@@ -1,0 +1,15 @@
+Benefits:
+
+Model-View-Controller pattern
+Auto-routes
+XSLT templates
+Lazy load technique
+Minimal overhead
+UTF-8 and internationalization support
+XCache / MemCache / Shared Memory caching support
+Nginx support
+Developer mode
+High code re-usage
+Business logic is separated from controller
+Ajax support
+

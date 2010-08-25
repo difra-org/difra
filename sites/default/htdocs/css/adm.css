@@ -1,0 +1,114 @@
+/* Общие стили для всех админок */
+
+body {
+	font-family:	arial;
+	font-size:	13px;
+	margin:		80px 10px 10px 280px;
+	background:	url('/images/adm_logo.png') 10px 10px no-repeat;
+}
+
+#menu {
+	position:	absolute;
+	width:		252px;
+	left:		10px;
+	top:		80px;
+	background-color:#e0edf7;
+}
+#menu ul li {
+	display:	block;
+}
+
+h2 {
+	font-weight:	normal;
+	margin:		0px 0px 10px 0px;
+}
+
+h3 {
+	background:	#f9f9f9;
+	border-top:	1px solid #dcdcdc;
+	border-bottom:	1px solid #dcdcdc;
+	width:		416px;
+	text-indent:	10px;
+	padding:	6px 0px;
+	margin:		20px 0px 10px 0px;
+	font-weight:	normal;
+}
+
+h4 {
+	text-indent:	10px;
+}
+
+.input_container {
+	padding:        4px 0px 0px 0px;
+}
+.input_label {
+	float:          left;
+	text-indent:    10px;
+}
+.input_field {
+	margin:		0px 0px 0px 200px;
+}
+.input_field input {
+	width:		198px;
+	margin-top:	-2px;
+}
+
+.textarea_label {
+	text-indent:    10px;
+	padding:        4px 0px 0px 0px;
+}
+.textarea_field {
+	padding-left:	10px;
+}
+.textarea_field textarea {
+	height:		200px;
+	width:		392px;
+}
+
+.select_container {
+	padding:	8px 0px 0px 0px;
+}
+.select_label {
+	float:          left;
+	text-indent:    10px;
+}
+.select_field {
+        margin:         -2px 0px 0px 200px;
+}
+.select_field select {
+	width:		204px;
+}
+
+.checkbox_container {
+	clear:		both;
+}
+.checkbox_field {
+	float:		left;
+	padding:	0px;
+	text-indent:	6px;
+}
+.checkbox_label {
+	padding:	2px 0px 0px 0px;
+	text-indent:	2px;
+}
+
+.submit_field {
+	clear:		both;
+	padding:	8px 0px 0px 7px;
+}
+
+table.layout {
+	padding:	0px;
+	margin:		0px;
+	border-collapse:collapse;
+}
+table.layout tr td {
+	vertical-align:	top !important;
+	border:		1px solid #f9f9f9;
+	border-collapse:collapse;
+	padding-bottom:	10px;
+}
+
+span.disabled {
+	color:		#e0e0e0;
+}
