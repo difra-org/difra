@@ -21,9 +21,6 @@ main.getXHTTPTransport = function() {
 
 main.httpRequest = function( url, params ) {
 
-	if( typeof params == 'undefined' ) {
-		params = false;
-	}
 	var ajax = main.getXHTTPTransport();
 	ajax.onReadyStateChange = function() {
 		document.body.style.cursor = ( ajax.readyState == 4 ? 'default' : 'wait' );
@@ -31,9 +28,16 @@ main.httpRequest = function( url, params ) {
 			document.getElementById( 'loading' ).style.display = ( ajax.readyState == 4 ? 'none' : 'block' );
 		}
 	}
-	ajax.open( params ? 'POST' : 'GET', url, params );
+	var data = null;
+	if( typeof params == 'undefined' ) {
+		ajax.open( 'GET', url, false );
+	} else {
+		ajax.open( 'POST', url, false );
+		ajax.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
+		data = 'json=' + JSON.stringify( params );
+	}
 	ajax.setRequestHeader( 'X-Requested-With', 'XMLHttpRequest' );
-	ajax.send( null );
+	ajax.send( data );
 	return ajax.responseText;
 }
 
@@ -56,6 +60,7 @@ main.include = function( path ) {
 }
 
 main.include( '/js/common/events.js' );
+main.include( '/js/common/json.js' );
 main.include( '/js/common/editor.js' );
 main.include( '/js/includes.js' );
 
