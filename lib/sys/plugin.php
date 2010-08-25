@@ -15,7 +15,7 @@ abstract class Plugin {
 		$menu = Menu::getInstance( 'menu-adm.xml' );
 		$xml = $menu->menu;
 		$root = $xml->documentElement;
-		$conentNode = false;
+		$contentNode = false;
 		if( $el = $xml->getElementsByTagname( 'item' ) ) {
 			foreach( $el as $item ) {
 				if( $item->getAttribute( 'id' ) == $nodeName ) {
