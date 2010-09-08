@@ -72,7 +72,7 @@ class Capcha {
 		for( $i = 0; $i < $len; $i++ ) {
 			$a .= $chars{rand( 0, strlen( $chars ) - 1 )};
 		}
-		$bad = array( 'mm', 'ww', 'mw', 'wm', 'huy', 'fuck', 'suka', 'huj' );
+		$bad = array( 'mm', 'ww', 'mw', 'wm', 'huy', 'fuck', 'suka', 'huj', 'blya', 'blia', 'blja', 'pidor', 'eba', 'eeb', 'sex', 'suck' );
 		$upA = strtolower( $a );
 		foreach( $bad as $b ) {
 			if( false !== strpos( $upA, $b ) ) {
