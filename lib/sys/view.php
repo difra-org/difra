@@ -59,10 +59,19 @@ class View {
 			$template = $this->template ? $this->template : 'main.xsl';
 		}
 
-		$xslDom = new DomDocument( );
-		if( !@$xslDom->load( DIR_SITE . "templates/$template" ) ) {
-			error( 'Can\'t load template ' . DIR_SITE . "templates/$template", __FILE__, __LINE__ );
-			if( !$errorPage ) {
+		$xslFile = $this->_getTemplatePath( $template );
+		if( !$xslFile ) {
+			error( "Can't find template $xslFile", __FILE__, __LINE__ );
+			if( !$dontEcho and !$errorPage ) {
+				$this->httpError( 500 );
+			} else {
+				return false;
+			}
+		}
+		$xslDom = new DomDocument;
+		if( !$xslDom->load( $xslFile ) ) {
+			error( "Can't load template $xslFile", __FILE__, __LINE__ );
+			if( !$dontEcho and !$errorPage ) {
 				$this->httpError( 500 );
 			} else {
 				return false;
@@ -111,5 +120,14 @@ class View {
 			$etNode = $xml->documentElement->appendChild( $elem );
 			$etNode->setAttribute( 'href', $template );
 		}
+	}
+
+	private function _getTemplatePath( $template ) {
+
+		if( file_exists( DIR_SITE . "templates/$template" ) ) {
+			return DIR_SITE . "templates/$template";
+		}
+		$paths = Plugger::getInstance()->getTemplates( $template );
+		return empty( $paths ) ? false : $paths[0];
 	}
 }

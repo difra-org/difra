@@ -14,6 +14,7 @@ final class Site {
 	public $devMode = false;
 	private $siteConfig = null;
 	private $startTime;
+	private $host = null;
 
 	/**
 	 * Singleton
@@ -70,7 +71,7 @@ final class Site {
 			$host = $_SERVER['HTTP_HOST'];
 			while( $host ) {
 				if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
-					$this->project = $host;
+					$this->project = $this->host = $host;
 					break;
 				}
 				$host = explode( '.', $host, 2 );
@@ -169,4 +170,14 @@ final class Site {
 		return $this->siteConfig['data'][$key];
 	}
 
+	public function getHost() {
+
+		if( $this->host ) {
+			return $this->host;
+		}
+		if( !empty( $this->siteConfig['host'] ) ) {
+			return $this->siteConfig['host'];
+		}
+		return $_SERVER['HTTP_HOST'];
+	}
 }

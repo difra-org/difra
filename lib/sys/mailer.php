@@ -42,21 +42,28 @@ class Mailer {
 
 		$xml = new DOMDocument();
 		$root = $xml->appendChild( $xml->createElement( 'mail' ) );
+		$this->_addDataXML( $root );
+		Locale::getInstance()->getLocaleXML( $root );
 		foreach( $data as $k => $v ) {
 			$root->setAttribute( $k, $v );
 		}
-		$view = new Sys_View;
-		$templateText = $view->render( $xml, 'mail/' . $template . '.xsl', true );
+		$view = new View;
+		$templateText = $view->render( $xml, $template, true );
 
 		preg_match( '|<subject>(.*)</subject>|Uis', $templateText, $subject );
 		preg_match( '|<text>(.*)</text>|Uis', $templateText, $mailText );
 		preg_match( '|<from>(.*)</from>|Uis', $templateText, $fromMail );
 		preg_match( '|<fromtext>(.*)</fromtext>|Uis', $templateText, $fromText );
 		$subject  = !empty( $subject[1] )  ? $subject[1]  : '';
-		$mailText = !empty( $mailtext[1] ) ? $mailText[1] : '';
+		$mailText = !empty( $mailText[1] ) ? $mailText[1] : '';
 		$fromMail = !empty( $fromMail[1] ) ? $fromMail[1] : $this->fromMail;
 		$fromText = !empty( $fromText[1] ) ? $fromText[1] : $this->fromText;
 
-		$this->sendMail( $email, $subject, $mail, $fromMail, $fromText );
+		$this->sendMail( $email, $subject, $mailText, $fromMail, $fromText );
+	}
+
+	private function _addDataXML( $node ) {
+
+		$node->setAttribute( 'host', Site::getInstance()->getHost() );
 	}
 }
