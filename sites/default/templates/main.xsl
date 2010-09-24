@@ -12,10 +12,6 @@
 		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
 		doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" />
 
-	<!-- load locale -->
-	<xsl:variable name="locale" select="document ('../lang.xml')/locale" />
-	<xsl:param name="locale" select="$locale"/>
-
 	<!-- Куски страниц -->
 	<xsl:include href="common/all.xsl"/>
 
