@@ -4,11 +4,11 @@ body {
 	font-family:	arial;
 	font-size:	13px;
 	margin:		80px 10px 10px 280px;
-	background:	url('/images/adm_logo.png') 10px 10px no-repeat;
+	background:	url('/images/adm_logo.png') 10px 10px no-repeat fixed;
 }
 
 #menu {
-	position:	absolute;
+	position:	fixed;
 	width:		252px;
 	left:		10px;
 	top:		80px;
