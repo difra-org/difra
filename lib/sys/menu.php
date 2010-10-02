@@ -63,7 +63,7 @@ class Menu {
 	public function getCurrent( $search ) {
 
 		static $_current = null;
-		if( is_null( $_current ) ) {
+		if( is_null( $_current ) or 1 ) {
 			$paths = $this->getPaths();
 			if( !empty( $paths ) ) {
 				$searchA = explode( '/', trim( $search, '/' ) );

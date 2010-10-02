@@ -40,9 +40,10 @@ abstract class Controller {
 		$this->_runAction();
 
 		// add XML data
-		Menu::getInstance( $this->view->menu )->getMenuXML( $this->root );
 		$this->auth->getAuthXML( $this->root );
 		$this->locale->getLocaleXML( $this->root );
+		Menu::getInstance( $this->view->menu )->getMenuXML( $this->root );
+		$this->root->setAttribute( 'menuitem', Menu::getInstance()->getCurrent( $this->action->uri ) );
 	}
 
 	private function _runAction() {
@@ -91,7 +92,6 @@ abstract class Controller {
 		$this->root->setAttribute( 'lang', $this->locale->locale );
 		$this->root->setAttribute( 'controller', $this->action->class );
 		$this->root->setAttribute( 'action', $this->action->method );
-		$this->root->setAttribute( 'menuitem', Menu::getInstance()->getCurrent( $this->action->uri ) );
 	}
 
 	public function noAuth() {
