@@ -92,6 +92,7 @@ abstract class Controller {
 		$this->root->setAttribute( 'lang', $this->locale->locale );
 		$this->root->setAttribute( 'controller', $this->action->class );
 		$this->root->setAttribute( 'action', $this->action->method );
+		$this->root->setAttribute( 'host', Site::getInstance()->getHost() );
 	}
 
 	public function noAuth() {

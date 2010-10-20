@@ -64,6 +64,7 @@ final class Site {
 	private function detectHost() {
 
 		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
+		$this->host = $_SERVER['HTTP_HOST'] or $_SERVER['VHOST_NAME'];
 
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
 			$this->project = $_SERVER['VHOST_NAME'];

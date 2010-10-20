@@ -38,6 +38,7 @@ class View {
 		if( file_exists( DIR_SITE . 'templates/errors/' . $err . '.xsl' ) ) {
 			$xml = new DOMDocument( );
 			$root = $xml->appendChild( $xml->createElement( 'error' . $err ) );
+			$root->setAttribute( 'host', Site::getInstance()->getHost() );
 			$renderProblem = !$this->render( $xml, 'errors/' . $err . '.xsl', false, true );
 			$this->error = $err;
 		}
