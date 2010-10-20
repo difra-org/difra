@@ -6,16 +6,21 @@ editor.config = {
 	height   : '320px',
 	width    : '95%',
 
-	/*
 	toolbar  : [
-		['Source','-','Bold','Italic','Underline','Strike','-','Subscript','Superscript'],
-		['NumberedList','BulletedList','-','Blockquote'],
-		['Link','Image','Flash','Table','HorizontalRule','Smiley','SpecialChar'],
+		['Source'],
+		['Maximize', 'ShowBlocks'],
+		['Cut','Copy','Paste','PasteText','PasteFromWord'],
+		['Undo','Redo','-','Find','Replace','-','SelectAll','RemoveFormat'],
+		['Link','Unlink'],
+		['Image','Flash','Table','HorizontalRule','SpecialChar'],
 		'/',
-		['Styles','Format','Font','FontSize'],
+		['Bold','Italic','Underline','Strike'],
+		[/*'Styles',*/'Format','Font','FontSize'],
+		/*['Subscript','Superscript'],*/
+		['NumberedList','BulletedList','-','Outdent','Indent','Blockquote'/*,'CreateDiv'*/],
+		['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
 		['TextColor','BGColor'],
-		['Maximize', 'ShowBlocks']
-	]*/
+	]
 }	
 
 editor.init = function() {
