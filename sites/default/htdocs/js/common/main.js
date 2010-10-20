@@ -61,6 +61,5 @@ main.include = function( path ) {
 
 main.include( '/js/common/events.js' );
 main.include( '/js/common/json.js' );
-main.include( '/js/common/editor.js' );
 main.include( '/js/includes.js' );
 
