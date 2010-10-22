@@ -15,6 +15,7 @@ final class Site {
 	private $siteConfig = null;
 	private $startTime;
 	private $host = null;
+	private $phpVersion = null;
 
 	/**
 	 * Singleton
@@ -111,21 +112,42 @@ final class Site {
 	 */
 	private function configurePHP() {
 
+		// get php version
+		$this->phpVersion = explode( '.', phpversion() );
+		$this->phpVersion = $this->phpVersion[0] * 100 + $this->phpVersion[1];
+
+		// debugging
 		ini_set( 'display_errors', $this->devMode ? 1 : 0 );
-		if( $this->devMode ) {
-			ini_set( 'error_reporting', E_ALL | E_STRICT );
+		ini_set( 'error_reporting', $this->devMode ? ( E_ALL | E_STRICT ) : false );
+		ini_set( 'html_errors', $this->devMode ? true : false );
+
+		// other
+		ini_set( 'short_open_tag', false );
+		ini_set( 'asp_tags', false );
+
+		// prepare data
+		$this->_stripSlashes();
+	}
+
+	private function _stripSlashes() {
+
+		if( get_magic_quotes_gpc() !== 1 ) {
+			return false;
 		}
-		if( get_magic_quotes_gpc() === 1 ) {
+		if( $this->phpVersion >= 503 ) {
+			$_GET = json_decode( stripslashes( json_encode( $_GET, JSON_HEX_APOS ) ), true );
+			$_POST = json_decode( stripslashes( json_encode( $_POST, JSON_HEX_APOS ) ), true );
+			$_COOKIE = json_decode( stripslashes( json_encode( $_COOKIE, JSON_HEX_APOS ) ), true );
+			$_REQUEST = json_decode( stripslashes( json_encode( $_REQUEST, JSON_HEX_APOS ) ), true );
+		} else {
 			$_GET = $this->_stripslashesRecursive( $_GET );
 			$_POST = $this->_stripslashesRecursive( $_POST );
 			$_COOKIE = $this->_stripslashesRecursive( $_COOKIE );
 			$_REQUEST = $this->_stripslashesRecursive( $_REQUEST );
-			/* XXX: in php 5.3+ this may be used:
-			$_REQUEST = json_decode(stripslashes(json_encode($_REQUEST, JSON_HEX_APOS)), true);
-			 */
 		}
 	}
-	function _stripslashesRecursive( &$value ) {
+
+	private function _stripslashesRecursive( &$value ) {
 
 		if( is_array( $value ) ) {
 			foreach( $value as $k=>$v ) {
