@@ -8,7 +8,7 @@ mkdir sites
 ln -s ../externals/difra/lib/sys lib/sys
 
 svn add bin externals lib plugins sites
-svn ci -m 'Directory tree automatically created'
+svn ci -m 'Created directory tree'
 cd externals
 
 cat > .tmp.ext << EOF
@@ -18,7 +18,7 @@ EOF
 svn propset svn:externals . -F .tmp.ext
 rm .tmp.ext
 
-svn ci -m 'Base framework external created'
+svn ci -m 'Created Difra externals'
 cd ..
 svn up
 svn export externals/difra/sites/default sites/default

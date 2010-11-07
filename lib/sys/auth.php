@@ -44,6 +44,11 @@ class Auth {
 		$this->_save();
 	}
 
+	public function update() {
+
+		$this->_save();
+	}
+
 	private function _save() {
 
 		if( !isset( $_SESSION ) ) {
