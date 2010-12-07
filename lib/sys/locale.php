@@ -102,6 +102,16 @@ class Locale {
 		$localePt = str_replace( array( 'd', 'm', 'y' ), array( '%d', '%m', '%Y' ), $localePt );
 		return $localePt;
 	}
+
+	public function getXPath( $xpath ) {
+
+		static $simpleXML = null;
+		if( is_null( $simpleXML ) ) {
+			$simpleXML = simplexml_import_dom( $this->localeXML );
+		}
+		$s = $simpleXML->xpath( $xpath );
+		return sizeof( $s ) == 1 ? $s[0] : false;
+	}
 }
 
 
