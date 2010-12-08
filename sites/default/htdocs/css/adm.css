@@ -3,19 +3,25 @@
 body {
 	font-family:	arial;
 	font-size:	13px;
-	margin:		80px 10px 10px 280px;
+	margin:		80px 10px 10px 340px;
 	background:	url('/images/adm_logo.png') 10px 10px no-repeat fixed;
 }
 
 #menu {
 	position:	fixed;
-	width:		252px;
+	width:		320px;
 	left:		10px;
 	top:		80px;
+	bottom:		10px;
 	background-color:#e0edf7;
+	overflow:	auto;
+}
+#menu ul {
+	padding:	4px 4px 20px 20px;
 }
 #menu ul li {
 	display:	block;
+	line-height:	16px;
 }
 
 h2 {
@@ -27,7 +33,7 @@ h3 {
 	background:	#f9f9f9;
 	border-top:	1px solid #dcdcdc;
 	border-bottom:	1px solid #dcdcdc;
-	width:		416px;
+	width:		100%;
 	text-indent:	10px;
 	padding:	6px 0px;
 	margin:		20px 0px 10px 0px;
