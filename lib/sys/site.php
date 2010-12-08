@@ -9,6 +9,10 @@ include_once 'mysql.php';
 final class Site {
 
 	const PATH_PART = '/../../../../sites/';
+
+	// libs
+	private $locales = array();
+
 	private $project = null;
 	private $siteDir = null;
 	public $devMode = false;
@@ -41,6 +45,7 @@ final class Site {
 		$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		$this->configurePHP();
 		$this->configurePaths();
+		$this->configureLocale();
 	}
 	
 	public function getStats() {
@@ -170,13 +175,56 @@ final class Site {
 	}
 
 	/**
-	 * Возвращает строку локали (ru_RU, en_US и т.д.)
 	 *
-	 * @return string
+	 * locale
+	 *
 	 */
 	public function getLocale() {
 
-		return isset( $this->siteConfig['locale'] ) ? $this->siteConfig['locale'] : 'ru_RU';
+		return $this->locale;
+	}
+
+	public function getLocalesList() {
+
+		return array_keys( $this->locales );
+	}
+
+	public function getLocalesListXML( $node ) {
+
+		$data = $this->getLocalesList();
+		if( !empty( $data ) ) {
+			foreach( $data as $lang ) {
+				$langNode = $node->appendChild( $node->ownerDocument->createElement( 'lang' ) );
+				$langNode->setAttribute( 'name', $lang );
+			}
+		}
+	}
+
+	public function getLocaleObj( $locale = null ) {
+
+		if( is_null( $locale ) ) {
+			$locale = $this->locale;
+		}
+		if( is_null( $this->locales[$locale] ) ) {
+			$this->locales[$locale] = new Locale( $locale );
+		}
+		return $this->locales[$locale];
+	}
+
+	public function configureLocale() {
+
+		if( !isset( $this->siteConfig['locales'] ) ) {
+			$this->locale = 'ru_RU';
+			$this->locales = array( 'ru_RU' => null );
+		} elseif( !is_array( $this->siteConfig['locales'] ) ) {
+			$this->locale = $this->siteConfig['locales'];
+			$this->locales = array( $this->siteConfig['locales'] => null );
+		} else {
+			$this->locale = $this->siteConfig['locales'][0];
+			foreach( $this->siteConfig['locales'] as $loc ) {
+				$this->locales[$loc] = null;
+			}
+		}
 	}
 
 	/**
@@ -187,11 +235,11 @@ final class Site {
 	 */
 	public function getData( $key ) {
 
-		if( !isset( $this->siteConfig['data'][$key] ) ) {
-			error( 'No data with key: ' . $key, __FILE__, __LINE__ );
+		if( !isset( $this->siteConfig[$key] ) ) {
+			error( 'No config data with key: ' . $key, __FILE__, __LINE__ );
 			return null;
 		}
-		return $this->siteConfig['data'][$key];
+		return $this->siteConfig[$key];
 	}
 
 	public function getHost() {

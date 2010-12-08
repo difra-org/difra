@@ -5,13 +5,9 @@ class Locale {
 	public $localeXML = null;
 	public $dateFormats = array( 'ru_RU' => 'd.m.y', 'en_US' => 'm-d-y' );
 
-	static function getInstance( $locale = 'ru_RU' ) {
+	static function getInstance( $locale = null ) {
 
-		static $_instance = null;
-		if( is_null( $_instance ) ) {
-			$_instance = new self( $locale );
-		}
-		return $_instance;
+		return Site::getInstance()->getLocaleObj( $locale );
 	}
 
 	public function __construct( $locale ) {
@@ -112,6 +108,7 @@ class Locale {
 		$s = $simpleXML->xpath( $xpath );
 		return sizeof( $s ) == 1 ? $s[0] : false;
 	}
+
 }
 
 

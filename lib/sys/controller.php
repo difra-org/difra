@@ -22,7 +22,7 @@ abstract class Controller {
 
 		// load essentials
 		$this->view	= View::getInstance();
-		$this->locale	= Locale::getInstance( Site::getInstance()->getLocale() );
+		$this->locale	= Site::getInstance()->getLocaleObj();
 		$this->action	= Action::getInstance();
 		$this->auth	= Auth::getInstance();
 		$this->ajax	= Ajax::getInstance();
@@ -93,6 +93,8 @@ abstract class Controller {
 		$this->root->setAttribute( 'controller', $this->action->class );
 		$this->root->setAttribute( 'action', $this->action->method );
 		$this->root->setAttribute( 'host', Site::getInstance()->getHost() );
+		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
+		Site::getInstance()->getLocalesListXML( $configNode );
 	}
 
 	public function noAuth() {
