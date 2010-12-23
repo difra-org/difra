@@ -143,6 +143,7 @@ final class Site {
 		if( $this->devMode ) {
 			$this->bigVersion .= '-' . date( 'YmdHis' );
 		}
+		echo $this->bigVersion;
 	}
 
 	private function configurePaths() {
