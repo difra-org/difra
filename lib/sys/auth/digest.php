@@ -1,6 +1,6 @@
 <?php
 
-// Digest authentication
+// Digest authentication support
 
 class Sys_Auth {
 
