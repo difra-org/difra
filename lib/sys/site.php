@@ -19,8 +19,11 @@ final class Site {
 	private $siteConfig = null;
 	private $startTime;
 	private $host = null;
+
 	private $phpVersion = null;
 	private $version = 'unknown';
+	private $pluginsVersion = 'unknown';
+	private $bigVersion = 'unknown';
 
 	/**
 	 * Singleton
@@ -44,7 +47,7 @@ final class Site {
 		}
 		$this->startTime = microtime( true );
 		$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
-		$this->configureVersion();
+		$this->configureVersions();
 		$this->configurePHP();
 		$this->configurePaths();
 		$this->configureLocale();
@@ -106,13 +109,40 @@ final class Site {
 		return true;
 	}
 
-	private function configureVersion() {
+	private function configureVersions() {
 
-		$revisionStr = '$Revision$';
-		if( preg_match( '/: ([0-9]+)\$/', $revisionStr, $revisionArr ) ) {
-			$this->version = $revisionArr[1];
+		// Detect framework version
+
+		// Detect version for developers: get it from svn files.
+		if( is_readable( dirname( __FILE__ ) . '/.svn/entries' ) ) {
+			$svn = file( dirname( __FILE__ ) . '/.svn/entries' );
+			$this->version = trim( $svn[3] );
+		// Detect version for production: get it from Revision prop.
+		} else {
+			$revisionStr = include( dirname( __FILE__ ) . '/../../revision.php' );
+			if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
+				$this->version = $revisionArr[1];
+			}
 		}
-		echo $this->version;
+
+		// Detect plugins revision
+
+		// Detect version for developers: get it from svn files.
+		if( is_readable( dirname( __FILE__ ) . '/../../../difra-plugins/.svn/entries' ) ) {
+			$svn = file( dirname( __FILE__ ) . '/../../../difra-plugins/.svn/entries' );
+			$this->pluginsVersion = trim( $svn[3] );
+		// Detect version for production: get it from revision.php
+		} else {
+			$revisionStr = include( dirname( __FILE__ ) . '/../../../difra-plugins/revision.php' );
+			if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
+				$this->pluginsVersion = $revisionArr[1];
+			}
+		}
+
+		$this->bigVersion = $this->version . '-' . $this->pluginsVersion;
+		if( $this->devMode ) {
+			$this->bigVersion .= '-' . date( 'YmdHis' );
+		}
 	}
 
 	private function configurePaths() {
