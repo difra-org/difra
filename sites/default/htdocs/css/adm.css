@@ -46,6 +46,7 @@ h4 {
 
 .input_container {
 	padding:        4px 0px 0px 0px;
+	clear:		both;
 }
 .input_label {
 	float:          left;
