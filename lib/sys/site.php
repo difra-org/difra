@@ -20,6 +20,7 @@ final class Site {
 	private $startTime;
 	private $host = null;
 	private $phpVersion = null;
+	private $version = 'unknown';
 
 	/**
 	 * Singleton
@@ -43,6 +44,7 @@ final class Site {
 		}
 		$this->startTime = microtime( true );
 		$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
+		$this->configureVersion();
 		$this->configurePHP();
 		$this->configurePaths();
 		$this->configureLocale();
@@ -102,6 +104,15 @@ final class Site {
 			$this->devMode = true;
 		}
 		return true;
+	}
+
+	private function configureVersion() {
+
+		$revisionStr = '$Revision$';
+		if( preg_match( '/: ([0-9]+)\$/', $revisionStr, $revisionArr ) ) {
+			$this->version = $revisionArr[1];
+		}
+		echo $this->version;
 	}
 
 	private function configurePaths() {
