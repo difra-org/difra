@@ -63,6 +63,7 @@ final class Site {
 			foreach( $db->queriesList as $q ) {
 				echo "<!-- MySQL: $q -->\n";
 			}
+			echo "<!-- Framework version {$this->version}, plugins version {$this->pluginsVersion} -->";
 		}
 	}
 
