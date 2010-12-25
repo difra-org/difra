@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<book version="5.0" xmlns="http://docbook.org/ns/docbook"
+      xmlns:xlink="http://www.w3.org/1999/xlink"
+      xmlns:xi="http://www.w3.org/2001/XInclude"
+      xmlns:svg="http://www.w3.org/2000/svg"
+      xmlns:m="http://www.w3.org/1998/Math/MathML"
+      xmlns:html="http://www.w3.org/1999/xhtml"
+      xmlns:db="http://docbook.org/ns/docbook">
+  <info>
+    <title>Difra Framework</title>
+
+    <author>
+      <personname><firstname>Эдуард</firstname><surname>Кутуев</surname></personname>
+
+      <affiliation>
+        <orgname>Студия «Яблочный Джем»</orgname>
+      </affiliation>
+    </author>
+
+    <pubdate></pubdate>
+  </info>
+
+  <chapter>
+    <title>Общее описание</title>
+
+    <section>
+      <title>Отличительные особенности</title>
+
+      <para>Difra Framework был разработан для групповой работы над высоко
+      нагруженными проектами.</para>
+
+      <para>Это не совсем framework в привычном понимании этого слова. В нём
+      нет десятков и сотен классов для поддержки самых разных аспектов
+      веб-программирования. Difra — это скорее идеология написания
+      веб-приложений. Если следовать этой идеологии, веб-приложения становятся
+      легко читаемыми, то есть любой человек, более-менее знакомый с принципом
+      построения приложений на difra, сможет быстро подключиться к работе над
+      проектом, а при совместной работе не потребуется много времени, чтобы
+      найти и понять нужный кусок кода, даже если он был написан много времени
+      назад другим человеком.</para>
+    </section>
+
+    <section>
+      <title>Совместная разработка</title>
+
+      <para>Второй аспект, который был заложен в difra — высокий показатель
+      повторного использования кода. Была создана система плагинов, которая
+      позволяет быстро начать разрабатывать собственные плагины, чтобы потом
+      переносить их из одного приложения в другое.</para>
+    </section>
+
+    <section>
+      <title>Поддержка мультиязычности</title>
+
+      <para></para>
+    </section>
+  </chapter>
+
+  <chapter>
+    <title>Системные библиотеки</title>
+
+    <para></para>
+
+    <sect1>
+      <title>Locale</title>
+
+      <para>Содержит функции для работы с локалью.</para>
+
+      <sect2>
+        <title>getXPath( $xpath )</title>
+
+        <para>Позволяет получить строку из языкового файла или целую ветку в
+        формате SimpleXML.</para>
+      </sect2>
+    </sect1>
+
+    <sect1>
+      <title>Site</title>
+
+      <para>Содержит базовые функции для инициализации веб-приложения</para>
+    </sect1>
+  </chapter>
+
+  <chapter>
+    <title>Плагины</title>
+
+    <section>
+      <title>Config</title>
+
+      <para>Плагин предоставляет средства для создания разделов в админке,
+      позволяющих редактировать параметры и для доступа к ним. К примеру,
+      зачастую нужно дать веб-мастеру возможность редактировать контактный
+      телефон, e-mail для уведомлений и т.д.</para>
+
+      <para>Нужные параметры можно разбить на секции, каждая из которых будет
+      отображаться в виде отдельной странички в админке. В данный момент
+      плагин поддерживает только строковые (string) параметры.</para>
+
+      <para>Наборы параметров задаются в site/sample.com/config.php, секция
+      data/config, в виде php-массива. Например:</para>
+
+      <programlisting>'data' =&gt; array(
+                'config' =&gt; array(
+                        'contacts' =&gt; array(
+                                'email' =&gt; 'string',
+                                'phone' =&gt; 'string'
+                        )
+                )
+        )</programlisting>
+
+      <para>Далее задаём текстовые строки — например, в
+      site/sample.com/locale/ru_RU.xml:</para>
+
+      <programlisting>&lt;?xml version="1.0" encoding="UTF-8"?&gt;
+&lt;locale lang="ru_RU"&gt;
+        &lt;config&gt;
+                &lt;contacts&gt;Контактные данные&lt;/contacts&gt;
+                &lt;phone&gt;Телефон&lt;/phone&gt;
+                &lt;email&gt;E-mail&lt;/email&gt;
+        &lt;/config&gt;
+&lt;/locale&gt;</programlisting>
+
+      <para>Чтобы получить значение параметра, нужно вызвать:</para>
+
+      <programlisting>Config::getInstance()-&gt;get( 'phone' )</programlisting>
+
+      <para></para>
+    </section>
+  </chapter>
+</book>
