@@ -5,7 +5,7 @@ class Ajax {
 	public $isAjax = false;
 	public $parameters = array();
 	public $response = array();
-    
+
 	public function __construct() {
 
 		$this->isAjax = isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
@@ -13,7 +13,7 @@ class Ajax {
 			$this->parameters = $this->getRequest();
 		}
 	}
-    
+
 	static function getInstance() {
 
 		static $_instance = null;
