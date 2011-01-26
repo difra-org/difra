@@ -73,7 +73,8 @@ abstract class Controller {
 		if( Site::getInstance()->devMode and isset( $_GET['xml'] ) and $_GET['xml'] ) {
 			header( 'Content-Type: text/xml' );
 			$this->xml->formatOutput = true;
-			echo( $this->xml->saveXML() );
+			$this->xml->encoding = 'utf-8';
+			echo( rawurldecode( $this->xml->saveXML() ) );
 		} elseif( $this->ajax->isAjax and $response = $this->ajax->getResponse() ) {
 			header( 'Content-type: text/javascript' );
 			echo( $this->ajax->getResponse() );
