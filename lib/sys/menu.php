@@ -12,9 +12,11 @@ class Menu {
 
 	public function __construct( $menufile ) {
 
+		$this->menu = new DOMDocument();
 		if( is_file( DIR_SITE . $menufile ) and is_readable( DIR_SITE . $menufile ) ) {
-			$this->menu = new DOMDocument();
 			$this->menu->load( DIR_SITE . $menufile );
+		} else {
+			$this->menu->appendChild( $this->menu->createElement( 'menu' ) );
 		}
 	}
 
