@@ -8,7 +8,7 @@ include_once 'mysql.php';
  */
 final class Site {
 
-	const PATH_PART = '/../../../../sites/';
+	const PATH_PART = '/../../sites/';
 
 	// libs
 	private $locales = array();
