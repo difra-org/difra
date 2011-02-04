@@ -1,6 +1,6 @@
 <?php
 
-require_once( dirname( __FILE__ ) . '/plugin.php' ); // needs to be included here because autoloader isn't loaded yet
+require_once( dirname( __FILE__ ) . '/plugin.php' );
 
 class Plugger {
 

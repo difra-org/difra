@@ -34,6 +34,17 @@ class Action {
 
 		$uri = $this->_getUri();
 		$parts = $uri ? explode( '/', $uri ) : array();
+		
+		/**
+		 * detect resourcer request
+		 */
+		if( !empty( $parts ) and Resourcer::isSupported( $parts[0] ) ) {
+			if( $resource = Resourcer::getResource( $parts, true ) ) {
+				return true;
+			} else {
+				return View::getInstance()->httpError( 404 );
+			}
+		}
 
 		/**
 		 * detect controller path
