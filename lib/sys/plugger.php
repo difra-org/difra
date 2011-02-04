@@ -15,7 +15,7 @@ class Plugger {
 
 	public function __construct() {
 
-		$this->path = realpath( dirname( __FILE__ ) . '/../../../../plugins' );
+		$this->path = realpath( dirname( __FILE__ ) . '/../../plugins' );
 
 		if( $dir = opendir( $this->path ) ) {
 			while( false !== ( $subdir = readdir( $dir ) ) ) {
