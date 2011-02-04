@@ -59,7 +59,3 @@ main.include = function( path ) {
 	return true;
 }
 
-main.include( '/js/common/events.js' );
-main.include( '/js/common/json.js' );
-main.include( '/js/includes.js' );
-
