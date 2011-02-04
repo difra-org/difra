@@ -2,12 +2,13 @@
 
 class Cache
 {
-    
+
+	const INST_AUTO		= 'auto';
 	const INST_MEMCACHED    = 'memcached';
-	const INST_FILE         = 'default';
 	const INST_XCACHE       = 'xcache';
 	const INST_SHAREDMEM    = 'shm';
-	const INST_DEFAULT      = self::INST_MEMCACHED;
+	const INST_NONE		= 'none';
+	const INST_DEFAULT      = self::INST_AUTO;
 
 	/**
 	 * Configured cache adapters.
@@ -25,20 +26,43 @@ class Cache
 	 */
 	public static function getInstance( $configName = self::INST_DEFAULT )
 	{
-		// Don't create adapters twice.
+		// adapter type auto detection
+		if( $configName == self::INST_AUTO ) {
+			static $_auto = null;
+			if( $_auto ) {
+				return self::getInstance( $_auto );
+			}
+			if( Cache_MemCache::isAvailable() ) {
+				return self::getInstance( $_auto = self::INST_MEMCACHED );
+			} elseif( Cache_XCache::isAvailable() ) {
+				return self::getInstance( $_auto = self::INST_XCACHE );
+			} elseif( Cache_SharedMemory::isAvailable() ) {
+				return self::getInstance( $_auto = self::INST_SHAREDMEM );
+			} else {
+				return self::getInstance( $_auto = self::INST_NONE );
+			}
+		}
+
+		// return adapter if exists
 		if( isset( self::$_adapters[$configName] ) ) {
 			return self::$_adapters[$configName];
 		}
-    
+
+		// create new adapter
 		if( $configName == self::INST_XCACHE ) {
 			self::$_adapters[$configName] = new Cache_XCache();
     			return self::$_adapters[$configName];
 		} elseif( $configName == self::INST_SHAREDMEM ) {
 			self::$_adapters[$configName] = new Cache_SharedMemory();
 			return self::$_adapters[$configName];
-		} else {
+		} elseif( $configName == self::INST_MEMCACHED ) {
 			self::$_adapters[$configName] = new Cache_MemCache();
 			return self::$_adapters[$configName];
+		} else { // none
+			if( !isset( self::$_adapters[self::INST_NONE] ) ) {
+				self::$_adapters[self::INST_NONE] = new Cache_None();
+			}
+			return self::$_adapters[self::INST_NONE];
 		}
 	}
 }

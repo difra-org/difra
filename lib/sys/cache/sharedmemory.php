@@ -1,6 +1,9 @@
 <?php
 
 class Cache_SharedMemory {
+	
+	public $adapter = 'SharedMemory';
+	
 	const SHM_BLOCK_ID = 0x2648;
 	const SHM_BLOCK_INDEX_SIZE = 40960;
 	const SHM_BLOCK_SEGMENT_SIZE = 655360;
@@ -9,9 +12,15 @@ class Cache_SharedMemory {
 	private $_shm_id = null;
 	
 	public function __construct() {
-		if( !function_exists( 'shmop_open' ) ) {
-			error( 'The Shared Memory is not enabled in PHP!', __FILE__, __LINE__ );
+		
+		if( !self::isAvailable() ) {
+			error( 'Shared Memory is not enabled in PHP!', __FILE__, __LINE__ );
 		}
+	}
+	
+	public static function isAvailable() {
+		
+		return function_exists( 'shmop_open' );
 	}
 
 	/**

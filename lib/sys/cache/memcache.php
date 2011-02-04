@@ -1,21 +1,43 @@
 <?php
 
 class Cache_MemCache {
+	
+	public $adapter = 'MemCache';
 
 	private static $_memcache  = false;
-	private static $_config    = false;
+	private static $_server    = false;
+	private static $_port      = 0;
 	private static $_serialize = false;
 	private static $_lifetime  = 0;
     
 	public function __construct() {
 
-		if( !extension_loaded( 'memcache' ) ) {
-			error( 'Memcache is not loaded', __FILE__, __LINE__ );
+		if( !self::isAvailable() ) {
+			error( 'Memcache is not available', __FILE__, __LINE__ );
 		}
 		self::$_memcache = new Memcache;
-		self::$_memcache->addServer( 'unix:///tmp/memcache', 0, 1 );
+		self::$_memcache->addServer( $this->_server, $this->_port, 1 );
 	}
-    
+	
+	public static function isAvailable() {
+	
+		if( !extension_loaded( 'memcache' ) ) {
+			return false;
+		}
+		$serverList = array(
+				    array( 'unix:///tmp/memcache', 0 ),
+				    array( '127.0.0.1', 11211 ),
+				    );
+		foreach( $serverList as $serv ) {
+			if( memcache_get_server_status( $serv[0], $serv[1] ) ) {
+				$this->_server	= $serv[0];
+				$this->_port	= $serv[1];
+				return true;
+			}
+		}
+		return false;
+	}
+
 	public function getInstance() {
 
 		static $_instance;

@@ -1,8 +1,8 @@
 <?php
 
-class Cache_XCache {
+class Cache_None {
 	
-	public $adapter = 'XCache';
+	public $adapter = 'None';
 
 	/**
 	 * Constructor
@@ -10,13 +10,13 @@ class Cache_XCache {
 	public function __construct() {
 
 		if( !self::isAvailable() ) {
-			error( 'XCache is not available!', __FILE__, __LINE__ );
+			error( 'Cache_None is not available!', __FILE__, __LINE__ );
 		}
 	}
 	
 	public static function isAvailable() {
 		
-		return extension_loaded( 'xcache' );
+		return true;
 	}
     
 	/**
@@ -27,9 +27,6 @@ class Cache_XCache {
 	 */
 	public function load( $id, $doNotTestCacheValidity = false ) {
 
-		if( xcache_isset( $id ) ) {
-			return xcache_get( $id );
-		}
 		return false;
 	}
     
@@ -40,7 +37,7 @@ class Cache_XCache {
 	 */
 	public function test( $id ) {
 
-		return xcache_isset( $id );
+		return false;
 	}
     
 	/**
@@ -53,7 +50,7 @@ class Cache_XCache {
 	 */
 	public function save( $id, $data, $specificLifetime = false ) {
 
-		return xcache_set( $id, $data );
+		return false;
 	}
     
 	/**
@@ -64,7 +61,7 @@ class Cache_XCache {
 	 */
 	public function remove( $id ) {
 
-		return xcache_unset( $id );
+		return false;
 	}
     
 	/**
