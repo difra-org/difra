@@ -211,7 +211,7 @@ class Resourcer {
 			}
 		}
 		if( $echo ) {
-			header( 'Content-type: text/javascript' );
+			header( 'Content-type: application/x-javascript' );
 			echo $data;
 			return true;
 		} else {
