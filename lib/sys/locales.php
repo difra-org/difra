@@ -1,6 +1,6 @@
 <?php
 
-class Locale {
+class Locales {
 	public $locale = 'ru_RU';
 	public $localeXML = null;
 	public $dateFormats = array( 'ru_RU' => 'd.m.y', 'en_US' => 'm-d-y' );

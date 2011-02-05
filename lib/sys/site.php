@@ -50,7 +50,7 @@ final class Site {
 		$this->configureVersions();
 		$this->configurePHP();
 		$this->configurePaths();
-		$this->configureLocale();
+		$this->configureLocales();
 	}
 	
 	public function getStats() {
@@ -250,12 +250,12 @@ final class Site {
 			$locale = $this->locale;
 		}
 		if( is_null( $this->locales[$locale] ) ) {
-			$this->locales[$locale] = new Locale( $locale );
+			$this->locales[$locale] = new Locales( $locale );
 		}
 		return $this->locales[$locale];
 	}
 
-	public function configureLocale() {
+	public function configureLocales() {
 
 		if( !isset( $this->siteConfig['locales'] ) ) {
 			$this->locale = 'ru_RU';
