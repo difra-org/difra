@@ -1,3 +1,11 @@
+<!DOCTYPE xsl:stylesheet [
+<!ENTITY % lat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "xhtml-lat1.ent">
+<!ENTITY % symbol PUBLIC "-//W3C//ENTITIES Symbols for XHTML//EN" "xhtml-symbol.ent">
+<!ENTITY % special PUBLIC "-//W3C//ENTITIES Special for XHTML//EN" "xhtml-special.ent">
+%lat1;
+%symbol;
+%special;
+]>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 	<xsl:variable name="locale" select="/root/locale" />
