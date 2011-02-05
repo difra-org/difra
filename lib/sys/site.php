@@ -167,8 +167,10 @@ final class Site {
 
 		// debugging
 		ini_set( 'display_errors', $this->devMode ? 1 : 0 );
-		ini_set( 'error_reporting', $this->devMode ? ( E_ALL | E_STRICT ) : false );
-		ini_set( 'html_errors', $this->devMode ? true : false );
+		if( $this->devMode ) {
+			ini_set( 'error_reporting', E_ALL | E_STRICT );
+			ini_set( 'html_errors', true );
+		}
 
 		// other
 		ini_set( 'short_open_tag', false );
