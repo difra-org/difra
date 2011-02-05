@@ -29,7 +29,7 @@ class Cache_SharedMemory {
 	 * @param boolean $doNotTestCacheValidity
 	 * @return string
 	 */
-	public function load( $id, $doNotTestCacheValidity = false ) {
+	public function get( $id, $doNotTestCacheValidity = false ) {
 		
 		$shm_id = shm_attach( self::SHM_BLOCK_ID );
 		if( $shm_id ) {
@@ -76,7 +76,7 @@ class Cache_SharedMemory {
 	 * @param int $specificLifetime if != false, set a specific lifetime for this cache record (null => infinite lifetime)
 	 * @return boolean true if no problem
 	 */
-	public function save( $id, $data, $specificLifetime = false ) {
+	public function put( $id, $data, $specificLifetime = false ) {
 		
 		//return shm_put_var( $this->_shm_id, $id, $data );
         	// First read cache structure from shared memory

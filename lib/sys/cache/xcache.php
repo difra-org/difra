@@ -16,7 +16,13 @@ class Cache_XCache {
 	
 	public static function isAvailable() {
 		
-		return extension_loaded( 'xcache' );
+		if( !extension_loaded( 'xcache' ) ) {
+			return false;
+		}
+		if( !ini_get( 'xcache.var_size' ) ) {
+			return false;
+		}
+		return true;
 	}
     
 	/**
@@ -25,7 +31,7 @@ class Cache_XCache {
 	 * @param boolean $doNotTestCacheValidity
 	 * @return string
 	 */
-	public function load( $id, $doNotTestCacheValidity = false ) {
+	public function get( $id, $doNotTestCacheValidity = false ) {
 
 		if( xcache_isset( $id ) ) {
 			return xcache_get( $id );
@@ -51,7 +57,7 @@ class Cache_XCache {
 	 * @param int $specificLifetime
 	 * @return boolean
 	 */
-	public function save( $id, $data, $specificLifetime = false ) {
+	public function put( $id, $data, $specificLifetime = false ) {
 
 		return xcache_set( $id, $data );
 	}

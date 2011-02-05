@@ -25,7 +25,7 @@ class Cache_None {
 	 * @param boolean $doNotTestCacheValidity
 	 * @return string
 	 */
-	public function load( $id, $doNotTestCacheValidity = false ) {
+	public function get( $id, $doNotTestCacheValidity = false ) {
 
 		return false;
 	}
@@ -48,7 +48,7 @@ class Cache_None {
 	 * @param int $specificLifetime
 	 * @return boolean
 	 */
-	public function save( $id, $data, $specificLifetime = false ) {
+	public function put( $id, $data, $specificLifetime = false ) {
 
 		return false;
 	}

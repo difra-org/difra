@@ -50,7 +50,7 @@ class Cache_MemCache {
 	 * @param boolean $doNotTestCacheValidity
 	 * @return string
 	 */
-	public function load( $id, $doNotTestCacheValidity = false ) {
+	public function get( $id, $doNotTestCacheValidity = false ) {
 		
 		$data = @self::$_memcache->get( $id );
 		return self::$_serialize ? @unserialize( $data ) : $data;
@@ -74,7 +74,7 @@ class Cache_MemCache {
 	 * @param int $specificLifetime
 	 * @return boolean true if no problem
 	 */
-	public function save( $id, $data, $specificLifetime = false ) {
+	public function put( $id, $data, $specificLifetime = false ) {
 		
 		return self::$_memcache->set( $id, self::$_serialize ? serialize( $data ) : $data, MEMCACHE_COMPRESSED, $specificLifetime !== false ? $specificLifetime : self::$_lifetime );
 	}
