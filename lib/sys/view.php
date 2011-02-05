@@ -112,7 +112,13 @@ class View {
 
 	private function _getExtTemplates( &$xml, $template = 'main.xsl' ) {
 
+		// шаблоны из плагинов
 		$data = Plugger::getInstance()->getTemplates( $template );
+		// общие шаблоны из движка
+		if( is_file( DIR_ROOT . 'templates/all.xsl' ) ) {
+			$data[] = DIR_ROOT . 'templates/all.xsl';
+		}
+		
 		if( !$data ) {
 			return false;
 		}
