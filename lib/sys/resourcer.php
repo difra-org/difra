@@ -42,8 +42,6 @@ class Resourcer {
 	public function __construct( $instance ) {
 	
 		$this->instance = $instance;
-		$this->_collect( 'js',  $instance );
-		$this->_collect( 'css', $instance );
 	}
 	
 	private function _collect( $type ) {
@@ -168,13 +166,15 @@ class Resourcer {
 	private function _compile( $type ) {
 		
 		// get compiled from cache if available
-		if( $cached = Cache::getInstance()->get( "{$this->instance}_$type" ) ) {
+		$cacheKey = Site::getInstance()->project . "_{$this->instance}_$type";
+		if( $cached = Cache::getInstance()->get( $cacheKey ) ) {
 			if( $cached['version'] == Site::getInstance()->bigVersion ) {
 				return $cached['data'];
 			}
 		}
 		
 		// compile new data
+		$this->_collect( $type, $this->instance );
 		$data = '';
 		if( !empty( $this->{$type} ) ) {
 			$data = implode( "\n", $this->{$type} );
@@ -194,7 +194,7 @@ class Resourcer {
 		
 		// save compiled data to cache
 		Cache::getInstance()->put(
-					  "{$this->instance}_$type",
+					  $cacheKey,
 					  array(
 						'version' => Site::getInstance()->bigVersion,
 						'data'    => $data

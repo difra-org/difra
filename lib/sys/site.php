@@ -13,7 +13,7 @@ final class Site {
 	// libs
 	private $locales = array();
 
-	private $project = null;
+	public $project = null;
 	private $siteDir = null;
 	public $devMode = false;
 	private $siteConfig = null;
@@ -23,7 +23,7 @@ final class Site {
 	private $phpVersion = null;
 	private $version = 'unknown';
 	private $pluginsVersion = 'unknown';
-	private $bigVersion = 'unknown';
+	public $bigVersion = 'unknown';
 
 	/**
 	 * Singleton
