@@ -69,17 +69,49 @@ class View {
 				return false;
 			}
 		}
+		
+		// Создание обёртки
+		$xslWrapper = '<' . '?xml version="1.0" encoding="UTF-8"?' . '>';
+		if( is_file( DIR_ROOT . 'templates/xhtml-lat1.ent' ) and
+		   is_file( DIR_ROOT . 'templates/xhtml-special.ent' ) and
+		   is_file( DIR_ROOT . 'templates/xhtml-symbol.ent' ) ) {
+			$xslWrapper .= '
+				<!DOCTYPE xsl:stylesheet [
+				<!ENTITY % lat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "' . DIR_ROOT . 'templates/xhtml-lat1.ent">
+				<!ENTITY % symbol PUBLIC "-//W3C//ENTITIES Symbols for XHTML//EN" "' . DIR_ROOT . 'templates/xhtml-symbol.ent">
+				<!ENTITY % special PUBLIC "-//W3C//ENTITIES Special for XHTML//EN" "' . DIR_ROOT . 'templates/xhtml-special.ent">
+				%lat1;
+				%symbol;
+				%special;
+				]>';
+		}
+		$xslWrapper .= '
+			<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
+				<xsl:output method="xml" indent="yes" encoding="utf-8" media-type="text/html"
+					doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
+					doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
+					cdata-section-elements="script style" />';
+		$includes = $this->_getExtTemplates( $template );
+		$includes[] = $xslFile;
+		foreach( $includes as $inc ) {
+			$xslWrapper .= '<xsl:include href="' . $inc . '"/>';
+		}
+		$xslWrapper .= '</xsl:stylesheet>';
+		
 		$xslDom = new DomDocument;
-		if( !$xslDom->load( $xslFile ) ) {
-			error( "Can't load template $xslFile", __FILE__, __LINE__ );
+		$xslDom->resolveExternals = true;
+		$xslDom->substituteEntities = true;
+		if( !$xslDom->loadXML( $xslWrapper ) ) {
+			error( "XSLT loader problem.", __FILE__, __LINE__ );
 			if( !$dontEcho and !$errorPage ) {
 				$this->httpError( 500 );
 			} else {
 				return false;
 			}
 		}
-		$this->_getExtTemplates( $xslDom, $template );
 		$xslProc = new XsltProcessor();
+		$xslProc->resolveExternals = true;
+		$xslProc->substituteEntities = true;
 		$xslProc->importStyleSheet( $xslDom );
 
 		// Transform to HTML or whatever template specifies
@@ -110,7 +142,7 @@ class View {
 		header( 'Location: ' . $url );
 	}
 
-	private function _getExtTemplates( &$xml, $template = 'main.xsl' ) {
+	private function _getExtTemplates( $template = 'main.xsl' ) {
 
 		// шаблоны из плагинов
 		$data = Plugger::getInstance()->getTemplates( $template );
@@ -118,15 +150,14 @@ class View {
 		if( is_file( DIR_ROOT . 'templates/all.xsl' ) ) {
 			$data[] = DIR_ROOT . 'templates/all.xsl';
 		}
-		
-		if( !$data ) {
-			return false;
-		}
+		return $data;
+		/*
 		foreach( $data as $template ) {
 			$elem = $xml->createElementNS( 'http://www.w3.org/1999/XSL/Transform', 'xsl:include' );
 			$etNode = $xml->documentElement->appendChild( $elem );
 			$etNode->setAttribute( 'href', $template );
 		}
+		 */
 	}
 
 	private function _getTemplatePath( $template ) {
