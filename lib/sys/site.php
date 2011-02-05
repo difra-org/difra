@@ -126,23 +126,25 @@ final class Site {
 			}
 		}
 
-		// Detect plugins revision
+		// Detect site revision
 
 		// Detect version for developers: get it from svn files.
-		if( is_readable( dirname( __FILE__ ) . '/../../../difra-plugins/.svn/entries' ) ) {
-			$svn = file( dirname( __FILE__ ) . '/../../../difra-plugins/.svn/entries' );
+		if( is_readable( dirname( __FILE__ ) . '/../.svn/entries' ) ) {
+			$svn = file( dirname( __FILE__ ) . '/../.svn/entries' );
 			$this->pluginsVersion = trim( $svn[3] );
+			/*
 		// Detect version for production: get it from revision.php
 		} else {
-			$revisionStr = include( dirname( __FILE__ ) . '/../../../difra-plugins/revision.php' );
+			$revisionStr = include( dirname( __FILE__ ) . '/../../difra-plugins/revision.php' );
 			if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
 				$this->pluginsVersion = $revisionArr[1];
 			}
+			 */
 		}
 
 		$this->bigVersion = $this->version . '-' . $this->pluginsVersion;
 		if( $this->devMode ) {
-			$this->bigVersion .= '-' . date( 'YmdHis' );
+			$this->bigVersion .= '-' . microtime( true );
 		}
 	}
 

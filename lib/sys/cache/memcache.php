@@ -4,7 +4,7 @@ class Cache_MemCache {
 	
 	public $adapter = 'MemCache';
 
-	private static $_memcache  = false;
+	private static $_memcache  = null;
 	private static $_server    = false;
 	private static $_port      = 0;
 	private static $_serialize = false;
@@ -15,8 +15,12 @@ class Cache_MemCache {
 		if( !self::isAvailable() ) {
 			error( 'Memcache is not available', __FILE__, __LINE__ );
 		}
-		self::$_memcache = new Memcache;
+		/* // Должен быть уже подключен
+		if( !self::$_memcache ) {
+			self::$_memcache = new Memcache;
+		}
 		self::$_memcache->addServer( $this->_server, $this->_port, 1 );
+		 */
 	}
 	
 	public static function isAvailable() {
@@ -28,10 +32,15 @@ class Cache_MemCache {
 				    array( 'unix:///tmp/memcache', 0 ),
 				    array( '127.0.0.1', 11211 ),
 				    );
+		if( !self::$_memcache ) {
+			self::$_memcache = new Memcache;
+		} else {
+			return true;
+		}
 		foreach( $serverList as $serv ) {
-			if( memcache_get_server_status( $serv[0], $serv[1] ) ) {
-				$this->_server	= $serv[0];
-				$this->_port	= $serv[1];
+			if( @self::$_memcache->connect( $serv[0], $serv[1] ) ) {
+				self::$_server	= $serv[0];
+				self::$_port	= $serv[1];
 				return true;
 			}
 		}
