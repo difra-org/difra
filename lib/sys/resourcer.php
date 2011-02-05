@@ -165,24 +165,49 @@ class Resourcer {
 		}
 	}
 	
-	public function getCSS( $echo ) {
-	
-		$data = '';
-		if( !empty( $this->css ) ) {
-			$data = implode( "\n", $this->css );
+	private function _compile( $type ) {
+		
+		// get compiled from cache if available
+		if( $cached = Cache::getInstance()->get( "{$this->instance}_$type" ) ) {
+			if( $cached['version'] == Site::getInstance()->bigVersion ) {
+				return $cached['data'];
+			}
 		}
-		if( !empty( $this->cssFiles ) ) {
-			foreach( $this->cssFiles as $file ) {
+		
+		// compile new data
+		$data = '';
+		if( !empty( $this->{$type} ) ) {
+			$data = implode( "\n", $this->{$type} );
+		}
+		if( !empty( $this->{$type.'Files'} ) ) {
+			foreach( $this->{$type.'Files'} as $file ) {
 				$data .= file_get_contents( $file ) . "\n";
 			}
 		}
-		if( !empty( $this->cssSpecialFiles ) ) {
-			foreach( $this->cssSpecialFiles as $file ) {
+		if( !empty( $this->{$type.'SpecialFiles'} ) ) {
+			foreach( $this->{$type.'SpecialFiles'} as $file ) {
 				foreach( $file['data'] as $f ) {
 					$data .= file_get_contents( $f ) . "\n";
 				}
 			}
 		}
+		
+		// save compiled data to cache
+		Cache::getInstance()->put(
+					  "{$this->instance}_$type",
+					  array(
+						'version' => Site::getInstance()->bigVersion,
+						'data'    => $data
+						),
+					  60
+					  );
+
+		return $data;
+	}
+	
+	public function getCSS( $echo ) {
+	
+		$data = $this->_compile( 'css' );
 		if( $echo ) {
 			header( 'Content-type: text/css' );
 			echo $data;
@@ -194,22 +219,7 @@ class Resourcer {
 	
 	public function getJS( $echo ) {
 	
-		$data = '';
-		if( !empty( $this->js ) ) {
-			$data = implode( "\n", $this->js );
-		}
-		if( !empty( $this->jsFiles ) ) {
-			foreach( $this->jsFiles as $file ) {
-				$data .= file_get_contents( $file ) . "\n";
-			}
-		}
-		if( !empty( $this->jsSpecialFiles ) ) {
-			foreach( $this->jsSpecialFiles as $file ) {
-				foreach( $file['data'] as $f ) {
-					$data .= file_get_contents( $f ) . "\n";
-				}
-			}
-		}
+		$data = $this->_compile( 'js' );
 		if( $echo ) {
 			header( 'Content-type: application/x-javascript' );
 			echo $data;
