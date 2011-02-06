@@ -88,13 +88,13 @@ class Resourcer {
 			// Добавляем именованные ресурсы (из подпапок)
 			if( is_dir( "$dirEntry" ) ) {
 				$dir2Handler = opendir( "$dirEntry" );
+				$specials = array();
 				while( $dir2Entry = readdir( $dir2Handler ) ) {
-					$specials = array();
 					if( $dir2Entry{0} != '.' and is_file( "$dirEntry/$dir2Entry" ) ) {
 						$specials[] = "$dirEntry/$dir2Entry";
 					}
-					$this->{'add'.$type.'Special'}( $dirEntry, $specials );
 				}
+				$this->{'add'.$type.'Special'}( $dirEntry, $specials );
 			}
 		}
 		return true;
