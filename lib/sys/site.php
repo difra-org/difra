@@ -16,7 +16,7 @@ final class Site {
 	public $project = null;
 	private $siteDir = null;
 	public $devMode = false;
-	private $siteConfig = null;
+	private $siteConfig = array();
 	private $startTime;
 	private $host = null;
 
@@ -46,7 +46,9 @@ final class Site {
 			die( 'Invalid server configuration or unconfigured host.' );
 		}
 		$this->startTime = microtime( true );
-		$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
+		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
+			$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
+		}
 		$this->configureVersions();
 		$this->configurePHP();
 		$this->configurePaths();
