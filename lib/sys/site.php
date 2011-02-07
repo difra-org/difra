@@ -166,10 +166,10 @@ final class Site {
 		$this->phpVersion = $this->phpVersion[0] * 100 + $this->phpVersion[1];
 
 		// debugging
-		ini_set( 'display_errors', $this->devMode ? 1 : 0 );
+		ini_set( 'display_errors', $this->devMode ? 'On' : 'Off' );
 		if( $this->devMode ) {
 			ini_set( 'error_reporting', E_ALL | E_STRICT );
-			ini_set( 'html_errors', true );
+			ini_set( 'html_errors', 'On' );
 		}
 
 		// other
