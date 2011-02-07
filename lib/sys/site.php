@@ -219,7 +219,7 @@ final class Site {
 	 */
 	public function getDbConfig() {
 
-		return $this->siteConfig['db'];
+		return isset( $this->siteConfig['db'] ) ? $this->siteConfig['db'] : array( 'username' => '', 'password' => '', 'database' => '' );
 	}
 
 	/**
