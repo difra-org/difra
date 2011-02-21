@@ -89,8 +89,7 @@ class View {
 			<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 				<xsl:output method="xml" indent="yes" encoding="utf-8" media-type="text/html"
 					doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"
-					doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN"
-					cdata-section-elements="script style" />';
+					doctype-public="-//W3C//DTD XHTML 1.0 Strict//EN" />';
 		$includes = $this->_getExtTemplates( $template );
 		$includes[] = $xslFile;
 		foreach( $includes as $inc ) {

@@ -122,9 +122,12 @@ final class Site {
 			$this->version = trim( $svn[3] );
 		// Detect version for production: get it from Revision prop.
 		} else {
-			$revisionStr = include( dirname( __FILE__ ) . '/../../revision.php' );
-			if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
-				$this->version = $revisionArr[1];
+			// TODO: временно обернул в if, надо разобраться с этим
+			if( is_file( dirname( __FILE__ ) . '/../../revision.php' ) ) {
+				$revisionStr = include( dirname( __FILE__ ) . '/../../revision.php' );
+				if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
+					$this->version = $revisionArr[1];
+				}
 			}
 		}
 
