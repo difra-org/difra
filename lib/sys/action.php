@@ -38,7 +38,7 @@ class Action {
 		/**
 		 * detect resourcer request
 		 */
-		if( !empty( $parts ) and Resourcer::isSupported( $parts[0] ) ) {
+		if( !empty( $parts ) and Resourcer::isViewable( $parts[0] ) ) {
 			if( $resource = Resourcer::getResource( $parts, true ) ) {
 				return true;
 			} else {
