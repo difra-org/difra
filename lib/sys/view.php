@@ -117,7 +117,7 @@ class View {
 			$html->formatOutput = $devMode;
 			$html->preserveWhiteSpace = $devMode;
 			if( !$dontEcho ) {
-				header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
+				//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
 				echo( $html->saveXML() );
 				Site::getInstance()->getStats();
 			} else {
