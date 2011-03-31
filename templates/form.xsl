@@ -243,6 +243,9 @@
 										<xsl:if test="@noeditor">
 											<xsl:attribute name="noeditor">1</xsl:attribute>
 										</xsl:if>
+										<xsl:if test="@class">
+											<xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
+										</xsl:if>
 										<xsl:value-of select="@value"/>
 									</textarea>
 								</div>
