@@ -158,12 +158,13 @@ class Resourcer {
 		if( $echo ) {
 			switch( $type ) {
 				case 'css':
-					header( 'Content-type: text/css' );
+					header( 'Content-Type: text/css' );
 					break;
 				case 'js':
-					header( 'Content-type: application/x-javascript' );
+					header( 'Content-Type: application/x-javascript' );
 					break;
 			}
+			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s' , time() + 3600 ) . ' GMT' );
 			echo $data;
 			return true;
 		} else {
