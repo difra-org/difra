@@ -135,6 +135,7 @@ final class MySQL {
 					$subnode->setAttribute( $k, $v );
 				}
 			}
+			return true;
 		}
 	}
 
