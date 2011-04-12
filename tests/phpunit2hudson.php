@@ -1,6 +1,7 @@
 <?php
 
 // Конвертация логов PHPUnit в фортмат, понимаемый Hudson
+// Источник: http://habrahabr.ru/blogs/php/98832/
 
 if( $_SERVER['argv'][1] or $_GET['unit'] ) {
 	$fileUnit = $_SERVER['argv'][1] ? $_SERVER['argv'][1] : $_GET['unit'];
