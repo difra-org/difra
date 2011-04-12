@@ -1,6 +1,5 @@
 /.AppleDouble
-bin/.AppleDouble
-doc/.AppleDouble
-externals/.AppleDouble
+fw/bin/.AppleDouble
+fw/doc/.AppleDouble
 lib/.AppleDouble
 sites/.AppleDouble

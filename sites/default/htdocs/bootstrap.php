@@ -1,3 +1,3 @@
 <?php
 
-include( '../../../lib/sys/bootstrap.php' );
+include( '../../../fw/lib/bootstrap.php' );
