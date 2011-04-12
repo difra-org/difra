@@ -56,8 +56,8 @@ class Resourcer {
 		
 		// Формируем список папок, где будем искать ресурсы
 		$parents = array(
-				 DIR_ROOT . "$type/{$this->instance}",
-				 DIR_ROOT . "$type/all",
+				 DIR_ROOT . "fw/$type/{$this->instance}",
+				 DIR_ROOT . "fw/$type/all",
 				 DIR_SITE . "$type/{$this->instance}",
 				 DIR_SITE . "$type/all",
 				 );

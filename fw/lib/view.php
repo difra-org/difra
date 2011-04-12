@@ -72,14 +72,14 @@ class View {
 		
 		// Создание обёртки
 		$xslWrapper = '<' . '?xml version="1.0" encoding="UTF-8"?' . '>';
-		if( is_file( DIR_ROOT . 'templates/xhtml-lat1.ent' ) and
-		   is_file( DIR_ROOT . 'templates/xhtml-special.ent' ) and
-		   is_file( DIR_ROOT . 'templates/xhtml-symbol.ent' ) ) {
+		if( is_file( DIR_ROOT . 'fw/templates/xhtml-lat1.ent' ) and
+		   is_file( DIR_ROOT . 'fw/templates/xhtml-special.ent' ) and
+		   is_file( DIR_ROOT . 'fw/templates/xhtml-symbol.ent' ) ) {
 			$xslWrapper .= '
 				<!DOCTYPE xsl:stylesheet [
-				<!ENTITY % lat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "' . DIR_ROOT . 'templates/xhtml-lat1.ent">
-				<!ENTITY % symbol PUBLIC "-//W3C//ENTITIES Symbols for XHTML//EN" "' . DIR_ROOT . 'templates/xhtml-symbol.ent">
-				<!ENTITY % special PUBLIC "-//W3C//ENTITIES Special for XHTML//EN" "' . DIR_ROOT . 'templates/xhtml-special.ent">
+				<!ENTITY % lat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "' . DIR_ROOT . 'fw/templates/xhtml-lat1.ent">
+				<!ENTITY % symbol PUBLIC "-//W3C//ENTITIES Symbols for XHTML//EN" "' . DIR_ROOT . 'fw/templates/xhtml-symbol.ent">
+				<!ENTITY % special PUBLIC "-//W3C//ENTITIES Special for XHTML//EN" "' . DIR_ROOT . 'fw/templates/xhtml-special.ent">
 				%lat1;
 				%symbol;
 				%special;
@@ -145,8 +145,8 @@ class View {
 		// шаблоны из плагинов
 		$data = Plugger::getInstance()->getTemplates( $template );
 		// общие шаблоны из движка
-		if( is_file( DIR_ROOT . 'templates/all.xsl' ) ) {
-			$data[] = DIR_ROOT . 'templates/all.xsl';
+		if( is_file( DIR_ROOT . 'fw/templates/all.xsl' ) ) {
+			$data[] = DIR_ROOT . 'fw/templates/all.xsl';
 		}
 		return $data;
 		/*
