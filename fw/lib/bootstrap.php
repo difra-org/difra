@@ -1,10 +1,6 @@
 <?php
 
-require_once( dirname( __FILE__ ) . '/plugger.php' );
-require_once( dirname( __FILE__ ) . '/site.php' );
-require_once( dirname( __FILE__ ) . '/autoload.php' );
-
-setlocale( LC_ALL, 'UTF8' ); 
+require_once( dirname( __FILE__ ) . '/autoloader.php' );
 
 // load site
 Site::getInstance();

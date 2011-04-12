@@ -25,21 +25,12 @@ final class Site {
 	private $pluginsVersion = 'unknown';
 	public $bigVersion = 'unknown';
 
-	/**
-	 * Singleton
-	 *
-	 * @return Sys_Site
-	 */
 	static public function getInstance( $reset = false ) {
 
 		static $self = null;
 		return ( $self and !$reset ) ? $self : $self = new self( );
 	}
 
-	/**
-	 * Constructor
-	 *
-	 */
 	public function __construct() {
 
 		if( !$this->detectHost() ) {
@@ -54,7 +45,7 @@ final class Site {
 		$this->configurePaths();
 		$this->configureLocales();
 	}
-	
+
 	public function getStats() {
 		
 		if( $this->devMode ) {
@@ -69,44 +60,36 @@ final class Site {
 		}
 	}
 
-	/**
-	 * Определяет хост:
-	 * 1. Смотрим серверные переменные VHOST_NAME и VHOST_DEVMODE
-	 * 2. Если нет VHOST_NAME, пытаемся определить домен по проекту
-	 *
-	 */
 	private function detectHost() {
 
 		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
-		if( !empty( $_SERVER['HTTP_HOST'] ) ) {
-			$this->host = $_SERVER['HTTP_HOST'];
-		} elseif( !empty( $_SERVER['VHOST_NAME'] ) ) {
+		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
 			$this->host = $_SERVER['VHOST_NAME'];
+		} elseif( !empty( $_SERVER['HTTP_HOST'] ) ) {
+			$this->host = $_SERVER['HTTP_HOST'];
 		} else {
 			$this->host = 'default';
 		}
 
-		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
-			$this->project = $_SERVER['VHOST_NAME'];
-		} else {
-			$host = $this->host;
-			while( $host ) {
-				if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
-					$this->project = $this->host = $host;
-					break;
-				}
-				$host = explode( '.', $host, 2 );
-				$host = !empty( $host[1] ) ? $host[1] : false;
+		$host = $this->host;
+		while( $host ) {
+			if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
+				$this->host = $host;
+				break;
 			}
+			$host = explode( '.', $host, 2 );
+			$host = !empty( $host[1] ) ? $host[1] : false;
 		}
-		if( !$this->project ) {
+		if( !$this->host ) {
 			return false;
 		}
 		if( !$this->siteDir ) {
-			if( is_dir( $sitesDir . $this->project ) ) {
-				$this->siteDir = $this->project;
-			} elseif( is_dir( $sitesDir . 'www.' . $this->project ) ) {
-				$this->siteDir = 'www.' . $this->project;
+			if( is_dir( $sitesDir . $this->host ) ) {
+				$this->siteDir = $this->host;
+			} elseif( is_dir( $sitesDir . 'www.' . $this->host ) ) {
+				$this->siteDir = 'www.' . $this->host;
+			} elseif( is_dir( $sitesDir . 'default' ) ) {
+				$this->siteDir = 'default';
 			} else {
 				return false;
 			}
@@ -143,14 +126,13 @@ final class Site {
 		if( is_readable( dirname( __FILE__ ) . '/../.svn/entries' ) ) {
 			$svn = file( dirname( __FILE__ ) . '/../.svn/entries' );
 			$this->pluginsVersion = trim( $svn[3] );
-			/*
 		// Detect version for production: get it from revision.php
-		} else {
-			$revisionStr = include( dirname( __FILE__ ) . '/../../difra-plugins/revision.php' );
-			if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
-				$this->pluginsVersion = $revisionArr[1];
-			}
-			 */
+		//} else {
+		//	$revisionStr = include( dirname( __FILE__ ) . '/../../difra-plugins/revision.php' );
+		//	if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
+		//		$this->pluginsVersion = $revisionArr[1];
+		//	}
+		//	 
 		}
 
 		$this->bigVersion = $this->version . '-' . $this->pluginsVersion;
@@ -167,9 +149,6 @@ final class Site {
 		define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
 	}
 
-	/**
-	 * Changes PHP configuration variables to run smooth on various systems
-	 */
 	private function configurePHP() {
 
 		// get php version
@@ -180,10 +159,11 @@ final class Site {
 		ini_set( 'display_errors', $this->devMode ? 'On' : 'Off' );
 		if( $this->devMode ) {
 			ini_set( 'error_reporting', E_ALL | E_STRICT );
-			ini_set( 'html_errors', 'On' );
+			ini_set( 'html_errors', !empty( $_SERVER['REQUEST_METHOD'] ) ? 'On' : 'Off' );
 		}
 
 		// other
+		setlocale( LC_ALL, 'UTF8' );
 		ini_set( 'short_open_tag', false );
 		ini_set( 'asp_tags', false );
 
@@ -221,21 +201,11 @@ final class Site {
 		return $value;
 	}
 
-	/**
-	 * Возвращает массив с параметрами подключения к базе
-	 *
-	 * @return array
-	 */
 	public function getDbConfig() {
 
 		return isset( $this->siteConfig['db'] ) ? $this->siteConfig['db'] : array( 'username' => '', 'password' => '', 'database' => '' );
 	}
 
-	/**
-	 *
-	 * locale
-	 *
-	 */
 	public function getLocale() {
 
 		return $this->locale;
@@ -284,16 +254,9 @@ final class Site {
 		}
 	}
 
-	/**
-	 * Возвращает данные по ключу
-	 *
-	 * @param string $key
-	 * @return mixed
-	 */
 	public function getData( $key ) {
 
 		if( !isset( $this->siteConfig[$key] ) ) {
-			error( 'No config data with key: ' . $key, __FILE__, __LINE__ );
 			return null;
 		}
 		return $this->siteConfig[$key];
