@@ -78,12 +78,18 @@ final class Site {
 	private function detectHost() {
 
 		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
-		$this->host = $_SERVER['HTTP_HOST'] ? $_SERVER['HTTP_HOST'] : $_SERVER['VHOST_NAME'];
+		if( !empty( $_SERVER['HTTP_HOST'] ) ) {
+			$this->host = $_SERVER['HTTP_HOST'];
+		} elseif( !empty( $_SERVER['VHOST_NAME'] ) ) {
+			$this->host = $_SERVER['VHOST_NAME'];
+		} else {
+			$this->host = 'default';
+		}
 
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
 			$this->project = $_SERVER['VHOST_NAME'];
 		} else {
-			$host = $_SERVER['HTTP_HOST'];
+			$host = $this->host;
 			while( $host ) {
 				if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
 					$this->project = $this->host = $host;

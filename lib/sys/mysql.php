@@ -1,7 +1,7 @@
 <?php
 
-require_once ( dirname( __FILE__ ) . '/site.php' );
-require_once ( dirname( __FILE__ ) . '/common.php' );
+//require_once ( dirname( __FILE__ ) . '/site.php' );
+//require_once ( dirname( __FILE__ ) . '/common.php' );
 
 /**
  * Работа с MySQL
@@ -46,16 +46,14 @@ final class MySQL {
 		if( !$this->connected ) {
 			$this->db = @mysql_pconnect( isset( $this->config['hostname'] ) ? $this->config['hostname'] : 'localhost',
 				$this->config['username'], $this->config['password'] );
-			if( $this->db ) {
-				if( mysql_select_db( $this->config['database'], $this->db ) ) {
-					$this->connected = true;
-					$this->query( "SET names UTF8" );
-				} else {
-					error( "Instance [{$this->id}] can't select database [{$this->config['database']}].", __LINE__,
-						__FILE__ );
-				}
+			if( !$this->db ) {
+				throw new exception( 'Can\'t connect to MySQL server.' );
+			}
+			if( mysql_select_db( $this->config['database'], $this->db ) ) {
+				$this->connected = true;
+				$this->query( "SET names UTF8" );
 			} else {
-				error( "Instance [{$this->id}] can't connect to database server.", __FILE__, __LINE__ );
+				throw new exception( "Can't select MySQL database [{$this->config['database']}]." );
 			}
 		}
 		return $this->connected;
