@@ -130,11 +130,11 @@ final class Images {
 				imagepng( $newImg );
 				break;
 			default:
-				error( "Unknown '$type' image type", __LINE__, __FILE__ );
+				throw new exception( "Unknown image type: $type" );
 			}
 			$newData = ob_get_contents();
-		} catch ( exception $ex ) {
-			error( 'Exception: ' . $ex->message, __LINE__, __FILE__ );
+		} catch( exception $ex ) {
+			throw new exception( 'Exception: ' . $ex->message );
 		}
 
 		@ob_end_clean();

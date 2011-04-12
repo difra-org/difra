@@ -74,7 +74,7 @@ final class MySQL {
 			if( !( $err = mysql_error( $this->db ) ) ) {
 				return true;
 			} else {
-				error( 'MySQL: ' . $err, __FILE__, __LINE__ );
+				throw new exception( 'MySQL: ' . $err );
 			}
 		}
 		return false;
@@ -102,7 +102,7 @@ final class MySQL {
 			if( !( $err = mysql_error( $this->db ) ) ) {
 				return $table;
 			} else {
-				error( 'MySQL: ' . $err, __FILE__, __LINE__ );
+				throw new exception( 'MySQL: ' . $err );
 			}
 		}
 		return false;

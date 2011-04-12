@@ -16,7 +16,7 @@ class Locales {
 		if( is_file( $file = DIR_SITE . "locales/{$this->locale}.xml" ) ) {
 		} elseif( is_file( $file = DIR_SITE . 'lang.xml' ) ) { // for backwards compartability
 		} else {
-			error( "Can't find locale/{$this->locale}.xml" );
+			throw new exception( "Can't find locale/{$this->locale}.xml" );
 			return false;
 		}
 		$this->localeXML = new DOMDocument();

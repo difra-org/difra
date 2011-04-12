@@ -47,7 +47,7 @@ class Resourcer {
 	private function findDirs( $type ) {
 		
 		if( !in_array( $type, $this->supportedTypes ) ) {
-			error( 'Unknown resource type: ' . $type, __FILE__, __LINE__ );
+			throw new exception( 'Unknown resource type: ' . $type );
 			return false;
 		}
 		$plugger = Plugger::getInstance();

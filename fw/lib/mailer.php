@@ -32,7 +32,7 @@ class Mailer {
 			'From: =?utf-8?B?' . base64_encode( $fromText ) . "==?= <{$fromMail}>";
 		$subj = '=?utf-8?B?' . base64_encode( $subject ) . '==?=';
 		if( !mail( $email, $subj, $body, $headers ) ) {
-			error( "Failed to send message to $email.", __FILE__, __LINE__ );
+			throw new exception( "Failed to send message to $email." );
 			return false;
 		}
 		return true;

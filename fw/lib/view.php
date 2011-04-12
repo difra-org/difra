@@ -62,7 +62,7 @@ class View {
 
 		$xslFile = $this->_getTemplatePath( $template );
 		if( !$xslFile ) {
-			error( "Can't find template $xslFile", __FILE__, __LINE__ );
+			throw new exception( "Can't find template $xslFile" );
 			if( !$dontEcho and !$errorPage ) {
 				$this->httpError( 500 );
 			} else {
@@ -99,7 +99,7 @@ class View {
 		$xslDom->resolveExternals = true;
 		$xslDom->substituteEntities = true;
 		if( !$xslDom->loadXML( $xslWrapper ) ) {
-			error( "XSLT loader problem.", __FILE__, __LINE__ );
+			throw new exception( "XSLT loader problem." );
 			if( !$dontEcho and !$errorPage ) {
 				$this->httpError( 500 );
 			} else {
@@ -124,7 +124,7 @@ class View {
 				return $html->saveXML();
 			}
 		} else {
-			error( 'Can\'t transform template ' . DIR_SITE . "templates/$template", __FILE__, __LINE__ );
+			throw new exception( 'Can\'t transform template ' . DIR_SITE . "templates/$template" );
 			if( !$errorPage ) {
 				$this->httpError( 500 );
 			} else {

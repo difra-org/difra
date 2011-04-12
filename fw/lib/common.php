@@ -1,10 +1,5 @@
 <?php
 
-function error( $text, $file = 'unspecified', $line = 'unspecified' ) {
-
-	error_log( "ERROR in $file, line $line: $text" );
-}
-
 class ErrorHandler {
 	public $error = false;
 	private $setFlag;
@@ -26,7 +21,7 @@ class ErrorHandler {
 	public function handler( $errno, $errstr, $errfile, $errline ) {
 
 		$this->error = true;
-		error( $errstr, $errfile, $errline );
+		throw new exception( "$errstr in $errfile:$errline" );
 		return true;
 	}
 

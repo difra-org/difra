@@ -113,7 +113,7 @@ class Action {
 			include_once( $fileName );
 		}
 		if( !class_exists( $className ) ) {
-			error( "Error! Controller class $className not found", __FILE__, __LINE__ );
+			throw new exception( "Error! Controller class $className not found" );
 			return View::getInstance()->httpError( 404 );
 		}
 
@@ -146,12 +146,12 @@ class Action {
 
 		$plugger = Plugger::getInstance();
 		if( !isset( $plugger->plugins[$plugin] ) ) {
-			error( "Called dispatcher '$dispatcher' from non-existent plugin '$plugin'", __FILE__, __LINE__ );
+			throw new exception( "Called dispatcher '$dispatcher' from non-existent plugin '$plugin'" );
 			return false;
 		}
 		if( !is_file( $file = "{$plugger->path}/{$plugin}/dispatchers/$dispatcher" ) ) {
 			echo "Not found $file";
-			error( "Dispatcher '$dispatcher' not found in plugin '$plugin'", __FILE__, __LINE__ );
+			throw new exception( "Dispatcher '$dispatcher' not found in plugin '$plugin'" );
 			return false;
 		}
 		include_once( $file );
