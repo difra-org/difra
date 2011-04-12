@@ -1,15 +1,14 @@
-Benefits:
+Функционал:
 
-Model-View-Controller pattern
-Auto-routes
-XSLT templates
-Lazy load technique
-Minimal overhead
-UTF-8 and internationalization support
-XCache / MemCache / Shared Memory caching support
-Nginx support
-Developer mode
-High code re-usage
-Business logic is separated from controller
-Ajax support
+MVC
+XSLT в качестве шаблонизатора
+Поддержка непрерывной интеграции (Hudson)
+Режим отладки
+Приспособленность к работе в nginx, php-fpm и т.д.
+Система плагинов
+Ориентированность на поддержку UTF-8 и многоязычности
+Автоматическое определение и поддержка кеширования в XCache, MemCache, Shared memory
+«Ленивая загрузка»
+Прозрачная поддержка ajax
+Сопроводительные ресурсы (js, css и т.д.)
 
