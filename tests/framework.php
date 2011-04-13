@@ -2,7 +2,7 @@
 
 include_once( 'framework/mysql.php' );
 
-class FrameworkSuite extends PHPUnit_Framework_TestSuite {
+class FrameworkSuite {
 
 	public static function suite() {
 

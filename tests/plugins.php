@@ -1,6 +1,6 @@
 <?php
 
-class PluginsSuite extends PHPUnit_Framework_TestSuite {
+class PluginsSuite {
 
 	public static function suite() {
 
