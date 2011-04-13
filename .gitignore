@@ -2,3 +2,4 @@
 bin/.AppleDouble
 doc/.AppleDouble
 sites/.AppleDouble
+tests/results/*
