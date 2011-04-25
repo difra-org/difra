@@ -122,7 +122,7 @@ final class MySQL {
 		}
 		foreach( $data as $row ) {
 			$subnode = $node->appendChild( $node->ownerDocument->createElement( 'item' ) );
-			foreach( $row as $k => $v ) {
+			foreach( $row as $k => $v ) { 
 				if( trim( $v ) and preg_match( '/^(i|s|a|o|d)(.*);/si', $v ) ) { // serialize!
 					$arr = unserialize( $v );
 					$subnode2 = $subnode->appendChild( $node->ownerDocument->createElement( $k ) );
@@ -133,8 +133,8 @@ final class MySQL {
 					$subnode->setAttribute( $k, $v );
 				}
 			}
-			return true;
 		}
+		return true;
 	}
 
 	/**
