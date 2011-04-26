@@ -1,6 +1,6 @@
 <?php
 
-class Cache_XCache {
+class Cache_XCache extends Cache_Common {
 	
 	public $adapter = 'XCache';
 
@@ -36,7 +36,7 @@ class Cache_XCache {
 		if( xcache_isset( $id ) ) {
 			return xcache_get( $id );
 		}
-		return false;
+		return null;
 	}
     
 	/**

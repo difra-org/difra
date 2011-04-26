@@ -1,6 +1,6 @@
 <?php
 
-class Cache_MemCache {
+class Cache_MemCache extends Cache_Common {
 	
 	public $adapter = 'MemCache';
 
@@ -38,7 +38,7 @@ class Cache_MemCache {
 			return true;
 		}
 		foreach( $serverList as $serv ) {
-			if( @self::$_memcache->connect( $serv[0], $serv[1] ) ) {
+			if( @self::$_memcache->pconnect( $serv[0], $serv[1] ) ) {
 				self::$_server	= $serv[0];
 				self::$_port	= $serv[1];
 				return true;

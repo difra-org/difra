@@ -1,6 +1,6 @@
 <?php
 
-class Cache_None {
+class Cache_None extends Cache_Common {
 	
 	public $adapter = 'None';
 
@@ -27,7 +27,7 @@ class Cache_None {
 	 */
 	public function get( $id, $doNotTestCacheValidity = false ) {
 
-		return false;
+		return null;
 	}
     
 	/**

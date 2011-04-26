@@ -1,6 +1,6 @@
 <?php
 
-class Cache_SharedMemory {
+class Cache_SharedMemory extends Cache_Common {
 	
 	public $adapter = 'SharedMemory';
 	
@@ -56,7 +56,7 @@ class Cache_SharedMemory {
 				shm_detach( $shm_id );
 			}
 		}
-		return false;
+		return null;
     	}
     
 	/**
