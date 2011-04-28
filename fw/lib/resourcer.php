@@ -22,6 +22,7 @@ class Resourcer {
 		return in_array( $type, $supported );
 	}
 	
+	// получение ресурса по URI
 	public static function getResource( $path, $echo = false ) {
 		
 		if( empty( $path ) or !self::isViewable( $path[0] ) ) {
@@ -38,6 +39,33 @@ class Resourcer {
 		$realInstance = self::getInstance( $instance );
 		return $realInstance ? $realInstance->get( $type, $echo ) : false;
 	}
+	
+	// получение собранного ресурса
+	public function get( $type, $echo = false ) {
+		
+		if( !in_array( $type, $this->supportedTypes ) ) {
+			throw new exception( "Resource type $type is not supported!" );
+		} elseif( !$this->isViewable( $type ) and $echo ) {
+			throw new exception( "Resource type $type is not allowed to be directly viewed" );
+		}
+		$data = $this->_compile( $type );
+		if( $echo ) {
+			switch( $type ) {
+				case 'css':
+					header( 'Content-Type: text/css' );
+					break;
+				case 'js':
+					header( 'Content-Type: application/x-javascript' );
+					break;
+			}
+			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s' , time() + 3600 ) . ' GMT' );
+			echo $data;
+			return true;
+		} else {
+			return $data;
+		}
+	}
+
 	
 	public function __construct( $instance ) {
 	
@@ -149,37 +177,12 @@ class Resourcer {
 		}
 	}
 	
-	public function get( $type, $echo = false ) {
-	
-		if( !$this->isViewable( $type ) ) {
-			return false;
-		}
-		$data = $this->_compile( $type );
-		if( $echo ) {
-			switch( $type ) {
-				case 'css':
-					header( 'Content-Type: text/css' );
-					break;
-				case 'js':
-					header( 'Content-Type: application/x-javascript' );
-					break;
-			}
-			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s' , time() + 3600 ) . ' GMT' );
-			echo $data;
-			return true;
-		} else {
-			return $data;
-		}
-	}
-	
 	private function _compile( $type ) {
 		
 		// get compiled from cache if available
-		$cacheKey = Site::getInstance()->project . "1_{$this->instance}_$type";
-		if( $cached = Cache::getInstance()->get( $cacheKey ) ) {
-			if( $cached['version'] == Site::getInstance()->bigVersion ) {
-				return $cached['data'];
-			}
+		$cacheKey = Site::getInstance()->project . "_{$this->instance}_$type";
+		if( $cached = Cache::getInstance()->smartGet( $cacheKey ) ) {
+			return $cached;
 		}
 		
 		// compile new data
@@ -200,19 +203,21 @@ class Resourcer {
 				$data[] = file_get_contents( $file );
 			}
 		}
-		$data = implode( "\n", $data );
+		$resource = '';
+		switch( $type ) {
+			case 'css':
+			case 'js':
+				$resource = implode( "\n", $data );
+				break;
+			case 'templates':
+				
+			default:
+				throw new exception( "Missing compile algorythm for resource type $type" );
+		}
 		
 		// save compiled data to cache
-		Cache::getInstance()->put(
-			$cacheKey,
-			array(
-			      'version' => Site::getInstance()->bigVersion,
-			      'data'    => $data
-			),
-			0,
-			60
-		);
+		Cache::getInstance()->smartPut( $cacheKey, $resource );
 
-		return $data;
+		return $resource;
 	}
 }
