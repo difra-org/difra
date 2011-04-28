@@ -214,6 +214,10 @@ class Resourcer {
 			default:
 				throw new exception( "Missing compile algorythm for resource type $type" );
 		}
+
+		if( Cache::getInstance()->adapter != 'None' ) {
+			$resource = Minify::getInstance( $type )->minify( $resource );
+		}
 		
 		// save compiled data to cache
 		Cache::getInstance()->smartPut( $cacheKey, $resource );
