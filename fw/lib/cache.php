@@ -49,16 +49,17 @@ class Cache
 		}
 
 		// create new adapter
-		if( $configName == self::INST_XCACHE ) {
+		switch( $configName ) {
+		case self::INST_XCACHE:
 			self::$_adapters[$configName] = new Cache_XCache();
     			return self::$_adapters[$configName];
-		} elseif( $configName == self::INST_SHAREDMEM ) {
+		case self::INST_SHAREDMEM:
 			self::$_adapters[$configName] = new Cache_SharedMemory();
 			return self::$_adapters[$configName];
-		} elseif( $configName == self::INST_MEMCACHED ) {
+		case self::INST_MEMCACHED:
 			self::$_adapters[$configName] = new Cache_MemCache();
 			return self::$_adapters[$configName];
-		} else { // none
+		default:
 			if( !isset( self::$_adapters[self::INST_NONE] ) ) {
 				self::$_adapters[self::INST_NONE] = new Cache_None();
 			}
