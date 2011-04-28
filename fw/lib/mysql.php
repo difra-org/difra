@@ -52,6 +52,8 @@ final class MySQL {
 			if( mysql_select_db( $this->config['database'], $this->db ) ) {
 				$this->connected = true;
 				$this->query( "SET names UTF8" );
+				$this->queries = 0;
+				$this->queriesList = array();
 			} else {
 				throw new exception( "Can't select MySQL database [{$this->config['database']}]." );
 			}

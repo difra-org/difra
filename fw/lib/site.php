@@ -48,15 +48,19 @@ final class Site {
 
 	public function getStats() {
 		
-		if( $this->devMode ) {
-			$time = microtime( true ) - $this->startTime;
-			$db = MySQL::getInstance();
-			$reqs = $db->queries;
-			echo "<!-- Page rendered in $time seconds, made $reqs mysql queries -->\n";
-			foreach( $db->queriesList as $q ) {
-				echo "<!-- MySQL: $q -->\n";
-			}
-			echo "<!-- Framework version {$this->version}, plugins version {$this->pluginsVersion} -->";
+		if( !$this->devMode ) {
+			return false;
+		}
+		$time = microtime( true ) - $this->startTime;
+		echo "<!--\n";
+		echo "Framework version {$this->version}, plugins version {$this->pluginsVersion}\n";
+		echo "Page rendered in $time seconds\n";
+		echo "Detected cache: " . Cache::getInstance()->adapter . "\n";
+		$db = MySQL::getInstance();
+		$reqs = $db->queries;
+		echo "Made $reqs mysql queries:\n";
+		foreach( $db->queriesList as $q ) {
+			echo "MySQL: $q\n";
 		}
 	}
 
@@ -137,7 +141,7 @@ final class Site {
 
 		$this->bigVersion = $this->version . '-' . $this->pluginsVersion;
 		if( $this->devMode ) {
-			$this->bigVersion .= '-' . microtime( true );
+			//$this->bigVersion .= '-' . microtime( true );
 		}
 	}
 
