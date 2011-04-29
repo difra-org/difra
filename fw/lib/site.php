@@ -62,6 +62,7 @@ final class Site {
 		foreach( $db->queriesList as $q ) {
 			echo "MySQL: $q\n";
 		}
+		echo "-->";
 	}
 
 	private function detectHost() {
@@ -141,7 +142,7 @@ final class Site {
 
 		$this->bigVersion = $this->version . '-' . $this->pluginsVersion;
 		if( $this->devMode ) {
-			//$this->bigVersion .= '-' . microtime( true );
+			$this->bigVersion .= '-' . microtime( true );
 		}
 	}
 
