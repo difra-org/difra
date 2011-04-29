@@ -58,6 +58,10 @@ class Resourcer {
 					header( 'Content-Type: application/x-javascript' );
 					break;
 			}
+			if( !$modified = Cache::getInstance()->smartGet( "{$this->instance}_{$type}_modified" ) ) {
+				$modified = gmdate( 'D, d M Y H:i:s' ) . ' GMT';
+			}
+			header( 'Last-Modified: ' . $modified );
 			header( 'Expires: ' . gmdate( 'D, d M Y H:i:s' , time() + 3600 ) . ' GMT' );
 			echo $data;
 			return true;
@@ -180,7 +184,7 @@ class Resourcer {
 	private function _compile( $type ) {
 		
 		// get compiled from cache if available
-		$cacheKey = Site::getInstance()->project . "_{$this->instance}_$type";
+		$cacheKey = "{$this->instance}_$type";
 		if( $cached = Cache::getInstance()->smartGet( $cacheKey ) ) {
 			return $cached;
 		}
@@ -221,6 +225,7 @@ class Resourcer {
 		
 		// save compiled data to cache
 		Cache::getInstance()->smartPut( $cacheKey, $resource );
+		Cache::getInstance()->smartPut( "{$this->instance}_{$type}_modified", gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
 
 		return $resource;
 	}

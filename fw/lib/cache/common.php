@@ -26,8 +26,8 @@ abstract class Cache_Common {
 	public function smartGet( $key ) {
 		
 		$data = $this->get( $key );
-		if( $this->isAutomaticCleaningAvailable() or !$data ) {
-			return $data;
+		if( !$data ) {
+			return null;
 		}
 		if( $data['system'] != Site::getInstance()->bigVersion or $data['expires'] < time() ) {
 			return null;
@@ -37,13 +37,11 @@ abstract class Cache_Common {
 	
 	public function smartPut( $key, $data, $ttl = 60 ) {
 		
-		if( !$this->isAutomaticCleaningAvailable() ) {
-			$data = array(
-				'system' => Site::getInstance()->bigVersion,
-				'expires' => time() + $ttl,
-				'data' => $data
-			);
-		}
+		$data = array(
+			'system' => Site::getInstance()->bigVersion,
+			'expires' => time() + $ttl,
+			'data' => $data
+		);
 		$this->put( $key, $data, $ttl );
 	}
 }
