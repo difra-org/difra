@@ -35,9 +35,7 @@ class Action {
 		$uri = $this->_getUri();
 		$parts = $uri ? explode( '/', $uri ) : array();
 		
-		/**
-		 * detect resourcer request
-		 */
+		// is it a resourcer request?
 		if( sizeof( $parts ) == 2 ) {
 			$resourcer = Resourcer::getInstance( $parts[0], true );
 			if( $resourcer and $resourcer->isPrintable() ) {
@@ -46,10 +44,7 @@ class Action {
 			}
 		}
 
-		/**
-		 * detect controller path
-		 */
-		
+		// get controller path
 		$path = '';
 		$depth = $dirDepth = 0;
 		$controllerDirs = Plugger::getInstance()->getControllerDirs();
@@ -70,10 +65,7 @@ class Action {
 			$dirs = $newDirs;
 		}
 		
-		/**
-		 * detect controller file
-		 */
-
+		// get controller file name
 		$controllers = array();
 		if( isset( $parts[$dirDepth] ) ) {
 			foreach( $dirs as $tmpDir ) {
@@ -96,10 +88,7 @@ class Action {
 			return View::getInstance()->httpError( 404 );
 		}
 
-		/**
-		 * load controller and dispatchers
-		 */
-
+		// load controller and dispatchers
 		$className = '';
 		for( $i = 0; $i < $dirDepth; $i++ ) {
 			$className .= ucfirst( $parts[$i] );
@@ -117,10 +106,7 @@ class Action {
 			return View::getInstance()->httpError( 404 );
 		}
 
-		/**
-		 * detect action method
-		 */
-
+		// detect action method
 		$methodName = false;
 		$methodNames = isset( $parts[$dirDepth] ) ? array( $parts[$dirDepth], 'index' ) : array( 'index' );
 		foreach( $methodNames as $methodTmp ) {

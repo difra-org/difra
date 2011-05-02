@@ -1,10 +1,11 @@
 <?php
 
 class Form {
+	
 	public $resfile = false;
 	public $instance = null;
 	public $xml = null;
-	public $formData = array(); // filled form data from forms
+	public $formData = array();
 
 	static function getInstance( $resname, $resfile = false ) {
 
@@ -32,7 +33,7 @@ class Form {
 			}
 		}
 		if( !$this->resfile or !file_exists( $this->resfile ) ) {
-			throw new exception( 'Can\'t find form xml:' . $resfile );
+			throw new exception( "Can't find form xml:'{$resfile}'" );
 		}
 		$this->load();
 	}

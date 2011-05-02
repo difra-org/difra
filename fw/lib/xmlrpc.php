@@ -58,10 +58,10 @@ class XMLRPC {
 		foreach( ( $methods ? $methods : $handler->getMethods() ) as $method ) {
 			xmlrpc_server_register_method( $server, $method, array( $handler, $method ) ); 
 		}
-		$request = $HTTP_RAW_POST_DATA ? $HTTP_RAW_POST_DATA : file_get_contents( 'php://input' );
+		$request = ( isset ( $HTTP_RAW_POST_DATA ) and $HTTP_RAW_POST_DATA ) ? $HTTP_RAW_POST_DATA : file_get_contents( 'php://input' );
 
-		$response = xmlrpc_server_call_method($server, $request, null); 
-		xmlrpc_server_destroy($server); 
+		$response = xmlrpc_server_call_method( $server, $request, null ); 
+		xmlrpc_server_destroy( $server ); 
 		return $response;
 	}
 }

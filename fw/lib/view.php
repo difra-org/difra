@@ -76,20 +76,19 @@ class View {
 		$xslProc->substituteEntities = true;
 		$xslProc->importStyleSheet( $xslDom );
 
-		// Transform to HTML or whatever template specifies
+		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
 			$devMode = Site::getInstance()->devMode;
 			$html->formatOutput = $devMode;
 			$html->preserveWhiteSpace = $devMode;
-			if( !$dontEcho ) {
-				//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
-				echo( $html->saveXML() );
-				Site::getInstance()->getStats();
-			} else {
+			if( $dontEcho ) {
 				return $html->saveXML();
 			}
+			//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
+			echo( $html->saveXML() );
+			Site::getInstance()->getStats();
 		} else {
-			throw new exception( 'Can\'t transform template ' . DIR_SITE . "templates/$template" );
+			throw new exception( "Can't render templates" );
 			if( !$errorPage ) {
 				$this->httpError( 500 );
 			} else {
