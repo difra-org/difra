@@ -38,11 +38,11 @@ class Action {
 		/**
 		 * detect resourcer request
 		 */
-		if( !empty( $parts ) and Resourcer::isViewable( $parts[0] ) ) {
-			if( $resource = Resourcer::getResource( $parts, true ) ) {
+		if( sizeof( $parts ) == 2 ) {
+			$resourcer = Resourcer::getInstance( $parts[0], true );
+			if( $resourcer and $resourcer->isPrintable() ) {
+				$resourcer->view( $parts[1] );
 				return true;
-			} else {
-				return View::getInstance()->httpError( 404 );
 			}
 		}
 
