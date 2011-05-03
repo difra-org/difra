@@ -29,7 +29,7 @@ abstract class Cache_Common {
 		if( !$data ) {
 			return null;
 		}
-		if( $data['system'] != Site::getInstance()->bigVersion or $data['expires'] < time() ) {
+		if( $data['expires'] < time() ) {
 			return null;
 		}
 		return $data['data'];
@@ -38,7 +38,6 @@ abstract class Cache_Common {
 	public function smartPut( $key, $data, $ttl = 60 ) {
 		
 		$data = array(
-			'system' => Site::getInstance()->bigVersion,
 			'expires' => time() + $ttl,
 			'data' => $data
 		);

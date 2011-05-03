@@ -1,11 +1,5 @@
 <?php
 
-include_once 'mysql.php';
-
-/**
- * Реализация мультисайтовой точки входа
- * 
- */
 final class Site {
 
 	const PATH_PART = '/../../sites/';
@@ -21,9 +15,6 @@ final class Site {
 	private $host = null;
 
 	private $phpVersion = null;
-	private $version = 'unknown';
-	private $pluginsVersion = 'unknown';
-	public $bigVersion = 'unknown';
 
 	static public function getInstance( $reset = false ) {
 
@@ -40,7 +31,6 @@ final class Site {
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
 			$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		}
-		$this->configureVersions();
 		$this->configurePHP();
 		$this->configurePaths();
 		$this->configureLocales();
@@ -104,46 +94,6 @@ final class Site {
 			$this->devMode = true;
 		}
 		return true;
-	}
-
-	private function configureVersions() {
-
-		// Detect framework version
-
-		// Detect version for developers: get it from svn files.
-		if( is_readable( dirname( __FILE__ ) . '/.svn/entries' ) ) {
-			$svn = file( dirname( __FILE__ ) . '/.svn/entries' );
-			$this->version = trim( $svn[3] );
-		// Detect version for production: get it from Revision prop.
-		} else {
-			// TODO: временно обернул в if, надо разобраться с этим
-			if( is_file( dirname( __FILE__ ) . '/../../revision.php' ) ) {
-				$revisionStr = include( dirname( __FILE__ ) . '/../../revision.php' );
-				if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
-					$this->version = $revisionArr[1];
-				}
-			}
-		}
-
-		// Detect site revision
-
-		// Detect version for developers: get it from svn files.
-		if( is_readable( dirname( __FILE__ ) . '/../.svn/entries' ) ) {
-			$svn = file( dirname( __FILE__ ) . '/../.svn/entries' );
-			$this->pluginsVersion = trim( $svn[3] );
-		// Detect version for production: get it from revision.php
-		//} else {
-		//	$revisionStr = include( dirname( __FILE__ ) . '/../../difra-plugins/revision.php' );
-		//	if( preg_match( '/: ([0-9]+) \$/', $revisionStr, $revisionArr ) ) {
-		//		$this->pluginsVersion = $revisionArr[1];
-		//	}
-		//	 
-		}
-
-		$this->bigVersion = $this->version . '-' . $this->pluginsVersion;
-		if( $this->devMode ) {
-			$this->bigVersion .= '-' . microtime( true );
-		}
 	}
 
 	private function configurePaths() {
