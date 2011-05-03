@@ -85,17 +85,4 @@ class Plugger {
 		return $files;
 	}
 
-	public function getTemplates( $template ) {
-
-		$files = array();
-		if( !empty( $this->plugins ) ) {
-			foreach( $this->plugins as $dir => $plugin ) {
-				if( is_file( $p = "{$this->path}/$dir/templates/$template" ) ) {
-					$files[] = $p;
-				}
-			}
-		}
-		return $files;
-	}
-
 }
