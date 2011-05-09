@@ -73,7 +73,7 @@ abstract class Resourcer_Abstract_Common {
 		$resource = $this->processData( $instance );
 		
 		// minify only if cache is available
-		if( $cache->adapter != 'None' ) {
+		if( $cache->adapter != 'None' and !Site::getInstance()->devMode ) {
 			$resource = Minify::getInstance( $this->type )->minify( $resource );
 			// save compiled data to cache
 			$cache->smartPut( $cacheKey, $resource );
