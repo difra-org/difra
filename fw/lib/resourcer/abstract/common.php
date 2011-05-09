@@ -20,13 +20,13 @@ abstract class Resourcer_Abstract_Common {
 		return true;
 	}
 	
-	// ïîëó÷åíèå ðåñóðñà ïî URI
+	// Ð¿Ð¾Ð»ÑƒÑ‡ÐµÐ½Ð¸Ðµ Ñ€ÐµÑÑƒÑ€ÑÐ° Ð¿Ð¾ URI
 	public function view( $instance ) {
 		
 		if( !$this->isPrintable() ) {
 			throw new exception( "Resource of type '{$this->type}' is not printable" );
 		}
-		// îòêóñèì ðàñøèðåíèå, åñëè îíî åñòü
+		// Ð¾Ñ‚ÐºÑƒÑÐ¸Ð¼ Ñ€Ð°ÑÑˆÐ¸Ñ€ÐµÐ½Ð¸Ðµ, ÐµÑÐ»Ð¸ Ð¾Ð½Ð¾ ÐµÑÑ‚ÑŒ
 		$parts = explode( '.', $instance );
 		if( sizeof( $parts ) == 2 ) {
 			if( $parts[1] == $this->type ) {
@@ -47,13 +47,13 @@ abstract class Resourcer_Abstract_Common {
 		return true;
 	}
 
-	// îïðåäåëßåò, âîçìîæíî ëè âûâåñòè ðåñóðñ â áðàóçåð
+	// Ð¾Ð¿Ñ€ÐµÐ´ÐµÐ»ÑÐµÑ‚, Ð²Ð¾Ð·Ð¼Ð¾Ð¶Ð½Ð¾ Ð»Ð¸ Ð²Ñ‹Ð²ÐµÑÑ‚Ð¸ Ñ€ÐµÑÑƒÑ€Ñ Ð² Ð±Ñ€Ð°ÑƒÐ·ÐµÑ€
 	public function isPrintable() {
 	
 		return $this->printable;
 	}
 	
-	// ñîáèðàåò âñÞ â åäèíûé äîêóìåíò
+	// ÑÐ¾Ð±Ð¸Ñ€Ð°ÐµÑ‚ Ð²ÑÑ‘ Ð² ÐµÐ´Ð¸Ð½Ñ‹Ð¹ Ð´Ð¾ÐºÑƒÐ¼ÐµÐ½Ñ‚
 	public function compile( $instance ) {
 		
 		if( !$this->checkInstance( $instance ) ) {
@@ -83,14 +83,14 @@ abstract class Resourcer_Abstract_Common {
 		return $resource;
 	}
 
-	// ñîáèðàåò ïàïêè ðåñóðñîâ ïî ïàïêàì ôðåéìâîðêà, ñàéòà è ïëàãèíîâ
+	// ÑÐ¾Ð±Ð¸Ñ€Ð°ÐµÑ‚ Ð¿Ð°Ð¿ÐºÐ¸ Ñ€ÐµÑÑƒÑ€ÑÐ¾Ð² Ð¿Ð¾ Ð¿Ð°Ð¿ÐºÐ°Ð¼ Ñ„Ñ€ÐµÐ¹Ð¼Ð²Ð¾Ñ€ÐºÐ°, ÑÐ°Ð¹Ñ‚Ð° Ð¸ Ð¿Ð»Ð°Ð³Ð¸Ð½Ð¾Ð²
 	private function find( $instance ) {
 		
 		$plugger = Plugger::getInstance();
 		$files = array();
 		$dirs = array();
 		
-		// ”îðìèðóåì ñïèñîê ïàïîê, ãäå áóäåì èñêàòü ðåñóðñû
+		// Ð¤Ð¾Ñ€Ð¼Ð¸Ñ€ÑƒÐµÐ¼ ÑÐ¿Ð¸ÑÐ¾Ðº Ð¿Ð°Ð¿Ð¾Ðº, Ð³Ð´Ðµ Ð±ÑƒÐ´ÐµÐ¼ Ð¸ÑÐºÐ°Ñ‚ÑŒ Ñ€ÐµÑÑƒÑ€ÑÑ‹
 		$parents = array(
 				 DIR_ROOT . "fw/{$this->type}/{$instance}",
 				 DIR_ROOT . "fw/{$this->type}/all",
