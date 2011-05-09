@@ -25,7 +25,7 @@ abstract class Cache_Common {
 
 	public function smartGet( $key ) {
 		
-		$data = $this->get( $key );
+		$data = $this->get( Site::getInstance()->getHost() . '_' . $key );
 		if( !$data ) {
 			return null;
 		}
@@ -41,6 +41,6 @@ abstract class Cache_Common {
 			'expires' => time() + $ttl,
 			'data' => $data
 		);
-		$this->put( $key, $data, $ttl );
+		$this->put( Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
 	}
 }

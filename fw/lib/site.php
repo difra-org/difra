@@ -7,7 +7,6 @@ final class Site {
 	// libs
 	private $locales = array();
 
-	public $project = null;
 	private $siteDir = null;
 	public $devMode = false;
 	private $siteConfig = array();
