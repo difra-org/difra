@@ -42,7 +42,7 @@ final class Site {
 		}
 		$time = microtime( true ) - $this->startTime;
 		echo "<!--\n";
-		echo "Framework version {$this->version}, plugins version {$this->pluginsVersion}\n";
+		//echo "Framework version {$this->version}, plugins version {$this->pluginsVersion}\n";
 		echo "Page rendered in $time seconds\n";
 		echo "Detected cache: " . Cache::getInstance()->adapter . "\n";
 		$db = MySQL::getInstance();
