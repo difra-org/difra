@@ -99,6 +99,7 @@ final class Site {
 
 		$_SERVER['DOCUMENT_ROOT'] = realpath( dirname( __FILE__ ) . self::PATH_PART . '..' ) . '/';
 		define( 'DIR_ROOT', $_SERVER['DOCUMENT_ROOT'] );
+		define( 'DIR_FW', $_SERVER['DOCUMENT_ROOT'] . 'fw/' );
 		define( 'DIR_SITE', $_SERVER['DOCUMENT_ROOT'] . 'sites/' . $this->siteDir . '/' );
 		define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
 	}

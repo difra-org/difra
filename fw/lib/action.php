@@ -48,7 +48,10 @@ class Action {
 		$path = '';
 		$depth = $dirDepth = 0;
 		$controllerDirs = Plugger::getInstance()->getControllerDirs();
-		$dirs = $controllerDirs = array_merge( $controllerDirs, array( DIR_SITE . 'controllers/' ) );
+		$dirs = $controllerDirs = array_merge( $controllerDirs, array(
+			DIR_SITE . 'controllers/',
+			DIR_FW . 'controllers/'
+		) );
 		foreach( $parts as $part ) {
 			$path .= "$part/";
 			$depth++;
