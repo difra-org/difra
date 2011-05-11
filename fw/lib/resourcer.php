@@ -11,6 +11,8 @@
 				return Resourcer_JS::getInstance();
 			case 'xslt':
 				return Resourcer_XSLT::getInstance();
+			case 'menu':
+				return Resourcer_Menu::getInstance();
 			default:
 				if( !$quiet ) {
 					throw new exception( "Resourcer does not support resource type '$type'" );
