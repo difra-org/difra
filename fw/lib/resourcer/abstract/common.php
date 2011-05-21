@@ -178,5 +178,21 @@ abstract class Resourcer_Abstract_Common {
 			}			
 		}
 	}
+	
+	public function getFiles( $instance ) {
+		
+		$files = array();
+		if( !empty( $this->resources[$instance]['specials'] ) ) {
+			foreach( $this->resources[$instance]['specials'] as $resource ) {
+				if( !empty( $resource['files'] ) ) {
+					$files = array_merge( $files, $resource['files'] );
+				}
+			}
+		}
+		if( !empty( $this->resources[$instance]['files'] ) ) {
+			$files = array_merge( $files, $this->resources[$instance]['files'] );
+		}
+		return $files;
+	}
 
 }

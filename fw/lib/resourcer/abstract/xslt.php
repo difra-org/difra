@@ -4,18 +4,7 @@
 		
 		protected function processData( $instance ) {
 			
-			// collect files
-			$files = array();
-			if( !empty( $this->resources[$instance]['specials'] ) ) {
-				foreach( $this->resources[$instance]['specials'] as $resource ) {
-					if( !empty( $resource['files'] ) ) {
-						$files = array_merge( $files, $resource['files'] );
-					}
-				}
-			}
-			if( !empty( $this->resources[$instance]['files'] ) ) {
-				$files = array_merge( $files, $this->resources[$instance]['files'] );
-			}
+			$files = $this->getFiles( $instance );
 			
 			// create master template
 			$template = 
