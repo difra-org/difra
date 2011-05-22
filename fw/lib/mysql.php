@@ -56,7 +56,7 @@ final class MySQL {
 			if( !( $err = mysql_error( $this->db ) ) ) {
 				return true;
 			} else {
-				throw new exception( 'MySQL: ' . $err );
+				throw new exception( 'MySQL error: ' . $err );
 			}
 		}
 		return false;
@@ -88,6 +88,12 @@ final class MySQL {
 
 		$data = $this->fetch( $query );
 		return isset( $data[0] ) ? $data[0] : false;
+	}
+	
+	public function fetchOne( $query ) {
+		
+		$data = $this->fetchRow( $query );
+		return !empty( $data ) ? array_shift( $data ) : null;
 	}
 
 	public function fetchXML( $node, $query ) {
