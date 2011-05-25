@@ -43,7 +43,7 @@ class Mailer {
 		$xml = new DOMDocument();
 		$root = $xml->appendChild( $xml->createElement( 'mail' ) );
 		$this->_addDataXML( $root );
-		Locale::getInstance()->getLocaleXML( $root );
+		Locales::getInstance()->getLocaleXML( $root );
 		foreach( $data as $k => $v ) {
 			$root->setAttribute( $k, $v );
 		}
