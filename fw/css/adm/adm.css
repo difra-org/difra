@@ -3,24 +3,42 @@
 body {
 	font-family:	arial;
 	font-size:	13px;
-	margin:		80px 10px 10px 340px;
+	margin:		105px 10px 10px 303px;
 }
 
 #menu {
 	position:	fixed;
-	width:		320px;
-	left:		10px;
-	top:		80px;
-	bottom:		10px;
-	background-color:#e0edf7;
+	width:		263px;
+	left:		20px;
+	top:		105px;
+	bottom:		20px;
 	overflow:	auto;
 }
 #menu ul {
-	padding:	4px 4px 20px 20px;
+	margin:		0px 0px 0px 0px;
+	padding:	8px 0px 0px 0px;
+}
+#menu > ul {
+	padding:	0px;
+	margin:		0px;
 }
 #menu ul li {
+	margin:		0px 0px 0px 16px;
 	display:	block;
-	line-height:	16px;
+	line-height:	20px;
+	font-weight:	normal;
+}
+#menu > ul > li {
+	background-color:#cce8ef;
+	padding:	12px;
+	margin:		0px 0px 12px 0px;
+	border-radius:	5px;
+	display:	block;
+	font-weight:	bold;
+}
+
+a {
+	color:		#0b4388;
 }
 
 h2 {
