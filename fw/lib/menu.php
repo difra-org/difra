@@ -4,31 +4,25 @@ class Menu {
 
 	public $menu = null;
 
-	static public function getInstance( $menufile = 'menu.xml' ) {
+	static public function getInstance( $instance ) {
 
 		static $_instances = array();
-		return isset( $_instances[$menufile] ) ? $_instances[$menufile] : $_instances[$menufile] = new self( $menufile );
+		return isset( $_instances[$instance] ) ? $_instances[$instance] : $_instances[$instance] = new self( $instance );
 	}
 
-	public function __construct( $menufile ) {
+	public function __construct( $instance ) {
 
 		$this->menu = new DOMDocument();
-		if( is_file( DIR_SITE . $menufile ) and is_readable( DIR_SITE . $menufile ) ) {
-			$this->menu->load( DIR_SITE . $menufile );
-		} else {
-			$this->menu->appendChild( $this->menu->createElement( 'menu' ) );
-		}
+		$this->menu->loadXML( Resourcer::getInstance( 'menu' )->compile( $instance ) );
 	}
-
-	public function getMenuXML( $node ) {
-
-		if( is_null( $this->menu ) ) {
-			return false;
-		}
+	
+	public function getXML( $node ) {
+		
 		$node->appendChild( $node->ownerDocument->importNode( $this->menu->documentElement, true ) );
 		return true;
 	}
 
+	/*
 	public function getPaths() {
 
 		static $_paths = null;
@@ -102,6 +96,6 @@ class Menu {
 		}
 		return $_current;
 	}
-
+	 */
 }
 

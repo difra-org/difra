@@ -6,7 +6,7 @@ class View {
 	public $redirect = false;
 	public $rendered = false;
 	public $template = false;
-	public $menu = 'menu.xml';
+	public $instance = 'main';
 
 	static function getInstance() {
 
@@ -57,7 +57,13 @@ class View {
 			return false;
 		}
 		if( !$template ) {
-			$template = $this->template ? $this->template : 'main';
+			if( $this->template ) {
+				$template = $this->template;
+			} elseif( $this->instance ) {
+				$template = $this->instance;
+			} else {
+				$template = 'main';
+			}
 		}
 		
 		$xslDom = new DomDocument;

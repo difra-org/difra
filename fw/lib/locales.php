@@ -5,6 +5,7 @@ class Locales {
 	public $localeXML = null;
 	public $dateFormats = array( 'ru_RU' => 'd.m.y', 'en_US' => 'm-d-y' );
 
+	
 	static function getInstance( $locale = null ) {
 
 		return Site::getInstance()->getLocaleObj( $locale );
@@ -13,29 +14,9 @@ class Locales {
 	public function __construct( $locale ) {
 
 		$this->locale = $locale;
-		if( is_file( $file = DIR_SITE . "locales/{$this->locale}.xml" ) ) {
-		} elseif( is_file( $file = DIR_SITE . 'lang.xml' ) ) { // for backwards compartability
-		} else {
-			throw new exception( "Can't find locale/{$this->locale}.xml" );
-			return false;
-		}
+		$xml = Resourcer::getInstance( 'locale' )->compile( $this->locale );
 		$this->localeXML = new DOMDocument();
-		if( !$this->localeXML->load( $file ) ) {
-			$this->localeXML->appendChild( $this->localeXML->createElement( 'locale' ) );
-		}
-		$this->localeXML->documentElement->setAttribute( 'lang', $locale );
-
-		if( $pluginData = Plugger::getInstance()->getLocales( $locale ) ) {
-			foreach( $pluginData as $plugin => $localeFile ) {
-				$subXML = new DOMDocument();
-				if( !$subXML->load( $localeFile ) ) {
-					continue;
-				}
-				foreach( $subXML->documentElement->childNodes as $item ) {
-					$this->localeXML->documentElement->appendChild( $this->localeXML->importNode( $item, true ) );
-				}
-			}
-		}
+		$this->localeXML->loadXML( $xml );
 	}
 
 	public function getLocaleXML( $node ) {

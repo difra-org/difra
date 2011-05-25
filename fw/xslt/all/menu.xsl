@@ -8,10 +8,12 @@
 	</xsl:template>
 
 	<xsl:template name="common_menu">
-		<xsl:if test="item">
+		<xsl:if test="*">
+			<xsl:variable name="instance" select="/root/menu/@instance"/>
 			<ul>
-				<xsl:for-each select="item">
-					<li id="menu_{@id}">
+				<xsl:for-each select="*">
+					<li id="{@id}">
+						<!-- получаем название пункта меню -->
 						<xsl:variable name="title">
 							<xsl:choose>
 								<xsl:when test="@title">
@@ -19,7 +21,14 @@
 								</xsl:when>
 								<xsl:otherwise>
 									<xsl:variable name="id" select="@id"/>
-									<xsl:value-of select="$locale/menu/*[name()=$id]"/>
+									<xsl:choose>
+										<xsl:when test="$locale/menu/*[name()=$instance]/*[name()=$id]">
+											<xsl:value-of select="$locale/menu/*[name()=$instance]/*[name()=$id]"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="name()"/>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:otherwise>
 							</xsl:choose>
 						</xsl:variable>

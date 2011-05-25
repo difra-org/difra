@@ -42,8 +42,8 @@ abstract class Controller {
 		// add XML data
 		$this->auth->getAuthXML( $this->root );
 		$this->locale->getLocaleXML( $this->root );
-		Menu::getInstance( $this->view->menu )->getMenuXML( $this->root );
-		$this->root->setAttribute( 'menuitem', Menu::getInstance()->getCurrent( $this->action->uri ) );
+		Menu::getInstance( $this->view->instance )->getXML( $this->root );
+		//$this->root->setAttribute( 'menuitem', Menu::getInstance()->getCurrent( $this->action->uri ) );
 	}
 
 	private function _runAction() {
@@ -71,7 +71,7 @@ abstract class Controller {
 			return;
 		}
 		if( Site::getInstance()->devMode and isset( $_GET['xml'] ) and $_GET['xml'] ) {
-			header( 'Content-Type: text/xml' );
+			header( 'Content-Type: text/plain' );
 			$this->xml->formatOutput = true;
 			$this->xml->encoding = 'utf-8';
 			echo( rawurldecode( $this->xml->saveXML() ) );
@@ -95,7 +95,7 @@ abstract class Controller {
 		$this->root->setAttribute( 'action', $this->action->method );
 		$this->root->setAttribute( 'host', Site::getInstance()->getHost() );
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
-		Site::getInstance()->getLocalesListXML( $configNode );
+		//Site::getInstance()->getLocalesListXML( $configNode );
 	}
 
 	public function noAuth() {

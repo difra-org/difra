@@ -4,8 +4,7 @@ class AdmIndexController extends Controller {
 
 	public function dispatch() {
 
-		$this->view->template = 'adm';
-		$this->view->menu = 'menu-adm.xml';
+		$this->view->instance = 'adm';
 	}
 
 	public function indexAction() {

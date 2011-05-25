@@ -4,13 +4,15 @@ abstract class Resourcer_Abstract_XML extends Resourcer_Abstract_Common {
 	
 	protected function processData( $instance ) {
 		
-
 		$files = $this->getFiles( $instance );
 		
 		$newXml = new SimpleXMLElement("<{$this->type}></{$this->type}>");
 		foreach( $files as $file ) {
 			$xml = simplexml_load_file( $file );
-			$this->_mergeXML( $newXml, $xml );
+			$this->_mergeXML( $newXml, $xml	);
+		}
+		if( method_exists( $this, 'postprocess' ) ) {
+			$this->postprocess( $newXml, $instance );
 		}
 		return $newXml->asXML();
 	}

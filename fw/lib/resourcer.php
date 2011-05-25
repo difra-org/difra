@@ -13,6 +13,8 @@
 				return Resourcer_XSLT::getInstance();
 			case 'menu':
 				return Resourcer_Menu::getInstance();
+			case 'locale':
+				return Resourcer_Locale::getInstance();
 			default:
 				if( !$quiet ) {
 					throw new exception( "Resourcer does not support resource type '$type'" );
