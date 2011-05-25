@@ -43,4 +43,9 @@ abstract class Cache_Common {
 		);
 		$this->put( Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
 	}
+	
+	public function smartRemove( $key ) {
+		
+		$this->remove( Site::getInstance()->getHost() . '_' . $key );
+	}
 }
