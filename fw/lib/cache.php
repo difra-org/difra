@@ -33,12 +33,16 @@ class Cache
 				return self::getInstance( $_auto );
 			}
 			if( Cache_MemCache::isAvailable() ) {
+				Debugger::getInstance()->addLine( "Auto-detected cache type: MemCache" );
 				return self::getInstance( $_auto = self::INST_MEMCACHED );
 			} elseif( Cache_XCache::isAvailable() ) {
+				Debugger::getInstance()->addLine( "Auto-detected cache type: XCache" );
 				return self::getInstance( $_auto = self::INST_XCACHE );
 			} elseif( Cache_SharedMemory::isAvailable() ) {
+				Debugger::getInstance()->addLine( "Auto-detected cache type: Shared Memory" );
 				return self::getInstance( $_auto = self::INST_SHAREDMEM );
 			} else {
+				Debugger::getInstance()->addLine( "No cache detected" );
 				return self::getInstance( $_auto = self::INST_NONE );
 			}
 		}

@@ -70,7 +70,7 @@ abstract class Controller {
 			echo $this->output;
 			return;
 		}
-		if( Site::getInstance()->devMode and isset( $_GET['xml'] ) and $_GET['xml'] ) {
+		if( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
 			header( 'Content-Type: text/plain' );
 			$this->xml->formatOutput = true;
 			$this->xml->encoding = 'utf-8';

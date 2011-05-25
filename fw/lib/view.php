@@ -84,15 +84,16 @@ class View {
 
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
-			$devMode = Site::getInstance()->devMode;
+			$devMode = Debugger::getInstance()->isEnabled();
 			$html->formatOutput = $devMode;
 			$html->preserveWhiteSpace = $devMode;
 			if( $dontEcho ) {
 				return $html->saveXML();
 			}
+			// эта строка ломает CKEditor, поэтому она накакзана
 			//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
 			echo( $html->saveXML() );
-			Site::getInstance()->getStats();
+			Debugger::getInstance()->printOutput();
 		} else {
 			throw new exception( "Can't render templates" );
 			if( !$errorPage ) {

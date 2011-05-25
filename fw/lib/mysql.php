@@ -1,12 +1,5 @@
 <?php
 
-//require_once ( dirname( __FILE__ ) . '/site.php' );
-//require_once ( dirname( __FILE__ ) . '/common.php' );
-
-/**
- * Работа с MySQL
- *
- */
 final class MySQL {
 
 	private $config = null;
@@ -14,7 +7,6 @@ final class MySQL {
 	public $id = null;
 	public $db = null;
 	public $queries = 0;
-	public $queriesList = array();
 
 	public function __construct( $reset = false ) {
 
@@ -29,59 +21,46 @@ final class MySQL {
 
 	private function connect() {
 
-		if( !$this->connected ) {
-			$this->db = @mysql_pconnect( isset( $this->config['hostname'] ) ? $this->config['hostname'] : 'localhost',
-				$this->config['username'], $this->config['password'] );
-			if( !$this->db ) {
-				throw new exception( "Can't connect to MySQL server." );
-			}
-			if( mysql_select_db( $this->config['database'], $this->db ) ) {
-				$this->connected = true;
-				$this->query( "SET names UTF8" );
-				$this->queries = 0;
-				$this->queriesList = array();
-			} else {
-				throw new exception( "Can't select MySQL database [{$this->config['database']}]." );
-			}
+		if( $this->connected ) {
+			return;
 		}
-		return $this->connected;
+		$this->db = @mysql_pconnect( isset( $this->config['hostname'] ) ? $this->config['hostname'] : 'localhost',
+			$this->config['username'], $this->config['password'] );
+		if( !$this->db ) {
+			throw new exception( "Can't connect to MySQL server." );
+		}
+		if( !mysql_select_db( $this->config['database'], $this->db ) ) {
+			throw new exception( "Can't select MySQL database [{$this->config['database']}]." );
+		}
+		$this->connected = true;
+		$this->query( "SET names UTF8" );
 	}
 
 	public function query( $qstring ) {
 
-		if( $this->connect() ) {
-			mysql_query( $qstring, $this->db );
-			$this->queries++;
-			$this->queriesList[] = $qstring;
-			if( !( $err = mysql_error( $this->db ) ) ) {
-				return true;
-			} else {
-				throw new exception( 'MySQL error: ' . $err );
-			}
+		$this->connect();
+		mysql_query( $qstring, $this->db );
+		$this->queries++;
+		Debugger::getInstance()->addLine( "MySQL: " . $qstring );
+		if( $err = mysql_error( $this->db ) ) {
+			throw new exception( 'MySQL error: ' . $err );
 		}
-		return false;
 	}
 
 	public function fetch( $query ) {
 
-		if( !$this->connect() ) {
-			return false;
-		}
+		$this->connect();
 		$table = array();
 		$result = mysql_query( $query, $this->db );
 		$this->queries++;
-		$this->queriesList[] = $query;
+		Debugger::getInstance()->addLine( $query );
 		if( mysql_error( $this->db ) ) {
-			return false;
+			throw new exception( 'MySQL: ' . $err );
 		}
 		while( $row = mysql_fetch_array( $result, MYSQL_ASSOC ) ) {
 			$table[] = $row;
 		}
-		if( !( $err = mysql_error( $this->db ) ) ) {
-			return $table;
-		} else {
-			throw new exception( 'MySQL: ' . $err );
-		}
+		return $table;
 	}
 
 	public function fetchRow( $query ) {
@@ -121,15 +100,13 @@ final class MySQL {
 
 	public function escape( $string ) {
 
-		if( !$this->connect() ) {
-			return false;
-		}
+		$this->connect();
 		return mysql_real_escape_string( $string, $this->db );
 	}
 
 	public function getLastId() {
 
 		$id = $this->fetch( 'SELECT LAST_INSERT_ID()' );
-		return isset( $id[0]['LAST_INSERT_ID()'] ) ? $id[0]['LAST_INSERT_ID()'] : false;
+		return isset( $id[0]['LAST_INSERT_ID()'] ) ? $id[0]['LAST_INSERT_ID()'] : null;
 	}
 }

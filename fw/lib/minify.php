@@ -4,8 +4,8 @@ class Minify {
 
 	static public function getInstance( $type ) {
 		
-		// no minify for developers' hosts
-		if( Site::getInstance()->devMode ) {
+		// no minification in debugging mode
+		if( Debugger::getInstance()->isEnabled() ) {
 			return Minify_None::getInstance();
 		}
 		switch( $type ) {

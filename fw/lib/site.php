@@ -8,7 +8,6 @@ final class Site {
 	private $locales = array();
 
 	private $siteDir = null;
-	public $devMode = false;
 	private $siteConfig = array();
 	private $startTime;
 	private $host = null;
@@ -33,25 +32,6 @@ final class Site {
 		$this->configurePHP();
 		$this->configurePaths();
 		$this->configureLocales();
-	}
-
-	public function getStats() {
-		
-		if( !$this->devMode ) {
-			return false;
-		}
-		$time = microtime( true ) - $this->startTime;
-		echo "<!--\n";
-		//echo "Framework version {$this->version}, plugins version {$this->pluginsVersion}\n";
-		echo "Page rendered in $time seconds\n";
-		echo "Detected cache: " . Cache::getInstance()->adapter . "\n";
-		$db = MySQL::getInstance();
-		$reqs = $db->queries;
-		echo "Made $reqs mysql queries:\n";
-		foreach( $db->queriesList as $q ) {
-			echo "MySQL: $q\n";
-		}
-		echo "-->";
 	}
 
 	private function detectHost() {
@@ -90,7 +70,7 @@ final class Site {
 		}
 
 		if( isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
-			$this->devMode = true;
+			Debugger::getInstance()->enable();
 		}
 		return true;
 	}
@@ -109,13 +89,6 @@ final class Site {
 		// get php version
 		$this->phpVersion = explode( '.', phpversion() );
 		$this->phpVersion = $this->phpVersion[0] * 100 + $this->phpVersion[1];
-
-		// debugging
-		ini_set( 'display_errors', $this->devMode ? 'On' : 'Off' );
-		if( $this->devMode ) {
-			ini_set( 'error_reporting', E_ALL | E_STRICT );
-			ini_set( 'html_errors', !empty( $_SERVER['REQUEST_METHOD'] ) ? 'On' : 'Off' );
-		}
 
 		// other
 		setlocale( LC_ALL, 'UTF8' );

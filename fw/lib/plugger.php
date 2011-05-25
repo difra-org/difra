@@ -72,17 +72,5 @@ class Plugger {
 		return $dirs;
 	}
 
-	public function getLocales( $locale ) {
-
-		$files = array();
-		if( !empty( $this->plugins ) ) {
-			foreach( $this->plugins as $dir => $plugin ) {
-				if( is_file( $p = "{$this->path}/$dir/locales/$locale.xml" ) ) {
-					$files[] = $p;
-				}
-			}
-		}
-		return $files;
-	}
 
 }

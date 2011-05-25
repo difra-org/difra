@@ -139,7 +139,6 @@ class Action {
 			return false;
 		}
 		if( !is_file( $file = "{$plugger->path}/{$plugin}/dispatchers/$dispatcher" ) ) {
-			echo "Not found $file";
 			throw new exception( "Dispatcher '$dispatcher' not found in plugin '$plugin'" );
 			return false;
 		}

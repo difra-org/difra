@@ -24,7 +24,7 @@
 			foreach( $files as $filename ) {
 				$templateInner .= "<xsl:include href=\"$filename\"/>\n";
 			}
-			if( !Site::getInstance()->devMode ) {
+			if( !Debugger::getInstance()->isEnabled() ) {
 				$templateInner = $this->_extendXSL( $templateInner );
 			}
 			$template .= $templateInner . '</xsl:stylesheet>';

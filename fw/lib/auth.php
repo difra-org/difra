@@ -83,4 +83,9 @@ class Auth {
 		
 		return isset( $this->data['id'] ) ? $this->data['id'] : null;
 	}
+	
+	public function isLogged() {
+		
+		return $this->logged;
+	}
 }
