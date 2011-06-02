@@ -16,7 +16,9 @@ class Resourcer_Menu extends Resourcer_Abstract_XML {
 			$newHref = "$href/$subname";
 			$newPrefix = "{$prefix}_{$subname}";
 			$subnode->addAttribute( 'id', $newPrefix );
-			$subnode->addAttribute( 'href', $newHref );
+			if( !isset( $subnode->attributes()->href ) ) {
+				$subnode->addAttribute( 'href', $newHref );
+			};
 			$this->_recursiveProcessor( $subnode, $newHref, $newPrefix );
 		}
 	}
