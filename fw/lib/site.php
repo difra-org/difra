@@ -196,6 +196,11 @@ final class Site {
 		}
 	}
 
+	public function getMainhost() {
+
+		return isset( $_SERVER['VHOST_MAIN'] ) ? $_SERVER['VHOST_MAIN'] : $this->getHostname();
+	}
+
 	public function getHost() {
 
 		return $this->host;

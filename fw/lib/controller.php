@@ -95,6 +95,10 @@ abstract class Controller {
 		$this->root->setAttribute( 'action', $this->action->method );
 		$this->root->setAttribute( 'host', Site::getInstance()->getHost() );
 		$this->root->setAttribute( 'hostname', Site::getInstance()->getHostname() );
+		$this->root->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
+		if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
+			$this->root->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
+		}
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
 		//Site::getInstance()->getLocalesListXML( $configNode );
 	}
