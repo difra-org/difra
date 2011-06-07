@@ -64,6 +64,6 @@ class Mailer {
 
 	private function _addDataXML( $node ) {
 
-		$node->setAttribute( 'host', Site::getInstance()->getHost() );
+		$node->setAttribute( 'host', Site::getInstance()->getHostname() );
 	}
 }

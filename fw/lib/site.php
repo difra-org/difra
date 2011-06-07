@@ -38,10 +38,10 @@ final class Site {
 	private function detectHost() {
 
 		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
+		
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
 			$this->host = $_SERVER['VHOST_NAME'];
-		} elseif( !empty( $_SERVER['HTTP_HOST'] ) ) {
-			$this->host = $_SERVER['HTTP_HOST'];
+		} elseif( !$this->host = $this->getHostname() ) {
 		} else {
 			$this->host = 'default';
 		}
@@ -54,9 +54,6 @@ final class Site {
 			}
 			$host = explode( '.', $host, 2 );
 			$host = !empty( $host[1] ) ? $host[1] : false;
-		}
-		if( !$this->host ) {
-			return false;
 		}
 		if( !$this->siteDir ) {
 			if( is_dir( $sitesDir . $this->host ) ) {
@@ -190,15 +187,18 @@ final class Site {
 		}
 		return $this->siteConfig[$key];
 	}
+	
+	public function getHostname() {
+
+		if( !empty( $_SERVER['HTTP_HOST'] ) ) {
+			return $_SERVER['HTTP_HOST'];
+		} else {
+			return null;
+		}
+	}
 
 	public function getHost() {
 
-		if( $this->host ) {
-			return $this->host;
-		}
-		if( !empty( $this->siteConfig['host'] ) ) {
-			return $this->siteConfig['host'];
-		}
-		return $_SERVER['HTTP_HOST'];
+		return $this->host;
 	}
 }
