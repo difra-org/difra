@@ -6,6 +6,7 @@ final class Site {
 
 	// libs
 	private $locales = array();
+	private $locale = 'ru_RU';
 
 	private $siteDir = null;
 	private $siteConfig = array();
