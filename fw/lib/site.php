@@ -39,37 +39,36 @@ final class Site {
 
 		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
 		
+		// хост передаётся от веб-сервера
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
 			$this->host = $_SERVER['VHOST_NAME'];
-		} elseif( !$this->host = $this->getHostname() ) {
-		} else {
+		// определяем хост по hostname
+		} elseif( $host = $this->getHostname() ) {
+			while( $host ) {
+				if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
+					$this->host = $host;
+					break;
+				}
+				$host = explode( '.', $host, 2 );
+				$host = !empty( $host[1] ) ? $host[1] : false;
+			}
+		}
+		// не нашли подходящий хост. ставим по умолчанию — default
+		if( !$this->host ) {
 			$this->host = 'default';
 		}
 
-		$host = $this->host;
-		while( $host ) {
-			if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
-				$this->host = $host;
-				break;
-			}
-			$host = explode( '.', $host, 2 );
-			$host = !empty( $host[1] ) ? $host[1] : false;
+		// ищем папку сайта
+		if( is_dir( $sitesDir . $this->host ) ) {
+			$this->siteDir = $this->host;
+		} elseif( is_dir( $sitesDir . 'www.' . $this->host ) ) {
+			$this->siteDir = 'www.' . $this->host;
+		} elseif( is_dir( $sitesDir . 'default' ) ) {
+			$this->siteDir = 'default';
+		} else {
+			return false;
 		}
-		if( !$this->siteDir ) {
-			if( is_dir( $sitesDir . $this->host ) ) {
-				$this->siteDir = $this->host;
-			} elseif( is_dir( $sitesDir . 'www.' . $this->host ) ) {
-				$this->siteDir = 'www.' . $this->host;
-			} elseif( is_dir( $sitesDir . 'default' ) ) {
-				$this->siteDir = 'default';
-			} else {
-				return false;
-			}
-		}
-
-		if( isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
-			Debugger::getInstance()->enable();
-		}
+				
 		return true;
 	}
 
