@@ -94,6 +94,7 @@ abstract class Controller {
 		$this->root->setAttribute( 'controller', $this->action->class );
 		$this->root->setAttribute( 'action', $this->action->method );
 		$this->root->setAttribute( 'host', Site::getInstance()->getHost() );
+		$this->root->setAttribute( 'hostname', Site::getInstance()->getHostname() );
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
 		//Site::getInstance()->getLocalesListXML( $configNode );
 	}
