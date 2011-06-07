@@ -91,7 +91,10 @@ final class Site {
 		setlocale( LC_ALL, 'UTF8' );
 		ini_set( 'short_open_tag', false );
 		ini_set( 'asp_tags', false );
-
+		
+		// set session domain
+		ini_set( 'session.cookie_domain', '.' . $this->getMainhost() );
+		
 		// prepare data
 		$this->_stripSlashes();
 	}
