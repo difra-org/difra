@@ -5,7 +5,14 @@
 	<xsl:param name="locale" select="$locale"/>
 
 	<xsl:template match="/root/locale"/>
-	<xsl:template match="/root/config"/>
+	<xsl:template match="/root/config">
+		<script type="text/javascript">
+			var config = {};
+			<xsl:if test="/root/@mainhost">
+				<xsl:text>config.mainhost = "</xsl:text><xsl:value-of select="/root/@mainhost"/><xsl:text>";</xsl:text>
+			</xsl:if>
+		</script>
+	</xsl:template>
 
 	<xsl:template name="repeat">
 		<xsl:param name="times"/>
