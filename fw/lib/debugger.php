@@ -13,7 +13,8 @@ class Debugger {
 	
 	public function __construct() {
 		
-		if( isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
+		if( ( !isset( $_GET['debug'] ) or ( $_GET['debug'] != '0' ) )
+				and isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
 			$this->enabled = true;
 			$this->startTime = microtime( true );
 			ini_set( 'display_errors', 'On' );
