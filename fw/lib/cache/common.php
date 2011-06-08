@@ -35,7 +35,7 @@ abstract class Cache_Common {
 		return $data['data'];
 	}
 	
-	public function smartPut( $key, $data, $ttl = 60 ) {
+	public function smartPut( $key, $data, $ttl = 300 ) {
 		
 		$data = array(
 			'expires' => time() + $ttl,
