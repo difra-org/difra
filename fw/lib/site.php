@@ -241,8 +241,12 @@ final class Site {
 			return $_build = implode( '.', $svnVer );
 		}
 
+		// at least something
+		$ver = '$Rev$';
+		if( preg_match( '/\d+/', $ver, $match ) ) {
+			return $_build = $match[0];
+		}
+
 		return $_build = '-';
-		
-		$ver = "$Rev$";
 	}
 }
