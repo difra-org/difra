@@ -5,9 +5,13 @@ BASEPATH=`dirname $0`/../..
 sql=`$BASEPATH/fw/bin/sql-getall.sh`
 
 sites=`ls $BASEPATH/sites`
-echo This script will delete all database data for next projects: $sites
-echo This server is `hostname`.
-read -p "Type YES to continue: "
+echo This script will delete ALL database data!
+echo
+echo "Server:   `hostname`"
+echo "Path:     `cd $BASEPATH;pwd`"
+echo "Projects: $sites"
+echo
+read -p "Are you sure? Type YES to continue: "
 if [[ ! $REPLY =~ ^[Yy][Ee][Ss]$ ]] ; then
 	echo Cancelled.
 	exit 1
