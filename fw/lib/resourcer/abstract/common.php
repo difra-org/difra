@@ -61,26 +61,62 @@ abstract class Resourcer_Abstract_Common {
 		}
 		
 		// get compiled from cache if available
-		$cacheKey = "{$instance}_{$this->type}";
 		$cache = Cache::getInstance();
-		if( $cached = $cache->smartGet( $cacheKey ) ) {
-			return $cached;
-		}
 		
-		// compile new data
-		$this->find( $instance );
-		$this->processDirs( $instance );
-		$resource = $this->processData( $instance );
-		
-		// minify only if cache is available
 		if( $cache->adapter != 'None' and !Debugger::getInstance()->isEnabled() ) {
+		
+			$t = microtime( true );
+			$cacheKey = "{$instance}_{$this->type}";
+			if( $cached = $cache->smartGet( $cacheKey ) ) {
+				return $cached;
+			}
+
+			$busyKey  = "{$cacheKey}_busy";
+			$busyValue = rand( 100000, 999999 );
+
+			while( true ) {
+				if( !$currentBusy = $cache->smartGet( $busyKey ) ) {
+					// is data arrived?
+					if( $cached = $cache->smartGet( $cacheKey ) ) {
+						return $cached;
+					}
+					
+					// try to lock cache
+					$cache->smartPut( $busyKey, $busyValue, 7 );
+					usleep( 5000 );
+				} else {
+					// is cache locked by me?
+					if( $currentBusy == $busyValue ) {
+						break;
+					}
+					
+					usleep( 50000 );
+				}
+			}
+
+			// compile and minify resource			
+			$resource = $this->_subCompile( $instance );
 			$resource = Minify::getInstance( $this->type )->minify( $resource );
-			// save compiled data to cache
+
+			// cache data
 			$cache->smartPut( $cacheKey, $resource );
 			$cache->smartPut( "{$instance}_{$this->type}_modified", gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+			
+			// unlock cache
+			$cache->smartRemove( $busyKey );
+
+			return $resource;
+		} else {
+			return $this->_subCompile( $instance );
 		}
 		
-		return $resource;
+	}
+	
+	private function _subCompile( $instance ) {
+	
+		$this->find( $instance );
+		$this->processDirs( $instance );
+		return $this->processData( $instance );
 	}
 
 	// собирает папки ресурсов по папкам фреймворка, сайта и плагинов
