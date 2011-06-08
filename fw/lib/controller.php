@@ -99,6 +99,7 @@ abstract class Controller {
 		if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
 			$this->root->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
 		}
+		$this->root->setAttribute( 'build', Site::getInstance()->getBuild() );
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
 		//Site::getInstance()->getLocalesListXML( $configNode );
 	}

@@ -78,6 +78,7 @@ final class Site {
 		define( 'DIR_ROOT', $_SERVER['DOCUMENT_ROOT'] );
 		define( 'DIR_FW', $_SERVER['DOCUMENT_ROOT'] . 'fw/' );
 		define( 'DIR_SITE', $_SERVER['DOCUMENT_ROOT'] . 'sites/' . $this->siteDir . '/' );
+		define( 'DIR_PLUGINS', $_SERVER['DOCUMENT_ROOT'] . 'plugins/' );
 		define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
 	}
 
@@ -207,5 +208,41 @@ final class Site {
 	public function getHost() {
 
 		return $this->host;
+	}
+	
+	public function getBuild() {
+	
+		static $_build = null;
+		if( !is_null( $_build ) ) {
+			return $_build;
+		}
+		
+		// try svn versions
+		$svnVer = array();
+		if( is_file( DIR_SITE . '.svn/entries' ) ) {
+			$svn = file( DIR_SITE . '.svn/entries' );
+			$svnVer[] = trim( $svn[3] );
+		}
+		if( is_file( DIR_FW . '.svn/entries' ) ) {
+			$svn = file( DIR_FW . '.svn/entries' );
+			$svnVer[] = trim( $svn[3] );
+		}
+		$plugVer = 0;
+		foreach( Plugger::getInstance()->plugins as $name=>$val ) {
+			if( is_file( DIR_PLUGINS . "$name/.svn/entries" ) ) {
+				$svn = file( DIR_PLUGINS . "$name/.svn/entries" );
+				$plugVer += trim( $svn[3] );
+			}
+		}
+		if( $plugVer ) {
+			$svnVer[] = $plugVer;
+		}
+		if( !empty( $svnVer ) ) {
+			return $_build = implode( '.', $svnVer );
+		}
+
+		return $_build = '-';
+		
+		$ver = "$Rev$";
 	}
 }
