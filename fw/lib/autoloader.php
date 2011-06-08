@@ -15,6 +15,7 @@ class Autoloader {
 
 		$this->basePath = realpath( dirname( __FILE__ ) . '/../..' );
 		$this->paths[] = 'fw/lib';
+		$this->paths[] = 'lib';
 	}
 
 	public function search( $name ) {
