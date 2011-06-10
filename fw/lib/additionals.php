@@ -2,7 +2,7 @@
 
 class Additionals {
 
-	// проверка заполненности и валидности дополнительных полей из конфига сайта
+	// РїСЂРѕРІРµСЂРєР° Р·Р°РїРѕР»РЅРµРЅРЅРѕСЃС‚Рё Рё РІР°Р»РёРґРЅРѕСЃС‚Рё РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… РїРѕР»РµР№ РёР· РєРѕРЅС„РёРіР° СЃР°Р№С‚Р°
 	public static function checkAdditionals( $module, $data ) {
 		
 		if( !$conf = Site::getInstance()->getData( $module ) ) {
@@ -43,7 +43,7 @@ class Additionals {
 		return true;
 	}
 
-	// сохранение дополнительных полей из конфига сайта
+	// СЃРѕС…СЂР°РЅРµРЅРёРµ РґРѕРїРѕР»РЅРёС‚РµР»СЊРЅС‹С… РїРѕР»РµР№ РёР· РєРѕРЅС„РёРіР° СЃР°Р№С‚Р°
 	public static function saveAdditionals( $module, $id, $data ) {
 		
 		if( !$conf = Site::getInstance()->getData( $module ) ) {
