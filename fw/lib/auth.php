@@ -88,4 +88,14 @@ class Auth {
 		
 		return $this->logged;
 	}
+	
+	/**
+	 * Бросает exception, если пользователь не авторизован
+	 */
+	public function required() {
+	
+		if( !$this->logged ) {
+			throw new exception( 'Unauthorized users can\'t change groups' );
+		}
+	}
 }
