@@ -30,6 +30,7 @@ abstract class Controller {
 		$this->ajax	= Ajax::getInstance();
 
 		$this->_initXML();
+		$realRoot = $this->root;
 
 		// run dispatchers
 		if( method_exists( $this, 'dispatch' ) ) {
@@ -42,9 +43,9 @@ abstract class Controller {
 		$this->_runAction();
 
 		// add XML data
-		$this->auth->getAuthXML( $this->root );
-		$this->locale->getLocaleXML( $this->root );
-		Menu::getInstance( $this->view->instance )->getXML( $this->root );
+		$this->auth->getAuthXML( $realRoot );
+		$this->locale->getLocaleXML( $realRoot );
+		Menu::getInstance( $this->view->instance )->getXML( $realRoot );
 		//$this->root->setAttribute( 'menuitem', Menu::getInstance()->getCurrent( $this->action->uri ) );
 	}
 
