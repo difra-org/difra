@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Minify {
 
 	static public function getInstance( $type ) {
@@ -10,11 +12,11 @@ class Minify {
 		}
 		switch( $type ) {
 			case 'css':
-				return Minify_CSS::getInstance();
+				return \Minify_CSS::getInstance();
 			case 'js':
-				return Minify_JS::getInstance();
+				return \Minify_JS::getInstance();
 			default:
-				return Minify_None::getInstance();
+				return \Minify_None::getInstance();
 		}
 	}
 	

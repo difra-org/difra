@@ -96,7 +96,7 @@ abstract class Resourcer_Abstract_Common {
 
 			// compile and minify resource			
 			$resource = $this->_subCompile( $instance );
-			$resource = Minify::getInstance( $this->type )->minify( $resource );
+			$resource = Difra\Minify::getInstance( $this->type )->minify( $resource );
 
 			// cache data
 			$cache->smartPut( $cacheKey, $resource );
