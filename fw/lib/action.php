@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Action {
 
 	public $parameters = array();

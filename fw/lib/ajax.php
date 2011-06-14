@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Ajax {
 
 	public $isAjax = false;

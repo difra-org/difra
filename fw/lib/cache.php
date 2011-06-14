@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Cache
 {
 
@@ -32,13 +34,14 @@ class Cache
 			if( $_auto ) {
 				return self::getInstance( $_auto );
 			}
-			if( Cache_MemCache::isAvailable() ) {
+			// TODO: перевести это дело на namespaces
+			if( \Cache_MemCache::isAvailable() ) {
 				Debugger::getInstance()->addLine( "Auto-detected cache type: MemCache" );
 				return self::getInstance( $_auto = self::INST_MEMCACHED );
-			} elseif( Cache_XCache::isAvailable() ) {
+			} elseif( \Cache_XCache::isAvailable() ) {
 				Debugger::getInstance()->addLine( "Auto-detected cache type: XCache" );
 				return self::getInstance( $_auto = self::INST_XCACHE );
-			} elseif( Cache_SharedMemory::isAvailable() ) {
+			} elseif( \Cache_SharedMemory::isAvailable() ) {
 				Debugger::getInstance()->addLine( "Auto-detected cache type: Shared Memory" );
 				return self::getInstance( $_auto = self::INST_SHAREDMEM );
 			} else {
@@ -55,17 +58,17 @@ class Cache
 		// create new adapter
 		switch( $configName ) {
 		case self::INST_XCACHE:
-			self::$_adapters[$configName] = new Cache_XCache();
+			self::$_adapters[$configName] = new \Cache_XCache();
     			return self::$_adapters[$configName];
 		case self::INST_SHAREDMEM:
-			self::$_adapters[$configName] = new Cache_SharedMemory();
+			self::$_adapters[$configName] = new \Cache_SharedMemory();
 			return self::$_adapters[$configName];
 		case self::INST_MEMCACHED:
-			self::$_adapters[$configName] = new Cache_MemCache();
+			self::$_adapters[$configName] = new \Cache_MemCache();
 			return self::$_adapters[$configName];
 		default:
 			if( !isset( self::$_adapters[self::INST_NONE] ) ) {
-				self::$_adapters[self::INST_NONE] = new Cache_None();
+				self::$_adapters[self::INST_NONE] = new \Cache_None();
 			}
 			return self::$_adapters[self::INST_NONE];
 		}

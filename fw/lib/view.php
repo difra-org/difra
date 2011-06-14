@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class View {
 
 	public $error = false;
@@ -66,7 +68,7 @@ class View {
 			}
 		}
 		
-		$xslDom = new DomDocument;
+		$xslDom = new \DomDocument;
 		$xslDom->resolveExternals = true;
 		$xslDom->substituteEntities = true;
 		if( !$xslDom->loadXML( Resourcer::getInstance( 'xslt' )->compile( $template ) ) ) {
@@ -77,7 +79,7 @@ class View {
 				return false;
 			}
 		}
-		$xslProc = new XsltProcessor();
+		$xslProc = new \XsltProcessor();
 		$xslProc->resolveExternals = true;
 		$xslProc->substituteEntities = true;
 		$xslProc->importStyleSheet( $xslDom );

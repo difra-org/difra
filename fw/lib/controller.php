@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 abstract class Controller {
 
  	protected $view = null;
@@ -88,7 +90,7 @@ abstract class Controller {
 
 	private function _initXML() {
 
-		$this->xml = new DOMDocument;
+		$this->xml = new \DOMDocument;
 		$this->root = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
 		$this->root->setAttribute( 'lang', $this->locale->locale );
 		$this->root->setAttribute( 'controller', $this->action->class );
@@ -107,6 +109,24 @@ abstract class Controller {
 	public function noAuth() {
 
 		return $this->view->httpError( 401 );
+	}
+	
+	public function getPage() {
+		
+		if( empty( $this->action->parameters ) ) {
+			return null;
+		}
+		while( list( $key, $parameter ) = each( $this->action->parameters ) ) {
+			if( $parameter == 'page' ) {
+				list( $key2, $parameter2 ) = each( $this->action->parameters );
+				if( ctype_digit( $parameter2 ) ) {
+					unset( $this->action->parameters[$key2] );
+					unset( $this->action->parameters[$key] );
+					$this->action->parameters = array_values( $this->action->parameters );
+					return $parameter2;
+				}
+			}
+		}
 	}
 }
 

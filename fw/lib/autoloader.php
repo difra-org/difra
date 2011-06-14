@@ -30,9 +30,10 @@ class Autoloader {
 
 	public static function load( $class ) {
 
-		$fileName = str_replace( '_', '/', strtolower( $class ) ) . '.php';
+		$fileName = str_replace( '_', '/', strtolower( str_replace( 'Difra\\', '', $class ) ) ) . '.php';
 		if( !$filePath = self::getInstance()->search( $fileName ) ) {
-			throw new exception( 'Can\'t find class ' . $class );
+//			throw new exception( 'Can\'t find class ' . $class );
+			return false;
 		}
 		include_once( $filePath );
 	}

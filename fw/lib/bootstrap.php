@@ -2,10 +2,13 @@
 
 require_once( dirname( __FILE__ ) . '/autoloader.php' );
 
+// TODO: избавиться от этого файла ;)
+require_once( dirname( __FILE__ ) . '/compat.php' );
+
 // load site
-Site::getInstance();
+Difra\Site::getInstance();
 // load plugins
-Plugger::getInstance();
+Difra\Plugger::getInstance();
 // call controller
-Action::getInstance()->run();
+Difra\Action::getInstance()->run();
 

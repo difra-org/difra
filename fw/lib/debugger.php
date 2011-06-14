@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Debugger {
 	
 	private $enabled = false;

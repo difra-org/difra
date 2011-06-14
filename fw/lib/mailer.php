@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Mailer {
 
 	var $fromText = 'Robot';

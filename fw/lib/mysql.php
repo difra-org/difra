@@ -1,6 +1,8 @@
 <?php
 
-final class MySQL {
+namespace Difra;
+
+class MySQL {
 
 	private $config = null;
 	public $connected = false;

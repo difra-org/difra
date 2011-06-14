@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Auth {
 
 	public $logged = false;

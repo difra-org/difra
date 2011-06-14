@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Locales {
 	public $locale = 'ru_RU';
 	public $localeXML = null;
@@ -15,7 +17,7 @@ class Locales {
 
 		$this->locale = $locale;
 		$xml = Resourcer::getInstance( 'locale' )->compile( $this->locale );
-		$this->localeXML = new DOMDocument();
+		$this->localeXML = new \DOMDocument();
 		$this->localeXML->loadXML( $xml );
 	}
 
@@ -90,6 +92,10 @@ class Locales {
 		return sizeof( $s ) == 1 ? $s[0] : false;
 	}
 
+	public function getDate( $timestamp ) {
+		
+		return date( $this->dateFormats[$this->locale], $timestamp );
+	}
 }
 
 

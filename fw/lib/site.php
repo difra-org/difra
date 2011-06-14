@@ -1,6 +1,8 @@
 <?php
 
-final class Site {
+namespace Difra;
+
+class Site {
 
 	const PATH_PART = '/../../sites/';
 

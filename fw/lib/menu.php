@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Menu {
 
 	public $menu = null;
@@ -12,7 +14,7 @@ class Menu {
 
 	public function __construct( $instance ) {
 
-		$this->menu = new DOMDocument();
+		$this->menu = new \DOMDocument();
 		$this->menu->loadXML( Resourcer::getInstance( 'menu' )->compile( $instance ) );
 	}
 	

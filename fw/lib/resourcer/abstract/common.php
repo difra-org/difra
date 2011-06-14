@@ -63,7 +63,7 @@ abstract class Resourcer_Abstract_Common {
 		// get compiled from cache if available
 		$cache = Cache::getInstance();
 		
-		if( $cache->adapter != 'None' and !Debugger::getInstance()->isEnabled() ) {
+		if( $cache->adapter != 'None' and !Difra\Debugger::getInstance()->isEnabled() ) {
 		
 			$t = microtime( true );
 			$cacheKey = "{$instance}_{$this->type}";
