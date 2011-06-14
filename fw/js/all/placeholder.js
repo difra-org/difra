@@ -1,6 +1,7 @@
+// XXX: Тут должен быть универсальный код, который обеспечит работу аттрибута <input placeholder="... в браузерах, которые не поддерживают HTML5
+
 /*
- 
- // XXX: Тут должен быть универсальный код, который обеспечит работу аттрибута <input placeholder="... в браузерах, которые не поддерживают HTML5
+ На заметку: if (!elementSupportsAttribute('textarea', 'placeholder')) { — это для определения поддержки браузером
  
 $(document).ready( function() {
 	$('[placeholder]').focus(function() {
