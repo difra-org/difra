@@ -105,29 +105,10 @@ final class Site {
 		if( get_magic_quotes_gpc() !== 1 ) {
 			return false;
 		}
-		if( $this->phpVersion >= 503 ) {
-			$_GET = json_decode( stripslashes( json_encode( $_GET, JSON_HEX_APOS ) ), true );
-			$_POST = json_decode( stripslashes( json_encode( $_POST, JSON_HEX_APOS ) ), true );
-			$_COOKIE = json_decode( stripslashes( json_encode( $_COOKIE, JSON_HEX_APOS ) ), true );
-			$_REQUEST = json_decode( stripslashes( json_encode( $_REQUEST, JSON_HEX_APOS ) ), true );
-		} else {
-			$_GET = $this->_stripslashesRecursive( $_GET );
-			$_POST = $this->_stripslashesRecursive( $_POST );
-			$_COOKIE = $this->_stripslashesRecursive( $_COOKIE );
-			$_REQUEST = $this->_stripslashesRecursive( $_REQUEST );
-		}
-	}
-
-	private function _stripslashesRecursive( &$value ) {
-
-		if( is_array( $value ) ) {
-			foreach( $value as $k=>$v ) {
-				$value[$k] = $this->_stripSlashesRecursive( $v );
-			}
-		} else {
-			$value = stripslashes( $value );
-		}
-		return $value;
+		$_GET = json_decode( stripslashes( json_encode( $_GET, JSON_HEX_APOS ) ), true );
+		$_POST = json_decode( stripslashes( json_encode( $_POST, JSON_HEX_APOS ) ), true );
+		$_COOKIE = json_decode( stripslashes( json_encode( $_COOKIE, JSON_HEX_APOS ) ), true );
+		$_REQUEST = json_decode( stripslashes( json_encode( $_REQUEST, JSON_HEX_APOS ) ), true );
 	}
 
 	public function getDbConfig() {
