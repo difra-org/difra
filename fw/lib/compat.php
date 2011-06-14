@@ -7,7 +7,9 @@ namespace {
 	class Locales extends Difra\Locales {}
 	class Resourcer extends Difra\Resourcer {}
 	class Plugger extends Difra\Plugger {}
-	class Controller extends Difra\Controller {}
 	class Mailer extends Difra\Mailer {}
 	class Cache extends Difra\Cache {}
+	class Auth extends Difra\Auth {}
+	class Controller extends Difra\Controller {}
+
 }

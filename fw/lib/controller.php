@@ -14,13 +14,13 @@ abstract class Controller {
  	public $xml;
  	public $root;
 	
-	final static function getInstance( $action ) {
+	public static function getInstance( $action ) {
 
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self( $action );
 	}
 
-	final public function __construct() {
+	public function __construct() {
 
 		// load essentials
 		$this->view	= View::getInstance();
