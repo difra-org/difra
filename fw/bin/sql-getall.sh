@@ -9,7 +9,7 @@ if [ -f $name ]; then
 	echo ""
 fi
 
-
+echo "SET FOREIGN_KEY_CHECKS = 0;"
 for plugin in `ls $PLUGINS`; do
 	name="$PLUGINS/$plugin/bin/db.sql";
 	if [ -f $name ]; then
@@ -17,4 +17,4 @@ for plugin in `ls $PLUGINS`; do
 		echo ""
 	fi
 done
-
+echo "SET FOREIGN_KEY_CHECKS = 1;"
