@@ -38,7 +38,7 @@ abstract class Resourcer_Abstract_Common {
 		}
 		$data = $this->compile( $instance );
 		header( 'Content-Type: ' . $this->contentType );
-		if( !$modified = Cache::getInstance()->smartGet( "{$instance}_{$this->type}_modified" ) ) {
+		if( !$modified = Difra\Cache::getInstance()->smartGet( "{$instance}_{$this->type}_modified" ) ) {
 			$modified = gmdate( 'D, d M Y H:i:s' ) . ' GMT';
 		}
 		header( 'Last-Modified: ' . $modified );
@@ -61,7 +61,7 @@ abstract class Resourcer_Abstract_Common {
 		}
 		
 		// get compiled from cache if available
-		$cache = Cache::getInstance();
+		$cache = Difra\Cache::getInstance();
 		
 		if( $cache->adapter != 'None' and !Difra\Debugger::getInstance()->isEnabled() ) {
 		
