@@ -4,7 +4,7 @@ class Additionals {
 
 	// проверка заполненности и валидности дополнительных полей из конфига сайта
 	public static function checkAdditionals( $module, $data ) {
-		
+
 		if( !$conf = Site::getInstance()->getData( $module ) ) {
 			return true;
 		}
@@ -45,7 +45,7 @@ class Additionals {
 
 	// сохранение дополнительных полей из конфига сайта
 	public static function saveAdditionals( $module, $id, $data ) {
-		
+
 		if( !$conf = Site::getInstance()->getData( $module ) ) {
 			return;
 		}
@@ -59,7 +59,7 @@ class Additionals {
 			}
 		}
 	}
-	
+
 	/**
 	 * Additionals::getAdditionals()
 	 * @desc Возвращает массив с дополнительными полями
@@ -73,12 +73,12 @@ class Additionals {
 		$query = "SELECT `name`, `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "'";
 		$res = $db->fetch( $query );
 		$fields = array();
-		foreach( $res as $k=>$data ) {
+		foreach( $res as $k => $data ) {
 			$fields[$data['name']] = $data['value'];
 		}
-		return !empty( $fields ) ? $fields : false;
+		return!empty( $fields ) ? $fields : false;
 	}
-	
+
 	/**
 	 * Additionals::getAdditionalsXml()
 	 * @desc Добавляет xml с дополнительными полями
@@ -99,4 +99,18 @@ class Additionals {
 		}
 	}
 
-}	
+	public static function getAdditionalId( $module, $name, $value ) {
+
+		$db = MySQL::getInstance();
+		$id = $db->fetchOne( "SELECT `id` FROM `{$module}_fields` WHERE `name`='" . $db->escape( $name ) . "' AND `value`='" . $db->escape( $value ) . "'" );
+		return $id ? $id : null;
+	}
+
+	public static function getAdditionalValue( $module, $id, $name ) {
+		
+		$db = MySQL::getInstance();
+		$id = $db->fetchOne( "SELECT `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='" . $db->escape( $name ) . "'" );
+		return $id ? $id : null;
+	} 
+}
+
