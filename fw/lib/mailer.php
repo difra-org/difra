@@ -42,7 +42,7 @@ class Mailer {
 
 	public function createMail( $email, $template, $data ) {
 
-		$xml = new DOMDocument();
+		$xml = new \DOMDocument();
 		$root = $xml->appendChild( $xml->createElement( 'mail' ) );
 		$this->_addDataXML( $root );
 		Locales::getInstance()->getLocaleXML( $root );
