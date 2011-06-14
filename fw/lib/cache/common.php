@@ -25,7 +25,7 @@ abstract class Cache_Common {
 
 	public function smartGet( $key ) {
 		
-		$data = $this->get( Site::getInstance()->getHost() . '_' . $key );
+		$data = $this->get( Difra\Site::getInstance()->getHost() . '_' . $key );
 		if( !$data ) {
 			return null;
 		}
@@ -41,11 +41,11 @@ abstract class Cache_Common {
 			'expires' => time() + $ttl,
 			'data' => $data
 		);
-		$this->put( Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
+		$this->put( Difra\Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
 	}
 	
 	public function smartRemove( $key ) {
 		
-		$this->remove( Site::getInstance()->getHost() . '_' . $key );
+		$this->remove( Difra\Site::getInstance()->getHost() . '_' . $key );
 	}
 }
