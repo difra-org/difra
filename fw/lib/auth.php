@@ -7,6 +7,7 @@ class Auth {
 	public $logged = false;
 	public $id = null;
 	public $data = null;
+	public $additionals = null;
 
 	static public function getInstance() {
 
@@ -28,21 +29,26 @@ class Auth {
 		} else {
 			$subNode = $authNode->appendChild( $node->ownerDocument->createElement( 'authorized' ) );
 			$subNode->setAttribute( 'id', $this->id );
-			$subNode->setAttribute( 'userid', $this->getId() );
+			if( !empty( $this->additionals ) ) {
+				foreach( $this->additionals as $k => $v ) {
+					$subNode->setAttribute( $k, $v );
+				}
+			}
 		}
 	}
 
-	public function login( $id, $data = null ) {
+	public function login( $id, $data = null, $additionals = null ) {
 
 		$this->id = $id;
 		$this->data = $data;
+		$this->additionals = $additionals;
 		$this->logged = true;
 		$this->_save();
 	}
 
 	public function logout() {
 
-		$this->id = $this->data = null;
+		$this->id = $this->data = $this->additionals = null;
 		$this->logged = false;
 		$this->_save();
 	}
@@ -60,7 +66,8 @@ class Auth {
 		if( $this->logged ) {
 			$_SESSION['auth'] = array(
 				'id'	=> $this->id,
-				'data'	=> $this->data
+				'data'	=> $this->data,
+				'additionals' => $this->additionals
 			);
 		} else {
 			if( isset( $_SESSION['auth'] ) ) {
@@ -79,6 +86,7 @@ class Auth {
 		}
 		$this->id   = $_SESSION['auth']['id'];
 		$this->data = $_SESSION['auth']['data'];
+		$this->additionals = $_SESSION['auth']['additionals'];
 		return $this->logged = true;
 	}
 
