@@ -55,7 +55,7 @@ class MySQL {
 		$table = array();
 		$result = mysql_query( $query, $this->db );
 		$this->queries++;
-		Debugger::getInstance()->addLine( $query );
+		Debugger::getInstance()->addLine( "MySQL: " . $query );
 		if( $err = mysql_error( $this->db ) ) {
 			throw new exception( 'MySQL: ' . $err );
 		}

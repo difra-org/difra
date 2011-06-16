@@ -44,7 +44,7 @@ class Debugger {
 		if( !$this->enabled ) {
 			return;
 		}
-		$output[] = $line;
+		$this->output[] = $line;
 	}
 	
 	public function printOutput() {
@@ -55,6 +55,6 @@ class Debugger {
 		echo "<!--\n";
 		echo "Page rendered in " . ( microtime( true ) - $this->startTime )  . " seconds\n";
 		echo implode( "\n", $this->output );
-		echo "-->";
+		echo "\n-->";
 	}
 }
