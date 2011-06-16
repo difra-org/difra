@@ -28,6 +28,7 @@ class Auth {
 		} else {
 			$subNode = $authNode->appendChild( $node->ownerDocument->createElement( 'authorized' ) );
 			$subNode->setAttribute( 'id', $this->id );
+			$subNode->setAttribute( 'userid', $this->getId() );
 		}
 	}
 

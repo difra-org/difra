@@ -2,9 +2,13 @@
 
 namespace {
 	
-	class MySQL extends Difra\MySQL {}
+	class MySQL {
+		public static function getInstance() {
+			return Difra\MySQL::getInstance();
+		}
+	}
 	class Site {
-		public  static function getInstance() {
+		public static function getInstance() {
 			return Difra\Site::getInstance();
 		}
 	}
