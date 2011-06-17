@@ -1,5 +1,7 @@
 <?php
-	
+
+namespace Difra;
+
 /**
  * Cookies
  * @desc Работа с куками

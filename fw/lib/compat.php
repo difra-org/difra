@@ -15,5 +15,5 @@ namespace {
 	class Locales extends Difra\Locales {}
 	class Plugger extends Difra\Plugger {}
 	class Auth extends Difra\Auth {}
-
+	class Cookies extends Difra\Cookies {}
 }
