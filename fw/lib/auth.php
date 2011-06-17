@@ -109,4 +109,14 @@ class Auth {
 			throw new exception( 'Unauthorized users can\'t change groups' );
 		}
 	}
+
+	public function setAdditionals( $additionals ) {
+		$this->additionals = $additionals;
+		$this->_save();
+	}
+
+	public function getAdditionals() {
+		return $this->additionals;
+	}
+
 }
