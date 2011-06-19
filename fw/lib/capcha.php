@@ -3,6 +3,9 @@
 class Capcha {
 
 	private $key = false;
+	private $sizeX = 140;
+	private $sizeY = 40;
+	private $keyLength = 5;
 
 	public function __construct() {
 		if( !isset( $_SESSION ) ) {
@@ -83,13 +86,22 @@ class Capcha {
 	}
 
 	public function viewCapcha() {
-		$this->key = $this->genKey( 5 );
-		$data = $this->mkCapcha( 140, 40, $this->key );
+		$this->key = $this->genKey( $this->keyLength );
+		$data = $this->mkCapcha( $this->sizeX, $this->sizeY, $this->key );
 		if( !isset( $_SESSION ) ) {
 			session_start();
 		}
 		$_SESSION['capcha_key'] = $this->key;
 		return $data;
+	}
+	
+	public function setSize( $sizeX, $sizeY ) {
+		$this->sizeX = $sizeX;
+		$this->sizeY = $sizeY;
+	}
+	
+	public function setKeyLength( $n ) {
+		$this->keyLength = $n;
 	}
 }
 
