@@ -111,6 +111,24 @@ class Additionals {
 		$db = MySQL::getInstance();
 		$id = $db->fetchOne( "SELECT `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='" . $db->escape( $name ) . "'" );
 		return $id ? $id : null;
-	} 
+	}
+	
+	/**
+	 * Additionals::unSetAdditionalField()
+	 * @desc Удаляет дополнительное поле
+	 * @param string $module
+	 * @param integer $id
+	 * @param string $name
+	 * @return void
+	 */
+	public static function unSetAdditionalField( $module, $id, $name ) {
+		if( !$conf = Site::getInstance()->getData( $module ) ) {
+			return;
+		}
+		if( isset( $conf['fields'][$name] ) ) {
+			$db = MySQL::getInstance();
+			$db->query( "DELETE FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='" . $db->escape( $name ) . "'" );
+		}
+	}
 }
 
