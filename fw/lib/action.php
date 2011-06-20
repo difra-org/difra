@@ -89,7 +89,6 @@ class Action {
 			}
 		}
 		if( empty( $controllers ) ) {
-			// TODO: check additional plugin paths here... hmmm... or not. but static pages should be cached and checked somewhere
 			return View::getInstance()->httpError( 404 );
 		}
 
