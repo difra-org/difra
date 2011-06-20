@@ -109,6 +109,7 @@ abstract class Controller {
 
 	public function noAuth() {
 
+		$this->action->parameters = array();
 		return $this->view->httpError( 401 );
 	}
 	
