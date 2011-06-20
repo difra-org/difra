@@ -36,16 +36,13 @@ class View {
 			$error = 'Unknown';
 		}
 		header( "HTTP/1.1 $err $error" );
-		$renderProblem = false;
-		if( file_exists( DIR_SITE . 'xslt/error_' . $err . '/main.xsl' ) ) {
+		try {
 			$xml = new \DOMDocument( );
 			$root = $xml->appendChild( $xml->createElement( 'error' . $err ) );
 			$root->setAttribute( 'host', Site::getInstance()->getHost() );
-			//$renderProblem = !$this->render( $xml, 'errors/' . $err . '.xsl', false, true );
-			$renderProblem = !$this->render( $xml, 'error_' . $err, false, true );
+			$this->render( $xml, 'error_' . $err, false, true );
 			$this->error = $err;
-		}
-		if( !file_exists( DIR_SITE . 'xslt/error_' . $err . '/main.xsl' ) or $renderProblem ) {
+		} catch( exception $ex ) {
 			$this->error = $err;
 			die( '<center><h1 style="padding:350px 0px 0px 0px">HTTP error ' . $err . ' (' . $error . ')</h1></center>' );
 		}
