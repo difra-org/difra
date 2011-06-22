@@ -92,6 +92,7 @@ class Site {
 
 		// other
 		setlocale( LC_ALL, 'UTF8' );
+		mb_internal_encoding( 'UTF-8' );
 		ini_set( 'short_open_tag', false );
 		ini_set( 'asp_tags', false );
 		
