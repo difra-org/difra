@@ -65,6 +65,22 @@ class MySQL {
 		return $table;
 	}
 
+	public function fetchWithId( $query ) {
+
+		$this->connect();
+		$table = array();
+		$result = mysql_query( $query, $this->db );
+		$this->queries++;
+		Debugger::getInstance()->addLine( "MySQL: " . $query );
+		if( $err = mysql_error( $this->db ) ) {
+			throw new exception( 'MySQL: ' . $err );
+		}
+		while( $row = mysql_fetch_array( $result, MYSQL_ASSOC ) ) {
+			$table[$row['id']] = $row;
+		}
+		return $table;
+	}
+
 	public function fetchRow( $query ) {
 
 		$data = $this->fetch( $query );
