@@ -116,7 +116,7 @@ abstract class Controller {
 	public function getPage() {
 		
 		if( empty( $this->action->parameters ) ) {
-			return null;
+			return 1;
 		}
 		while( list( $key, $parameter ) = each( $this->action->parameters ) ) {
 			if( $parameter == 'page' ) {
@@ -129,6 +129,7 @@ abstract class Controller {
 				}
 			}
 		}
+		return 1;
 	}
 }
 
