@@ -32,7 +32,7 @@ for site in $BASEPATH/sites/*; do
 
 		tables=`mysql -u$user -p$pass $base -e 'show tables'|awk '{ print $1}'|grep -v '^Tables'`
 		for t in $tables; do
-			mysql -u$user -p$pass $base -e "drop table $t"
+			mysql -u$user -p$pass $base -e "SET FOREIGN_KEY_CHECKS = 0;drop table $t"
 		done
 
 		mysql -u$user -p$pass $base -e "$sql"
