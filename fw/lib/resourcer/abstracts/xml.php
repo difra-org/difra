@@ -1,12 +1,14 @@
 <?php
-	
-abstract class Resourcer_Abstract_XML extends Resourcer_Abstract_Common {
+
+namespace Difra\Resourcer\Abstracts;
+
+abstract class XML extends Common {
 	
 	protected function processData( $instance ) {
 		
 		$files = $this->getFiles( $instance );
 		
-		$newXml = new SimpleXMLElement("<{$this->type}></{$this->type}>");
+		$newXml = new \SimpleXMLElement("<{$this->type}></{$this->type}>");
 		foreach( $files as $file ) {
 			$xml = simplexml_load_file( $file );
 			$this->_mergeXML( $newXml, $xml	);

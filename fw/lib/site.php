@@ -29,6 +29,7 @@ class Site {
 			die( 'Invalid server configuration or unconfigured host.' );
 		}
 		$this->startTime = microtime( true );
+		Debugger::getInstance();
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
 			$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		}

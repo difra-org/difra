@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Autoloader {
 
 	private $basePath = '';
@@ -20,6 +22,7 @@ class Autoloader {
 
 	public function search( $name ) {
 
+		
 		foreach( $this->paths as $path ) {
 			if( file_exists( "{$this->basePath}/$path/$name" ) ) {
 				return "{$this->basePath}/$path/$name";
@@ -30,30 +33,40 @@ class Autoloader {
 
 	public static function load( $class ) {
 
-		$fileName = str_replace( '_', '/', strtolower( str_replace( 'Difra\\', '', $class ) ) ) . '.php';
-		if( !$filePath = self::getInstance()->search( $fileName ) ) {
-//			throw new exception( 'Can\'t find class ' . $class );
-			return false;
+		$class = ltrim( $class, '\\' );
+		$parts = explode( '\\', $class );
+		$path = '';
+		if( $parts[0] != 'Difra' ) {
+			$path = 'lib/';
+		} elseif( $parts[0] == 'Difra' and $parts[1] == 'Plugins' ) {
+			$path = '';
+			array_shift( $parts );
+			$name = array_pop( $parts );
+			// классы вида Plugins/Name ищем в plugins/name/lib/name.php
+			if( sizeof( $parts ) == 1 ) {
+				array_push( $parts, $name );
+			}
+			array_push( $parts, 'lib' );
+			array_push( $parts, $name );
+		} else {
+			$path = 'fw/lib/';
+			array_shift( $parts );
 		}
-		include_once( $filePath );
+		$filename = realpath( dirname( __FILE__ ) . '/../..' ) . "/$path" . strtolower( implode( '/', $parts ) ) . '.php';
+		if( !file_exists( $filename ) ) {
+			throw new exception( "Class $class not found" );
+		}
+		include_once( $filename );
 	}
 
 	public static function register() {
 
 		if( function_exists( 'spl_autoload_register' ) ) {
-			if( !spl_autoload_register( 'Autoloader::load' ) ) {
+			if( !spl_autoload_register( 'Difra\Autoloader::load' ) ) {
 				throw new exception( 'Can\'t register Autoloader' );
 			}
 		}
 	}
 }
 
-// for PHP 5.3 and newer
 Autoloader::register();
-
-// for older PHP, will not be magic after spl_autoload_register if PHP version >= 5.3
-function __autoload( $class ) {
-
-	Autoloader::getInstance()->load( $class );
-}
-

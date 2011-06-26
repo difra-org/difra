@@ -1,6 +1,8 @@
 <?php
 
-abstract class Resourcer_Abstract_Plain extends Resourcer_Abstract_Common {
+namespace Difra\Resourcer\Abstracts;
+
+abstract class Plain extends Common {
 	
 	protected function processData( $instance ) {
 		

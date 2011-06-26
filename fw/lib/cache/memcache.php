@@ -1,6 +1,8 @@
 <?php
 
-class Cache_MemCache extends Cache_Common {
+namespace Difra\Cache;
+
+class MemCache extends Common {
 	
 	public $adapter = 'MemCache';
 
@@ -12,13 +14,13 @@ class Cache_MemCache extends Cache_Common {
     
 	public function __construct() {
 
-		if( !self::isAvailable() ) {
-			error( 'Memcache is not available', __FILE__, __LINE__ );
-		}
+//		if( !self::isAvailable() ) {
+//			throw new exception( 'Memcache is not available', __FILE__, __LINE__ );
+//		}
 	}
 	
 	public static function isAvailable() {
-	
+
 		if( !extension_loaded( 'memcache' ) ) {
 			return false;
 		}
@@ -26,11 +28,10 @@ class Cache_MemCache extends Cache_Common {
 				    array( 'unix:///tmp/memcache', 0 ),
 				    array( '127.0.0.1', 11211 ),
 				    );
-		if( !self::$_memcache ) {
-			self::$_memcache = new Memcache;
-		} else {
+		if( self::$_memcache ) {
 			return true;
 		}
+		self::$_memcache = new \MemCache;
 		foreach( $serverList as $serv ) {
 			if( @self::$_memcache->pconnect( $serv[0], $serv[1] ) ) {
 				self::$_server	= $serv[0];

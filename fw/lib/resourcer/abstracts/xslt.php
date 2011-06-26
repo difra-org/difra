@@ -1,6 +1,9 @@
 <?php
 
-abstract class Resourcer_Abstract_XSLT extends Resourcer_Abstract_Common {
+namespace Difra\Resourcer\Abstracts;
+use Difra;
+
+abstract class XSLT extends Common {
 
 	protected function processData( $instance ) {
 

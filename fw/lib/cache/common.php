@@ -1,9 +1,12 @@
 <?php
 
-abstract class Cache_Common {
+namespace Difra\Cache;
+use Difra;
+
+abstract class Common {
 
 	// is class available?
-//	abstract static public function isAvailable();
+//	abstracts static public function isAvailable();
 	// return cache record or null if record is not found
 	abstract public function get( $id, $doNotTestCacheValidity = false );
 	// test if cache record exists

@@ -1,6 +1,9 @@
 <?php
 
-abstract class Resourcer_Abstract_Common {
+namespace Difra\Resourcer\Abstracts;
+use Difra;
+
+abstract class Common {
 			
 	protected $resources = array();
 
@@ -55,14 +58,14 @@ abstract class Resourcer_Abstract_Common {
 	
 	// собирает всё в единый документ
 	public function compile( $instance ) {
-		
+
 		if( !$this->checkInstance( $instance ) ) {
 			return false;
 		}
-		
+
 		// get compiled from cache if available
 		$cache = Difra\Cache::getInstance();
-		
+
 		if( $cache->adapter != 'None' and !Difra\Debugger::getInstance()->isEnabled() ) {
 		
 			$t = microtime( true );
@@ -122,7 +125,7 @@ abstract class Resourcer_Abstract_Common {
 	// собирает папки ресурсов по папкам фреймворка, сайта и плагинов
 	private function find( $instance ) {
 		
-		$plugger = Plugger::getInstance();
+		$plugger = Difra\Plugger::getInstance();
 		$files = array();
 		$dirs = array();
 		

@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Capcha {
 
 	private $key = false;

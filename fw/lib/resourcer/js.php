@@ -1,6 +1,8 @@
 <?php
-	
-class Resourcer_JS extends Resourcer_Abstract_Plain {
+
+namespace Difra\Resourcer;
+
+class JS extends Abstracts\Plain {
 	
 	protected $type = 'js';
 	protected $printable = true;

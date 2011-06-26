@@ -1,6 +1,8 @@
 <?php
 
-class Cache_None extends Cache_Common {
+namespace Difra\Cache;
+
+class None extends Common {
 	
 	public $adapter = 'None';
 

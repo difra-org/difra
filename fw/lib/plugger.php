@@ -23,10 +23,10 @@ class Plugger {
 					if( is_readable( "{$this->path}/$subdir/plugin.php" ) ) {
 						try {
 							include_once( "{$this->path}/$subdir/plugin.php" );
-							if( method_exists( $class = 'P' . ucfirst( $subdir ), 'getInstance' ) ) {
-								$this->plugins[$subdir] = new $class;
-							}
+							$class = 'Difra\\Plugins\\' . ucfirst( $subdir ) . '\\Plugin';
+							$this->plugins[$subdir] = new $class;
 						} catch( exception $ex ) {
+							echo "Can't load plugin $subdir: " . $ex->getMessage() . "<br/>\n" ;
 						}
 					}
 				}

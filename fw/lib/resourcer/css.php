@@ -1,6 +1,8 @@
 <?php
 
-class Resourcer_CSS extends Resourcer_Abstract_Plain {
+namespace Difra\Resourcer;
+
+class CSS extends Abstracts\Plain {
 
 	protected $type = 'css';
 	protected $printable = true;

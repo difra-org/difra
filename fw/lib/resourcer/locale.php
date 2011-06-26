@@ -1,6 +1,8 @@
 <?php
-	
-class Resourcer_Locale extends Resourcer_Abstract_XML {
+
+namespace Difra\Resourcer;
+
+class Locale extends Abstracts\XML {
 	
 	protected $type = 'locale';
 	protected $printable = false;

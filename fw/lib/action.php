@@ -36,7 +36,7 @@ class Action {
 
 		$uri = $this->_getUri();
 		$parts = $uri ? explode( '/', $uri ) : array();
-		
+
 		// is it a resourcer request?
 		if( sizeof( $parts ) == 2 ) {
 			$resourcer = Resourcer::getInstance( $parts[0], true );
@@ -69,7 +69,7 @@ class Action {
 			}
 			$dirs = $newDirs;
 		}
-		
+
 		// get controller file name
 		$controllers = array();
 		if( isset( $parts[$dirDepth] ) ) {

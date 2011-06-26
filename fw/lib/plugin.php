@@ -1,13 +1,22 @@
 <?php
 
+namespace Difra;
+
 abstract class Plugin {
 
-	public function getInstance() {
+	private $class;
+
+	static public function getInstance() {
 		
 		static $_self = null;
 		return $_self ? $_self : $_self = new self;
 	}
 
+	public function __construct() {
+		$this->class = get_class( $this );
+	}
+
+	/*
 	public function dispatch() {
 
 		$class = substr( get_class( $this ), 1 );
@@ -19,5 +28,6 @@ abstract class Plugin {
 			}
 		}
 	}
+	*/
 }
 

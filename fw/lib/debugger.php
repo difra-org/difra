@@ -22,14 +22,7 @@ class Debugger {
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL | E_STRICT );
 			ini_set( 'html_errors', !empty( $_SERVER['REQUEST_METHOD'] ) ? 'On' : 'Off' );
-		/*
-		// Для того, чтобы можно было понять, отчего фреймворк дохнет при выключенном режиме отладки :)
-		} elseif( true ) {
-			ini_set( 'display_errors', 'On' );
-			ini_set( 'error_reporting', E_ALL | E_STRICT );
-			ini_set( 'html_errors', !empty( $_SERVER['REQUEST_METHOD'] ) ? 'On' : 'Off' );
-		 */
-	     	} else {
+		} else {
 			ini_set( 'display_errors', 'Off' );
 		}
 	}

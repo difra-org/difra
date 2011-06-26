@@ -1,6 +1,8 @@
 <?php
 
-class Cache_XCache extends Cache_Common {
+namespace Difra\Cache;
+
+class XCache extends Common {
 	
 	public $adapter = 'XCache';
 

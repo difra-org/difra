@@ -1,6 +1,8 @@
 <?php
-	
-class Resourcer_XSLT extends Resourcer_Abstract_XSLT {
+
+namespace Difra\Resourcer;
+
+class XSLT extends Abstracts\XSLT {
 	
 	protected $type = 'xslt';
 	protected $printable = false;

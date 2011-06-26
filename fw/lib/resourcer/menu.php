@@ -1,6 +1,8 @@
 <?php
-	
-class Resourcer_Menu extends Resourcer_Abstract_XML {
+
+namespace Difra\Resourcer;
+
+class Menu extends Abstracts\XML {
 	
 	protected $type = 'menu';
 	protected $printable = false;

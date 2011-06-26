@@ -1,6 +1,8 @@
 <?php
 
-class Cache_SharedMemory extends Cache_Common {
+namespace Difra\Cache;
+
+class SharedMemory extends Common {
 	
 	public $adapter = 'SharedMemory';
 	
