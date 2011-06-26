@@ -1,6 +1,6 @@
 <?php
 
-class AdmIndexController extends Controller {
+class AdmIndexController extends Difra\Controller {
 
 	public function dispatch() {
 
