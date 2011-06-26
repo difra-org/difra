@@ -41,18 +41,20 @@ class Autoloader {
 		} elseif( $parts[0] == 'Difra' and $parts[1] == 'Plugins' ) {
 			$path = '';
 			array_shift( $parts );
-			$name = array_pop( $parts );
+			array_shift( $parts );
+			$name = array_shift( $parts );
 			// классы вида Plugins/Name ищем в plugins/name/lib/name.php
-			if( sizeof( $parts ) == 1 ) {
-				array_push( $parts, $name );
+			if( sizeof( $parts ) == 0 ) {
+				$path = "plugins/$name/lib/$name";
+			} else {
+				$path = "plugins/$name/lib/";
 			}
-			array_push( $parts, 'lib' );
-			array_push( $parts, $name );
 		} else {
 			$path = 'fw/lib/';
 			array_shift( $parts );
 		}
-		$filename = realpath( dirname( __FILE__ ) . '/../..' ) . "/$path" . strtolower( implode( '/', $parts ) ) . '.php';
+		$filename = realpath( dirname( __FILE__ ) . '/../..' ) . strtolower( "/$path" . implode( '/', $parts ) ) . '.php';
+		echo $filename . "<br/>\n";
 		if( !file_exists( $filename ) ) {
 			throw new exception( "Class $class not found" );
 		}
