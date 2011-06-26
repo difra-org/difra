@@ -28,26 +28,26 @@ class Capcha {
 	public function mkCapcha( $sizeX, $sizeY, $text ) {
 
 		// init image
-		$image = new Imagick();
-		$image->newImage( $sizeX, $sizeY, new ImagickPixel( 'white' ) );
+		$image = new \Imagick();
+		$image->newImage( $sizeX, $sizeY, new \ImagickPixel( 'white' ) );
 		$image->setImageFormat('png');
 
 		$method = 'grayblur';
 
 		switch( $method ) {
 		case 'graynoise':
-			$draw = new ImagickDraw();
+			$draw = new \ImagickDraw();
 			$draw->setFontSize( 35 );
 			$draw->setFontWeight( 900 );
-			$draw->setGravity( imagick::GRAVITY_CENTER );
-			$image->addNoiseImage( imagick::NOISE_LAPLACIAN );
+			$draw->setGravity( \imagick::GRAVITY_CENTER );
+			$image->addNoiseImage( \imagick::NOISE_LAPLACIAN );
 			$image->annotateImage( $draw, 0, 0, 0, $text );
 			$image->charcoalImage( 2, 1.5 );
-			$image->addNoiseImage( imagick::NOISE_LAPLACIAN );
+			$image->addNoiseImage( \imagick::NOISE_LAPLACIAN );
 			$image->gaussianBlurImage( 1, 1 );
 			break;
 		case 'grayblur':
-			$draw = new ImagickDraw();
+			$draw = new \ImagickDraw();
 			$order = array();
 			for( $i = 0; $i < strlen( $text ); $i++ ) {
 				$order[$i] = $i;
@@ -61,7 +61,7 @@ class Capcha {
 					$draw->setFont( dirname( __FILE__ ) . '/capcha/DejaVuSans.ttf' );
 					$draw->setFontSize( $j ? rand( $sizeY * 3/5, $sizeY * 5/6 ) : rand( $sizeY * 4/6, $sizeY * 5/6 ) );
 					$draw->setFontWeight( rand( 100, 900 ) );
-					$draw->setGravity( imagick::GRAVITY_CENTER );
+					$draw->setGravity( \imagick::GRAVITY_CENTER );
 					$image->annotateImage( $draw, ( $i - strlen( $text ) / 2 ) * $sizeX / ( strlen( $text ) + 3 ), 0, rand( -25, 25 ), $text{$i} );
 					$image->gaussianBlurImage( 1, 1 );
 				}
