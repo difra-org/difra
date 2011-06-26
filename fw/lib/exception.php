@@ -2,6 +2,6 @@
 
 namespace Difra;
 
-class exception extends \exception {
+class Exception extends \exception {
 	
 }

@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class Form {
 	
 	public $resfile = false;

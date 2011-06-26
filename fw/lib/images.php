@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 final class Images {
 
 	static function getInstance() {

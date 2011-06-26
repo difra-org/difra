@@ -1,5 +1,7 @@
 <?php
 
+namespace Difra;
+
 class XMLRPC {
 
 	public function __construct() {
