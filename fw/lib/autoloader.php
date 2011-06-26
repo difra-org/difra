@@ -54,7 +54,6 @@ class Autoloader {
 			array_shift( $parts );
 		}
 		$filename = realpath( dirname( __FILE__ ) . '/../..' ) . strtolower( "/$path" . implode( '/', $parts ) ) . '.php';
-		echo $filename . "<br/>\n";
 		if( !file_exists( $filename ) ) {
 			throw new exception( "Class $class not found" );
 		}
