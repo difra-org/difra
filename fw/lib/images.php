@@ -136,7 +136,7 @@ final class Images {
 			}
 			$newData = ob_get_contents();
 		} catch( exception $ex ) {
-			throw new exception( 'Exception: ' . $ex->message );
+			throw new exception( 'Exception: ' . $ex->getMessage() );
 		}
 
 		@ob_end_clean();
