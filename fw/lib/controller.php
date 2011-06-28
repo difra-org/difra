@@ -11,7 +11,14 @@ abstract class Controller {
 	protected $auth = null;
 
  	protected $output = null;
+	
+	/**
+	 * @var \DOMDocument
+	 */
  	public $xml;
+	/**
+	 * @var \DOMElement
+	 */
  	public $root;
 	
 	public static function getInstance( $action ) {
