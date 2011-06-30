@@ -25,7 +25,7 @@ class View {
 
 	public function httpError( $err ) {
 
-		if( $this->redirect ) {
+		if( $this->redirect or $this->error ) {
 			return false;
 		}
 		$errors = include ( 'http_errors.php' );

@@ -10,12 +10,12 @@ $.ajaxSetup( {
 	},
 	complete : function() {
 		$( '#loading' ).css( 'display', 'none' );
-	},
+	}
 } );
 
 var main = {
 	context: this
-}
+};
 
 main.httpRequest = function( url, params ) {
 
@@ -27,5 +27,5 @@ main.httpRequest = function( url, params ) {
 		data.data = 'json=' + JSON.stringify( params );
 	}
 	return $.ajax( url, data ).responseText;
-}
+};
 

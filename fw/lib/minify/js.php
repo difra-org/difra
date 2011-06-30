@@ -1,12 +1,12 @@
 <?php
 
-include_once( 'js/jsmin.php' );
-	
-class Minify_JS extends Minify_Common {
+namespace Difra\Minify;
+
+class JS extends Common {
 	
 	public function minify( $data ) {
 		
-		return JSMin::minify( $data );
+		return JS\JSMin::minify( $data );
 	}
 }
 	

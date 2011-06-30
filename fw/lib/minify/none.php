@@ -1,9 +1,11 @@
 <?php
 
-	class Minify_None extends Minify_Common {
-		
-		public function minify( $data ) {
+namespace Difra\Minify;
 
-			return $data;
-		}
+class None extends Common {
+
+	public function minify( $data ) {
+
+		return $data;
 	}
+}

@@ -21,5 +21,5 @@ JSON.stringify = JSON.stringify || function( obj ) {
 		}
 		return( arr ? "[" : "{" ) + String( json ) + ( arr ? "]" : "}" );
 	}  
-}
+};
 

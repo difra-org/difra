@@ -4,6 +4,8 @@
  * Который, в свою очередь, является портом jsmin.c
  */
 
+namespace Difra\Minify\JS;
+
 class JSMin {
 	const ORD_LF            = 10;
 	const ORD_SPACE         = 32;
