@@ -8,15 +8,15 @@ class Minify {
 		
 		// no minification in debugging mode
 		if( Debugger::getInstance()->isEnabled() ) {
-			return Minify_None::getInstance();
+			return Minify\None::getInstance();
 		}
 		switch( $type ) {
 			case 'css':
-				return \Minify_CSS::getInstance();
+				return Minify\CSS::getInstance();
 			case 'js':
-				return \Minify_JS::getInstance();
+				return Minify\JS::getInstance();
 			default:
-				return \Minify_None::getInstance();
+				return Minify\None::getInstance();
 		}
 	}
 	
