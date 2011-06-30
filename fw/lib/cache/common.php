@@ -22,7 +22,7 @@ abstract class Common {
 	public function __construct() {
 		
 		if( !method_exists( self, 'isAvailable') or !self::isAvailable() ) {
-			throw new exception( __CLASS__ . ' requested, but that cache is not available!' );
+			throw new Difra\Exception( __CLASS__ . ' requested, but that cache is not available!' );
 		}
 	}
 

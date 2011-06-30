@@ -107,7 +107,6 @@ class Action {
 		}
 		if( !class_exists( $className ) ) {
 			throw new exception( "Error! Controller class $className not found" );
-			return View::getInstance()->httpError( 404 );
 		}
 
 		// detect action method
@@ -137,11 +136,9 @@ class Action {
 		$plugger = Plugger::getInstance();
 		if( !isset( $plugger->plugins[$plugin] ) ) {
 			throw new exception( "Called dispatcher '$dispatcher' from non-existent plugin '$plugin'" );
-			return false;
 		}
 		if( !is_file( $file = "{$plugger->path}/{$plugin}/dispatchers/$dispatcher" ) ) {
 			throw new exception( "Dispatcher '$dispatcher' not found in plugin '$plugin'" );
-			return false;
 		}
 		include_once( $file );
 		return true;

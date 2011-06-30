@@ -5,6 +5,7 @@
  */
 
 namespace Difra\Minify\JS;
+use Difra;
 
 class JSMin {
 	const ORD_LF            = 10;
@@ -332,4 +333,4 @@ class JSMin {
 }
 
 // -- Exceptions ---------------------------------------------------------------
-class JSMinException extends Exception {}
+class JSMinException extends Difra\Exception {}

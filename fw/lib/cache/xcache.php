@@ -1,6 +1,7 @@
 <?php
 
 namespace Difra\Cache;
+use Difra;
 
 class XCache extends Common {
 	
@@ -12,7 +13,7 @@ class XCache extends Common {
 	public function __construct() {
 
 		if( !self::isAvailable() ) {
-			error( 'XCache is not available!', __FILE__, __LINE__ );
+			throw new Difra\Exception( 'XCache is not available!' );
 		}
 	}
 	
