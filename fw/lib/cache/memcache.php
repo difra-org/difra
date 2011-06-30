@@ -67,7 +67,7 @@ class MemCache extends Common {
 	
 	public function remove( $id ) {
 
-		return self::$_memcache->delete( $id );
+		return @self::$_memcache->delete( $id );
 	}
 
 	public function isAutomaticCleaningAvailable() {
