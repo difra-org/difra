@@ -4,9 +4,6 @@ namespace Difra;
 
 class Autoloader {
 
-	private $basePath = '';
-	private $paths = array();
-
 	public static function getInstance() {
 
 		static $_instance = null;
@@ -14,25 +11,12 @@ class Autoloader {
 	}
 
 	public function __construct() {
-
-		$this->basePath = realpath( dirname( __FILE__ ) . '/../..' );
-		$this->paths[] = 'fw/lib';
-		$this->paths[] = 'lib';
-	}
-
-	public function search( $name ) {
-
-		
-		foreach( $this->paths as $path ) {
-			if( file_exists( "{$this->basePath}/$path/$name" ) ) {
-				return "{$this->basePath}/$path/$name";
-			}
-		}
-		return false;
 	}
 
 	public static function load( $class ) {
 
+		static $basePath = null;
+		$basePath ? : $basePath = realpath( dirname( __FILE__ ) . '/../..' );
 		$class = ltrim( $class, '\\' );
 		$parts = explode( '\\', $class );
 		$path = '';
@@ -40,21 +24,21 @@ class Autoloader {
 			$path = 'lib/';
 		} elseif( $parts[0] == 'Difra' and $parts[1] == 'Plugins' ) {
 			$path = '';
-			array_shift( $parts );
-			array_shift( $parts );
-			$name = array_shift( $parts );
+			$name = $parts[2];
 			// классы вида Plugins/Name ищем в plugins/name/lib/name.php
-			if( sizeof( $parts ) == 0 ) {
+			if( sizeof( $parts ) == 3 ) {
+				$parts = array();
 				$path = "plugins/$name/lib/$name";
 			} else {
+				$parts = array_slice( $parts, 3 );
 				$path = "plugins/$name/lib/";
 			}
 		} else {
 			$path = 'fw/lib/';
 			array_shift( $parts );
 		}
-		$filename = realpath( dirname( __FILE__ ) . '/../..' ) . strtolower( "/$path" . implode( '/', $parts ) ) . '.php';
-		if( !file_exists( $filename ) ) {
+		$filename = "{$basePath}/$path" . strtolower( implode( '/', $parts ) ) . '.php';
+		if( !is_file( $filename ) ) {
 			throw new exception( "Class $class not found" );
 		}
 		include_once( $filename );
