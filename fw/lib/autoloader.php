@@ -37,7 +37,7 @@ class Autoloader {
 			$path = 'fw/lib/';
 			array_shift( $parts );
 		}
-		$filename = $basePath . strtolower( "$path/" . implode( '/', $parts ) ) . '.php';
+		$filename = $basePath . strtolower( "/$path" . implode( '/', $parts ) ) . '.php';
 		if( !is_file( $filename ) ) {
 			throw new exception( "Class $class not found" );
 		}
