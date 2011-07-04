@@ -10,7 +10,7 @@ class Ajax {
 
 	public function __construct() {
 
-		$this->isAjax = isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest';
+		$this->isAjax = ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' );
 		if( $this->isAjax ) {
 			$this->parameters = $this->getRequest();
 		}
