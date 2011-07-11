@@ -3,13 +3,6 @@ $.ajaxSetup( {
 	cache :	false,
 	headers : {
 		'X-Requested-With' : 'XMLHttpRequest'
-	},
-	beforeSend : function() {
-		$( '#loading' ).css( 'display', 'block' );
-
-	},
-	complete : function() {
-		$( '#loading' ).css( 'display', 'none' );
 	}
 } );
 
@@ -31,4 +24,3 @@ main.httpRequest = function( url, params, headers ) {
 	}
 	return $.ajax( url, data ).responseText;
 };
-
