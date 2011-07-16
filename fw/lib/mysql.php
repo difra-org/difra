@@ -35,7 +35,7 @@ class MySQL {
 	public function query( $qstring ) {
 
 		$this->connect();
-		$this->db->query( $qstring, $this->db );
+		$this->db->query( $qstring );
 		$this->queries++;
 		Debugger::getInstance()->addLine( "MySQL: " . $qstring );
 		if( $err = $this->db->error ) {
