@@ -26,25 +26,19 @@ class MySQL {
 		if( $this->connected ) {
 			return;
 		}
-		$this->db = @mysql_pconnect( isset( $this->config['hostname'] ) ? $this->config['hostname'] : 'localhost',
-			$this->config['username'], $this->config['password'] );
-		if( !$this->db ) {
-			throw new exception( "Can't connect to MySQL server." );
-		}
-		if( !mysql_select_db( $this->config['database'], $this->db ) ) {
-			throw new exception( "Can't select MySQL database [{$this->config['database']}]." );
-		}
+		$this->db = new \mysqli( 'p:' . ( isset( $this->config['hostname'] ) ? $this->config['hostname'] : 'localhost' ),
+			$this->config['username'], $this->config['password'], $this->config['database'] );
 		$this->connected = true;
-		$this->query( "SET names UTF8" );
+		$this->db->set_charset( 'utf8' );
 	}
 
 	public function query( $qstring ) {
 
 		$this->connect();
-		mysql_query( $qstring, $this->db );
+		$this->db->query( $qstring, $this->db );
 		$this->queries++;
 		Debugger::getInstance()->addLine( "MySQL: " . $qstring );
-		if( $err = mysql_error( $this->db ) ) {
+		if( $err = $this->db->error ) {
 			throw new exception( 'MySQL error: ' . $err );
 		}
 	}
@@ -53,13 +47,14 @@ class MySQL {
 
 		$this->connect();
 		$table = array();
-		$result = mysql_query( $query, $this->db );
+		$result = $this->db->query( $query );
 		$this->queries++;
 		Debugger::getInstance()->addLine( "MySQL: " . $query );
-		if( $err = mysql_error( $this->db ) ) {
+		if( $err = $this->db->error ) {
 			throw new exception( 'MySQL: ' . $err );
 		}
-		while( $row = mysql_fetch_array( $result, MYSQL_ASSOC ) ) {
+		// XXX: вместо этого, по идее, надо делать fetch_all, но оно требует mysqlnd
+		while( $row = $result->fetch_array( MYSQLI_ASSOC ) ) {
 			$table[] = $row;
 		}
 		return $table;
@@ -69,13 +64,13 @@ class MySQL {
 
 		$this->connect();
 		$table = array();
-		$result = mysql_query( $query, $this->db );
+		$result = $this->db->query( $query );
 		$this->queries++;
 		Debugger::getInstance()->addLine( "MySQL: " . $query );
-		if( $err = mysql_error( $this->db ) ) {
+		if( $err = $this->db->error ) {
 			throw new exception( 'MySQL: ' . $err );
 		}
-		while( $row = mysql_fetch_array( $result, MYSQL_ASSOC ) ) {
+		while( $row = $result->fetch_array( MYSQLI_ASSOC ) ) {
 			$table[$row['id']] = $row;
 		}
 		return $table;
@@ -119,12 +114,12 @@ class MySQL {
 	public function escape( $string ) {
 
 		$this->connect();
-		return mysql_real_escape_string( $string, $this->db );
+		return $this->db->real_escape_string( $string );
 	}
 
 	public function getLastId() {
 
-		$id = $this->fetch( 'SELECT LAST_INSERT_ID()' );
-		return isset( $id[0]['LAST_INSERT_ID()'] ) ? $id[0]['LAST_INSERT_ID()'] : null;
+		$id = $this->db->insert_id;
+		return $id ? $id : null;
 	}
 }
