@@ -28,18 +28,35 @@ class MySQL {
 		}
 		$this->db = new \mysqli( 'p:' . ( isset( $this->config['hostname'] ) ? $this->config['hostname'] : 'localhost' ),
 			$this->config['username'], $this->config['password'], $this->config['database'] );
+		if( $this->db->connect_errno ) {
+			throw new Exception( 'Can\'t connect to MySQL: ' . $this->db->connect_error );
+		}
 		$this->connected = true;
 		$this->db->set_charset( 'utf8' );
 	}
 
 	public function query( $qstring ) {
 
-		$this->connect();
-		$this->db->query( $qstring );
-		$this->queries++;
-		Debugger::getInstance()->addLine( "MySQL: " . $qstring );
-		if( $err = $this->db->error ) {
-			throw new exception( 'MySQL error: ' . $err );
+		if( !is_array( $qstring ) ) {
+			$this->connect();
+			$this->db->query( $qstring );
+			$this->queries++;
+			Debugger::getInstance()->addLine( "MySQL: " . $qstring );
+			if( $this->connect->errno ) {
+				throw new exception( 'MySQL error: ' . $this->db->error );
+			}
+		} else {
+			try {
+				$this->db->autocommit( false );
+				foreach( $qstring as $subQuery ) {
+					$this->query( $subQuery );
+				}
+				$this->db->autocommit( true );
+			} catch( Exception $ex ) {
+				$this->db->rollback();
+				$this->db->autocommit( true );
+				throw new exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
+			}
 		}
 	}
 
