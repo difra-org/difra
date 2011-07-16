@@ -42,7 +42,7 @@ class MySQL {
 			$this->db->query( $qstring );
 			$this->queries++;
 			Debugger::getInstance()->addLine( "MySQL: " . $qstring );
-			if( $this->connect->errno ) {
+			if( $this->db->errno ) {
 				throw new exception( 'MySQL error: ' . $this->db->error );
 			}
 		} else {
