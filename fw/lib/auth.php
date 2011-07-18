@@ -107,7 +107,7 @@ class Auth {
 	public function required() {
 	
 		if( !$this->logged ) {
-			throw new exception( 'Unauthorized users can\'t change groups' );
+			throw new exception( 'Authorization required' );
 		}
 	}
 

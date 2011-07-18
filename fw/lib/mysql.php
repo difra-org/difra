@@ -6,7 +6,6 @@ class MySQL {
 
 	private $config = null;
 	public $connected = false;
-	public $id = null;
 	public $db = null;
 	public $queries = 0;
 
@@ -136,7 +135,11 @@ class MySQL {
 
 	public function getLastId() {
 
-		$id = $this->db->insert_id;
-		return $id ? $id : null;
+		return $this->db->insert_id;
+	}
+
+	public function getAffectedRows() {
+
+		return $this->db->affected_rows;
 	}
 }
