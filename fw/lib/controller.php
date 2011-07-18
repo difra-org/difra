@@ -87,7 +87,7 @@ abstract class Controller {
 			echo( rawurldecode( $this->xml->saveXML() ) );
 		} elseif( $this->ajax->isAjax and $response = $this->ajax->getResponse() ) {
 			header( 'Content-type: text/javascript' );
-			echo( $this->ajax->getResponse() );
+			echo( $response );
 
 		} else {
 			if( !$this->view->rendered ) {
