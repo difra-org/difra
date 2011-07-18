@@ -71,11 +71,6 @@ class View {
 		$xslDom->substituteEntities = true;
 		if( !$xslDom->loadXML( Resourcer::getInstance( 'xslt' )->compile( $template ) ) ) {
 			throw new exception( "XSLT loader problem." );
-			if( !$dontEcho and !$errorPage ) {
-				$this->httpError( 500 );
-			} else {
-				return false;
-			}
 		}
 		$xslProc = new \XsltProcessor();
 		$xslProc->resolveExternals = true;
@@ -96,11 +91,6 @@ class View {
 			Debugger::getInstance()->printOutput();
 		} else {
 			throw new exception( "Can't render templates" );
-			if( !$errorPage ) {
-				$this->httpError( 500 );
-			} else {
-				return false;
-			}
 		}
 		return true;
 	}
