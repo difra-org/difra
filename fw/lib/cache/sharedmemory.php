@@ -31,7 +31,7 @@ class SharedMemory extends Common {
 	 * @param boolean $doNotTestCacheValidity
 	 * @return string
 	 */
-	public function get( $id, $doNotTestCacheValidity = false ) {
+	public function realGet( $id, $doNotTestCacheValidity = false ) {
 		
 		$shm_id = shm_attach( self::SHM_BLOCK_ID );
 		if( $shm_id ) {
@@ -78,7 +78,7 @@ class SharedMemory extends Common {
 	 * @param int $specificLifetime if != false, set a specific lifetime for this cache record (null => infinite lifetime)
 	 * @return boolean true if no problem
 	 */
-	public function put( $id, $data, $specificLifetime = false ) {
+	public function realPut( $id, $data, $specificLifetime = false ) {
 		
 		//return shm_put_var( $this->_shm_id, $id, $data );
         	// First read cache structure from shared memory
@@ -157,7 +157,7 @@ class SharedMemory extends Common {
 	 * @param string $id
 	 * @return boolean
 	 */
-	public function remove( $id ) {
+	public function realRemove( $id ) {
 	
 		//return @shm_remove_var( $this->_shm_id, $id );
 		$struc_id = shm_attach( self::SHM_BLOCK_ID, self::SHM_BLOCK_INDEX_SIZE, self::SHM_BLOCK_PERMS );

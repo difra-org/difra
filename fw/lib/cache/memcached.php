@@ -2,14 +2,12 @@
 
 namespace Difra\Cache;
 
-class MemCache extends Common {
+class MemCached extends Common {
 	
-	public $adapter = 'MemCache';
+	public $adapter = 'MemCached';
 
 	private static $_memcache  = null;
-	private static $_server    = false;
-	private static $_port      = 0;
-	private static $_serialize = false;
+	private static $_serialize = true;
 	private static $_lifetime  = 0;
     
 	public function __construct() {
@@ -21,24 +19,23 @@ class MemCache extends Common {
 	
 	public static function isAvailable() {
 
-		if( !extension_loaded( 'memcache' ) ) {
-			return false;
-		}
-		if( self::$_memcache ) {
-			return true;
-		}
-		$serverList = array(
-			array( 'unix:///tmp/memcache', 0 ), array( '127.0.0.1', 11211 ),
-		);
-		self::$_memcache = new \MemCache;
-		foreach( $serverList as $serv ) {
-			if( @self::$_memcache->pconnect( $serv[0], $serv[1] ) ) {
-				self::$_server	= $serv[0];
-				self::$_port	= $serv[1];
+		try {
+			if( !extension_loaded( 'memcached' ) ) {
+				return false;
+			}
+			if( self::$_memcache ) {
 				return true;
 			}
+			
+			self::$_memcache = new \MemCached;
+			$currentServers = self::$_memcache->getServerList();
+			if( empty( $currentServers ) ) {
+				self::$_memcache->addServers( array( array( '127.0.0.1', '11211', '10' ) ) );
+			}
+			return (bool) self::$_memcache->getVersion();
+		} catch( \Difra\Exception $ex ) {
+			return false;
 		}
-		return false;
 	}
 
 	public function getInstance() {
@@ -55,13 +52,13 @@ class MemCache extends Common {
     
 	public function test( $id ) {
 		
-		$data = self::load( $id );
+		$data = self::realGet( $id );
 		return !empty( $data );
 	}
     
 	public function realPut( $id, $data, $specificLifetime = false ) {
 		
-		return self::$_memcache->set( $id, self::$_serialize ? serialize( $data ) : $data, MEMCACHE_COMPRESSED, $specificLifetime !== false ? $specificLifetime : self::$_lifetime );
+		return self::$_memcache->set( $id, self::$_serialize ? serialize( $data ) : $data, $specificLifetime !== false ? $specificLifetime : self::$_lifetime );
 	}
 	
 	public function realRemove( $id ) {

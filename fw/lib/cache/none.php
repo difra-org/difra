@@ -27,7 +27,7 @@ class None extends Common {
 	 * @param boolean $doNotTestCacheValidity
 	 * @return string
 	 */
-	public function get( $id, $doNotTestCacheValidity = false ) {
+	public function realGet( $id, $doNotTestCacheValidity = false ) {
 
 		return null;
 	}
@@ -50,7 +50,7 @@ class None extends Common {
 	 * @param int $specificLifetime
 	 * @return boolean
 	 */
-	public function put( $id, $data, $specificLifetime = false ) {
+	public function realPut( $id, $data, $specificLifetime = false ) {
 
 		return false;
 	}
@@ -61,7 +61,7 @@ class None extends Common {
 	 * @param string $id
 	 * @return boolean
 	 */
-	public function remove( $id ) {
+	public function realRemove( $id ) {
 
 		return false;
 	}

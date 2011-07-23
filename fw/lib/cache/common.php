@@ -8,13 +8,13 @@ abstract class Common {
 	// is class available?
 //	abstracts static public function isAvailable();
 	// return cache record or null if record is not found
-	abstract public function get( $id, $doNotTestCacheValidity = false );
+	abstract public function realGet( $id, $doNotTestCacheValidity = false );
 	// test if cache record exists
 	abstract public function test( $id );
 	// create or update cache record
-	abstract public function put( $id, $data, $specificLifetime = false );
+	abstract public function realPut( $id, $data, $specificLifetime = false );
 	// delete cache record
-	abstract public function remove( $id );
+	abstract public function realRemove( $id );
 	// is the automatic cleaning available for the backend?
 	abstract public function isAutomaticCleaningAvailable();
 
@@ -26,9 +26,9 @@ abstract class Common {
 		}
 	}
 
-	public function smartGet( $key ) {
-		
-		$data = $this->get( Difra\Site::getInstance()->getHost() . '_' . $key );
+	public function get( $key ) {
+
+		$data = $this->realGet( Difra\Site::getInstance()->getHost() . '_' . $key );
 		if( !$data ) {
 			return null;
 		}
@@ -38,17 +38,29 @@ abstract class Common {
 		return $data['data'];
 	}
 	
-	public function smartPut( $key, $data, $ttl = 300 ) {
+	public function put( $key, $data, $ttl = 300 ) {
 		
 		$data = array(
 			'expires' => time() + $ttl,
 			'data' => $data
 		);
-		$this->put( Difra\Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
+		$this->realPut( Difra\Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
 	}
 	
-	public function smartRemove( $key ) {
+	public function remove( $key ) {
 		
-		$this->remove( Difra\Site::getInstance()->getHost() . '_' . $key );
+		$this->realRemove( Difra\Site::getInstance()->getHost() . '_' . $key );
+	}
+
+	public function smartGet( $key ) {
+		return $this->get( $key );
+	}
+
+	public function smartPut( $key, $data, $ttl = 300 ) {
+		$this->put( $key, $data, $ttl );
+	}
+
+	public function smartRemove( $key ) {
+		$this->remove( $key );
 	}
 }
