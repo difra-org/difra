@@ -160,22 +160,14 @@ class JSMin {
 	 */
 	protected function get() {
 		$c = $this->lookAhead;
-		$this->lookAhead = null;
 
-		if( $c === null ) {
-			if( $this->inputIndex < $this->inputLength ) {
-				$c = substr( $this->input, $this->inputIndex, 1 );
-				$this->inputIndex += 1;
-			} else {
-				$c = null;
-			}
+		if( $c === null and $this->inputIndex < $this->inputLength ) {
+			$c = $this->input{$this->inputIndex++};
+		} else {
+			$this->lookAhead = null;
 		}
 
-		if( $c === "\r" ) {
-			return "\n";
-		}
-
-		if( $c === null || $c === "\n" || ord( $c ) >= self::ORD_SPACE ) {
+		if( $c >= ' ' or $c === null or $c === "\n" ) {
 			return $c;
 		}
 
