@@ -8,8 +8,6 @@ use Difra;
 
 class JSMin {
 
-	const ORD_LF = 10;
-	const ORD_SPACE = 32;
 	const ACTION_KEEP_A = 1;
 	const ACTION_DELETE_A = 2;
 	const ACTION_DELETE_A_B = 3;
