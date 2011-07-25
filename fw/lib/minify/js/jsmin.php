@@ -180,7 +180,8 @@ class JSMin {
 	 * @return bool
 	 */
 	protected function isAlphaNum( $c ) {
-		return ord( $c ) > 126 || $c === '\\' || preg_match( '/^[\w\$]$/', $c ) === 1;
+		return ( 'a' <= $c and $c <= 'z' ) or ( $c >= 'A' and $c <= 'Z' ) or ( $c >= '0' and $c <= '9' ) or $c == '_' or $c == '$' or $c > '~' or
+						      $c == '\\';
 	}
 
 	/**
@@ -287,7 +288,7 @@ class JSMin {
 				while( true ) {
 					$c = $this->get();
 
-					if( ord( $c ) <= self::ORD_LF ) {
+					if( $c <= "\n" ) {
 						return $c;
 					}
 				}
@@ -324,8 +325,7 @@ class JSMin {
 	 * @return string|null
 	 */
 	protected function peek() {
-		$this->lookAhead = $this->get();
-		return $this->lookAhead;
+		return $this->lookAhead = $this->get();
 	}
 }
 
