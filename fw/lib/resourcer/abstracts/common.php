@@ -97,9 +97,8 @@ abstract class Common {
 				}
 			}
 
-			// compile and minify resource			
+			// compile resource
 			$resource = $this->_subCompile( $instance );
-			$resource = Difra\Minify::getInstance( $this->type )->minify( $resource );
 
 			// cache data
 			$cache->smartPut( $cacheKey, $resource );
@@ -126,9 +125,7 @@ abstract class Common {
 	private function find( $instance ) {
 		
 		$plugger = Difra\Plugger::getInstance();
-		$files = array();
-		$dirs = array();
-		
+
 		// Формируем список папок, где будем искать ресурсы
 		$parents = array(
 				 DIR_ROOT . "fw/{$this->type}/{$instance}",
@@ -204,7 +201,12 @@ abstract class Common {
 							continue;
 						}
 						if( is_file( "$entry/$specSub" ) ) {
-							$special['files'][] = "$entry/$specSub";
+							$name = str_replace( '.min.', '.', $specSub );
+							$type = ( $name == $specSub ) ? 'raw' : 'min';
+							if( !isset( $special['files'][$name] ) ) {
+								$special['files'][$name] = array();
+							}
+							$special['files'][$name][$type] = "$entry/$specSub";
 						}
 					}
 					$this->resources[$instance]['specials'][$special['name']] = $special;
@@ -212,12 +214,17 @@ abstract class Common {
 					if( !isset( $this->resources[$instance]['files'] ) ) {
 						$this->resources[$instance]['files'] = array();
 					}
-					$this->resources[$instance]['files'][] = $entry;
+					$name = str_replace( '.min.', '.', $entry );
+					$type = ( $name == $entry ) ? 'raw' : 'min';
+					if( !isset( $special['files'][$name] ) ) {
+						$special['files'][$name] = array();
+					}
+					$this->resources[$instance]['files'][$name][$type] = $entry;
 				}
-			}			
+			}
 		}
 	}
-	
+
 	public function getFiles( $instance ) {
 		
 		$files = array();
@@ -233,5 +240,4 @@ abstract class Common {
 		}
 		return $files;
 	}
-
 }

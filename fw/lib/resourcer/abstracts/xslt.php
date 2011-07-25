@@ -24,7 +24,7 @@ abstract class XSLT extends Common {
 				';
 		$templateInner = '';
 		foreach( $files as $filename ) {
-			$templateInner .= "<xsl:include href=\"$filename\"/>\n";
+			$templateInner .= "<xsl:include href=\"{$filename['raw']}\"/>\n";
 		}
 		if( !Difra\Debugger::getInstance( )->isEnabled( ) ) {
 			$templateInner = $this->_extendXSL( $templateInner );

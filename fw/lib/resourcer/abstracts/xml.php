@@ -10,7 +10,7 @@ abstract class XML extends Common {
 		
 		$newXml = new \SimpleXMLElement("<{$this->type}></{$this->type}>");
 		foreach( $files as $file ) {
-			$xml = simplexml_load_file( $file );
+			$xml = simplexml_load_file( $file['raw'] );
 			$this->_mergeXML( $newXml, $xml	);
 		}
 		if( method_exists( $this, 'postprocess' ) ) {
