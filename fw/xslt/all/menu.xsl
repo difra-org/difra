@@ -33,12 +33,17 @@
 							</xsl:choose>
 						</xsl:variable>
 						<xsl:choose>
+							<xsl:when test="@href=''">
+								<span class="menu_nolink">
+									<xsl:value-of select="$title"/>
+								</span>
+							</xsl:when>
 							<xsl:when test="@href and not(@href=/root/@menuitem)">
 								<a href="{@href}">
 									<xsl:value-of select="$title"/>
 								</a>
 							</xsl:when>
-							<xsl:when test="not(@href)">
+							<xsl:when test="@href=''">
 								<span class="menu_nolink">
 									<xsl:value-of select="$title"/>
 								</span>

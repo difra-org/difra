@@ -23,8 +23,13 @@ abstract class XML extends Common {
 		
 		foreach( $xml2 as $name => $node ) {
 			if( property_exists( $xml1, $name ) ) {
+				$attr = $xml1->$name->attributes();
 				foreach( $node->attributes() as $key => $value ) {
-					$xml1->$name->addAttribute( $key, $value );
+					if( !isset( $attr[$key] ) ) {
+						$xml1->$name->addAttribute( $key, $value );
+					} elseif( $value != '' ) {
+						$xml1->$name->attributes()->$key = $value;
+					}
 				}
 				$this->_mergeXML( $xml1->$name, $node );
 			} else {
