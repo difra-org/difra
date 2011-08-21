@@ -96,7 +96,7 @@ abstract class Controller {
 				$name = $parameter->getName();
 				if( $parameter->getClass() and $parameter->getClass()->name == 'Difra\Unnamed' ) {
 					// параметр класса Unnamed
-					if( !empty( $this->action->parameters ) and (
+					if( !empty( $this->action->parameters ) and ( !$parameter->isOptional() or
 						empty( $namedParameters ) or $this->action->parameters[0] != $namedParameters[0] )
 					) {
 						$callParameters[$name] = new Unnamed( array_shift( $this->action->parameters ) );
