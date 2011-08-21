@@ -58,17 +58,60 @@ abstract class Controller {
 
 	private function _runAction() {
 
+		// выбор метода
+		$finalMethod = false;
 		if( $this->ajax->isAjax and $this->action->methodAjaxAuth and $this->auth->logged ) {
-			$this->{$this->action->methodAjaxAuth}();
+			$finalMethod = 'methodAjaxAuth';
 		} elseif( $this->ajax->isAjax and $this->action->methodAjax ) {
-			$this->{$this->action->methodAjax}();
+			$finalMethod = 'methodAjax';
 		} elseif( $this->action->methodAuth and $this->auth->logged ) {
-			$this->{$this->action->methodAuth}();
+			$finalMethod = 'methodAuth';
 		} elseif( $this->action->method ) {
-			$this->{$this->action->method}();
+			$finalMethod = 'method';
 		} elseif( $this->action->methodAuth ) {
 			$this->noAuth();
+			return;
 		}
+		// получение параметров и вызов метода
+		if( $finalMethod ) {
+			try {
+				$callParameters = array();
+				$actionMethod = $this->action->$finalMethod;
+				$actionReflection = new \ReflectionMethod( $this, $actionMethod );
+				$actionParameters = $actionReflection->getParameters();
+				if( !empty( $actionParameters ) ) {
+					foreach( $actionParameters as $parameter ) {
+						if( !is_null( $val = $this->_getParameter( $parameter->getName() ) ) ) {
+							$callParameters[$parameter->getName()] = $val;
+						} elseif( !$parameter->isOptional() ) {
+							// штатная обработка 404, никаких exception тут вызывать не нужно!
+							$this->view->httpError( 404 );
+							return;
+						}
+					}
+				}
+				call_user_func_array( array( $this, $actionMethod ), $callParameters );
+			} catch( Exception $e ) {
+				throw new Exception( 'Problem calling action.' );
+			}
+		}
+	}
+
+	private function _getParameter( $name ) {
+
+		if( empty( $this->action->parameters ) ) {
+			return null;
+		}
+		while( list( $key, $parameter ) = each( $this->action->parameters ) ) {
+			if( $parameter == $name ) {
+				list( $key2, $parameter2 ) = each( $this->action->parameters );
+				unset( $this->action->parameters[$key2] );
+				unset( $this->action->parameters[$key] );
+				$this->action->parameters = array_values( $this->action->parameters );
+				return $parameter2;
+			}
+		}
+		return null;
 	}
 
 	final public function __destruct() {
