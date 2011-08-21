@@ -73,45 +73,63 @@ abstract class Controller {
 			return;
 		}
 		// получение параметров и вызов метода
-		if( $finalMethod ) {
-			try {
-				$callParameters = array();
-				$actionMethod = $this->action->$finalMethod;
-				$actionReflection = new \ReflectionMethod( $this, $actionMethod );
-				$actionParameters = $actionReflection->getParameters();
-				if( !empty( $actionParameters ) ) {
-					foreach( $actionParameters as $parameter ) {
-						if( !is_null( $val = $this->_getParameter( $parameter->getName() ) ) ) {
-							$callParameters[$parameter->getName()] = $val;
-						} elseif( !$parameter->isOptional() ) {
-							// штатная обработка 404, никаких exception тут вызывать не нужно!
-							$this->view->httpError( 404 );
-							return;
-						}
-					}
+		if( !$finalMethod ) {
+			$this->view->httpError( 404 );
+			return;
+		}
+		try {
+			$callParameters = array();
+			$actionMethod = $this->action->$finalMethod;
+			$actionReflection = new \ReflectionMethod( $this, $actionMethod );
+			$actionParameters = $actionReflection->getParameters();
+			if( empty( $actionParameters ) ) {
+				call_user_func( array( $this, $actionMethod ) );
+			}
+			// получаем имена именованных параметров
+			$namedParameters = array();
+			foreach( $actionParameters as $parameter ) {
+				if( !$parameter->getClass() ) {
+					$namedParameters[] = $parameter->getName();
 				}
-				call_user_func_array( array( $this, $actionMethod ), $callParameters );
-			} catch( Exception $e ) {
-				throw new Exception( 'Problem calling action.' );
 			}
-		}
-	}
-
-	private function _getParameter( $name ) {
-
-		if( empty( $this->action->parameters ) ) {
-			return null;
-		}
-		while( list( $key, $parameter ) = each( $this->action->parameters ) ) {
-			if( $parameter == $name ) {
-				list( $key2, $parameter2 ) = each( $this->action->parameters );
-				unset( $this->action->parameters[$key2] );
-				unset( $this->action->parameters[$key] );
-				$this->action->parameters = array_values( $this->action->parameters );
-				return $parameter2;
+			foreach( $actionParameters as $parameter ) {
+				$name = $parameter->getName();
+				if( $parameter->getClass() and $parameter->getClass()->name == 'Difra\Unnamed' ) {
+					// параметр класса Unnamed
+					if( !empty( $this->action->parameters ) and (
+						empty( $namedParameters ) or $this->action->parameters[0] != $namedParameters[0] )
+					) {
+						$callParameters[$name] = new Unnamed( array_shift( $this->action->parameters ) );
+					} elseif( !$parameter->isOptional() ) {
+						$this->view->httpError( 404 );
+						return;
+					} else {
+						$callParameters[$name] = new Unnamed();
+					}
+				} elseif( $parameter->getClass() ) {
+					// параметр непонятного класса
+					throw new Exception( 'Bad class of action parameter (' . $parameter->getClass->name() . ')' );
+				} else {
+					// именованный параметр
+					if( sizeof( $this->action->parameters ) >= 2 and $this->action->parameters[0] == $name ) {
+						array_shift( $this->action->parameters );
+						$callParameters[$parameter->getName()] = array_shift( $this->action->parameters );
+					} elseif( isset( $_GET[$name] ) ) {
+						$callParameters[$name] = $_GET[$name];
+						unset( $_GET[$name] );
+					} elseif( !$parameter->isOptional() ) {
+						$this->view->httpError( 404 );
+						return;
+					} else {
+						//$callParameters[$parameter->getName()] = null;
+					}
+					array_shift( $namedParameters );
+				}
 			}
+			call_user_func_array( array( $this, $actionMethod ), $callParameters );
+		} catch( Exception $e ) {
+			throw new Exception( 'Problem calling action.' );
 		}
-		return null;
 	}
 
 	final public function __destruct() {
