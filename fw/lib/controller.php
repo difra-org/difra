@@ -128,7 +128,7 @@ abstract class Controller {
 			}
 			call_user_func_array( array( $this, $actionMethod ), $callParameters );
 		} catch( Exception $e ) {
-			throw new Exception( 'Problem calling action.' );
+			throw new Exception( 'Problem calling action: ' . $e->getMessage() );
 		}
 	}
 
