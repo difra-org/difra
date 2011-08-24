@@ -182,23 +182,22 @@ abstract class Controller {
 		return $this->view->httpError( 401 );
 	}
 	
-	public function getPage() {
-		
-		if( empty( $this->action->parameters ) ) {
-			return 1;
+	public function checkReferer() {
+
+		if( empty( $_SERVER['HTTP_REFERER'] ) ) {
+			throw new Exception( 'Bad referer' );
 		}
-		while( list( $key, $parameter ) = each( $this->action->parameters ) ) {
-			if( $parameter == 'page' ) {
-				list( $key2, $parameter2 ) = each( $this->action->parameters );
-				if( ctype_digit( $parameter2 ) ) {
-					unset( $this->action->parameters[$key2] );
-					unset( $this->action->parameters[$key] );
-					$this->action->parameters = array_values( $this->action->parameters );
-					return $parameter2;
-				}
-			}
+		if( ( substr( $_SERVER['HTTP_REFERER'], 0, 7 ) != 'http://' ) and (
+			substr( $_SERVER['HTTP_REFERER'], 0, 8 ) != 'https://' )
+		) {
+			throw new Exception( 'Bad referer' );
 		}
-		return 1;
+		$domain = explode( '://', $_SERVER['HTTP_REFERER'], 2 );
+		$domain = explode( '/', $domain[1] );
+		$domain = $domain[0] . '/';
+		if( false === strpos( $domain, Site::getInstance()->getMainhost() ) ) {
+			throw new Exception( 'Bad referer' );
+		}
 	}
 }
 
