@@ -77,13 +77,14 @@ abstract class Controller {
 			$this->view->httpError( 404 );
 			return;
 		}
-		try {
+//		try {
 			$callParameters = array();
 			$actionMethod = $this->action->$finalMethod;
 			$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 			$actionParameters = $actionReflection->getParameters();
 			if( empty( $actionParameters ) ) {
 				call_user_func( array( $this, $actionMethod ) );
+				return;
 			}
 			// получаем имена именованных параметров
 			$namedParameters = array();
@@ -127,9 +128,9 @@ abstract class Controller {
 				}
 			}
 			call_user_func_array( array( $this, $actionMethod ), $callParameters );
-		} catch( Exception $e ) {
-			throw new Exception( 'Problem calling action: ' . $e->getMessage() );
-		}
+//		} catch( Exception $e ) {
+//			throw new Exception( 'Problem calling action: ' . $e->getMessage() );
+//		}
 	}
 
 	final public function __destruct() {
