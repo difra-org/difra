@@ -7,7 +7,11 @@ class Locales {
 	public $localeXML = null;
 	public $dateFormats = array( 'ru_RU' => 'd.m.y', 'en_US' => 'm-d-y' );
 
-	
+	/**
+	 * @static
+	 * @param null $locale
+	 * @return Locales
+	 */
 	static function getInstance( $locale = null ) {
 
 		return Site::getInstance()->getLocaleObj( $locale );
@@ -21,6 +25,11 @@ class Locales {
 		$this->localeXML->loadXML( $xml );
 	}
 
+	/**
+	 * Возвращает дерево языковых строк
+	 * @param $node
+	 * @return void
+	 */
 	public function getLocaleXML( $node ) {
 
 		if( !is_null( $this->localeXML ) ) {
@@ -28,11 +37,24 @@ class Locales {
 		}
 	}
 
+	/**
+	 * Меняет текущую локаль
+	 * @param string $locale
+	 * @return void
+	 */
 	public function setLocale( $locale ) {
 
 		$this->locale = $locale;
 	}
 
+	/**
+	 * Парсит строку даты, вводимую пользователем и возвращает в формате:
+	 * array( 0 => Y, 1 => m, 2 => d );
+	 *
+	 * @param string $string
+	 * @param string|bool $locale
+	 * @return array|bool
+	 */
 	public function parseDate( $string, $locale = false ) {
 
 		$string = str_replace( array( '.', '-' ), '/', $string );
@@ -75,6 +97,11 @@ class Locales {
 		return implode( '-', $date );
 	}
 
+	/**
+	 * Возвращает строку в синтаксисе MySQL для получения дат в формате локали из базы данных
+	 * @param bool $locale
+	 * @return mixed
+	 */
 	public function getMysqlFormat( $locale = false ) {
 
 		$localePt = $this->dateFormats[$locale ? $locale : $this->locale];
@@ -82,6 +109,11 @@ class Locales {
 		return $localePt;
 	}
 
+	/**
+	 * Возвращает строчку из языковых файлов по её XPath
+	 * @param string $xpath
+	 * @return string|bool
+	 */
 	public function getXPath( $xpath ) {
 
 		static $simpleXML = null;
@@ -92,10 +124,29 @@ class Locales {
 		return sizeof( $s ) == 1 ? $s[0] : false;
 	}
 
+	/**
+	 * Возвращает дату в формате текущей локали
+	 * @param int $timestamp
+	 * @return string
+	 */
 	public function getDate( $timestamp ) {
 		
 		return date( $this->dateFormats[$this->locale], $timestamp );
 	}
+
+	/**
+	 * Парсит строку даты в формате MySQL и возвращает её в формате текущей локали
+	 * @param $date
+	 * @return string
+	 */
+	public function getDateFromMysql( $date ) {
+
+		$date = explode( ' ', $date );
+		$date[0] = explode( '-', $date[0] );
+		$date[1] = explode( ':', $date[1] );
+		return $this->getDate( mktime( $date[1][0], $date[1][1], $date[1][2], $date[0][1], $date[0][2], $date[0][0] ) );
+	}
+
 }
 
 
