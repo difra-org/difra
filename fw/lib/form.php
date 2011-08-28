@@ -42,7 +42,7 @@ class Form {
 
 	public function load() {
 
-		$this->xml = new DOMDocument( );
+		$this->xml = new \DOMDocument;
 		$this->xml->load( $this->resfile );
 		$this->xml->documentElement->setAttribute( 'name', $this->instance );
 	}
@@ -55,7 +55,7 @@ class Form {
 		return $this->xml;
 	}
 
-	private function _updateData( DOMNode $node ) {
+	private function _updateData( \DOMNode $node ) {
 
 		if( isset( $this->formData[$node->getAttribute( 'name' )] ) ) {
 			$node->setAttribute( 'value', $this->formData[$node->getAttribute( 'name' )] );
@@ -69,7 +69,7 @@ class Form {
 		}
 	}
 
-	public function getFormXML( DOMNode $node, $withData = false ) {
+	public function getFormXML( \DOMNode $node, $withData = false ) {
 
 		$node->appendChild( $node->ownerDocument->importNode( $this->getForm( true )->documentElement, true ) );
 	}
@@ -130,7 +130,7 @@ class Form {
 						}
 						break;
 					case 'date':
-						if( $value and !Locale::getInstance()->isDate( $value ) ) {
+						if( $value and !Locales::getInstance()->isDate( $value ) ) {
 							$item->setAttribute( 'error_type_date', '1' );
 							$errors++;
 						}
