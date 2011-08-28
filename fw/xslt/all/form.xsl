@@ -232,11 +232,15 @@
 								<!-- form element -->
 								<div id="{@name}_textarea" class="textarea_field">
 									<textarea id="{@name}_field" name="{$form_name}_{@name}">
-										<xsl:if test="@noeditor">
-											<xsl:attribute name="noeditor">1</xsl:attribute>
-										</xsl:if>
 										<xsl:if test="@class">
-											<xsl:attribute name="class"><xsl:value-of select="@class"/></xsl:attribute>
+											<xsl:attribute name="class">
+												<xsl:value-of select="@class"/>
+											</xsl:attribute>
+										</xsl:if>
+										<xsl:if test="@editor">
+											<xsl:attribute name="editor">
+												<xsl:value-of select="@editor"/>
+											</xsl:attribute>
 										</xsl:if>
 										<xsl:value-of select="@value"/>
 									</textarea>

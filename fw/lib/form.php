@@ -6,9 +6,18 @@ class Form {
 	
 	public $resfile = false;
 	public $instance = null;
+	/**
+	 * @var \DOMDocument
+	 */
 	public $xml = null;
 	public $formData = array();
 
+	/**
+	 * @static
+	 * @param string $resname
+	 * @param string|bool $resfile
+	 * @return Form
+	 */
 	static function getInstance( $resname, $resfile = false ) {
 
 		static $_instances = array();
