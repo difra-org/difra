@@ -99,5 +99,6 @@ class View {
 
 		$this->redirect = true;
 		header( 'Location: ' . $url );
+		die();
 	}
 }

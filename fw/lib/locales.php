@@ -121,7 +121,7 @@ class Locales {
 			$simpleXML = simplexml_import_dom( $this->localeXML );
 		}
 		$s = $simpleXML->xpath( $xpath );
-		return sizeof( $s ) == 1 ? $s[0] : false;
+		return sizeof( $s ) == 1 ? (string)$s[0] : false;
 	}
 
 	/**

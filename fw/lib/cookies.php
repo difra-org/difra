@@ -92,5 +92,13 @@ class Cookies {
 	public function remove( $name ) {
 		return setcookie( $name, '', time() - 108000, $this->path );
 	}
+
+	public function notify( $message, $error = false ) {
+
+		$this->set( 'notification', array(
+						 'type' => $error ? 'error' : 'ok',
+						 'message' => (string) $message
+					    ) );
+	}
 }
 	

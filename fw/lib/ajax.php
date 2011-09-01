@@ -24,7 +24,11 @@ class Ajax {
 
 	private function getRequest() {
 
-		return !empty( $_POST['json'] ) ? json_decode( $_POST['json'], true ) : array();
+		$res = array();
+		if( !empty( $_POST['json'] ) ) {
+			$res = json_decode( $_POST['json'], true );
+		}
+		return $res;
 	}
 
 	public function setResponse( $param, $value ) {
@@ -35,6 +39,15 @@ class Ajax {
 	public function getResponse() {
 
 		return json_encode( $this->response );
+	}
+
+	public function notify( $message ) {
+
+		$this->setResponse( 'action', 'notify' );
+		$this->setResponse( 'message', htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ) );
+		$this->setResponse( 'lang', array(
+						  'close'	=> Locales::getInstance()->getXPath( 'notifications/close' )
+					    ) );
 	}
 }
 

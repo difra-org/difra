@@ -9,6 +9,7 @@ abstract class Controller {
  	protected $locale = null;
  	protected $ajax = null;
 	protected $auth = null;
+	protected $method = null;
 
  	protected $output = null;
 	
@@ -58,8 +59,18 @@ abstract class Controller {
 
 	private function _runAction() {
 
-		// выбор метода
-		$finalMethod = false;
+		if( $this->method = $this->_chooseMehod() ) {
+			$this->_callMethod( $this->method );
+		}
+	}
+
+	/**
+	 * Выбор самого подходящего метода
+	 * @return null|string
+	 */
+	private function _chooseMehod() {
+
+		$finalMethod = null;
 		if( $this->ajax->isAjax and $this->action->methodAjaxAuth and $this->auth->logged ) {
 			$finalMethod = 'methodAjaxAuth';
 		} elseif( $this->ajax->isAjax and $this->action->methodAjax ) {
@@ -68,75 +79,89 @@ abstract class Controller {
 			$finalMethod = 'methodAuth';
 		} elseif( $this->action->method ) {
 			$finalMethod = 'method';
-		} elseif( $this->action->methodAuth ) {
-			$this->noAuth();
-			return;
-		}
-		// получение параметров и вызов метода
-		if( !$finalMethod ) {
+		} elseif( $this->action->methodAuth or $this->action->methodAjaxAuth ) {
+			$this->action->parameters = array();
+			$this->view->httpError( 401 );
+			return null;
+		} else {
 			$this->view->httpError( 404 );
+			return null;
+		}
+		return $finalMethod;
+	}
+
+	private function _callMethod( $method ) {
+
+		$actionMethod = $this->action->$method;
+		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
+		$actionParameters = $actionReflection->getParameters();
+
+		// у выбранного метода нет параметров
+		if( empty( $actionParameters ) ) {
+			call_user_func( array( $this, $actionMethod ) );
 			return;
 		}
-//		try {
-			$callParameters = array();
-			$actionMethod = $this->action->$finalMethod;
-			$actionReflection = new \ReflectionMethod( $this, $actionMethod );
-			$actionParameters = $actionReflection->getParameters();
-			if( empty( $actionParameters ) ) {
-				call_user_func( array( $this, $actionMethod ) );
-				return;
+
+		// получаем имена именованных REQUEST_URI параметров
+		$namedParameters = array();
+		foreach( $actionParameters as $parameter ) {
+			$class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
+			if( call_user_func( array( "$class", "getSource" ) ) == 'query' and call_user_func( array( "$class", "isNamed" ) )
+			) {
+				$namedParameters[] = $parameter->getName();
 			}
-			// получаем имена именованных параметров
-			$namedParameters = array();
-			foreach( $actionParameters as $parameter ) {
-				if( !$parameter->getClass() ) {
-					$namedParameters[] = $parameter->getName();
-				}
-			}
-			foreach( $actionParameters as $parameter ) {
-				$name = $parameter->getName();
-				if( $parameter->getClass() and $parameter->getClass()->name == 'Difra\Unnamed' ) {
-					// параметр класса Unnamed
-					if( !empty( $this->action->parameters ) and ( !$parameter->isOptional() or
-						empty( $namedParameters ) or $this->action->parameters[0] != $namedParameters[0] )
-					) {
-						$callParameters[$name] = new Unnamed( array_shift( $this->action->parameters ) );
-					} elseif( !$parameter->isOptional() ) {
-						$this->view->httpError( 404 );
-						return;
-					} else {
-						$callParameters[$name] = new Unnamed();
-					}
-				} elseif( $parameter->getClass() ) {
-					// параметр непонятного класса
-					throw new Exception( 'Bad class of action parameter (' . $parameter->getClass->name() . ')' );
-				} else {
+		}
+
+		// получаем значения параметров
+		$callParameters = array();
+		foreach( $actionParameters as $parameter ) {
+			$name = $parameter->getName();
+			$class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
+			switch( call_user_func( array( "$class", "getSource" ) ) ) {
+			case 'query':
+				// параметр из query — нужно соблюдать очередность параметров
+				if( call_user_func( array( "$class", "isNamed" )) ) {
 					// именованный параметр
 					if( sizeof( $this->action->parameters ) >= 2 and $this->action->parameters[0] == $name ) {
 						array_shift( $this->action->parameters );
+						if( !call_user_func( array( "$class", 'verify' ), $this->action->parameters[0] ) ) {
+							$this->view->httpError( 404 );
+							return;
+						}
 						$callParameters[$parameter->getName()] = array_shift( $this->action->parameters );
-					} elseif( isset( $_GET[$name] ) ) {
-						$callParameters[$name] = $_GET[$name];
-						unset( $_GET[$name] );
 					} elseif( !$parameter->isOptional() ) {
 						$this->view->httpError( 404 );
 						return;
-					} else {
-						//$callParameters[$parameter->getName()] = null;
 					}
 					array_shift( $namedParameters );
+				} else {
+					if( !empty( $this->action->parameters ) and ( !$parameter->isOptional() or
+										      empty( $namedParameters ) or
+										      $this->action->parameters[0] != $namedParameters[0] )
+					) {
+						if( !call_user_func( array( "$class", 'verify'), $this->action->parameters[0] ) ) {
+							$this->view->httpError( 404 );
+							return;
+						}
+						$callParameters[$name] = new $class( array_shift( $this->action->parameters ) );
+					} elseif( !$parameter->isOptional() ) {
+						$this->view->httpError( 404 );
+						return;
+					}
 				}
+				break;
+			case 'ajax':
+
 			}
-			call_user_func_array( array( $this, $actionMethod ), $callParameters );
-//		} catch( Exception $e ) {
-//			throw new Exception( 'Problem calling action: ' . $e->getMessage() );
-//		}
+		}
+		call_user_func_array( array( $this, $actionMethod ), $callParameters );
 	}
 
 	final public function __destruct() {
 
 		if( !empty( $this->action->parameters ) ) {
-			return $this->view->httpError( 404 );
+			$this->view->httpError( 404 );
+			return;
 		}
 		if( !is_null( $this->output ) ) {
 			echo $this->output;
@@ -176,12 +201,6 @@ abstract class Controller {
 		//Site::getInstance()->getLocalesListXML( $configNode );
 	}
 
-	public function noAuth() {
-
-		$this->action->parameters = array();
-		return $this->view->httpError( 401 );
-	}
-	
 	public function checkReferer() {
 
 		if( empty( $_SERVER['HTTP_REFERER'] ) ) {
