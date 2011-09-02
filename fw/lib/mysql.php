@@ -59,7 +59,7 @@ class MySQL {
 		}
 	}
 
-	public function fetch( $query ) {
+	public function fetch( $query, $replica = false ) {
 
 		$this->connect();
 		$table = array();
@@ -76,7 +76,7 @@ class MySQL {
 		return $table;
 	}
 
-	public function fetchWithId( $query ) {
+	public function fetchWithId( $query, $replica = false ) {
 
 		$this->connect();
 		$table = array();
@@ -92,21 +92,21 @@ class MySQL {
 		return $table;
 	}
 
-	public function fetchRow( $query ) {
+	public function fetchRow( $query, $replica = false ) {
 
-		$data = $this->fetch( $query );
+		$data = $this->fetch( $query, $replica );
 		return isset( $data[0] ) ? $data[0] : false;
 	}
 	
-	public function fetchOne( $query ) {
+	public function fetchOne( $query, $replica = false ) {
 		
-		$data = $this->fetchRow( $query );
+		$data = $this->fetchRow( $query, $replica );
 		return !empty( $data ) ? array_shift( $data ) : null;
 	}
 
-	public function fetchXML( $node, $query ) {
+	public function fetchXML( $node, $query, $replica = false ) {
 
-		$data = $this->fetch( $query );
+		$data = $this->fetch( $query, $replica );
 		if( empty( $data ) ) {
 			return false;
 		}
@@ -141,5 +141,10 @@ class MySQL {
 	public function getAffectedRows() {
 
 		return $this->db->affected_rows;
+	}
+
+	public function getFoundRows() {
+
+		return $this->fetchOne( "SELECT FOUND_ROWS()" );
 	}
 }
