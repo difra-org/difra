@@ -35,6 +35,11 @@ ajaxer.sendForm = function( form, event ) {
 	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), $( event.target ).serialize() ) ); //{ form: jForm.serializeArray() } ) );
 };
 
+ajaxer.query = function( url, data ) {
+	
+	ajaxer.process( this.httpRequest( url, data ) );
+};
+
 ajaxer.process = function( data ) {
 
 	try {
