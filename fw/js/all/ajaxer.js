@@ -1,3 +1,9 @@
+/**
+ * Отправляет ajax-запросы и обрабатывает результаты.
+ *
+ * Добавляет события:
+ * form-submit		— срабатывает перед отправкой данных формы
+ */
 $.ajaxSetup( {
 	async : false,
 	cache :	false,
@@ -23,10 +29,10 @@ ajaxer.httpRequest = function( url, params, headers ) {
 	return $.ajax( url, data ).responseText;
 };
 
-ajaxer.sendForm = function( form ) {
+ajaxer.sendForm = function( form, event ) {
 
 	var jForm = $( form );
-	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), { form: jForm.serializeArray() } ) );
+	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), $( event.target ).serialize() ) ); //{ form: jForm.serializeArray() } ) );
 };
 
 ajaxer.process = function( data ) {
@@ -79,7 +85,8 @@ var main = {};
 main.httpRequest = ajaxer.httpRequest;
 
 $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
+	$( document ).triggerHandler( 'form-submit' );
 	event.preventDefault();
-	ajaxer.sendForm( this );
+	ajaxer.sendForm( this, event );
 } );
 
