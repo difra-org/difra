@@ -1,7 +1,9 @@
 function autocenter() {
-	$( this ).css( {
-		left: ( $( window ).width() - $( this ).outerWidth() ) / 2,
-		top: ( $( window ).height() - $( this ).outerHeight() ) / 2
+	$( '.auto-center' ).each( function( index, elem ) {
+		$( elem ).css( {
+			left: ( $( window ).width() - $( elem ).outerWidth() ) / 2,
+			top: ( $( window ).height() - $( elem ).outerHeight() ) / 2
+		} );
 	} );
 }
 
