@@ -151,10 +151,20 @@ abstract class Controller {
 				}
 				break;
 			case 'ajax':
-
+				if( $value = $this->ajax->getParam( $name ) ) {
+					if( !call_user_func( array( "$class", "verify" ), $value ) ) {
+						$this->ajax->invalid( $name );
+						continue;
+					}
+					$callParameters[$name] = new $class( $value );
+				} elseif( !$parameter->isOptional() ) {
+					$this->ajax->required( $name );
+				}
 			}
 		}
-		call_user_func_array( array( $this, $actionMethod ), $callParameters );
+		if( !$this->ajax->hasProblem() ) {
+			call_user_func_array( array( $this, $actionMethod ), $callParameters );
+		}
 	}
 
 	final public function __destruct() {
