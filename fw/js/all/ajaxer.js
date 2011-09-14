@@ -32,8 +32,10 @@ ajaxer.httpRequest = function( url, params, headers ) {
 ajaxer.sendForm = function( form, event ) {
 
 	var jForm = $( form );
-	// var data = jForm.serializeArray();
-	var data = $( event.target ).serialize();
+	var data = {
+		form: jForm.serializeArray()
+	};
+	//var data = $( event.target ).serialize();
 	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), data ), form );
 };
 
@@ -58,9 +60,11 @@ ajaxer.process = function( data, form ) {
 			case 'require':// не заполнено обязательное поле формы
 				this.showRequire( form, action.lang, action.name );
 				break;
+			case 'redirect':// перенаправление
+				this.redirect( action.url );
+				break;
 			case 'invalid':	// не правильное значение поля формы
 			case 'error':	// сообщение об ошибке
-			case 'redirect':// перенаправление
 			case 'display':	// показать окно с пришедшим html
 			case 'reload': // перезагрузить страницу
 			default:
@@ -68,7 +72,7 @@ ajaxer.process = function( data, form ) {
 			}
 		}
 	} catch( ex ) {
-		// TODO: notify about fail
+		console.warn( 'Server returned:', data );
 	}
 };
 
@@ -91,6 +95,15 @@ ajaxer.showNotify = function( lang, message ) {
 ajaxer.showRequire = function( form, lang, name ) {
 
 	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' ).css( 'display', 'block' );
+};
+
+ajaxer.redirect = function( url ) {
+
+	if( typeof(switcher) != undefined ) {
+		switcher.page( url );
+	} else {
+		document.location( url );
+	}
 };
 
 ajaxer.close = function( obj ) {

@@ -101,7 +101,7 @@ $( 'a' ).live( 'click dblclick',
 	} );
 
 $( 'form' ).live( 'submit', function( event ) {
-	if( this.hasClass( 'ajaxer' ) ) {
+	if( $( this ).hasClass( 'ajaxer' ) ) {
 		return;
 	}
 	event.preventDefault();
