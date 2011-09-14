@@ -32,7 +32,9 @@ ajaxer.httpRequest = function( url, params, headers ) {
 ajaxer.sendForm = function( form, event ) {
 
 	var jForm = $( form );
-	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), $( event.target ).serialize() ) ); //{ form: jForm.serializeArray() } ) );
+	// var data = jForm.serializeArray();
+	var data = $( event.target ).serialize();
+	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), data ), form );
 };
 
 ajaxer.query = function( url, data ) {
@@ -40,25 +42,30 @@ ajaxer.query = function( url, data ) {
 	ajaxer.process( this.httpRequest( url, data ) );
 };
 
-ajaxer.process = function( data ) {
+ajaxer.process = function( data, form ) {
 
 	try {
 		data = eval( '(' + data + ')' );
-		if( !data.action ) {
+		if( !data.actions ) {
 			return data;
 		}
-		switch( data.action ) {
-		case 'notify':	// сообщение
-			this.showNotify( data.lang, data.message );
-			break;
-		case 'error':	// сообщение об ошибке
-		case 'redirect':// перенаправление
-		case 'display':	// показать окно с пришедшим html
-		case 'required':// не заполнено обязательное поле формы
-		case 'invalid':	// не правильное значение поля формы
-		case 'reload': // перезагрузить страницу
-		default:
-			alert( 'Ajaxer action ' + data.action + ' not implemented' );
+		for( key in data.actions ) {
+			var action = data.actions[key];
+			switch( action.action ) {
+			case 'notify':	// сообщение
+				this.showNotify( action.lang, action.message );
+				break;
+			case 'require':// не заполнено обязательное поле формы
+				this.showRequire( form, action.lang, action.name );
+				break;
+			case 'invalid':	// не правильное значение поля формы
+			case 'error':	// сообщение об ошибке
+			case 'redirect':// перенаправление
+			case 'display':	// показать окно с пришедшим html
+			case 'reload': // перезагрузить страницу
+			default:
+				console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
+			}
 		}
 	} catch( ex ) {
 		// TODO: notify about fail
@@ -79,6 +86,11 @@ ajaxer.showNotify = function( lang, message ) {
 			'</div>'
 	);
 	$( window ).resize();
+};
+
+ajaxer.showRequire = function( form, lang, name ) {
+
+	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' ).css( 'display', 'block' );
 };
 
 ajaxer.close = function( obj ) {

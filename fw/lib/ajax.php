@@ -50,7 +50,7 @@ class Ajax {
 	 * @param string $name		Имя параметра
 	 * @return string|array|null
 	 */
-	private function getParameter( $name ) {
+	public function getParam( $name ) {
 
 		return isset( $this->parameters[$name] ) ? $this->parameters[$name] : null;
 	}
