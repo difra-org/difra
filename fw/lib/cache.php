@@ -34,12 +34,12 @@ class Cache
 			if( $_auto ) {
 				return self::getInstance( $_auto );
 			}
-			if( Cache\MemCached::isAvailable() ) {
-				Debugger::getInstance()->addLine( "Auto-detected cache type: MemCached" );
-				return self::getInstance( $_auto = self::INST_MEMCACHED );
-			} elseif( Cache\XCache::isAvailable() ) {
+			if( Cache\XCache::isAvailable() ) {
 				Debugger::getInstance()->addLine( "Auto-detected cache type: XCache" );
 				return self::getInstance( $_auto = self::INST_XCACHE );
+			} elseif( Cache\MemCached::isAvailable() ) {
+				Debugger::getInstance()->addLine( "Auto-detected cache type: MemCached" );
+				return self::getInstance( $_auto = self::INST_MEMCACHED );
 			} elseif( Cache\MemCache::isAvailable() ) {
 				Debugger::getInstance()->addLine( "Auto-detected cache type: Memcache" );
 				return self::getInstance( $_auto = self::INST_MEMCACHE );

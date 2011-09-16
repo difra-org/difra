@@ -67,7 +67,7 @@ class XCache extends Common {
 	 */
 	public function realPut( $id, $data, $specificLifetime = false ) {
 
-		return xcache_set( $id, $data );
+		return xcache_set( $id, $data, $specificLifetime );
 	}
     
 	/**
