@@ -35,14 +35,32 @@ class Action {
 	public function run() {
 
 		$uri = $this->_getUri();
+		$cacheKey = 'action:uri:' . $uri;
+		if( $data = Cache::getInstance()->get( $cacheKey ) ) {
+			switch( $data['result'] ) {
+			case 'action':
+				foreach( $data['controllers'] as $cont ) {
+					include_once( $cont );
+				}
+				foreach( $data['vars'] as $k => $v ) {
+					$this->$k = $v;
+				}
+				new $this->class;
+				break;
+			case '404':
+				$this->view->httpError( 404 );
+			}
+			return;
+		}
 		$parts = $uri ? explode( '/', $uri ) : array();
+		$match = array( 'vars' => array() );
 
 		// is it a resourcer request?
 		if( sizeof( $parts ) == 2 ) {
 			$resourcer = Resourcer::getInstance( $parts[0], true );
 			if( $resourcer and $resourcer->isPrintable() ) {
 				$resourcer->view( $parts[1] );
-				return true;
+				return;
 			}
 		}
 
@@ -50,10 +68,11 @@ class Action {
 		$path = '';
 		$depth = $dirDepth = 0;
 		$controllerDirs = Plugger::getInstance()->getControllerDirs();
-		$dirs = $controllerDirs = array_merge( $controllerDirs, array(
+		$dirs = $controllerDirs = array_merge( array(
+			DIR_ROOT . 'controllers/',
 			DIR_SITE . 'controllers/',
 			DIR_FW . 'controllers/'
-		) );
+		), $controllerDirs );
 		foreach( $parts as $part ) {
 			$path .= "$part/";
 			$depth++;
@@ -70,7 +89,7 @@ class Action {
 			$dirs = $newDirs;
 		}
 
-		// get controller file name
+		$cname = '';
 		$controllers = array();
 		if( isset( $parts[$dirDepth] ) ) {
 			foreach( $dirs as $tmpDir ) {
@@ -89,7 +108,8 @@ class Action {
 			}
 		}
 		if( empty( $controllers ) ) {
-			return View::getInstance()->httpError( 404 );
+			$this->saveCache( $cacheKey, array( 'result' => '404' ) );
+			View::getInstance()->httpError( 404 );
 		}
 
 		// load controller and dispatchers
@@ -102,12 +122,14 @@ class Action {
 		}
 		$this->class = $className = $className . ucfirst( $cname ) . 'Controller';
 
+		$match['controllers'] = $controllers;
 		foreach( $controllers as $fileName ) {
 			include_once( $fileName );
 		}
 		if( !class_exists( $className ) ) {
 			throw new exception( "Error! Controller class $className not found" );
 		}
+		$match['vars']['class'] = $className;
 
 		// detect action method
 		$methodName = false;
@@ -117,7 +139,7 @@ class Action {
 				if( method_exists( $className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
 					$methodName = $methodTmp;
 					$methodVar = "method{$methodType[0]}{$methodType[1]}";
-					$this->$methodVar = $m;
+					$this->$methodVar = $match['vars'][$methodVar] = $m;
 				}
 			}
 			if( $methodName and $methodName != 'index' ) {
@@ -128,7 +150,17 @@ class Action {
 		$parts = array_slice( $parts, $dirDepth );
 
 		$this->parameters = $parts;
+		$match['vars']['parameters'] = $this->parameters;
+		$match['result'] = 'action';
+
+		$this->saveCache( $cacheKey, $match );
+
 		new $className();
+	}
+
+	private function saveCache( $key, $match ) {
+
+		Cache::getInstance()->put( $key, $match, 300 );
 	}
 
 	public function dispatch( $plugin, $dispatcher ) {

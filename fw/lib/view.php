@@ -26,7 +26,7 @@ class View {
 	public function httpError( $err ) {
 
 		if( $this->redirect or $this->error ) {
-			return false;
+			return;
 		}
 		$errors = include ( 'http_errors.php' );
 
@@ -46,6 +46,7 @@ class View {
 			$this->error = $err;
 			die( '<center><h1 style="padding:350px 0px 0px 0px">HTTP error ' . $err . ' (' . $error . ')</h1></center>' );
 		}
+		die();
 	}
 
 	public function render( $xml, $template = false, $dontEcho = false, $errorPage = false ) {
