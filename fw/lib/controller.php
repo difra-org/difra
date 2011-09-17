@@ -128,7 +128,7 @@ abstract class Controller {
 							$this->view->httpError( 404 );
 							return;
 						}
-						$callParameters[$parameter->getName()] = array_shift( $this->action->parameters );
+						$callParameters[$parameter->getName()] = new $class( array_shift( $this->action->parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						$this->view->httpError( 404 );
 						return;
