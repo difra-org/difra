@@ -17,7 +17,7 @@ class Plugger {
 
 		$this->path = defined( 'DIR_PLUGINS' ) ? DIR_PLUGINS : realpath( dirname( __FILE__ ) . '/../../plugins' );
 
-		if( !$paths = Cache::getInstance()->get( 'plugger_paths' ) ) {
+		if( Debugger::getInstance()->isEnabled() or !$paths = Cache::getInstance()->get( 'plugger_paths' ) ) {
 			$paths = array();
 			if( $dir = opendir( $this->path ) ) {
 				while( false !== ( $subdir = readdir( $dir ) ) ) {

@@ -36,7 +36,7 @@ class Action {
 
 		$uri = $this->_getUri();
 		$cacheKey = 'action:uri:' . $uri;
-		if( $data = Cache::getInstance()->get( $cacheKey ) ) {
+		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $cacheKey ) ) {
 			switch( $data['result'] ) {
 			case 'action':
 				foreach( $data['controllers'] as $cont ) {

@@ -52,10 +52,10 @@ class Mailer {
 		$view = new View;
 		$templateText = $view->render( $xml, $template, true );
 
-		preg_match( '|<subject>(.*)</subject>|Uis', $templateText, $subject );
-		preg_match( '|<text>(.*)</text>|Uis', $templateText, $mailText );
-		preg_match( '|<from>(.*)</from>|Uis', $templateText, $fromMail );
-		preg_match( '|<fromtext>(.*)</fromtext>|Uis', $templateText, $fromText );
+		preg_match( '|<subject[^>]*>(.*)</subject>|Uis', $templateText, $subject );
+		preg_match( '|<text[^>]*>(.*)</text>|Uis', $templateText, $mailText );
+		preg_match( '|<from[^>]*>(.*)</from>|Uis', $templateText, $fromMail );
+		preg_match( '|<fromtext[^>]*>(.*)</fromtext>|Uis', $templateText, $fromText );
 		$subject  = !empty( $subject[1] )  ? $subject[1]  : '';
 		$mailText = !empty( $mailText[1] ) ? $mailText[1] : '';
 		$fromMail = !empty( $fromMail[1] ) ? $fromMail[1] : $this->fromMail;
