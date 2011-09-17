@@ -17,23 +17,30 @@ class Plugger {
 
 		$this->path = defined( 'DIR_PLUGINS' ) ? DIR_PLUGINS : realpath( dirname( __FILE__ ) . '/../../plugins' );
 
-		if( $dir = opendir( $this->path ) ) {
-			while( false !== ( $subdir = readdir( $dir ) ) ) {
-				if( $subdir != '.' and $subdir != '..' and is_dir( "{$this->path}/$subdir" ) ) {
-					if( is_readable( "{$this->path}/$subdir/plugin.php" ) ) {
-						try {
-							include_once( "{$this->path}/$subdir/plugin.php" );
-							$class = 'Difra\\Plugins\\' . ucfirst( $subdir ) . '\\Plugin';
-							$this->plugins[$subdir] = new $class;
-						} catch( exception $ex ) {
-							echo "Can't load plugin $subdir: " . $ex->getMessage() . "<br/>\n" ;
+		if( !$paths = Cache::getInstance()->get( 'plugger_paths' ) ) {
+			$paths = array();
+			if( $dir = opendir( $this->path ) ) {
+				while( false !== ( $subdir = readdir( $dir ) ) ) {
+					if( $subdir != '.' and $subdir != '..' and is_dir( "{$this->path}/$subdir" ) ) {
+						if( is_readable( "{$this->path}/$subdir/plugin.php" ) ) {
+							$paths[] = array(
+								'name' => $subdir, 'file' => "{$this->path}/$subdir/plugin.php",
+								'class' => 'Difra\\Plugins\\' . ucfirst( $subdir ) . '\\Plugin'
+							);
 						}
 					}
 				}
 			}
+			Cache::getInstance()->put( 'plugger_paths', $paths, 300 );
 		}
-		if( empty( $this->plugins ) ) {
-			return false;
+
+		foreach( $paths as $path ) {
+			try {
+				include_once( $path['file'] );
+				$this->plugins[$path['name']] = new $path['class'];
+			} catch( exception $ex ) {
+				throw new exception( "Can't load plugin {$path['name']}: " . $ex->getMessage() );
+			}
 		}
 	}
 

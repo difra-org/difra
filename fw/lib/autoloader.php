@@ -19,11 +19,9 @@ class Autoloader {
 		$basePath ? : $basePath = realpath( dirname( __FILE__ ) . '/../..' );
 		$class = ltrim( $class, '\\' );
 		$parts = explode( '\\', $class );
-		$path = '';
 		if( $parts[0] != 'Difra' ) {
 			$path = 'lib/';
 		} elseif( $parts[0] == 'Difra' and $parts[1] == 'Plugins' ) {
-			$path = '';
 			$name = $parts[2];
 			// классы вида Plugins/Name ищем в plugins/name/lib/name.php
 			if( sizeof( $parts ) == 3 ) {
@@ -38,9 +36,9 @@ class Autoloader {
 			array_shift( $parts );
 		}
 		$filename = $basePath . strtolower( "/$path" . implode( '/', $parts ) ) . '.php';
-		if( !is_file( $filename ) ) {
+/*		if( !is_file( $filename ) ) {
 			throw new exception( "Class $class not found" );
-		}
+		}*/
 		include_once( $filename );
 	}
 
