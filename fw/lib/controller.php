@@ -208,7 +208,7 @@ abstract class Controller {
 		}
 		$this->root->setAttribute( 'build', Site::getInstance()->getBuild() );
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
-		//Site::getInstance()->getLocalesListXML( $configNode );
+		Site::getInstance()->getConfigXML( $configNode );
 	}
 
 	public function checkReferer() {

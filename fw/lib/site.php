@@ -130,17 +130,6 @@ class Site {
 		return array_keys( $this->locales );
 	}
 
-	public function getLocalesListXML( $node ) {
-
-		$data = $this->getLocalesList();
-		if( !empty( $data ) ) {
-			foreach( $data as $lang ) {
-				$langNode = $node->appendChild( $node->ownerDocument->createElement( 'lang' ) );
-				$langNode->setAttribute( 'name', $lang );
-			}
-		}
-	}
-
 	public function getLocaleObj( $locale = null ) {
 
 		if( is_null( $locale ) ) {
@@ -233,5 +222,16 @@ class Site {
 		}
 
 		return $_build = '-';
+	}
+
+	public function getConfigXML( $node ) {
+
+		$data = $this->getLocalesList();
+		if( !empty( $data ) ) {
+			foreach( $data as $lang ) {
+				$langNode = $node->appendChild( $node->ownerDocument->createElement( 'lang' ) );
+				$langNode->setAttribute( 'name', $lang );
+			}
+		}
 	}
 }

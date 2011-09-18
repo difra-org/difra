@@ -53,6 +53,11 @@ switcher.page = function( url, noPush, data ) {
 
 	switcher.noPush = noPush ? true : false;
 	switcher.url = url;
+	if( !$( '#content' ).length ) {
+		$( document ).triggerHandler( 'destruct' );
+		$( '#loading' ).css( 'display', 'none' );
+		document.location = switcher.url;
+	}
 	if( data ) {
 		var conf = switcher.ajaxConfig;
 		conf.type = 'POST';
