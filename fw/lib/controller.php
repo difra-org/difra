@@ -206,6 +206,9 @@ abstract class Controller {
 		if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
 			$this->root->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
 		}
+		$this->root->setAttribute( 'ajax', ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+									      $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? 1
+							 : 0 );
 		$this->root->setAttribute( 'build', Site::getInstance()->getBuild() );
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );
