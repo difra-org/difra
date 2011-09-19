@@ -70,22 +70,25 @@ abstract class Common {
 		
 			$t = microtime( true );
 			$cacheKey = "{$instance}_{$this->type}";
-			if( $cached = $cache->smartGet( $cacheKey ) ) {
-				return $cached;
+			if( $cached = $cache->get( $cacheKey ) ) {
+				$build = $cache->get( $cacheKey . '_build' );
+				if( $build == \Difra\Site::getInstance()->getBuild() ) {
+					return $cached;
+				}
 			}
 
 			$busyKey  = "{$cacheKey}_busy";
 			$busyValue = rand( 100000, 999999 );
 
 			while( true ) {
-				if( !$currentBusy = $cache->smartGet( $busyKey ) ) {
+				if( !$currentBusy = $cache->get( $busyKey ) ) {
 					// is data arrived?
-					if( $cached = $cache->smartGet( $cacheKey ) ) {
+					if( $cached = $cache->get( $cacheKey ) ) {
 						return $cached;
 					}
 					
 					// try to lock cache
-					$cache->smartPut( $busyKey, $busyValue, 7 );
+					$cache->put( $busyKey, $busyValue, 7 );
 					usleep( 5000 );
 				} else {
 					// is cache locked by me?
@@ -101,11 +104,12 @@ abstract class Common {
 			$resource = $this->_subCompile( $instance );
 
 			// cache data
-			$cache->smartPut( $cacheKey, $resource );
-			$cache->smartPut( "{$instance}_{$this->type}_modified", gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+			$cache->put( $cacheKey, $resource );
+			$cache->put( $cacheKey . '_build', \Difra\Site::getInstance()->getBuild() );
+			$cache->put( $cacheKey . '_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
 			
 			// unlock cache
-			$cache->smartRemove( $busyKey );
+			$cache->remove( $busyKey );
 
 			return $resource;
 		} else {
