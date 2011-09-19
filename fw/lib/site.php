@@ -233,5 +233,8 @@ class Site {
 				$langNode->setAttribute( 'name', $lang );
 			}
 		}
+		$node->setAttribute( 'host', $this->getHost() );
+		$node->setAttribute( 'hostname', $this->getHostname() );
+		$node->setAttribute( 'mainhost', $this->getMainhost() );
 	}
 }

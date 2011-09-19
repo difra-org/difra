@@ -9,9 +9,13 @@
 	<xsl:template name="config">
 		<script type="text/javascript">
 			var config = {};
-			<xsl:if test="@mainhost">
-				<xsl:text>config.mainhost = "</xsl:text><xsl:value-of select="@mainhost"/><xsl:text>";</xsl:text>
-			</xsl:if>
+			<xsl:for-each select="@*">
+				<xsl:text>config.</xsl:text>
+				<xsl:value-of select="name()"/>
+				<xsl:text> = "</xsl:text>
+				<xsl:value-of select="."/>
+				<xsl:text>";</xsl:text>
+			</xsl:for-each>
 		</script>
 	</xsl:template>
 
