@@ -8,12 +8,21 @@ class Common {
 
 	public function __construct( $value = '' ) {
 
-		$this->value = $value;
+		switch( static::type ) {
+		case 'string':
+			$this->value = (string) $value;
+			break;
+		case 'int':
+			$this->value = (int) $value;
+			break;
+		default:
+			throw new \Difra\Exception( 'No wrapper for type ' . ( static::type ) . ' in Param\Common constructor.' );
+		}
 	}
 
 	public function __toString() {
 
-		return $this->value;
+		return (string)$this->value;
 	}
 
 	public static function verify( $value ) {
@@ -26,6 +35,11 @@ class Common {
 		default:
 			throw new \Difra\Exception( 'Can\'t check param of type: ' . static::type );
 		}
+	}
+
+	public function val() {
+
+		return $this->value;
 	}
 
 	public static function getSource() {
