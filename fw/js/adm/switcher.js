@@ -105,6 +105,8 @@ $( 'a' ).live( 'click dblclick',
 		}
 	} );
 
+/*
+// проблемная функция — не передаёт $_POST, если не получилось загрузить страницу ajax-ом
 $( 'form' ).live( 'submit', function( event ) {
 	if( $( this ).hasClass( 'ajaxer' ) ) {
 		return;
@@ -116,3 +118,4 @@ $( 'form' ).live( 'submit', function( event ) {
 	}
 	switcher.page( $( event.target ).attr( 'action' ), true, $( event.target ).serialize() );
 } );
+*/
