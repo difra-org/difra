@@ -43,7 +43,7 @@ class Ajax {
 			$res = json_decode( $_POST['json'], true );
 			if( !empty( $res['form'] ) ) {
 				foreach( $res['form'] as $item ) {
-					$res[$item['name']] = $item['value'];
+					$res[$item['name']] = trim( $item['value'] );
 				}
 				unset( $res['form'] );
 			}

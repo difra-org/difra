@@ -91,6 +91,10 @@ class Auth {
 		return $this->logged = true;
 	}
 
+	/**
+	 * Возвращает id текущего пользователя или null
+	 * @return int|null
+	 */
 	public function getId() {
 		
 		return isset( $this->data['id'] ) ? $this->data['id'] : null;
