@@ -62,8 +62,8 @@ class MySQL {
 			$this->db->query( $qstring );
 			$this->queries++;
 			Debugger::getInstance()->addLine( "MySQL: " . $qstring );
-			if( $this->db->errno ) {
-				throw new exception( 'MySQL error: ' . $this->db->error );
+			if( $err = $this->db->error ) {
+				throw new Exception( 'MySQL error: ' . $err );
 			}
 		} else {
 			try {
@@ -75,7 +75,7 @@ class MySQL {
 			} catch( Exception $ex ) {
 				$this->db->rollback();
 				$this->db->autocommit( true );
-				throw new exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
+				throw new Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
 			}
 		}
 	}

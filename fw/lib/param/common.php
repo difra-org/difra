@@ -4,7 +4,7 @@ namespace Difra\Param;
 
 class Common {
 
-	private $value = null;
+	protected $value = null;
 
 	public function __construct( $value = '' ) {
 
