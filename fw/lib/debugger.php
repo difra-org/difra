@@ -21,7 +21,7 @@ class Debugger {
 			$this->startTime = microtime( true );
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL | E_STRICT );
-			ini_set( 'html_errors', !empty( $_SERVER['REQUEST_METHOD'] ) ? 'On' : 'Off' );
+			ini_set( 'html_errors', ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
 		} else {
 			ini_set( 'display_errors', 'Off' );
 		}
