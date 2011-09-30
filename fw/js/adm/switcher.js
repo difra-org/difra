@@ -13,7 +13,6 @@ var switcher = [];
 switcher.hashChanged = false;
 switcher.noPush = false;
 switcher.url = false;
-switcher.first = true;
 switcher.ajaxConfig = {
 	async: true,
 	cache: false,
@@ -53,6 +52,10 @@ switcher.page = function( url, noPush, data ) {
 
 	switcher.noPush = noPush ? true : false;
 	switcher.url = url;
+	var host = window.location.protocol + "//" + window.location.host + "/";
+	if( host == switcher.url.substring( 0, host.length ) ) {
+		switcher.url = switcher.url.substring( host.length - 1 );
+	}
 	if( !$( '#content' ).length ) {
 		$( document ).triggerHandler( 'destruct' );
 		$( '#loading' ).css( 'display', 'none' );
@@ -68,26 +71,33 @@ switcher.page = function( url, noPush, data ) {
 	}
 };
 
-window.onpopstate = function() {
-	if( switcher.first ) {
-		switcher.first = false;
+window.onhashchange = function() {
+
+	if( switcher.hashChanged ) {
+		switcher.hashChanged = false;
 		return;
 	}
-	switcher.page( document.location.href, true );
-};
-
-window.onhashchange = function() {
-	if( !switcher.hashChanged && document.location.hash.substring( 0, 2 ) == '#!' ) {
+	if( document.location.hash.substring( 0, 2 ) == '#!' ) {
 		switcher.page( document.location.hash.substring( 2 ), true );
 	} else {
-		switcher.hashChanged = false;
+		switcher.page( document.location.href, true );
 	}
 };
 
 $( document ).ready( function() {
+
 	if( document.location.hash && document.location.hash.substring( 0, 2 ) == '#!' ) {
 		switcher.page( document.location.hash.substring( 2 ), true );
+		if( history.replaceState ) {
+			switcher.hashChanged = true;
+			history.replaceState( { url: switcher.url }, null, switcher.url );
+		}
+	} else if( !history.pushState && document.location.hash.substring( 0, 2 ) != '#!' ) {
+//		switcher.page( document.location.href );
 	}
+	window.onpopstate = function() {
+		switcher.page( document.location.href, true );
+	};
 } );
 
 function switchPage( url, noPush, data ) {
