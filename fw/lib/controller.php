@@ -131,7 +131,8 @@ abstract class Controller {
 						$callParameters[$parameter->getName()] = new $class( array_shift( $this->action->parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						$this->view->httpError( 404 );
-						return;
+					} else {
+						$callParameters[$parameter->getName()] = null;
 					}
 					array_shift( $namedParameters );
 				} else {
@@ -141,12 +142,10 @@ abstract class Controller {
 					) {
 						if( !call_user_func( array( "$class", 'verify'), $this->action->parameters[0] ) ) {
 							$this->view->httpError( 404 );
-							return;
 						}
 						$callParameters[$name] = new $class( array_shift( $this->action->parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						$this->view->httpError( 404 );
-						return;
 					}
 				}
 				break;
