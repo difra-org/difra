@@ -55,14 +55,14 @@ class Capcha {
 			shuffle( $order );
 			for( $j = 0; $j < 2; $j++ ) {
 				shuffle( $order );
-				$image->gaussianBlurImage( 5, 3 );
+				$image->gaussianBlurImage( 15, 3 );
 				for( $n = 0; $n < strlen( $text ); $n++ ) {
 					$i = $order[$n];
 					$draw->setFont( dirname( __FILE__ ) . '/capcha/DejaVuSans.ttf' );
 					$draw->setFontSize( $j ? rand( $sizeY * 3/5, $sizeY * 5/6 ) : rand( $sizeY * 4/6, $sizeY * 5/6 ) );
 					$draw->setFontWeight( rand( 100, 900 ) );
 					$draw->setGravity( \imagick::GRAVITY_CENTER );
-					$image->annotateImage( $draw, ( $i - strlen( $text ) / 2 ) * $sizeX / ( strlen( $text ) + 3 ), 0, rand( -25, 25 ), $text{$i} );
+					$image->annotateImage( $draw, ( $i - strlen( $text ) / 2 ) * $sizeX / ( strlen( $text ) + 2.5 ), 0, rand( -25, 25 ), $text{$i} );
 					$image->gaussianBlurImage( 1, 1 );
 				}
 			}	 
@@ -73,11 +73,11 @@ class Capcha {
 	
 	public function genKey( $len ) {
 		$a = '';
-		$chars = 'ACDEFGHJKLMNPRTUVWXYacdhkmnprsuvwxyz3467';
+		$chars = 'ACDEFGHJKLNPRUVXYacdhknpsuvxyz3467';
 		for( $i = 0; $i < $len; $i++ ) {
 			$a .= $chars{rand( 0, strlen( $chars ) - 1 )};
 		}
-		$bad = array( 'mm', 'ww', 'mw', 'wm', 'huy', 'fuck', 'suka', 'huj', 'hui', 'blya', 'blia', 'blja', 'pidor', 'eb', 'ib', 'sex', 'suck' );
+		$bad = array( 'mm', 'ww', 'mw', 'wm', 'huy', 'fuck', 'suka', 'huj', 'hui', 'blya', 'blia', 'blja', 'pidor', 'eb', 'ib', 'sex', 'suck', 'cyka' );
 		$upA = strtolower( $a );
 		foreach( $bad as $b ) {
 			if( false !== strpos( $upA, $b ) ) {
