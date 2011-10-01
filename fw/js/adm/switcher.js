@@ -35,6 +35,9 @@ switcher.ajaxConfig = {
 				switcher.hashChanged = true;
 				window.location = '/#!' + switcher.url;
 			}
+			if( _gaq.push ) {
+				_gaq.push( ['_trackPageview', switcher.url] );
+			}
 		}
 		$( document ).triggerHandler( 'switch' );
 		$( '#content' ).replaceWith( a ).remove();
