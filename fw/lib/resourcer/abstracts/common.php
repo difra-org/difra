@@ -6,6 +6,7 @@ use Difra;
 abstract class Common {
 			
 	protected $resources = array();
+	const CACHE_TTL = 86400;
 
 	static public function getInstance() {
 
@@ -17,8 +18,7 @@ abstract class Common {
 	private function checkInstance( $instance ) {
 		
 		if( !preg_match( '/^[a-z0-9_-]+$/i', $instance ) ) {
-			throw new exception( "Bad Resourcer instance name: '$instance'" );
-			return false;
+			throw new \Difra\Exception( "Bad Resourcer instance name: '$instance'" );
 		}
 		return true;
 	}
@@ -27,7 +27,7 @@ abstract class Common {
 	public function view( $instance ) {
 		
 		if( !$this->isPrintable() ) {
-			throw new exception( "Resource of type '{$this->type}' is not printable" );
+			throw new \Difra\Exception( "Resource of type '{$this->type}' is not printable" );
 		}
 		// откусим расширение, если оно есть
 		$parts = explode( '.', $instance );
@@ -121,9 +121,9 @@ abstract class Common {
 			}
 		}
 		// lock получен — кешируем данные
-		$cache->put( $cacheKey . '_gz', gzencode( $this->compile( $instance ), 9 ) );
-		$cache->put( $cacheKey . '_gz_build', Difra\Site::getInstance()->getBuild() );
-		$cache->put( $cacheKey . '_gz_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+		$cache->put( $cacheKey . '_gz', gzencode( $this->compile( $instance ), 9 ), self::CACHE_TTL );
+		$cache->put( $cacheKey . '_gz_build', Difra\Site::getInstance()->getBuild(), self::CACHE_TTL );
+		$cache->put( $cacheKey . '_gz_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT', self::CACHE_TTL );
 		// снимаем lock
 		$cache->remove( $busyKey );
 	}
@@ -174,9 +174,9 @@ abstract class Common {
 			$resource = $this->_subCompile( $instance );
 
 			// cache data
-			$cache->put( $cacheKey, $resource );
-			$cache->put( $cacheKey . '_build', \Difra\Site::getInstance()->getBuild() );
-			$cache->put( $cacheKey . '_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+			$cache->put( $cacheKey, $resource, self::CACHE_TTL );
+			$cache->put( $cacheKey . '_build', \Difra\Site::getInstance()->getBuild(), self::CACHE_TTL );
+			$cache->put( $cacheKey . '_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT', self::CACHE_TTL );
 			
 			// unlock cache
 			$cache->remove( $busyKey );
