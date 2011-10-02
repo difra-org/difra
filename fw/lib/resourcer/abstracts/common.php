@@ -39,13 +39,43 @@ abstract class Common {
 		if( !$instance or !$this->checkInstance( $instance ) ) {
 			return false;
 		}
-		$data = $this->compile( $instance );
+
+
+		// узнаем, поддерживает ли браузер gzip
+		$enc = false;
+		if( !empty( $_SERVER['HTTP_ACCEPT_ENCODING'] ) ) {
+			$encTypes = $_SERVER['HTTP_ACCEPT_ENCODING'];
+			if( strpos( $encTypes, ',' ) ) {
+				$encTypes = explode( ',', $encTypes );
+			} else {
+				$encTypes = array( $encTypes );
+			}
+			foreach( $encTypes as $type ) {
+				$type = trim( $type );
+				switch( $type ) {
+				case 'gzip':
+					$enc = 'gzip';
+					break 2;
+				}
+			}
+		}
+
 		header( 'Content-Type: ' . $this->contentType );
-		if( !$modified = Difra\Cache::getInstance()->smartGet( "{$instance}_{$this->type}_modified" ) ) {
+		switch( $enc ) {
+		case 'gzip':
+			if( $data = $this->compileGZ( $instance ) ) {
+				header( 'Vary: Accept-Encoding' );
+				header( 'Content-Encoding: gzip' );
+				break;
+			}
+		default:
+			$data = $this->compile( $instance );
+		}
+		if( !$modified = Difra\Cache::getInstance()->get( "{$instance}_{$this->type}_modified" ) ) {
 			$modified = gmdate( 'D, d M Y H:i:s' ) . ' GMT';
 		}
 		header( 'Last-Modified: ' . $modified );
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s' , time() + 3600 ) . ' GMT' );
+		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 604800 ) . ' GMT' );
 		echo $data;
 		return true;
 	}
@@ -54,6 +84,48 @@ abstract class Common {
 	public function isPrintable() {
 	
 		return $this->printable;
+	}
+
+	public function compileGZ( $instance ) {
+
+		$cache = Difra\Cache::getInstance();
+		if( $cache->adapter == 'None' or Difra\Debugger::getInstance()->isEnabled() ) {
+			return false;
+		}
+
+		$cacheKey = "{$instance}_{$this->type}";
+		if( $cached = $cache->get( $cacheKey . '_gz' ) ) {
+			if( $cache->get( $cacheKey . '_gz_build' ) == \Difra\Site::getInstance()->getBuild() ) {
+				return $cached;
+			}
+		}
+
+		// ждём, пока удастся сделать lock, либо пока не появятся данные от другого процесса
+		$busyKey = "{$cacheKey}_gz_busy";
+		$busyValue = rand( 100000, 999999 );
+		while( true ) {
+			if( !$currentBusy = $cache->get( $busyKey ) ) {
+				// появились данные от другого процесса?
+				if( $cached = $cache->get( $cacheKey . '_gz' ) ) {
+					return $cached;
+				}
+				// попытаемся получить блокировку
+				$cache->put( $busyKey, $busyValue, 7 );
+				usleep( 5000 );
+			} else {
+				// удалось получить блокировку?
+				if( $currentBusy == $busyValue ) {
+					break;
+				}
+				usleep( 50000 );
+			}
+		}
+		// lock получен — кешируем данные
+		$cache->put( $cacheKey . '_gz', gzencode( $this->compile( $instance ), 9 ) );
+		$cache->put( $cacheKey . '_gz_build', Difra\Site::getInstance()->getBuild() );
+		$cache->put( $cacheKey . '_gz_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT' );
+		// снимаем lock
+		$cache->remove( $busyKey );
 	}
 	
 	// собирает всё в единый документ
@@ -68,18 +140,16 @@ abstract class Common {
 
 		if( $cache->adapter != 'None' and !Difra\Debugger::getInstance()->isEnabled() ) {
 		
-			$t = microtime( true );
 			$cacheKey = "{$instance}_{$this->type}";
 			if( $cached = $cache->get( $cacheKey ) ) {
-				$build = $cache->get( $cacheKey . '_build' );
-				if( $build == \Difra\Site::getInstance()->getBuild() ) {
+				if( $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild() ) {
 					return $cached;
 				}
 			}
 
+			// ждём, пока удастся сделать lock, либо пока не появятся данные от другого процесса
 			$busyKey  = "{$cacheKey}_busy";
 			$busyValue = rand( 100000, 999999 );
-
 			while( true ) {
 				if( !$currentBusy = $cache->get( $busyKey ) ) {
 					// is data arrived?
