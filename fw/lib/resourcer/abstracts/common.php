@@ -122,11 +122,12 @@ abstract class Common {
 			}
 		}
 		// lock получен — кешируем данные
-		$cache->put( $cacheKey . '_gz', gzencode( $this->compile( $instance ), 9 ), self::CACHE_TTL );
+		$cache->put( $cacheKey . '_gz', $data = gzencode( $this->compile( $instance ), 9 ), self::CACHE_TTL );
 		$cache->put( $cacheKey . '_gz_build', Difra\Site::getInstance()->getBuild(), self::CACHE_TTL );
 		$cache->put( $cacheKey . '_gz_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT', self::CACHE_TTL );
 		// снимаем lock
 		$cache->remove( $busyKey );
+		return $data;
 	}
 	
 	// собирает всё в единый документ
@@ -152,11 +153,10 @@ abstract class Common {
 			$busyKey  = "{$cacheKey}_busy";
 			$busyValue = rand( 100000, 999999 );
 			while( true ) {
-				if( !$currentBusy = $cache->get( $busyKey ) and
-				    $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild()
-				) {
+				if( !$currentBusy = $cache->get( $busyKey ) ) {
 					// is data arrived?
-					if( $cached = $cache->get( $cacheKey ) ) {
+					if( $cached = $cache->get( $cacheKey ) and
+					    $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild() ) {
 						return $cached;
 					}
 					
