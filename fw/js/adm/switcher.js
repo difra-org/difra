@@ -31,11 +31,11 @@ switcher.ajaxConfig = {
 		if( !switcher.noPush ) {
 			if( history.pushState ) {
 				history.pushState( { url: switcher.url }, null, switcher.url );
-			} else {
+			} else { // workaround для убогих (IE, Opera)
 				switcher.hashChanged = true;
 				window.location = '/#!' + switcher.url;
 			}
-			if( _gaq.push ) {
+			if( _gaq && _gaq.push ) {
 				_gaq.push( ['_trackPageview', switcher.url] );
 			}
 		}
@@ -87,6 +87,14 @@ window.onhashchange = function() {
 	}
 };
 
+window.onpopstate = function() {
+
+	if( switcher.url && switcher.url != document.location.pathname && switcher.url != document.location.hash.substring( 2 ) ) {
+		alert( document.location.pathname );
+		switcher.page( document.location.href, true );
+	}
+};
+
 $( document ).ready( function() {
 
 	if( document.location.hash && document.location.hash.substring( 0, 2 ) == '#!' ) {
@@ -96,25 +104,19 @@ $( document ).ready( function() {
 			history.replaceState( { url: switcher.url }, null, switcher.url );
 		}
 	} else if( !history.pushState && document.location.hash.substring( 0, 2 ) != '#!' ) {
-//		switcher.page( document.location.href );
+//		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
 	}
-	window.onpopstate = function() {
-		switcher.page( document.location.href, true );
-	};
 } );
-
-function switchPage( url, noPush, data ) {
-
-	switcher.page( url, noPush, data );
-}
 
 $( 'a' ).live( 'click dblclick',
 	function( event ) {
-		if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 1 ) != '#' ) {
-			event.preventDefault();
-			switcher.page( $( this ).attr( 'href' ) );
+		if( $( this ).attr( 'href' ).substring( 0, 11 ) == 'javascript:' ) {
 		} else if( $( this ).attr( 'href' ) == '#' ) {
 			event.preventDefault();
+		} else if( $( this ).attr( 'href' ).substring( 0, 1 ) == '#' ) {
+		} else if( $( this ).attr( 'href' ) ) {
+			event.preventDefault();
+			switcher.page( $( this ).attr( 'href' ) );
 		}
 	} );
 
