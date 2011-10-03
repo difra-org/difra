@@ -106,7 +106,8 @@ abstract class Common {
 		while( true ) {
 			if( !$currentBusy = $cache->get( $busyKey ) ) {
 				// появились данные от другого процесса?
-				if( $cached = $cache->get( $cacheKey . '_gz' ) ) {
+				if( $cached = $cache->get( $cacheKey . '_gz' ) and
+				    $cache->get( $cacheKey . '_gz_build' ) == \Difra\Site::getInstance()->getBuild() ) {
 					return $cached;
 				}
 				// попытаемся получить блокировку
@@ -151,7 +152,9 @@ abstract class Common {
 			$busyKey  = "{$cacheKey}_busy";
 			$busyValue = rand( 100000, 999999 );
 			while( true ) {
-				if( !$currentBusy = $cache->get( $busyKey ) ) {
+				if( !$currentBusy = $cache->get( $busyKey ) and
+				    $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild()
+				) {
 					// is data arrived?
 					if( $cached = $cache->get( $cacheKey ) ) {
 						return $cached;
