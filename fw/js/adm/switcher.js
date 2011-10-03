@@ -109,10 +109,10 @@ $( document ).ready( function() {
 
 $( 'a' ).live( 'click dblclick',
 	function( event ) {
-		if( $( this ).attr( 'href' ).substring( 0, 11 ) == 'javascript:' ) {
+		if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 11 ) == 'javascript:' ) {
 		} else if( $( this ).attr( 'href' ) == '#' ) {
 			event.preventDefault();
-		} else if( $( this ).attr( 'href' ).substring( 0, 1 ) == '#' ) {
+		} else if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 1 ) == '#' ) {
 		} else if( $( this ).attr( 'href' ) ) {
 			event.preventDefault();
 			switcher.page( $( this ).attr( 'href' ) );
