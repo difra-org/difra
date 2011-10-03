@@ -90,7 +90,6 @@ window.onhashchange = function() {
 window.onpopstate = function() {
 
 	if( switcher.url && switcher.url != document.location.pathname && switcher.url != document.location.hash.substring( 2 ) ) {
-		alert( document.location.pathname );
 		switcher.page( document.location.href, true );
 	}
 };
