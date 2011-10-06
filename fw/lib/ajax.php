@@ -154,14 +154,17 @@ class Ajax {
 	/**
 	 * Не корректные данные формы
 	 * @param string $name		Имя (name) элемента формы, заполненного не верно
+	 * @param string $message	Текст ошибки
 	 * @return void
 	 */
-	public function invalid( $name ) {
+	public function invalid( $name, $message = null ) {
 
 		$this->problem = true;
-		$this->addAction( array(
-				       'action' => 'invalid', 'name' => $name
-				  ) );
+		$action = array( 'action' => 'invalid', 'name' => $name );
+		if( $message ) {
+			$action['message'] = $message;
+		}
+		$this->addAction( $action );
 	}
 
 	/**
@@ -209,6 +212,13 @@ class Ajax {
 
 		$this->addAction( array(
 				       'action' => 'load', 'target' => $target, 'html' => $html
+				  ) );
+	}
+
+	public function close() {
+
+		$this->addAction( array(
+					'action' => 'close'
 				  ) );
 	}
 }
