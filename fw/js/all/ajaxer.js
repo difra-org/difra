@@ -13,6 +13,7 @@ $.ajaxSetup( {
 } );
 
 var ajaxer = {};
+ajaxer.id = 1;
 
 ajaxer.httpRequest = function( url, params, headers ) {
 
@@ -36,6 +37,8 @@ ajaxer.sendForm = function( form, event ) {
 		form: jForm.serializeArray()
 	};
 	//var data = $( event.target ).serialize();
+	$( form ).find( '.required' ).fadeOut( 'fast' );
+	$( form ).find( '.invalid' ).fadeOut( 'fast' );
 	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), data ), form );
 };
 
@@ -47,41 +50,53 @@ ajaxer.query = function( url, data ) {
 ajaxer.process = function( data, form ) {
 
 	try {
-		data = eval( '(' + data + ')' );
-		if( !data.actions ) {
-			return data;
+		var data1 = eval( '(' + data + ')' );
+		if( !data1.actions ) {
+			throw "data error";
 		}
-		for( key in data.actions ) {
-			var action = data.actions[key];
+		for( var key in data1.actions ) {
+			var action = data1.actions[key];
 			switch( action.action ) {
 			case 'notify':	// сообщение
-				this.showNotify( action.lang, action.message );
+				this.notify( action.lang, action.message );
 				break;
 			case 'require':// не заполнено обязательное поле формы
-				this.showRequire( form, action.lang, action.name );
+				this.require( form, action.name );
+				break;
+			case 'invalid':	// не правильное значение поля формы
+				this.invalid( form, action.name, action.message );
 				break;
 			case 'redirect':// перенаправление
 				this.redirect( action.url );
 				break;
-			case 'invalid':	// не правильное значение поля формы
-			case 'error':	// сообщение об ошибке
 			case 'display':	// показать окно с пришедшим html
+				this.display( action.html );
+				break;
 			case 'reload': // перезагрузить страницу
+				this.reload();
+				break;
+			case 'close':
+				this.close( form );
+				break;
+			case 'error':	// сообщение об ошибке
+				this.error( action.lang, action.message );
+				break;
 			default:
 				console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
 			}
 		}
 	} catch( ex ) {
+		this.notify( {close:'OK'}, 'Unknown error.' );
 		console.warn( 'Server returned:', data );
 	}
 };
 
-ajaxer.showNotify = function( lang, message ) {
+ajaxer.notify = function( lang, message ) {
 
 	$( 'body' ).append(
-		'<div class="overlay">' +
-			'<div class="overlay-container notify auto-center">' +
-			'<div class="overlay-inner">' +
+		'<div class="overlay" id="ajaxer-' + ajaxer.id + '">' +
+			'<div class="overlay-container auto-center">' +
+			'<div class="overlay-inner" style="display:none">' +
 			'<div class="close-button" onclick="ajaxer.close(this)"></div>' +
 			'<p>' + message + '</p>' +
 			'<a href="#" onclick="ajaxer.close(this)" class="popup-button center">' + lang.close + '</a>' +
@@ -89,26 +104,67 @@ ajaxer.showNotify = function( lang, message ) {
 			'</div>' +
 			'</div>'
 	);
+	$( '#ajaxer-' + ajaxer.id ).find( '.overlay-inner' ).fadeIn( 'fast' );
 	$( window ).resize();
+	ajaxer.id++;
 };
 
-ajaxer.showRequire = function( form, lang, name ) {
+ajaxer.error = function( lang, message ) {
 
-	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' ).css( 'display', 'block' );
+	ajaxer.notify( lang, message );
+};
+
+ajaxer.require = function( form, name ) {
+
+	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' ).fadeIn( 'fast' );
+};
+
+ajaxer.invalid = function( form, name, message ) {
+
+	var inv = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.invalid' );
+	if( inv ) {
+		inv.fadeIn( 'fast' );
+		inv.find( '.invalid-text' ).html( message );
+	}
 };
 
 ajaxer.redirect = function( url ) {
 
-	if( typeof(switcher) != undefined ) {
+	if( typeof(switcher) != 'undefined' ) {
 		switcher.page( url );
 	} else {
 		document.location( url );
 	}
 };
 
+ajaxer.reload = function() {
+
+	window.location.reload();
+};
+
+ajaxer.display = function( html ) {
+
+	$( 'body' ).append(
+		'<div class="overlay" id="ajaxer-' + ajaxer.id + '">' +
+			'<div class="overlay-container auto-center">' +
+			'<div class="overlay-inner" style="display:none">' +
+			'<div class="close-button" onclick="ajaxer.close(this)"></div>' +
+			html +
+			'</div>' +
+			'</div>' +
+			'</div>'
+	);
+	$( '#ajaxer-' + ajaxer.id ).find( '.overlay-inner' ).fadeIn( 'fast' );
+	$( window ).resize();
+	ajaxer.id++;
+};
+
 ajaxer.close = function( obj ) {
 
-	$( obj ).parents( '.overlay' ).remove();
+	var el = $( obj ).parents( '.overlay' );
+	el.fadeOut( 'fast', function() {
+		$( this ).remove();
+	} );
 };
 
 var main = {};
@@ -120,3 +176,26 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 	ajaxer.sendForm( this, event );
 } );
 
+$( '.enter-submit' ).live( 'keypress', function( e ) {
+	if( e.which == 13 ) {
+		$( this ).parents( 'form' ).submit();
+	}
+} );
+
+$( '.submit' ).live( 'click dblclick', function( e ) {
+	$( this ).parents( 'form' ).submit();
+	e.preventDefault();
+});
+
+ajaxer.watcher = function() {
+
+	var mc = $.cookie( 'query' );
+	if( mc ) {
+		mc = $.parseJSON( mc );
+		ajaxer.query( mc.url );
+	}
+	$.cookie( 'query', null, { path: "/", domain: config.mainhost ? '.' + config.mainhost : false } );
+};
+
+$( document ).ready( ajaxer.watcher );
+$( document ).bind( 'construct', ajaxer.watcher );
