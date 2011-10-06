@@ -68,12 +68,12 @@ class Cookies {
 	public function setExpire( $expireTime ) {
 		$this->expireTime = $expireTime;  
 	}
-	
+
 	/**
 	 * Cookies::set()
 	 * @desc Устанавливает куку
 	 * @param string $name
-	 * @param string || array $value
+	 * @param string|array $value
 	 * @return boolean
 	 */
 	public function set( $name, $value ) {
@@ -99,6 +99,16 @@ class Cookies {
 						 'type' => $error ? 'error' : 'ok',
 						 'message' => (string) $message
 					    ) );
+	}
+
+	/**
+	 * Устанавливает куку, которая указывает Ajaxer'у обратиться по указанному URL
+	 * @param $url
+	 * @return void
+	 */
+	public function query( $url ) {
+
+		$this->set( 'query', array( 'url' => $url ) );
 	}
 }
 	
