@@ -49,7 +49,7 @@ class View {
 		die();
 	}
 
-	public function render( $xml, $template = false, $dontEcho = false, $errorPage = false ) {
+	public function render( $xml, $instance = false, $dontEcho = false, $errorPage = false ) {
 
 		if( !$dontEcho ) {
 			$this->rendered = true;
@@ -57,20 +57,20 @@ class View {
 		if( $this->error or $this->redirect ) {
 			return false;
 		}
-		if( !$template ) {
+		if( !$instance ) {
 			if( $this->template ) {
-				$template = $this->template;
+				$instance = $this->template;
 			} elseif( $this->instance ) {
-				$template = $this->instance;
+				$instance = $this->instance;
 			} else {
-				$template = 'main';
+				$instance = 'main';
 			}
 		}
 		
 		$xslDom = new \DomDocument;
 		$xslDom->resolveExternals = true;
 		$xslDom->substituteEntities = true;
-		if( !$xslDom->loadXML( Resourcer::getInstance( 'xslt' )->compile( $template ) ) ) {
+		if( !$xslDom->loadXML( Resourcer::getInstance( 'xslt' )->compile( $instance ) ) ) {
 			throw new exception( "XSLT loader problem." );
 		}
 		$xslProc = new \XsltProcessor();
