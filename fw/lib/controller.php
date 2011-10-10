@@ -156,6 +156,8 @@ abstract class Controller {
 						continue;
 					}
 					$callParameters[$name] = new $class( $value );
+				} elseif( call_user_func( array( "$class", 'isAuto' ) ) ) {
+					$callParameters[$name] = new $class;
 				} elseif( !$parameter->isOptional() ) {
 					$this->ajax->required( $name );
 				}

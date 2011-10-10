@@ -19,7 +19,7 @@ abstract class XSLT extends Common {
 					%symbol;
 					%special;
 				]>
-				<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0" xmlns:array="none">
+				<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 				<xsl:output method="xml" indent="yes" encoding="utf-8" omit-xml-declaration="yes" doctype-system="about:legacy-compat"/>
 				';
 		$templateInner = '';
@@ -36,7 +36,7 @@ abstract class XSLT extends Common {
 	private function _extendXSL( $text, $path = '/', $depth = 1 ) {
 
 		if( $depth > 10 ) {
-			throw new exception( 'Too long XSLT includes recursion depth.' );
+			throw new \Difra\Exception( 'Too long XSLT includes recursion depth.' );
 		}
 		while( true ) {
 			preg_match( '/(.*?)<xsl:include href="(.*?)"\/\>(.*)/is', $text, $matches );

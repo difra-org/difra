@@ -24,10 +24,10 @@ class Cookies {
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
 	}
-	
+
 	/**
 	 * Cookies::__construct()
-	 * @return void
+	 * @return \Difra\Cookies
 	 */
 	private function __construct() {
 		$this->domain = Site::getInstance()->getMainhost();
@@ -95,10 +95,11 @@ class Cookies {
 
 	public function notify( $message, $error = false ) {
 
-		$this->set( 'notification', array(
-						 'type' => $error ? 'error' : 'ok',
-						 'message' => (string) $message
-					    ) );
+		$this->set( 'notify', array(
+					   'type' => $error ? 'error' : 'ok', 'message' => (string) $message, 'lang' => array(
+						    'close' => Locales::getInstance()->getXPath( 'notifications/close' )
+					    )
+				      ) );
 	}
 
 	/**
