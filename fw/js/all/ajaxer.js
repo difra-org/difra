@@ -22,7 +22,7 @@ ajaxer.httpRequest = function( url, params, headers ) {
 		data.type = 'GET';
 	} else {
 		data.type = 'POST';
-		data.data = 'json=' + JSON.stringify( params );
+		data.data = 'json=' + encodeURIComponent( JSON.stringify( params ) );
 	}
 	if( typeof headers != 'undefined' ) {
 		data.headers = headers;
@@ -39,6 +39,7 @@ ajaxer.sendForm = function( form, event ) {
 	//var data = $( event.target ).serialize();
 	$( form ).find( '.required' ).fadeOut( 'fast' );
 	$( form ).find( '.invalid' ).fadeOut( 'fast' );
+	$( form ).find( '.status' ).fadeOut( 'fast' );
 	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), data ), form );
 };
 
@@ -50,7 +51,8 @@ ajaxer.query = function( url, data ) {
 ajaxer.process = function( data, form ) {
 
 	try {
-		var data1 = eval( '(' + data + ')' );
+		//console.info( 'Server said: ' + data );
+		var data1 = $.parseJSON( data );
 		if( !data1.actions ) {
 			throw "data error";
 		}
@@ -65,6 +67,9 @@ ajaxer.process = function( data, form ) {
 				break;
 			case 'invalid':	// не правильное значение поля формы
 				this.invalid( form, action.name, action.message );
+				break;
+			case 'status': // текстовый статус для поля
+				this.status( form, action.name, action.message, action.classname );
 				break;
 			case 'redirect':// перенаправление
 				this.redirect( action.url );
@@ -116,7 +121,10 @@ ajaxer.error = function( lang, message ) {
 
 ajaxer.require = function( form, name ) {
 
-	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' ).fadeIn( 'fast' );
+	var req = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' );
+	if( req ) {
+		req.fadeIn();
+	}
 };
 
 ajaxer.invalid = function( form, name, message ) {
@@ -125,6 +133,16 @@ ajaxer.invalid = function( form, name, message ) {
 	if( inv ) {
 		inv.fadeIn( 'fast' );
 		inv.find( '.invalid-text' ).html( message );
+	}
+};
+
+ajaxer.status = function( form, name, message, classname ) {
+
+	var status = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.status' );
+	if( status ) {
+		status.fadeIn( 'fast' );
+		status.attr( 'class', '.status .' + classname );
+		status.html( message );
 	}
 };
 
@@ -176,7 +194,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 	ajaxer.sendForm( this, event );
 } );
 
-$( '.enter-submit' ).live( 'keypress', function( e ) {
+$( '.ajaxer input' ).live( 'keypress', function( e ) {
 	if( e.which == 13 ) {
 		$( this ).parents( 'form' ).submit();
 	}
