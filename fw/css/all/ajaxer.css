@@ -10,7 +10,9 @@
 
 .overlay-container {
 	position: relative;
-	width: 425px;
+	display: inline-block;
+	min-width: 325px;
+	max-width: 775px;
 }
 
 .overlay-inner {
