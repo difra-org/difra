@@ -168,6 +168,23 @@ class Ajax {
 	}
 
 	/**
+	 * Сообщение рядом с элементом формы
+	 * @param $name
+	 * @param $message
+	 * @param $class
+	 * @return void
+	 */
+	public function status( $name, $message, $class ) {
+
+		$this->addAction( array(
+					  'action' => 'status',
+					  'name' => $name,
+					  'message' => $message,
+					  'classname' => $class
+				  ) );
+	}
+
+	/**
 	 * Перенаправление
 	 * @param string $url		URL, по которому будет сделано перенаправление
 	 * @return void
