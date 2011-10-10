@@ -51,7 +51,7 @@ ajaxer.query = function( url, data ) {
 ajaxer.process = function( data, form ) {
 
 	try {
-		//console.info( 'Server said: ' + data );
+		console.info( 'Server said: ' + data );
 		var data1 = $.parseJSON( data );
 		if( !data1.actions ) {
 			throw "data error";
@@ -141,7 +141,7 @@ ajaxer.status = function( form, name, message, classname ) {
 	var status = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.status' );
 	if( status ) {
 		status.fadeIn( 'fast' );
-		status.attr( 'class', '.status .' + classname );
+		status.attr( 'class', 'status ' + classname );
 		status.html( message );
 	}
 };
@@ -211,8 +211,18 @@ ajaxer.watcher = function() {
 	if( mc ) {
 		mc = $.parseJSON( mc );
 		ajaxer.query( mc.url );
+		$.cookie( 'query', null, { path: "/", domain: config.mainhost ? '.' + config.mainhost : false } );
 	}
-	$.cookie( 'query', null, { path: "/", domain: config.mainhost ? '.' + config.mainhost : false } );
+	mc = $.cookie( 'notify' );
+	if( mc ) {
+		mc = $.parseJSON( mc );
+		if( mc.type == 'error' ) {
+			ajaxer.error( mc.lang, mc.message );
+		} else {
+			ajaxer.notify( mc.lang, mc.message );
+		}
+		$.cookie( 'notify', null, { path: "/", domain: config.mainhost ? '.' + config.mainhost : false } );
+	}
 };
 
 $( document ).ready( ajaxer.watcher );
