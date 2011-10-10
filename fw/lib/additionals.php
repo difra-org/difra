@@ -7,42 +7,64 @@ class Additionals {
 	// проверка заполненности и валидности дополнительных полей из конфига сайта
 	public static function checkAdditionals( $module, $data ) {
 
-		if( !$conf = Site::getInstance()->getData( $module ) ) {
-			return true;
+		$err = self::getStatus( $module, $data );
+		if( is_array( $err ) and !empty( $err ) ) {
+			foreach( $err as $k => $v ) {
+				if( $v != static::FIELD_OK ) {
+					return $k;
+				}
+			}
 		}
-		if( !isset( $conf['fields'] ) or empty( $conf['fields'] ) ) {
-			return true;
+		return true;
+	}
+
+	const FIELD_OK = 'field_ok';
+	const FIELD_EMPTY = 'field_empty';
+	const FIELD_DUPE = 'field_dupe';
+	public static function getStatus( $module, $data ) {
+
+		$err = array();
+		$conf = Site::getInstance()->getData( $module );
+		if( !$conf or !isset( $conf['fields'] ) or empty( $conf['fields'] ) ) {
+			return $err;
 		}
 		foreach( $conf['fields'] as $field => $flags ) {
+			$res = static::FIELD_OK;
 			if( !$flags or empty( $flags ) ) {
+				$err[$field] = $res;
 				continue;
 			}
 			if( !is_array( $flags ) ) {
 				$flags = array( $flags );
 			}
+			$value = !empty( $data[$field] ) ? trim( $data[$field] ) : '';
 			$db = MySQL::getInstance();
 			foreach( $flags as $flag ) {
 				switch( $flag ) {
-					case 'required':
-						if( empty( $data[$field] ) ) {
-							return $field;
-						}
+				case 'required':
+					if( $value === '' ) {
+						$res = static::FIELD_EMPTY;
+					}
+					break;
+				case 'unique':
+					if( $value === '' ) {
+						$res = static::FIELD_EMPTY;
 						break;
-					case 'unique':
-						if( empty( $data[$field] ) ) {
-							return $field;
-						}
-						$used = $db->fetchOne( "SELECT `id` FROM `{$module}_fields` WHERE `name`='" . $db->escape( $field ) . "' AND `value`='" . $db->escape( $data[$field] ) . "'" );
-						if( $used ) {
-							return $field;
-						}
-						break;
-					case 'normal':
-						break;
+					}
+					$used =
+						$db->fetchOne( "SELECT `id` FROM `{$module}_fields` WHERE `name`='" . $db->escape( $field )
+							       . "' AND `value`='" . $db->escape( trim( $data[$field] ) ) . "'" );
+					if( $used ) {
+						$res = static::FIELD_DUPE;
+					}
+					break;
+				case 'normal':
+					break;
 				}
 			}
+			$err[$field] = $res;
 		}
-		return true;
+		return $err;
 	}
 
 	// сохранение дополнительных полей из конфига сайта
