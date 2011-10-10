@@ -51,4 +51,9 @@ class Common {
 
 		return static::named;
 	}
+
+	public static function isAuto() {
+
+		return defined( 'static::auto' ) ? static::auto : false;
+	}
 }
