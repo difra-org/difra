@@ -238,5 +238,12 @@ class Ajax {
 					'action' => 'close'
 				  ) );
 	}
+
+	public function reset() {
+
+		$this->addAction( array(
+				       'action' => 'reset'
+				  ) );
+	}
 }
 

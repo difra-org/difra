@@ -32,15 +32,14 @@ ajaxer.httpRequest = function( url, params, headers ) {
 
 ajaxer.sendForm = function( form, event ) {
 
-	var jForm = $( form );
 	var data = {
-		form: jForm.serializeArray()
+		form: $( form ).serializeArray()
 	};
 	//var data = $( event.target ).serialize();
 	$( form ).find( '.required' ).fadeOut( 'fast' );
 	$( form ).find( '.invalid' ).fadeOut( 'fast' );
 	$( form ).find( '.status' ).fadeOut( 'fast' );
-	ajaxer.process( this.httpRequest( jForm.attr( 'action' ), data ), form );
+	ajaxer.process( this.httpRequest( $( form ).attr( 'action' ), data ), form );
 };
 
 ajaxer.query = function( url, data ) {
@@ -86,6 +85,8 @@ ajaxer.process = function( data, form ) {
 			case 'error':	// сообщение об ошибке
 				this.error( action.lang, action.message );
 				break;
+			case 'reset':	// сделать форме reset
+				this.reset( form );
 			default:
 				console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
 			}
@@ -104,7 +105,7 @@ ajaxer.notify = function( lang, message ) {
 			'<div class="overlay-inner" style="display:none">' +
 			'<div class="close-button" onclick="ajaxer.close(this)"></div>' +
 			'<p>' + message + '</p>' +
-			'<a href="#" onclick="ajaxer.close(this)" class="popup-button center">' + lang.close + '</a>' +
+			'<a href="#" onclick="ajaxer.close(this)" class="button">' + lang.close + '</a>' +
 			'</div>' +
 			'</div>' +
 			'</div>'
@@ -121,19 +122,12 @@ ajaxer.error = function( lang, message ) {
 
 ajaxer.require = function( form, name ) {
 
-	var req = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' );
-	if( req ) {
-		req.fadeIn();
-	}
+	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' ).fadeIn();
 };
 
 ajaxer.invalid = function( form, name, message ) {
 
-	var inv = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.invalid' );
-	if( inv ) {
-		inv.fadeIn( 'fast' );
-		inv.find( '.invalid-text' ).html( message );
-	}
+	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.invalid' ).fadeIn( 'fast' ).find( '.invalid-text' ).html( message );
 };
 
 ajaxer.status = function( form, name, message, classname ) {
@@ -185,6 +179,11 @@ ajaxer.close = function( obj ) {
 	} );
 };
 
+ajaxer.reset = function( form ) {
+
+	$( form ).get( 0 ).reset();
+};
+
 var main = {};
 main.httpRequest = ajaxer.httpRequest;
 
@@ -204,6 +203,11 @@ $( '.submit' ).live( 'click dblclick', function( e ) {
 	$( this ).parents( 'form' ).submit();
 	e.preventDefault();
 });
+
+$( '.reset' ).live( 'click dblclick', function( e ) {
+	ajaxer.reset( $( this ).parents( 'form' ) );
+	e.preventDefault();
+} );
 
 ajaxer.watcher = function() {
 
