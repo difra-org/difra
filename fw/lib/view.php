@@ -40,6 +40,14 @@ class View {
 			$xml = new \DOMDocument( );
 			$root = $xml->appendChild( $xml->createElement( 'error' . $err ) );
 			$root->setAttribute( 'host', Site::getInstance()->getHost() );
+			$root->setAttribute( 'hostname', Site::getInstance()->getHostname() );
+			$root->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
+			if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
+				$root->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
+			}
+			$root->setAttribute( 'build', Site::getInstance()->getBuild() );
+			$configNode = $root->appendChild( $xml->createElement( 'config' ) );
+			Site::getInstance()->getConfigXML( $configNode );
 			$this->render( $xml, 'error_' . $err, false, true );
 			$this->error = $err;
 		} catch( exception $ex ) {

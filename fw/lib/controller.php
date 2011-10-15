@@ -47,14 +47,14 @@ abstract class Controller {
 		Plugger::getInstance()->runDispatchers( $this );
 		$this->action->runDispatchers( $this );
 
-		// run action method
-		$this->_runAction();
-
 		// add XML data
 		$this->auth->getAuthXML( $realRoot );
 		$this->locale->getLocaleXML( $realRoot );
 		Menu::getInstance( $this->view->instance )->getXML( $realRoot );
 		//$this->root->setAttribute( 'menuitem', Menu::getInstance()->getCurrent( $this->action->uri ) );
+
+		// run action method
+		$this->_runAction();
 	}
 
 	private function _runAction() {

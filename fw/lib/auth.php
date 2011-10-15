@@ -116,6 +116,7 @@ class Auth {
 	}
 
 	public function setAdditionals( $additionals ) {
+		
 		$this->additionals = $additionals;
 		$this->_save();
 	}
