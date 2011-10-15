@@ -12,33 +12,37 @@ class Site {
 
 	private $siteDir = null;
 	private $siteConfig = array();
-	private $startTime;
 	private $host = null;
 
 	private $phpVersion = null;
 
-	static public function getInstance( $reset = false ) {
+	static public function getInstance() {
 
-		static $self = null;
-		return ( $self and !$reset ) ? $self : $self = new self( );
+		static $_instance = null;
+		return $_instance ? $_instance : $_instance = new self;
 	}
 
 	public function __construct() {
 
-		if( !$this->detectHost() ) {
-			die( 'Invalid server configuration or unconfigured host.' );
-		}
-		$this->startTime = microtime( true );
-		Debugger::getInstance();
+		Events::register( 'whoami', 'Difra\\Site', 'detectHost' );
+		Events::register( 'init-core', 'Difra\\Debugger' );
+		Events::register( 'config-stage1', 'Difra\\Site', 'configureStage1' );
+		Events::register( 'init-php', 'Difra\\Site', 'configurePHP' );
+		Events::register( 'init-paths', 'Difra\\Site', 'configurePaths' );
+		Events::register( 'plugins-load', 'Difra\Plugger' );
+
+		Events::register( 'action-find', 'Difra\\Action', 'find' );
+		Events::register( 'action-run', 'Difra\\Action', 'run' );
+	}
+
+	public function configureStage1() {
+
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
 			$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		}
-		$this->configurePHP();
-		$this->configurePaths();
-		$this->configureLocales();
 	}
 
-	private function detectHost() {
+	public function detectHost() {
 
 		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
 		
@@ -69,13 +73,14 @@ class Site {
 		} elseif( is_dir( $sitesDir . 'default' ) ) {
 			$this->siteDir = 'default';
 		} else {
-			return false;
+			header( 'HTTP/1.1 500 Internal Server Error' );
+			die( 'Internal server error: difra can not find the configuration.' );
 		}
 				
 		return true;
 	}
 
-	private function configurePaths() {
+	public function configurePaths() {
 
 		$_SERVER['DOCUMENT_ROOT'] = realpath( dirname( __FILE__ ) . self::PATH_PART . '..' ) . '/';
 		define( 'DIR_ROOT', $_SERVER['DOCUMENT_ROOT'] );
@@ -85,7 +90,7 @@ class Site {
 		define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
 	}
 
-	private function configurePHP() {
+	public function configurePHP() {
 
 		// get php version
 		$this->phpVersion = explode( '.', phpversion() );
@@ -135,7 +140,7 @@ class Site {
 		if( is_null( $locale ) ) {
 			$locale = $this->locale;
 		}
-		if( is_null( $this->locales[$locale] ) ) {
+		if( empty( $this->locales[$locale] ) ) {
 			$this->locales[$locale] = new Locales( $locale );
 		}
 		return $this->locales[$locale];

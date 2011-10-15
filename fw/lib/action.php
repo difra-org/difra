@@ -10,6 +10,8 @@ class Action {
 	public $dispatchers = array();
 
 	public $class = null;
+	public $className = null;
+	public $controller = null;
 
 	public $method = null;
 	public $methodAuth = null;
@@ -32,7 +34,7 @@ class Action {
 	public function __construct() {
 	}
 
-	public function run() {
+	public function find() {
 
 		$uri = $this->_getUri();
 		$cacheKey = 'action:uri:' . $uri;
@@ -60,7 +62,7 @@ class Action {
 			$resourcer = Resourcer::getInstance( $parts[0], true );
 			if( $resourcer and $resourcer->isPrintable() ) {
 				$resourcer->view( $parts[1] );
-				return;
+				die();
 			}
 		}
 
@@ -155,7 +157,12 @@ class Action {
 
 		$this->saveCache( $cacheKey, $match );
 
-		new $className();
+		$this->className = $className;
+	}
+
+	public function run() {
+
+		$this->controller = new $this->className;
 	}
 
 	private function saveCache( $key, $match ) {
