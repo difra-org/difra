@@ -24,22 +24,17 @@ class Site {
 
 	public function __construct() {
 
-		Events::register( 'whoami', 'Difra\\Site', 'detectHost' );
-		Events::register( 'init-core', 'Difra\\Debugger' );
-		Events::register( 'config-stage1', 'Difra\\Site', 'configureStage1' );
-		Events::register( 'init-php', 'Difra\\Site', 'configurePHP' );
-		Events::register( 'init-paths', 'Difra\\Site', 'configurePaths' );
-		Events::register( 'plugins-load', 'Difra\Plugger' );
-
-		Events::register( 'action-find', 'Difra\\Action', 'find' );
-		Events::register( 'action-run', 'Difra\\Action', 'run' );
-	}
-
-	public function configureStage1() {
-
+		$this->detectHost();
+		$this->configurePHP();
+		$this->configurePaths();
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
 			$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		}
+
+		Events::register( 'core-init', 'Difra\\Debugger' );
+		Events::register( 'plugins-load', 'Difra\Plugger' );
+		Events::register( 'action-find', 'Difra\\Action', 'find' );
+		Events::register( 'action-run', 'Difra\\Action', 'run' );
 	}
 
 	public function detectHost() {
