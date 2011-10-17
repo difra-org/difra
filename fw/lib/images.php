@@ -129,7 +129,7 @@ final class Images {
 				imagegif( $newImg );
 				break;
 			case 'png':
-				imagepng( $newImg );
+				imagepng( $newImg, null, 9 );
 				break;
 			default:
 				throw new exception( "Unknown image type: $type" );
