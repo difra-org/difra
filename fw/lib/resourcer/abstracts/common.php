@@ -207,6 +207,8 @@ abstract class Common {
 		$parents = array(
 				 DIR_ROOT . "fw/{$this->type}/{$instance}",
 				 DIR_ROOT . "fw/{$this->type}/all",
+			         DIR_ROOT . "{$this->type}/{$instance}",
+			         DIR_ROOT . "{$this->type}/all",
 				 DIR_SITE . "{$this->type}/{$instance}",
 				 DIR_SITE . "{$this->type}/all",
 				 );

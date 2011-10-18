@@ -50,7 +50,7 @@ abstract class Controller {
 		// add XML data
 		$this->auth->getAuthXML( $realRoot );
 		$this->locale->getLocaleXML( $realRoot );
-		Menu::getInstance( $this->view->instance )->getXML( $realRoot );
+		Menu::getAllXML( $this->view->instance, $realRoot );
 		//$this->root->setAttribute( 'menuitem', Menu::getInstance()->getCurrent( $this->action->uri ) );
 
 		// run action method

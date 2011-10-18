@@ -52,11 +52,12 @@ final class Images {
 	/**
 	 * Resizes image from binary string to given resolution keeping aspect ratio
 	 *
-	 * $data	binary string with image in it
-	 * $maxHeight	maximum height of thumbnail
-	 * $maxWidth	maximum width of thumbnail
-	 * $type	resulting image type
-	 * $tobig	should we scale image to bigger if needed
+	 * @param string $data		binary string with image in it
+	 * @param int $maxWidth		maximum width of thumbnail
+	 * @param int $maxHeight	maximum height of thumbnail
+	 * @param string $type		resulting image type
+	 * @param bool $tobig		should we scale image to bigger if needed
+	 * @return string
 	 */
 	public function scaleAndCrop( $data, $maxWidth, $maxHeight, $type, $tobig = false ) {
 		$img = imagecreatefromstring( $data );

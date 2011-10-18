@@ -10,7 +10,12 @@ class Menu extends Abstracts\XML {
 	protected function postprocess( $xml, $instance ) {
 		
 		$xml->addAttribute( 'instance', $instance );
-		$this->_recursiveProcessor( $xml, "/$instance", 'menu' );
+		if( $xml->attributes()->prefix ) {
+			$prefix = $xml->attributes()->prefix;
+		} else {
+			$prefix = '/' . $instance;
+		}
+		$this->_recursiveProcessor( $xml, $prefix, 'menu' );
 	}
 	private function _recursiveProcessor( $node, $href, $prefix ) {
 		

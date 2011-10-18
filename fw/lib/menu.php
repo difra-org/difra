@@ -21,7 +21,19 @@ class Menu {
 	public function getXML( $node ) {
 		
 		$node->appendChild( $node->ownerDocument->importNode( $this->menu->documentElement, true ) );
-		return true;
+	}
+
+	static public function getAllXML( $instance, $node ) {
+
+		$menu = Site::getInstance()->getData( 'menu' );
+		if( !isset( $menu[$instance] ) ) {
+			Menu::getInstance( $instance )->getXML( $node );
+		} elseif( empty( $menu[$instance] ) ) {
+		} else {
+			foreach( $menu[$instance] as $inst ) {
+				Menu::getInstance( $inst )->getXML( $node );
+			}
+		}
 	}
 
 	/*

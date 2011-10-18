@@ -12,6 +12,9 @@ abstract class XML extends Common {
 		foreach( $files as $file ) {
 			$xml = simplexml_load_file( $file['raw'] );
 			$this->_mergeXML( $newXml, $xml	);
+			foreach( $xml->attributes() as $key => $value ) {
+				$newXml->addAttribute( $key, $value );
+			}
 		}
 		if( method_exists( $this, 'postprocess' ) ) {
 			$this->postprocess( $newXml, $instance );
