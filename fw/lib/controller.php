@@ -146,6 +146,8 @@ abstract class Controller {
 						$callParameters[$name] = new $class( array_shift( $this->action->parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						$this->view->httpError( 404 );
+					} else {
+						$callParameters[$parameter->getName()] = null;
 					}
 				}
 				break;
