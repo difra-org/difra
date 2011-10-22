@@ -2,9 +2,12 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 	<xsl:template match="menu">
-		<div id="menu">
-			<xsl:call-template name="common_menu"/>
-		</div>
+		<xsl:param name="auto" select="1"/>
+		<xsl:if test="$auto=0">
+			<div id="menu">
+				<xsl:call-template name="common_menu"/>
+			</div>
+		</xsl:if>
 	</xsl:template>
 
 	<xsl:template name="common_menu">

@@ -5,7 +5,6 @@
 	<xsl:param name="locale" select="$localePath"/>
 
 	<xsl:template match="/root/locale"/>
-	<xsl:template match="/root/menu"/>
 
 	<xsl:template name="config">
 		<script type="text/javascript">
