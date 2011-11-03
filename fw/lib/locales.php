@@ -6,6 +6,7 @@ class Locales {
 	public $locale = 'ru_RU';
 	public $localeXML = null;
 	public $dateFormats = array( 'ru_RU' => 'd.m.y', 'en_US' => 'm-d-y' );
+	public $dateTimeFormats = array( 'ru_RU' => 'd.m.y H:i:s', 'en_US' => 'm-d-y h:i:s A' );
 
 	/**
 	 * @static
@@ -133,20 +134,30 @@ class Locales {
 	 * @return string
 	 */
 	public function getDate( $timestamp ) {
-		
+
 		return date( $this->dateFormats[$this->locale], $timestamp );
+	}
+
+	public function getDateTime( $timestamp ) {
+
+		return date( $this->dateTimeFormats[$this->locale], $timestamp );
 	}
 
 	/**
 	 * Парсит строку даты в формате MySQL и возвращает её в формате текущей локали
 	 * @param $date
+	 * @param boolean $withTime  - выводить дату вместе с временем 
 	 * @return string
 	 */
-	public function getDateFromMysql( $date ) {
+	public function getDateFromMysql( $date, $withTime = false ) {
 
 		$date = explode( ' ', $date );
 		$date[0] = explode( '-', $date[0] );
 		$date[1] = explode( ':', $date[1] );
+
+		if( $withTime ) {
+			return $this->getDateTime( mktime( $date[1][0], $date[1][1], $date[1][2], $date[0][1], $date[0][2], $date[0][0] ) );
+		}
 		return $this->getDate( mktime( $date[1][0], $date[1][1], $date[1][2], $date[0][1], $date[0][2], $date[0][0] ) );
 	}
 
