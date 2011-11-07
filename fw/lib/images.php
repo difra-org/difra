@@ -124,7 +124,7 @@ final class Images {
 			switch( strtolower( $type ) ) {
 			case 'jpg':
 			case 'jpeg':
-				imagejpeg( $newImg );
+				imagejpeg( $newImg, null, 88 );
 				break;
 			case 'gif':
 				imagegif( $newImg );
