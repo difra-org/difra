@@ -50,7 +50,7 @@ class Action {
 				new $this->class;
 				break;
 			case '404':
-				$this->view->httpError( 404 );
+				View::getInstance()->httpError( 404 );
 			}
 			return;
 		}
@@ -61,8 +61,12 @@ class Action {
 		if( sizeof( $parts ) == 2 ) {
 			$resourcer = Resourcer::getInstance( $parts[0], true );
 			if( $resourcer and $resourcer->isPrintable() ) {
-				$resourcer->view( $parts[1] );
-				die();
+				try {
+					$resourcer->view( $parts[1] );
+					die();
+				} catch( Exception $ex ) {
+					View::getInstance()->httpError( 404 );
+				}
 			}
 		}
 

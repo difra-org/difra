@@ -13,10 +13,7 @@ class View {
 	static function getInstance() {
 
 		static $_instance = null;
-		if( !$_instance ) {
-			$_instance = new self( );
-		}
-		return $_instance;
+		return $_instance ? $_instance : $_instance = new self;
 	}
 
 	public function __construct() {

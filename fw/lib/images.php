@@ -12,10 +12,11 @@ final class Images {
 	/**
 	 * Resizes image from binary string to given resolution keeping aspect ratio
 	 *
-	 * $data	binary string with image in it
-	 * $maxHeight	maximum height of thumbnail
-	 * $maxWidth	maximum width of thumbnail
-	 * $type	resulting image type
+	 * @param $data		binary string with image in it
+	 * @param $maxWidth	maximum height of thumbnail
+	 * @param $maxHeight	maximum width of thumbnail
+	 * @param $type		resulting image type
+	 * @return string
 	 */
 	public function createThumbnail( $data, $maxWidth, $maxHeight, $type ) {
 		$img = imagecreatefromstring( $data );
