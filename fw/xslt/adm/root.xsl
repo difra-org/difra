@@ -9,7 +9,7 @@
 	<xsl:template match="/root">
 		<html>
 			<head>
-				<title>MamaMart — Админка</title>
+				<title>Панель администратора</title>
 				<link rel="SHORTCUT ICON" href="/favicon.ico" />
 				<link rel="ICON" href="/favicon.ico" type="image/x-icon" />
 				<meta name="keywords" content="" />
