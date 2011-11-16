@@ -10,9 +10,9 @@ namespace Difra\Param\Filters;
 class HTML {
 
 	// allowed tags
-	protected $tagsArray = array( 'a', 'div', 'em', 'li', 'ol', 'p', 'pre', 'span', 'strike', 'u', 'ul' );
+	protected $tagsArray = array( 'a', 'div', 'em', 'li', 'ol', 'p', 'pre', 'span', 'strike', 'u', 'ul', 'img' );
 	// allowed attributes
-	protected $attrArray = array( 'href' );
+	protected $attrArray = array( 'href', 'src' );
 
 	protected $tagsMethod; // default = 0
 	protected $attrMethod; // default = 0
