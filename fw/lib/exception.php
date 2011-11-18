@@ -6,13 +6,14 @@ class Exception extends \exception {
 
 	public function __construct( $message = null, $code = 0, \Exception $previous = null ) {
 
-		$date = date( 'r' );
-		$server = print_r( $_SERVER, true );
-		$post = print_r( $_POST, true );
-		$cookie = print_r( $_COOKIE, true );
-		$user = Auth::getInstance()->data['email'];
+		if( !Debugger::getInstance()->isEnabled() ) {
+			$date = date( 'r' );
+			$server = print_r( $_SERVER, true );
+			$post = print_r( $_POST, true );
+			$cookie = print_r( $_COOKIE, true );
+			$user = Auth::getInstance()->data['email'];
 
-		$text = <<<MSG
+			$text = <<<MSG
 $message
 
 Page:	{$_SERVER['REQUEST_URI']}
@@ -34,9 +35,10 @@ $post
 $cookie
 MSG;
 
-		if( !Debugger::getInstance()->isEnabled() ) {
 			mail( 'errors@a-jam.ru', 'Report from ' . $_SERVER['HTTP_HOST'], $text );
 			echo 'Error.';
+		} else {
+			parent::__construct( $message, $code, $previous );
 		}
 	}
 }
