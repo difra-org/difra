@@ -93,9 +93,9 @@ class MySQL {
 		$table = array();
 		$result = $this->db->query( $query );
 		$this->queries++;
-		Debugger::getInstance()->addLine( "MySQL: " . $query );
+		Debugger::getInstance()->addLine( 'MySQL: ' . $query );
 		if( $err = $this->db->error ) {
-			throw new exception( 'MySQL: ' . $err );
+			throw new Exception( 'MySQL: ' . $err );
 		}
 		// XXX: вместо этого, по идее, надо делать fetch_all, но оно требует mysqlnd
 		while( $row = $result->fetch_array( MYSQLI_ASSOC ) ) {
