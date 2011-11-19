@@ -104,10 +104,14 @@ class Site {
 		$this->_stripSlashes();
 	}
 
+	/**
+	 * Убирает слеши из $_GET, $_POST, $_COOKIE, $_REQUEST, если включены magic quotes
+	 * @return
+	 */
 	private function _stripSlashes() {
 
 		if( get_magic_quotes_gpc() !== 1 ) {
-			return false;
+			return;
 		}
 		$_GET = json_decode( stripslashes( json_encode( $_GET, JSON_HEX_APOS ) ), true );
 		$_POST = json_decode( stripslashes( json_encode( $_POST, JSON_HEX_APOS ) ), true );
@@ -184,11 +188,17 @@ class Site {
 		return $this->host;
 	}
 	
-	public function getBuild() {
+	public function getBuild( $asArray = false ) {
 	
 		static $_build = null;
-		if( !is_null( $_build ) ) {
+		static $_array = null;
+
+		$ver = '$Rev$';
+
+		if( !$asArray and !is_null( $_build ) ) {
 			return $_build;
+		} elseif( $asArray and !is_null( $_array ) ) {
+			return $_array;
 		}
 		
 		// try svn versions
@@ -196,13 +206,20 @@ class Site {
 		if( is_file( DIR_SITE . '.svn/entries' ) ) {
 			$svn = file( DIR_SITE . '.svn/entries' );
 			$svnVer[] = trim( $svn[3] );
+		} else {
+			$svnVer[] = '';
 		}
 		if( is_file( DIR_FW . '.svn/entries' ) ) {
 			$svn = file( DIR_FW . '.svn/entries' );
 			$svnVer[] = trim( $svn[3] );
+		} elseif( preg_match( '/\d+/', $ver, $match ) ) {
+			$svnVer[] = $match[0];
+		} else {
+			$svnVer[] = '';
 		}
 		$plugVer = 0;
-		foreach( Plugger::getInstance()->plugins as $name=>$val ) {
+		$list = Plugger::getInstance()->getList();
+		foreach( $list as $name ) {
 			if( is_file( DIR_PLUGINS . "$name/.svn/entries" ) ) {
 				$svn = file( DIR_PLUGINS . "$name/.svn/entries" );
 				$plugVer += trim( $svn[3] );
@@ -210,15 +227,14 @@ class Site {
 		}
 		if( $plugVer ) {
 			$svnVer[] = $plugVer;
+		} else {
+			$svnVer[] = '';
 		}
-		if( !empty( $svnVer ) ) {
+		$_array = $svnVer;
+		if( $asArray ) {
+			return $svnVer;
+		} elseif( !empty( $svnVer ) ) {
 			return $_build = implode( '.', $svnVer );
-		}
-
-		// at least something
-		$ver = '$Rev$';
-		if( preg_match( '/\d+/', $ver, $match ) ) {
-			return $_build = $match[0];
 		}
 
 		return $_build = '-';
