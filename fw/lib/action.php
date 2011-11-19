@@ -73,12 +73,15 @@ class Action {
 		// get controller path
 		$path = '';
 		$depth = $dirDepth = 0;
-		$controllerDirs = Plugger::getInstance()->getControllerDirs();
-		$dirs = $controllerDirs = array_merge( array(
-			DIR_ROOT . 'controllers/',
-			DIR_SITE . 'controllers/',
-			DIR_FW . 'controllers/'
-		), $controllerDirs );
+		$controllerDirs = Plugger::getInstance()->getPaths();
+		$controllerDirs = array_merge( array(
+							    DIR_SITE, DIR_ROOT, DIR_FW
+						       ), $controllerDirs );
+		foreach( $controllerDirs as $k => $v ) {
+			$controllerDirs[$k] = "$v/controllers/";
+		}
+		$dirs = $controllerDirs;
+
 		foreach( $parts as $part ) {
 			$path .= "$part/";
 			$depth++;
@@ -177,10 +180,10 @@ class Action {
 	public function dispatch( $plugin, $dispatcher ) {
 
 		$plugger = Plugger::getInstance();
-		if( !isset( $plugger->plugins[$plugin] ) ) {
+		if( is_null( $plugin = $plugger->getPlugin( $plugin ) ) ) {
 			throw new exception( "Called dispatcher '$dispatcher' from non-existent plugin '$plugin'" );
 		}
-		if( !is_file( $file = "{$plugger->path}/{$plugin}/dispatchers/$dispatcher" ) ) {
+		if( !is_file( $file = "{$plugger->getPath()}/{$plugin}/dispatchers/$dispatcher" ) ) {
 			throw new exception( "Dispatcher '$dispatcher' not found in plugin '$plugin'" );
 		}
 		include_once( $file );
@@ -212,4 +215,3 @@ class Action {
 		return trim( $uri, '/' );
 	}
 }
-
