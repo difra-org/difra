@@ -25,10 +25,12 @@ class Plugger {
 
 		$this->allPlugins = $this->getAllPlugins();
 		$this->enabled = $this->getEnabled( $this->allPlugins );
+		sort( $this->enabled );
 
 		foreach( $this->enabled as $plugin ) {
 			$this->load( $plugin );
 		}
+		ksort( $this->plugins );
 	}
 
 	private function getAllPlugins() {

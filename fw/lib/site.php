@@ -4,6 +4,9 @@ namespace Difra;
 
 class Site {
 
+	const VERSION = '2.0';
+	const BUILD = '$Rev$';
+
 	const PATH_PART = '/../../sites/';
 
 	// libs
@@ -187,13 +190,11 @@ class Site {
 
 		return $this->host;
 	}
-	
+
 	public function getBuild( $asArray = false ) {
 	
 		static $_build = null;
 		static $_array = null;
-
-		$ver = '$Rev$';
 
 		if( !$asArray and !is_null( $_build ) ) {
 			return $_build;
@@ -201,24 +202,19 @@ class Site {
 			return $_array;
 		}
 		
-		// try svn versions
+		// fw version and build
 		$svnVer = array();
-		if( is_file( DIR_SITE . '.svn/entries' ) ) {
-			$svn = file( DIR_SITE . '.svn/entries' );
-			$svnVer[] = trim( $svn[3] );
-		} else {
-			$svnVer[] = '';
-		}
 		if( is_file( DIR_FW . '.svn/entries' ) ) {
 			$svn = file( DIR_FW . '.svn/entries' );
-			$svnVer[] = trim( $svn[3] );
-		} elseif( preg_match( '/\d+/', $ver, $match ) ) {
-			$svnVer[] = $match[0];
+			$svnVer[] = self::VERSION . '.' . trim( $svn[3] );
+		} elseif( preg_match( '/\d+/', self::BUILD, $match ) ) {
+			$svnVer[] = self::VERSION . '.' . $match[0];
 		} else {
-			$svnVer[] = '';
+			$svnVer[] = self::VERSION;
 		}
-		$plugVer = 0;
+		// plugins builds summary
 		$list = Plugger::getInstance()->getList();
+		$plugVer = 0;
 		foreach( $list as $name ) {
 			if( is_file( DIR_PLUGINS . "$name/.svn/entries" ) ) {
 				$svn = file( DIR_PLUGINS . "$name/.svn/entries" );
@@ -227,9 +223,13 @@ class Site {
 		}
 		if( $plugVer ) {
 			$svnVer[] = $plugVer;
-		} else {
-			$svnVer[] = '';
 		}
+		// site revision
+		if( is_file( DIR_SITE . '.svn/entries' ) ) {
+			$svn = file( DIR_SITE . '.svn/entries' );
+			$svnVer[] = trim( $svn[3] );
+		}
+
 		$_array = $svnVer;
 		if( $asArray ) {
 			return $svnVer;

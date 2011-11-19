@@ -16,7 +16,7 @@ class Stats {
 		// stats/difra
 		$difraNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'difra' ) );
 		$ver = \Difra\Site::getInstance()->getBuild( true );
-		$difraNode->setAttribute( 'version', $ver[1] );
+		$difraNode->setAttribute( 'version', $ver[0] );
 
 		// stats/plugins
 		$difraNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
