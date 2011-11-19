@@ -24,7 +24,7 @@ class Cache
 	 * existing one.
 	 *
 	 * @param string $configName
-	 * @return Zend_Cache_Core
+	 * @return \Difra\Cache\Common
 	 */
 	public static function getInstance( $configName = self::INST_DEFAULT )
 	{
