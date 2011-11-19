@@ -87,6 +87,21 @@ class Plugger {
 			}
 		}
 	}
+
+	public function getDisabled() {
+
+		static $_disabled = null;
+		if( is_null( $_disabled ) ) {
+			$disabled = array();
+			foreach( $this->allPlugins as $name ) {
+				if( !isset( $this->plugins[$name] ) ) {
+					$disabled[] = array();
+				}
+			}
+			$_disabled = $disabled;
+		}
+		return $_disabled;
+	}
 	
 	public function getPath() {
 

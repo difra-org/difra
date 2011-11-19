@@ -6,6 +6,8 @@ body {
 	margin:		105px 10px 10px 303px;
 }
 
+/* menu */
+
 #menu {
 	position:	fixed;
 	width:		263px;
@@ -37,6 +39,8 @@ body {
 	font-weight:	bold;
 }
 
+/* common elements */
+
 a {
 	color:		#0b4388;
 }
@@ -60,6 +64,30 @@ h3 {
 h4 {
 	text-indent:	10px;
 }
+
+/* 2 columns table */
+
+table.twoColumns {
+	width: 100%;
+}
+
+table.twoColumns > tr,
+table.twoColumns > tbody > tr {
+	vertical-align: top;
+}
+
+table.twoColumns > tr > td,
+table.twoColumns > tbody > tr > td {
+	width: 50%;
+}
+
+table.twoColumns th {
+	text-align: left;
+	vertical-align: top;
+	white-space: nowrap;
+}
+
+/* forms */
 
 .input_container {
 	padding:        4px 0px 0px 0px;
