@@ -1,71 +1,82 @@
 /* Admin panel styles */
 
 body {
-	font-family:	arial;
-	font-size:	13px;
-	margin:		105px 10px 10px 303px;
+	font-family: Arial, Helvetica, Garuda, sans-serif;
+	font-size:   13px;
+	margin:      105px 10px 10px 303px;
 }
 
-/* menu */
+/* #menu */
 
 #menu {
-	position:	fixed;
-	width:		263px;
-	left:		20px;
-	top:		105px;
-	bottom:		20px;
-	overflow:	auto;
+	position: fixed;
+	width:    263px;
+	left:     20px;
+	top:      105px;
+	bottom:   20px;
+	overflow: auto;
 }
+
 #menu ul {
-	margin:		0px 0px 0px 0px;
-	padding:	8px 0px 0px 0px;
+	margin:  0 0 0 0;
+	padding: 8px 0 0 0;
 }
+
 #menu > ul {
-	padding:	0px;
-	margin:		0px;
+	padding: 0;
+	margin:  0;
 }
+
 #menu ul li {
-	margin:		0px 0px 0px 16px;
-	display:	block;
-	line-height:	20px;
-	font-weight:	normal;
+	margin:      0 0 0 16px;
+	display:     block;
+	line-height: 20px;
+	font-weight: normal;
 }
+
 #menu > ul > li {
-	background-color:#cce8ef;
-	padding:	12px;
-	margin:		0px 0px 12px 0px;
-	border-radius:	5px;
-	display:	block;
-	font-weight:	bold;
+	background-color: #cce8ef;
+	padding:          12px;
+	margin:           0 0 12px 0;
+	border-radius:    5px;
+	display:          block;
+	font-weight:      bold;
 }
 
 /* common elements */
 
 a {
-	color:		#0b4388;
+	color: #0b4388;
 }
 
 h2 {
-	font-weight:	normal;
-	margin:		0px 0px 10px 0px;
+	font-weight: normal;
+	margin:      0 0 10px 0;
 }
 
 h3 {
-	background:	#f9f9f9;
-	border-top:	1px solid #dcdcdc;
-	border-bottom:	1px solid #dcdcdc;
-	width:		100%;
-	text-indent:	10px;
-	padding:	6px 0px;
-	margin:		20px 0px 10px 0px;
-	font-weight:	normal;
+	background:    #f9f9f9;
+	border-top:    1px solid #dcdcdc;
+	border-bottom: 1px solid #dcdcdc;
+	width:         100%;
+	text-indent:   10px;
+	padding:       6px 0;
+	margin:        20px 0 10px 0;
+	font-weight:   normal;
 }
 
 h4 {
-	text-indent:	10px;
+	text-indent: 10px;
 }
 
-/* 2 columns table */
+th {
+	text-align:     left;
+	vertical-align: top;
+	white-space:    nowrap;
+	font-weight:    normal;
+}
+
+/* twoColumns */
 
 table.twoColumns {
 	width: 100%;
@@ -81,86 +92,91 @@ table.twoColumns > tbody > tr > td {
 	width: 50%;
 }
 
-table.twoColumns th {
-	text-align: left;
-	vertical-align: top;
-	white-space: nowrap;
-}
-
 /* forms */
 
 .input_container {
-	padding:        4px 0px 0px 0px;
-	clear:		both;
+	padding: 4px 0 0 0;
+	clear:   both;
 }
+
 .input_label {
-	float:          left;
-	text-indent:    10px;
+	float:       left;
+	text-indent: 10px;
 }
+
 .input_field {
-	margin:		0px 0px 0px 200px;
+	margin: 0 0 0 200px;
 }
+
 .input_field input {
-	width:		198px;
-	margin-top:	-2px;
+	width:      198px;
+	margin-top: -2px;
 }
 
 .textarea_label {
-	text-indent:    10px;
-	padding:        4px 0px 0px 0px;
+	text-indent: 10px;
+	padding:     4px 0 0 0;
 }
+
 .textarea_field {
-	padding-left:	10px;
+	padding-left: 10px;
 }
+
 .textarea_field textarea {
-	height:		200px;
-	width:		392px;
+	height: 200px;
+	width:  392px;
 }
 
 .select_container {
-	padding:	8px 0px 0px 0px;
+	padding: 8px 0 0 0;
 }
+
 .select_label {
-	float:          left;
-	text-indent:    10px;
+	float:       left;
+	text-indent: 10px;
 }
+
 .select_field {
-        margin:         -2px 0px 0px 200px;
+	margin: -2px 0 0 200px;
 }
+
 .select_field select {
-	width:		204px;
+	width: 204px;
 }
 
 .checkbox_container {
-	clear:		both;
+	clear: both;
 }
+
 .checkbox_field {
-	float:		left;
-	padding:	0px;
-	text-indent:	6px;
+	float:       left;
+	padding:     0;
+	text-indent: 6px;
 }
+
 .checkbox_label {
-	padding:	2px 0px 0px 0px;
-	text-indent:	2px;
+	padding:     2px 0 0 0;
+	text-indent: 2px;
 }
 
 .submit_field {
-	clear:		both;
-	padding:	8px 0px 0px 7px;
+	clear:   both;
+	padding: 8px 0 0 7px;
 }
 
 table.layout {
-	padding:	0px;
-	margin:		0px;
-	border-collapse:collapse;
+	padding:         0;
+	margin:          0;
+	border-collapse: collapse;
 }
+
 table.layout tr td {
-	vertical-align:	top !important;
-	border:		1px solid #f9f9f9;
-	border-collapse:collapse;
-	padding-bottom:	10px;
+	vertical-align:  top !important;
+	border:          1px solid #f9f9f9;
+	border-collapse: collapse;
+	padding-bottom:  10px;
 }
 
 span.disabled {
-	color:		#e0e0e0;
+	color: #e0e0e0;
 }

@@ -24,6 +24,17 @@
 								</td>
 							</tr>
 						</xsl:if>
+						<tr>
+							<td colspan="2">
+								<h4>Кеширование</h4>
+							</td>
+						</tr>
+						<tr>
+							<td>Тип кеширования</td>
+							<td>
+								<xsl:value-of select="stats/cache/@type"/>
+							</td>
+						</tr>
 					</table>
 				</td>
 				<td>

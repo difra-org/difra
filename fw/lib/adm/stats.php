@@ -19,9 +19,17 @@ class Stats {
 		$difraNode->setAttribute( 'version', $ver[0] );
 
 		// stats/plugins
-		$difraNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
-		$difraNode->setAttribute( 'loaded', implode( ', ', \Difra\Plugger::getInstance()->getList() ) );
-		$difraNode->setAttribute( 'disabled', implode( ', ', \Difra\Plugger::getInstance()->getDisabled() ) );
+		$pluginsNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
+		$pluginsNode->setAttribute( 'loaded', implode( ', ', \Difra\Plugger::getInstance()->getList() ) );
+		$pluginsNode->setAttribute( 'disabled', implode( ', ', \Difra\Plugger::getInstance()->getDisabled() ) );
+
+		// stats/cache
+		$cacheNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'cache' ) );
+		$cacheNode->setAttribute( 'type', \Difra\Cache::getInstance()->adapter );
+
+		// stats/mysql
+		$mysqlNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'mysql' ) );
+		$mysqlNode->setAttribute( 'uptodate', \Difra\MySQL\Updater::getInstance()->check() ? '0' : '1' );
 
 		// stats/system
 		$systemNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'system' ) );
@@ -34,18 +42,7 @@ class Stats {
 		$extensionsOk = array();
 		$extensionsExtra = array();
 		$extensionsRequired = array(
-			'dom',
-			'SimpleXML',
-			'xsl',
-			'zlib',
-			'ctype',
-			'json',
-			'mbstring',
-			'Reflection',
-			'Phar',
-			'gd',
-			'imagick',
-			'mysqli'
+			'dom', 'SimpleXML', 'xsl', 'zlib', 'ctype', 'json', 'mbstring', 'Reflection', 'Phar', 'gd', 'imagick', 'mysqli'
 		);
 		foreach( $extensions as $extension ) {
 			if( in_array( $extension, $extensionsRequired ) ) {
@@ -55,6 +52,9 @@ class Stats {
 				$extensionsExtra[] = $extension;
 			}
 		}
+		natcasesort( $extensionsOk );
+		natcasesort( $extensionsRequired );
+		natcasesort( $extensionsExtra );
 		$extensionsNode->setAttribute( 'ok', implode( ', ', $extensionsOk ) );
 		$extensionsNode->setAttribute( 'required', implode( ', ', $extensionsRequired ) );
 		$extensionsNode->setAttribute( 'extra', implode( ', ', $extensionsExtra ) );
