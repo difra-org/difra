@@ -28,29 +28,10 @@ class Updater {
 		return $this->parseDump( implode( "\n", $tables ) );
 	}
 
-	/*
-	private function collectCurrent() {
-
-		$db = \Difra\MySQL::getInstance();
-		$list = $db->fetch( 'SHOW TABLES' );
-		$tables = array();
-		foreach( $list as $table ) {
-			$t = $db->fetchRow( 'SHOW CREATE TABLE `' . array_pop( $table ) . '`' );
-			$tables[] = array_pop( $t );
-		}
-		return $this->parseDump( $tables );
-	}
-
-	private function compare( $dump ) {
-
-		return false;
-	}
-	*/
-
 	private function parseDump( $dump ) {
 
 		$fragments = $this->chop( $dump );
-//		var_dump( $fragments );
+		$queries = $this->getQueries( $fragments );
 	}
 
 	private function chop( $text, $recursive = false ) {
@@ -58,19 +39,19 @@ class Updater {
 		$shards = array();
 		$next = '';
 		$i = 0;
-		$size = strlen( $text );
+		$size = mb_strlen( $text );
 		$comm = $linecomm = false;
 		$str = '';
 		while( $i < $size ) {
-			$a = $text{$i};
-			$a1 = ( $i < $size - 1 ) ? $text{$i+1} : '';
+			$a = mb_substr( $text, $i, 1 );
+			$a1 = ( $i < $size - 1 ) ? mb_substr( $text, $i + 1, 1 ) : '';
 			$i++;
 
 			/* Строки */
 			// проверка на конец строки
 			if( $str !== '' ) {
 				$str .= $a;
-				if( $str{0} == $a and substr( $str, -1 ) != '\\' ) {
+				if( mb_substr( $str, 0, 1 ) == $a and mb_substr( $str, -1 ) != '\\' ) {
 					$shards[] = $str;
 					$str = '';
 				}
@@ -114,7 +95,7 @@ class Updater {
 				continue;
 			}
 			// проверка на начало строкового комментария ('-- comment')
-			if( $a == '-' and $a1 == '-' and $this->isSpace( $text{$i+1} ) ) {
+			if( $a == '-' and $a1 == '-' and $this->isSpace( mb_substr( $text, $i + 1, 1 ) ) ) {
 				if( $next !== '' ) {
 					$shards[] = $next;
 					$next = '';
@@ -138,7 +119,7 @@ class Updater {
 					$shards[] = $next;
 					$next = '';
 				}
-				$res = $this->chop( substr( $text, $i ), true );
+				$res = $this->chop( mb_substr( $text, $i ), true );
 				$shards[] = $res['data'];
 				$i += $res['parsed'];
 				continue;
@@ -152,7 +133,7 @@ class Updater {
 				return array( 'data' => $shards, 'parsed' => $i );
 			}
 
-			if( $a == ',' or $a == ';' ) {
+			if( $a == ',' or $a == ';' or $a == '=' ) {
 				if( $next !== '' ) {
 					$shards[] = $next;
 					$next = '';
@@ -186,5 +167,29 @@ class Updater {
 			return true;
 		}
 		return false;
+	}
+
+	private function getQueries( $fragments ) {
+
+		$size = sizeof( $fragments );
+		$i = 0;
+		$next = array();
+		$queries = array();
+		while( $i < $size ) {
+			$a = $fragments[$i];
+			$i++;
+			if( $a == ';' ) {
+				if( !empty( $next ) ) {
+					$queries[] = \Difra\MySQL\Query::factory( $next );
+					$next = array();
+				}
+				continue;
+			}
+			$next[] = $a;
+		}
+		if( !empty( $next ) ) {
+			$queries[] = \Difra\MySQL\Query::factory( $next );
+		}
+		return $queries;
 	}
 }
