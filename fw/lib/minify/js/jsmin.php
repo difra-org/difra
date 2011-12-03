@@ -175,6 +175,7 @@ class JSMin {
 	/**
 	 * Is $c a letter, digit, underscore, dollar sign, or non-ASCII character.
 	 *
+	 * @param $c
 	 * @return bool
 	 */
 	protected function isAlphaNum( $c ) {

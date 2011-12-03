@@ -12,9 +12,17 @@ abstract class Plugin {
 		return $_self ? $_self : $_self = new self;
 	}
 
-	public function __construct() {
+	final function __construct() {
+		
 		$this->class = get_class( $this );
 	}
+
+	public function getRequirements() {
+
+		return property_exists( $this, 'require' ) ? $this->require : null;
+	}
+
+	abstract public function init();
 
 	/*
 	public function dispatch() {

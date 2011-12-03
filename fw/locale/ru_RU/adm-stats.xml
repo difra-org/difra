@@ -1,0 +1,10 @@
+<locale>
+	<adm>
+		<stats>
+			<server>
+				<webserver>Веб-сервер</webserver>
+				<phpversion>Версия PHP</phpversion>
+			</server>
+		</stats>
+	</adm>
+</locale>

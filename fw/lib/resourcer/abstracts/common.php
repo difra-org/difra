@@ -212,10 +212,11 @@ abstract class Common {
 				 DIR_SITE . "{$this->type}/{$instance}",
 				 DIR_SITE . "{$this->type}/all",
 				 );
-		if( !empty( $plugger->plugins ) ) {
-			foreach( $plugger->plugins as $dir => $plugin ) {
-				$parents[] = "{$plugger->path}/{$dir}/{$this->type}/{$instance}";
-				$parents[] = "{$plugger->path}/{$dir}/{$this->type}/all";
+		$paths = $plugger->getPaths();
+		if( !empty( $paths ) ) {
+			foreach( $paths as $dir ) {
+				$parents[] = "{$dir}/{$this->type}/{$instance}";
+				$parents[] = "{$dir}/{$this->type}/all";
 			}
 		}
 		
@@ -250,7 +251,7 @@ abstract class Common {
 	public function processDirs( $instance ) {
 		
 		if( empty( $this->resources[$instance]['dirs'] ) ) {
-			return false;
+			return;
 		}
 		foreach( $this->resources[$instance]['dirs'] as $dir ) {
 			if( !is_dir( $dir ) ) {

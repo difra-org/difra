@@ -4,6 +4,9 @@ namespace Difra;
 
 class Site {
 
+	const VERSION = '2.0';
+	const BUILD = '$Rev$';
+
 	const PATH_PART = '/../../sites/';
 
 	// libs
@@ -104,10 +107,14 @@ class Site {
 		$this->_stripSlashes();
 	}
 
+	/**
+	 * Убирает слеши из $_GET, $_POST, $_COOKIE, $_REQUEST, если включены magic quotes
+	 * @return
+	 */
 	private function _stripSlashes() {
 
 		if( get_magic_quotes_gpc() !== 1 ) {
-			return false;
+			return;
 		}
 		$_GET = json_decode( stripslashes( json_encode( $_GET, JSON_HEX_APOS ) ), true );
 		$_POST = json_decode( stripslashes( json_encode( $_POST, JSON_HEX_APOS ) ), true );
@@ -183,26 +190,32 @@ class Site {
 
 		return $this->host;
 	}
-	
-	public function getBuild() {
+
+	public function getBuild( $asArray = false ) {
 	
 		static $_build = null;
-		if( !is_null( $_build ) ) {
+		static $_array = null;
+
+		if( !$asArray and !is_null( $_build ) ) {
 			return $_build;
+		} elseif( $asArray and !is_null( $_array ) ) {
+			return $_array;
 		}
 		
-		// try svn versions
+		// fw version and build
 		$svnVer = array();
-		if( is_file( DIR_SITE . '.svn/entries' ) ) {
-			$svn = file( DIR_SITE . '.svn/entries' );
-			$svnVer[] = trim( $svn[3] );
-		}
 		if( is_file( DIR_FW . '.svn/entries' ) ) {
 			$svn = file( DIR_FW . '.svn/entries' );
-			$svnVer[] = trim( $svn[3] );
+			$svnVer[] = self::VERSION . '.' . trim( $svn[3] );
+		} elseif( preg_match( '/\d+/', self::BUILD, $match ) ) {
+			$svnVer[] = self::VERSION . '.' . $match[0];
+		} else {
+			$svnVer[] = self::VERSION;
 		}
+		// plugins builds summary
+		$list = Plugger::getInstance()->getList();
 		$plugVer = 0;
-		foreach( Plugger::getInstance()->plugins as $name=>$val ) {
+		foreach( $list as $name ) {
 			if( is_file( DIR_PLUGINS . "$name/.svn/entries" ) ) {
 				$svn = file( DIR_PLUGINS . "$name/.svn/entries" );
 				$plugVer += trim( $svn[3] );
@@ -211,14 +224,17 @@ class Site {
 		if( $plugVer ) {
 			$svnVer[] = $plugVer;
 		}
-		if( !empty( $svnVer ) ) {
-			return $_build = implode( '.', $svnVer );
+		// site revision
+		if( is_file( DIR_SITE . '.svn/entries' ) ) {
+			$svn = file( DIR_SITE . '.svn/entries' );
+			$svnVer[] = trim( $svn[3] );
 		}
 
-		// at least something
-		$ver = '$Rev$';
-		if( preg_match( '/\d+/', $ver, $match ) ) {
-			return $_build = $match[0];
+		$_array = $svnVer;
+		if( $asArray ) {
+			return $svnVer;
+		} elseif( !empty( $svnVer ) ) {
+			return $_build = implode( '.', $svnVer );
 		}
 
 		return $_build = '-';
