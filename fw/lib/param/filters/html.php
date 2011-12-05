@@ -10,9 +10,14 @@ namespace Difra\Param\Filters;
 class HTML {
 
 	// allowed tags
-	protected $tagsArray = array( 'a', 'div', 'em', 'li', 'ol', 'p', 'pre', 'span', 'strike', 'u', 'ul', 'img' );
+	protected $tagsArray = array( 'a', 'div', 'em', 'li', 'ol', 'p', 'pre', 'span', 'strike', 'u', 'ul', 'img', 'strong' );
 	// allowed attributes
-	protected $attrArray = array( 'href', 'src' );
+	protected $attrArray = array( 'href', 'src', 'style' );
+	// allowed styles
+	protected $styleArray = array(
+			'font-weight' => array( 'bold', 'bolder' ),
+			'text-align' => array( 'left', 'center', 'right' ),
+			'color' => 'all' );
 
 	protected $tagsMethod; // default = 0
 	protected $attrMethod; // default = 0
@@ -256,10 +261,20 @@ class HTML {
 				// strip slashes
 				$attrSubSet[1] = stripslashes( $attrSubSet[1] );
 			}
+
 			// auto strip attr's with "javascript:
-			if( ( ( mb_strpos( strtolower( $attrSubSet[1] ), 'expression' ) !== false ) && ( mb_strtolower( $attrSubSet[0] ) == 'style' ) ) || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'javascript:' ) !== false ) || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'behaviour:' ) !== false ) || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'vbscript:' ) !== false ) || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'mocha:' ) !== false ) || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'livescript:' ) !== false )
+			if( ( ( mb_strpos( strtolower( $attrSubSet[1] ), 'expression' ) !== false ) && ( mb_strtolower( $attrSubSet[0] ) == 'style' ) )
+			    || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'javascript:' ) !== false )
+			    || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'behaviour:' ) !== false )
+			    || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'vbscript:' ) !== false )
+			    || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'mocha:' ) !== false )
+			    || ( mb_strpos( mb_strtolower( $attrSubSet[1] ), 'livescript:' ) !== false )
 			) {
 				continue;
+			}
+
+			if( $attrSubSet[0] == 'style' ) {
+				$attrSubSet[1] = $this->filterStyle( $attrSubSet[1] );
 			}
 
 			// if matches user defined array
@@ -297,6 +312,42 @@ class HTML {
 		// convert hex
 		$source = preg_replace( '/&#x([a-f0-9]+);/mei', "chr(0x\\1)", $source ); // hex notation
 		return $source;
+	}
+
+	/**
+	 * дуже проста обрізання стилей от pnd
+	 * @param $attr
+	 * @return void
+	 */
+	protected function filterStyle( $attr ) {
+
+		$returnStyle = '';
+		$stylesSet = explode( ';', $attr );
+		$stylesSet = array_map( 'trim', $stylesSet );
+		foreach(
+			$stylesSet as $value
+		) {
+			$styleElements = explode( ':', $value );
+
+			if( isset( $styleElements[0] ) && isset( $styleElements[1] ) && $styleElements[1] != '' ) {
+
+				// проверяем элемент
+				if( array_key_exists( $styleElements[0], $this->styleArray ) ) {
+
+					// проверяем значение
+					if( is_array( $this->styleArray[$styleElements[0]] ) ) {
+
+						if( in_array( $styleElements[1], $this->styleArray[$styleElements[0]] ) ) {
+							$returnStyle .= $styleElements[0] . ': ' . $styleElements[1] . '; ';
+						}
+						
+					} elseif( $this->styleArray[$styleElements[0]] == 'all' ) {
+						$returnStyle .= $styleElements[0] . ': ' . $styleElements[1] . '; ';
+					}
+				}
+			}
+		}
+		return $returnStyle;
 	}
 }
 
