@@ -84,6 +84,21 @@ class Additionals {
 		}
 	}
 
+	// сохраняет все дополнительные поля, без ограничений конфига
+	public static function saveAllAdditionals( $module, $id, $data ) {
+
+		$db = MySQL::getInstance();
+		$query = array();
+		$db->query( "DELETE FROM `{$module}_fields` WHERE `id`='" . intval( $id ) . "'" );
+		foreach( $data as $key=>$value ) {
+			$query[] = "REPLACE INTO `{$module}_fields` (`id`, `name`, `value`) VALUES ( '" . intval( $id ) . "',
+			 		'" . $db->escape( $key ) . "', '" . $db->escape( $value ) . "')";
+		}
+		if( !empty( $query ) ) {
+			$db->query( $query );
+		}
+	}
+
 	/**
 	 * Additionals::getAdditionals()
 	 * @desc Возвращает массив с дополнительными полями
