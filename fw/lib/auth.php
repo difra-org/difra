@@ -7,6 +7,7 @@ class Auth {
 	public $logged = false;
 	public $id = null;
 	public $data = null;
+	public $moderator = false;
 	public $additionals = null;
 
 	static public function getInstance() {
@@ -30,6 +31,7 @@ class Auth {
 			$subNode = $authNode->appendChild( $node->ownerDocument->createElement( 'authorized' ) );
 			$subNode->setAttribute( 'id', $this->id );
 			$subNode->setAttribute( 'userid', $this->getId() );
+			$subNode->setAttribute( 'moderator', $this->moderator );
 			if( !empty( $this->additionals ) ) {
 				foreach( $this->additionals as $k => $v ) {
 					$subNode->setAttribute( $k, $v );
@@ -88,6 +90,7 @@ class Auth {
 		$this->id   = $_SESSION['auth']['id'];
 		$this->data = $_SESSION['auth']['data'];
 		$this->additionals = $_SESSION['auth']['additionals'];
+		$this->moderator = ( $_SESSION['auth']['data']['moderator'] == 1 ) ? true : false;
 		return $this->logged = true;
 	}
 
@@ -123,6 +126,10 @@ class Auth {
 
 	public function getAdditionals() {
 		return $this->additionals;
+	}
+
+	public function isModerator() {
+		return $this->moderator;
 	}
 
 }
