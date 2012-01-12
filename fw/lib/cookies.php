@@ -90,7 +90,7 @@ class Cookies {
 	 * @return boolean
 	 */
 	public function remove( $name ) {
-		return setcookie( $name, '', time() - 108000, $this->path );
+		return setrawcookie( $name, '', time() - 108000, $this->path, $this->domain );
 	}
 
 	public function notify( $message, $error = false ) {
