@@ -4,6 +4,13 @@ namespace Difra;
 
 class Resourcer {
 
+	/**
+	 * @static
+	 * @param $type
+	 * @param bool $quiet
+	 * @return Resourcer\CSS|Resourcer\JS|Resourcer\XSLT|Resourcer\Menu|Resourcer\Locale
+	 * @throws exception
+	 */
 	static public function getInstance( $type, $quiet = false ) {
 
 		// TODO: перевести все классы на неймспейсы

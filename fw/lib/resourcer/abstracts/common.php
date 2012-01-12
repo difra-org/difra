@@ -271,8 +271,11 @@ abstract class Common {
 							 'files' => array()
 							 );
 					if( isset( $this->resources[$instance]['specials'][$special['name']] ) ) {
-						if( $this->resources[$instance]['specials'][$special['name']]['version'] >= $special['version'] ) {
+						if( $this->resources[$instance]['specials'][$special['name']]['version'] >
+						    $special['version'] ) {
 							continue;
+						} else {
+							unset( $this->resources[$instance]['specials'][$special['name']] );
 						}
 					}
 					$specHandler = opendir( $entry );

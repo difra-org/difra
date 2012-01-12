@@ -78,6 +78,19 @@ class View {
 		if( !$xslDom->loadXML( Resourcer::getInstance( 'xslt' )->compile( $instance ) ) ) {
 			throw new exception( "XSLT loader problem." );
 		}
+		if( $errorPage ) {
+			$hasTemplate = false;
+			$li = $xslDom->documentElement->childNodes;
+			foreach( $li as $el ) {
+				if( $el->nodeName == 'xsl:template' ) {
+					$hasTemplate = true;
+					break;
+				}
+			}
+			if( !$hasTemplate ) {
+				throw new Exception( 'Error page template not found' );
+			}
+		}
 		$xslProc = new \XsltProcessor();
 		$xslProc->resolveExternals = true;
 		$xslProc->substituteEntities = true;
