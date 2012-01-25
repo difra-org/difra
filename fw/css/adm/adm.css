@@ -55,14 +55,13 @@ h2 {
 }
 
 h3 {
-	background:    #f9f9f9;
-	border-top:    1px solid #dcdcdc;
-	border-bottom: 1px solid #dcdcdc;
+	border-bottom: 2px solid #e8e8e8;
 	width:         100%;
-	text-indent:   10px;
+	text-indent:   3px;
 	padding:       6px 0;
 	margin:        20px 0 10px 0;
 	font-weight:   normal;
+	font-size: 14px;
 }
 
 h4 {
