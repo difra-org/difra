@@ -39,6 +39,7 @@ ajaxer.sendForm = function( form, event ) {
 	$( form ).find( '.required' ).fadeOut( 'fast' );
 	$( form ).find( '.invalid' ).fadeOut( 'fast' );
 	$( form ).find( '.status' ).fadeOut( 'fast' );
+	$( form ).find( '.problem' ).removeClass( 'problem' );
 	ajaxer.process( this.httpRequest( $( form ).attr( 'action' ), data ), form );
 };
 
@@ -122,7 +123,32 @@ ajaxer.error = function( lang, message ) {
 
 ajaxer.require = function( form, name ) {
 
-	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.required' ).fadeIn();
+	var el = $( form ).find( '[name=' + name + ']' );
+	if( !el ) {
+		ajaxer.error( {}, 'Field "' + name + '" is required.' );
+		return;
+	}
+	var container = el.closest( '.container' );
+	if( !container.length ) {
+		var cke = $( form ).find( '#cke_' + name );
+		if( cke.length ) {
+			cke.addClass( 'problem' );
+		} else {
+			el.addClass( 'problem' );
+		}
+		return;
+	}
+	var req = container.find( '.required' );
+	if( !req ) {
+		cke = $( form ).find( '#cke_' + name );
+		if( cke.length ) {
+			cke.addClass( 'problem' );
+		} else {
+			container.addClass( 'problem' );
+		}
+		return;
+	}
+	req.fadeIn();
 };
 
 ajaxer.invalid = function( form, name, message ) {
