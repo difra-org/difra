@@ -21,6 +21,7 @@ class Additionals {
 	const FIELD_OK = 'field_ok';
 	const FIELD_EMPTY = 'field_empty';
 	const FIELD_DUPE = 'field_dupe';
+	const FIELD_BAD = 'field_bad';
 	public static function getStatus( $module, $data ) {
 
 		$err = array();
@@ -56,6 +57,9 @@ class Additionals {
 							       . "' AND `value`='" . $db->escape( trim( $data[$field] ) ) . "'" );
 					if( $used ) {
 						$res = static::FIELD_DUPE;
+					}
+					if( !preg_match( '/^[a-z0-9-_а-я]+$/iu', trim( $data[$field] ) ) ) {
+						$res = static::FIELD_BAD;
 					}
 					break;
 				case 'normal':
