@@ -109,3 +109,7 @@ table th:last-child {
 	border-top-right-radius: 8px;
 	border-bottom-right-radius: 8px;
 }
+form table th {
+	background-color: transparent;
+	font-weight: normal;
+}
