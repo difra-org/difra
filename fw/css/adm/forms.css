@@ -10,7 +10,7 @@ input.problem,
 textarea.problem,
 .cke_editor_body.problem {
 	border-color: #fb7a53;
-	background: #fffcfd;
+	background:   #fffcfd;
 }
 
 input[type="submit"],
@@ -32,7 +32,7 @@ input[type="button"],
 	font-size:        13px;
 	font-family:      arial;
 	box-shadow:       0 1px 3px rgba(0, 0, 0, 0.25);
-	margin:           8px 0;
+	margin:           8px 4px 8px 0;
 	text-shadow:      -1px 0 3px rgba(0, 0, 0, 0.25);
 	text-decoration:  none;
 	text-align:       center;
@@ -44,7 +44,8 @@ input[type="button"],
 }
 
 .button {
-	line-height: 24px;
+	line-height: 22px;
+	height:      22px;
 }
 
 form table {
@@ -52,10 +53,36 @@ form table {
 }
 
 form table tr td:last-child {
-	width: 95%;
+	width:   95%;
 	padding: 0 0 0 10px;
 }
 
 form table tr td:last-child input {
 	width: 100%;
+}
+
+.action {
+	display:          inline-block;
+	border:           1px solid #c3c3c3;
+	border-radius:    5px;
+	background-image: linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(249, 249, 249) 100%);
+	background-image: -o-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
+	background-image: -moz-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
+	background-image: -webkit-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(249, 249, 249) 100%);
+	background-image: -ms-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
+	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(214, 214, 214)), color-stop(1, rgb(249, 249, 249)));
+	color:            #000;
+	font-size:        13px;
+	font-family:      arial;
+	box-shadow:       0 1px 3px rgba(0, 0, 0, 0.25);
+	margin:           0 -8px 0 0;
+	text-decoration:  none;
+	text-align:       center;
+	padding:          0 5px;
+	cursor:           default;
+	font-style:       normal;
+	font-variant:     normal;
+	font-weight:      normal;
+	line-height:      18px;
+	height:           16px;
 }
