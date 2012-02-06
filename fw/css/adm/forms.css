@@ -78,11 +78,34 @@ form table tr td:last-child input {
 	margin:           0 -8px 0 0;
 	text-decoration:  none;
 	text-align:       center;
-	padding:          0 5px;
+	padding:          5px;
 	cursor:           default;
 	font-style:       normal;
 	font-variant:     normal;
 	font-weight:      normal;
-	line-height:      18px;
-	height:           16px;
+	line-height:      8px;
+	height:           8px;
+}
+
+table {
+	border-spacing: 0 4px;
+}
+table th,
+table td {
+	padding: 0 5px;
+}
+table th {
+	background-color: #e8e8e8;
+	color: #000;
+	font-weight: bold;
+	height: 29px;
+	line-height: 29px;
+}
+table th:first-child {
+	border-top-left-radius: 8px;
+	border-bottom-left-radius: 8px;
+}
+table th:last-child {
+	border-top-right-radius: 8px;
+	border-bottom-right-radius: 8px;
 }
