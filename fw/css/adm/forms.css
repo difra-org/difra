@@ -37,7 +37,7 @@ input[type="button"],
 	text-decoration:  none;
 	text-align:       center;
 	padding:          0 5px;
-	cursor:           default;
+	cursor:           pointer;
 	font-style:       normal;
 	font-variant:     normal;
 	font-weight:      normal;

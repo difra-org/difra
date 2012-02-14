@@ -3,7 +3,7 @@
 body {
 	font-family: Arial, Helvetica, Garuda, sans-serif;
 	font-size:   13px;
-	margin:      105px 10px 10px 303px;
+	margin:      105px 10px 10px 288px;
 }
 
 /* #menu */
@@ -11,7 +11,7 @@ body {
 #menu {
 	position: fixed;
 	width:    263px;
-	left:     20px;
+	left:     10px;
 	top:      105px;
 	bottom:   20px;
 	overflow: auto;
@@ -19,7 +19,7 @@ body {
 
 #menu ul {
 	margin:  0 0 0 0;
-	padding: 8px 0 0 0;
+	padding: 6px 0 0 0;
 }
 
 #menu > ul {
@@ -36,8 +36,8 @@ body {
 
 #menu > ul > li {
 	background-color: #cce8ef;
-	padding:          12px;
-	margin:           0 0 12px 0;
+	padding:          10px;
+	margin:           0 0 10px 0;
 	border-radius:    5px;
 	display:          block;
 	font-weight:      bold;
@@ -75,20 +75,20 @@ th {
 	font-weight:    normal;
 }
 
-/* twoColumns */
+/* summary */
 
-table.twoColumns {
+table.summary {
 	width: 100%;
 }
+table.summary th {
+	width: 25%;
+	background-color: transparent;
 
-table.twoColumns > tr,
-table.twoColumns > tbody > tr {
-	vertical-align: top;
 }
-
-table.twoColumns > tr > td,
-table.twoColumns > tbody > tr > td {
-	width: 50%;
+table.summary td {
+	line-height: 29px;
+	border-radius: 8px;
+	background-color: #E8E8E8;
 }
 
 /* forms */
