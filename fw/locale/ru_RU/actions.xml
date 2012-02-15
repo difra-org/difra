@@ -1,0 +1,10 @@
+<locale>
+	<adm>
+		<actions>
+			<edit>Редактировать</edit>
+			<delete>Удалить</delete>
+			<up>Вверх</up>
+			<down>Вниз</down>
+		</actions>
+	</adm>
+</locale>
