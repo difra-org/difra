@@ -197,6 +197,14 @@ class Ajax {
 	}
 
 	/**
+	 * Мягко обновить текущую страницу
+	 */
+	public function refresh() {
+
+		$this->redirect( $_SERVER['HTTP_REFERER'] );
+	}
+
+	/**
 	 * Перегрузить текущую страницу
 	 * @return void
 	 */
