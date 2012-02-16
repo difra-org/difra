@@ -79,7 +79,7 @@ form table tr td:last-child input {
 	text-decoration:  none;
 	text-align:       center;
 	padding:          5px;
-	cursor:           default;
+	cursor:           pointer;
 	font-style:       normal;
 	font-variant:     normal;
 	font-weight:      normal;
