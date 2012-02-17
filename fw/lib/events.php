@@ -16,6 +16,9 @@ class Events {
 		'action-find',
 		'action-run',
 
+		// диспатчеры
+		'dispatch',
+
 		// рендер
 		'render-init',
 		'render-run',

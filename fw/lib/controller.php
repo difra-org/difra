@@ -4,7 +4,7 @@ namespace Difra;
 
 abstract class Controller {
 
- 	protected $view = null;
+ 	public $view = null;
  	protected $action = null;
  	protected $locale = null;
  	protected $ajax = null;
