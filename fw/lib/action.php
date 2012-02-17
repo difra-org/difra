@@ -217,4 +217,9 @@ class Action {
 		}
 		return trim( $uri, '/' );
 	}
+
+	public function render() {
+
+		$this->controller->render();
+	}
 }

@@ -170,7 +170,7 @@ abstract class Controller {
 		}
 	}
 
-	final public function __destruct() {
+	final public function render() {
 
 		if( !empty( $this->action->parameters ) ) {
 			$this->view->httpError( 404 );

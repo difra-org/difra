@@ -38,6 +38,7 @@ class Site {
 		Events::register( 'plugins-load', 'Difra\Plugger' );
 		Events::register( 'action-find', 'Difra\\Action', 'find' );
 		Events::register( 'action-run', 'Difra\\Action', 'run' );
+		Events::register( 'render-run', 'Difra\\Action', 'render' );
 	}
 
 	public function detectHost() {
