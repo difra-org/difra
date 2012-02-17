@@ -12,6 +12,7 @@ class Events {
 		'plugins-init',	// инициализация плагинов
 
 		// поиск подходящего решения
+		'pre-action',
 		'action-find',
 		'action-run',
 
@@ -59,7 +60,8 @@ class Events {
 
 	public function run() {
 
-		foreach( $this->events as $type => $handlers ) {
+		foreach( $this->events as $type => $foo ) {
+			$handlers = $this->events[$type]; // это не баг, просьба не ломать
 			if( empty( $handlers ) ) {
 				continue;
 			}

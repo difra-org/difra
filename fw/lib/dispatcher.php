@@ -4,5 +4,5 @@ namespace Difra;
 
 interface Dispatcher {
 
-	function run( &$controller );
+	public function run( &$controller );
 }

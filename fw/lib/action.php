@@ -36,7 +36,10 @@ class Action {
 
 	public function find() {
 
-		$uri = $this->_getUri();
+		if( $this->className ) {
+			return false;
+		}
+		$uri = $this->getUri();
 		$cacheKey = 'action:uri:' . $uri;
 		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $cacheKey ) ) {
 			switch( $data['result'] ) {
@@ -206,7 +209,7 @@ class Action {
 		return true;
 	}
 
-	private function _getUri() {
+	public function getUri() {
 
 		$uri = $this->uri = $_SERVER['REQUEST_URI'];
 		if( false !== strpos( $uri, '?' ) ) {
