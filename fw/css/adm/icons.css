@@ -34,3 +34,8 @@
 .action.down {
 	background-position: -144px 3px, 0 0;
 }
+
+.action.disabled {
+	opacity: 0.5;
+	cursor: default;
+}
