@@ -1,6 +1,7 @@
 <locale>
 	<adm>
 		<actions>
+			<view>Просмотр</view>
 			<edit>Редактировать</edit>
 			<delete>Удалить</delete>
 			<up>Вверх</up>
