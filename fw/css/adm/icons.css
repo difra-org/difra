@@ -1,3 +1,4 @@
+.action.add,
 .action.edit,
 .action.delete,
 .action.up,
@@ -18,6 +19,10 @@
 	margin:      0 -5px 0 0;
 	overflow:    hidden;
 	text-indent: 20px;
+}
+
+.action.add {
+	background-position: -23px 3px, 0 0;
 }
 
 .action.edit {

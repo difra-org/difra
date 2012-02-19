@@ -6,6 +6,7 @@
 			<delete>Удалить</delete>
 			<up>Вверх</up>
 			<down>Вниз</down>
+			<add>Добавить</add>
 		</actions>
 	</adm>
 </locale>
