@@ -93,6 +93,7 @@ table.summary td {
 	line-height: 29px;
 	border-radius: 5px;
 	background-color: #E8E8E8;
+	border: 0;
 }
 
 /* forms */

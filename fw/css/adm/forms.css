@@ -3,7 +3,9 @@ input {
 	border-radius: 5px;
 	height:        22px;
 	line-height:   24px;
-	font-size:     14px;
+	font-size:     13px;
+	margin:  0 5px 0 -5px;
+	padding: 3px
 }
 
 input.problem,
@@ -73,6 +75,11 @@ table.form tr td:last-child {
 
 table.form tr td:last-child input {
 	width: 100%;
+}
+
+table.form .info {
+	border-radius:    5px;
+	background-color: #E8E8E8;
 }
 
 
