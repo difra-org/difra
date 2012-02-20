@@ -183,3 +183,29 @@ table.layout tr td {
 span.disabled {
 	color: #e0e0e0;
 }
+
+.moveUpHighlight td {
+	position: relative;
+}
+
+.moveUpHighlight td:first-child:before {
+	content:   '→';
+	position:  absolute;
+	top:       -10px;
+	left:      -12px;
+	font-size: 16px;
+	color:     #999999;
+}
+
+.moveDownHighlight td {
+	position: relative;
+}
+
+.moveDownHighlight td:first-child:before {
+	content:   '→';
+	position:  absolute;
+	bottom:    -11px;
+	left:      -12px;
+	font-size: 16px;
+	color:     #999999;
+}
