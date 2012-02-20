@@ -60,6 +60,7 @@ table.form {
 table.form th, table.form td,
 form table th, form table td {
 	padding: 0 5px;
+	border: 0;
 }
 
 table.form tr th,
