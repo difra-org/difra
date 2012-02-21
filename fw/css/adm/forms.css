@@ -4,8 +4,7 @@ input {
 	height:        22px;
 	line-height:   24px;
 	font-size:     13px;
-	margin:  0 5px 0 -5px;
-	padding: 3px
+	padding: 3px;
 }
 
 input.problem,
@@ -59,7 +58,7 @@ table.form {
 }
 
 table.form th, table.form td {
-	padding: 0 5px;
+	padding: 0 8px 0 0;
 	border: 0;
 }
 
@@ -67,21 +66,23 @@ table.form tr th {
 	width: 20%;
 	background-color: transparent;
 	font-weight:      normal;
+	padding: 0 6px;
 }
 
 table.form tr td:last-child {
-	width:   95%;
+	width:   100%;
 }
 
 table.form tr td:last-child input {
 	width: 100%;
 }
 
-table.form .info {
+table .info {
 	border-radius:    5px;
-	background-color: #E8E8E8;
+	background-color: #E6E6E6;
+	padding: 1px 5px !important;
+	line-height: 29px;
 }
-
 
 .action {
 	display:          inline-block;
@@ -136,5 +137,3 @@ table th:last-child {
 	border-top-right-radius: 4px;
 	border-bottom-right-radius: 4px;
 }
-
-
