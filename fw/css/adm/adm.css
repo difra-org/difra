@@ -75,8 +75,20 @@ th {
 	font-weight:    normal;
 }
 
-span.message {
+.message {
 	padding: 0 0 0 5px;
+}
+
+.note {
+	padding: 5px 0 0 0;
+}
+
+.small {
+	font-size: 11px;
+}
+
+.gray {
+	color: #aaaaaa;
 }
 
 /* summary */
