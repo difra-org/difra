@@ -87,8 +87,9 @@ th {
 	font-size: 11px;
 }
 
-.gray {
-	color: #aaaaaa;
+.gray,
+.gray a {
+	color: #aaaaaa !important;
 }
 
 /* summary */
