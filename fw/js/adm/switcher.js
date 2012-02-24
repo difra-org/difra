@@ -109,6 +109,9 @@ $( document ).ready( function() {
 
 $( 'a' ).live( 'click dblclick',
 	function( event ) {
+		if( $( this ).hasClass( 'ajaxer' ) ) {
+			return;
+		}
 		if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 11 ) == 'javascript:' ) {
 		} else if( $( this ).attr( 'href' ) == '#' ) {
 			event.preventDefault();

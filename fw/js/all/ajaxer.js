@@ -219,6 +219,11 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 	ajaxer.sendForm( this, event );
 } );
 
+$( 'a.ajaxer' ).live( 'click dblclick', function( e ) {
+	ajaxer.query( $( this ).attr( 'href' ) );
+	e.preventDefault();
+} );
+
 $( '.ajaxer input' ).live( 'keypress', function( e ) {
 	if( e.which == 13 ) {
 		$( this ).parents( 'form' ).submit();
