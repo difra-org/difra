@@ -69,8 +69,14 @@ table.form tr td:last-child {
 	width:   100%;
 }
 
-table.form tr td:last-child input {
+table.form tr td:last-child input[type="text"] {
 	width: 100%;
+}
+
+table.form label {
+	position: relative;
+	top:      -4px;
+	padding-right: 15px;
 }
 
 table .info {
