@@ -91,11 +91,15 @@ th {
 }
 
 .little_spacing {
-	margin-top: 5px !important;
+	margin-top: 6px !important;
 }
 
 .middle_spacing {
-	margin-top: 17px !important;
+	margin-top: 18px !important;
+}
+
+.large_spacing {
+	margin-top: 26px !important;
 }
 
 /* summary */
