@@ -75,14 +75,6 @@ th {
 	font-weight:    normal;
 }
 
-.message {
-	padding: 0 0 0 5px;
-}
-
-.note {
-	padding: 5px 0 0 0;
-}
-
 .small {
 	font-size: 11px;
 }
@@ -90,6 +82,20 @@ th {
 .gray,
 .gray a {
 	color: #aaaaaa !important;
+}
+
+/* spacing & indent */
+
+.message {
+	padding: 0 0 0 5px;
+}
+
+.little_spacing {
+	margin-top: 5px !important;
+}
+
+.middle_spacing {
+	margin-top: 17px !important;
 }
 
 /* summary */
