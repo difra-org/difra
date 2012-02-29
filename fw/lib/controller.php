@@ -152,7 +152,7 @@ abstract class Controller {
 				}
 				break;
 			case 'ajax':
-				if( $value = $this->ajax->getParam( $name ) ) {
+				if( !is_null( $value = $this->ajax->getParam( $name ) ) and $value != '' ) {
 					if( !call_user_func( array( "$class", "verify" ), $value ) ) {
 						$this->ajax->invalid( $name );
 						continue;
