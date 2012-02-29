@@ -19,6 +19,9 @@
 				<script type="text/javascript" src="/js/common/main.js"></script>
 			</head>
 			<body>
+				<h1>
+					<xsl:value-of select="$locale/index/welcome"/>
+				</h1>
 				<xsl:apply-templates select="*[not(@autorender=0)]"/>
 			</body>
 		</html>
