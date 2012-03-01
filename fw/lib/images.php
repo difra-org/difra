@@ -60,7 +60,7 @@ final class Images {
 	 * @param bool $tobig		should we scale image to bigger if needed
 	 * @return string
 	 */
-	public function scaleAndCrop( $data, $maxWidth, $maxHeight, $type, $tobig = false ) {
+	public function scaleAndCrop( $data, $maxWidth, $maxHeight, $type = 'png', $tobig = false ) {
 		$img = imagecreatefromstring( $data );
 		$sizeX = imagesx( $img );
 		$sizeY = imagesy( $img );

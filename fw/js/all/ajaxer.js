@@ -18,7 +18,7 @@ ajaxer.id = 1;
 ajaxer.httpRequest = function( url, params, headers ) {
 
 	var data = {};
-	if( typeof params == 'undefined' ) {
+	if( typeof params == 'undefined' || !params ) {
 		data.type = 'GET';
 	} else {
 		data.type = 'POST';
@@ -261,6 +261,12 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 		// iframe method
 		if( !$( '#ajaxerFrame' ).length ) {
 			var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none"></iframe>' );
+			var uuid = '';
+			for( var i = 0; i < 32; i++ ) {
+				uuid += Math.floor( Math.random() * 16 ).toString( 16 );
+			}
+			var originalAction = form.attr( 'action' );
+			form.attr( 'action', form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
 			$( 'body' ).append( frame );
 			form.attr( 'target', 'ajaxerFrame' );
 			form.append( '<input type="hidden" name="_method" value="iframe"/>' );
@@ -269,6 +275,12 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				$( 'body' ).append( loading = $( '<div id="loading"></div>' ) );
 			}
 			loading.fadeIn();
+			var interval = window.setInterval(
+				function() {
+					ajaxer.fetchProgress( uuid );
+				},
+				1000
+			);
 			frame.load( function() {
 				var rawframe = frame.get(0);
 				if( rawframe.contentDocument ) {
@@ -278,14 +290,36 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				} else if( rawframe.document ) {
 					val = rawframe.document.body.innerHTML;
 				}
+				form.attr( 'action', originalAction );
 				form.find( 'input[name=_method]' ).remove();
 				$( 'iframe#ajaxerFrame' ).remove();
-				loading.fadeOut();
+				loading.fadeOut( 'fast', function() {
+					loading.find( '#upprog' ).remove();
+					window.clearTimeout( interval );
+				} );
 				ajaxer.process( val, form );
 			} );
 		}
 	}
 } );
+
+ajaxer.fetchProgress = function( uuid ) {
+
+	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID': uuid } );
+	res = $.parseJSON( res ); // new Object({ 'state' : 'uploading', 'received' : 3486881, 'size' : 6971123 })
+	if( res.state == 'uploading' ) {
+		var progressbar = $( '#upprog' );
+		if( !progressbar.length ) {
+			$( '#loading' )
+				.css( 'background-image', 'none' )
+				.append( '<div id="upprog" class="auto-center"><div class="td1"/></div>' );
+			autocenter();
+			progressbar = $( '#upprog' );
+		}
+		progressbar.find( '.td1' )
+			.css( 'width', Math.ceil( ( progressbar.width() - 20 ) * res.received / res.size ) + 'px' );
+	}
+};
 
 $( 'a.ajaxer' ).live( 'click dblclick', function( e ) {
 	ajaxer.query( $( this ).attr( 'href' ) );
