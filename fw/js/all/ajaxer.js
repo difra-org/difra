@@ -217,9 +217,9 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 
 	var form = $( this );
 	var files = form.find( 'input[type=file]' );
+	$( document ).triggerHandler( 'form-submit' );
 	if( !files.length ) {
 		// serialize method
-		$( document ).triggerHandler( 'form-submit' );
 		event.preventDefault();
 		ajaxer.sendForm( this, event );
 	} else {

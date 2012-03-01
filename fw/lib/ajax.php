@@ -24,6 +24,9 @@ class Ajax {
 			$this->isIframe = true;
 			$this->parameters = $_POST;
 			unset( $this->parameters['method_'] );
+			foreach( $_FILES as $k => $file ) {
+				$this->parameters[$k] = $file;
+			}
 		}
 	}
 
