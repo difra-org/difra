@@ -229,6 +229,11 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 			$( 'body' ).append( frame );
 			form.attr( 'target', 'ajaxerFrame' );
 			form.append( '<input type="hidden" name="_method" value="iframe"/>' );
+			var loading = $( '#loading' );
+			if( !loading.length ) {
+				$( 'body' ).append( loading = $( '<div id="loading"></div>' ) );
+			}
+			loading.fadeIn();
 			frame.load( function() {
 				var rawframe = frame.get(0);
 				if( rawframe.contentDocument ) {
@@ -240,6 +245,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				}
 				form.find( 'input[name=_method]' ).remove();
 				$( 'iframe#ajaxerFrame' ).remove();
+				loading.fadeOut();
 				ajaxer.process( val );
 			} );
 		}
