@@ -17,7 +17,6 @@
 				<meta http-equiv="pragma" content="no-cache" />
 				<meta http-equiv="proxy" content="no-cache" />
 				<link href="/css/adm.css" rel="stylesheet" type="text/css" />
-				<script type="text/javascript" src="/js/ck/ckeditor.js"/>
 				<script type="text/javascript" src="/js/adm.js"/>
 			</head>
 			<body>
