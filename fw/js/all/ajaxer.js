@@ -153,7 +153,35 @@ ajaxer.require = function( form, name ) {
 
 ajaxer.invalid = function( form, name, message ) {
 
-	$( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.invalid' ).fadeIn( 'fast' ).find( '.invalid-text' ).html( message );
+	var el = $( form ).find( '[name=' + name + ']' );
+	if( !el ) {
+		ajaxer.error( {}, 'Invalid value for field "' + name + '".' );
+		return;
+	}
+	var container = el.closest( '.container' );
+	if( !container.length ) {
+		var cke = $( form ).find( '#cke_' + name );
+		if( cke.length ) {
+			cke.addClass( 'problem' );
+		} else {
+			el.addClass( 'problem' );
+		}
+		return;
+	}
+	var req = container.find( '.invalid' );
+	if( !req ) {
+		cke = $( form ).find( '#cke_' + name );
+		if( cke.length ) {
+			cke.addClass( 'problem' );
+		} else {
+			container.addClass( 'problem' );
+		}
+		return;
+	}
+	if( message ) {
+		req.find( '.invalid-text' ).html( message );
+	}
+	req.fadeIn( 'fast' );
 };
 
 ajaxer.status = function( form, name, message, classname ) {
@@ -246,7 +274,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				form.find( 'input[name=_method]' ).remove();
 				$( 'iframe#ajaxerFrame' ).remove();
 				loading.fadeOut();
-				ajaxer.process( val );
+				ajaxer.process( val, form );
 			} );
 		}
 	}
