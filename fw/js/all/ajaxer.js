@@ -56,6 +56,7 @@ ajaxer.process = function( data, form ) {
 		if( !data1.actions ) {
 			throw "data error";
 		}
+		this.clean( form );
 		for( var key in data1.actions ) {
 			var action = data1.actions[key];
 			switch( action.action ) {
@@ -97,6 +98,11 @@ ajaxer.process = function( data, form ) {
 		this.notify( {close:'OK'}, 'Unknown error.' );
 		console.warn( 'Server returned:', data );
 	}
+};
+
+ajaxer.clean = function( form ) {
+
+	$( form ).find( '.problem' ).removeClass( 'problem' );
 };
 
 ajaxer.notify = function( lang, message ) {

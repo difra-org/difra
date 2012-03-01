@@ -24,8 +24,13 @@ class Ajax {
 			$this->isIframe = true;
 			$this->parameters = $_POST;
 			unset( $this->parameters['method_'] );
-			foreach( $_FILES as $k => $file ) {
-				$this->parameters[$k] = $file;
+			if( !empty( $_FILES ) ) {
+				foreach( $_FILES as $k => $file ) {
+					if( $file['error'] == UPLOAD_ERR_NO_FILE ) {
+						continue;
+					}
+					$this->parameters[$k] = $file;
+				}
 			}
 		}
 	}

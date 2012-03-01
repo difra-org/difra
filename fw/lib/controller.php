@@ -163,6 +163,8 @@ abstract class Controller {
 					$callParameters[$name] = new $class;
 				} elseif( !$parameter->isOptional() ) {
 					$this->ajax->required( $name );
+				} else {
+					$callParameters[$name] = null;
 				}
 			}
 		}
