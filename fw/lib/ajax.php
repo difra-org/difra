@@ -5,6 +5,7 @@ namespace Difra;
 class Ajax {
 
 	public $isAjax = false;
+	public $isIframe = false;
 	public $parameters = array();
 	public $response = array();
 	private $actions = array();
@@ -15,9 +16,14 @@ class Ajax {
 	 */
 	public function __construct() {
 
-		$this->isAjax = ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' );
-		if( $this->isAjax ) {
+		if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) {
+			$this->isAjax = true;
 			$this->parameters = $this->getRequest();
+		} elseif( isset( $_POST['_method'] ) and $_POST['_method'] == 'iframe' ) {
+			$this->isAjax = true;
+			$this->isIframe = true;
+			$this->parameters = $_POST;
+			unset( $this->parameters['method_'] );
 		}
 	}
 

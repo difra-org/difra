@@ -152,7 +152,8 @@ abstract class Controller {
 				}
 				break;
 			case 'ajax':
-				if( !is_null( $value = $this->ajax->getParam( $name ) ) and $value != '' ) {
+				$value = $this->ajax->getParam( $name );
+				if( !is_null( $value ) and $value !== '' ) {
 					if( !call_user_func( array( "$class", "verify" ), $value ) ) {
 						$this->ajax->invalid( $name );
 						continue;
@@ -186,7 +187,9 @@ abstract class Controller {
 			$this->xml->encoding = 'utf-8';
 			echo( rawurldecode( $this->xml->saveXML() ) );
 		} elseif( ! $this->view->rendered and $this->ajax->isAjax and $response = $this->ajax->getResponse() ) {
-			header( 'Content-type: text/javascript' );
+			if( !$this->ajax->isIframe ) {
+				header( 'Content-type: text/javascript' );
+			}
 			echo( $response );
 
 		} elseif( !$this->view->rendered ) {

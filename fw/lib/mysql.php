@@ -63,7 +63,7 @@ class MySQL {
 			$this->queries++;
 			Debugger::getInstance()->addLine( "MySQL: " . $qstring );
 			if( $err = $this->db->error ) {
-				throw new Exception( 'MySQL error: ' . $err );
+				throw new Exception( "MySQL error: [$err] on request [$qstring]" );
 			}
 		} else {
 			try {

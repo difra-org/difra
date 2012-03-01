@@ -214,9 +214,36 @@ var main = {};
 main.httpRequest = ajaxer.httpRequest;
 
 $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
-	$( document ).triggerHandler( 'form-submit' );
-	event.preventDefault();
-	ajaxer.sendForm( this, event );
+
+	var form = $( this );
+	var files = form.find( 'input[type=file]' );
+	if( !files.length ) {
+		// serialize method
+		$( document ).triggerHandler( 'form-submit' );
+		event.preventDefault();
+		ajaxer.sendForm( this, event );
+	} else {
+		// iframe method
+		if( !$( '#ajaxerFrame' ).length ) {
+			var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none"></iframe>' );
+			$( 'body' ).append( frame );
+			form.attr( 'target', 'ajaxerFrame' );
+			form.append( '<input type="hidden" name="_method" value="iframe"/>' );
+			frame.load( function() {
+				var rawframe = frame.get(0);
+				if( rawframe.contentDocument ) {
+					var val = rawframe.contentDocument.body.innerHTML;
+				} else if( rawframe.contentWindow ) {
+					val = rawframe.contentWindow.document.body.innerHTML;
+				} else if( rawframe.document ) {
+					val = rawframe.document.body.innerHTML;
+				}
+				form.find( 'input[name=_method]' ).remove();
+				$( 'iframe#ajaxerFrame' ).remove();
+				ajaxer.process( val );
+			} );
+		}
+	}
 } );
 
 $( 'a.ajaxer' ).live( 'click dblclick', function( e ) {
