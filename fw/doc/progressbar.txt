@@ -1,0 +1,14 @@
+Для поддержки progress bar'ов при сабмите форм с файлами нужно, чтобы в nginx был установлен модуль upload progress. В debian этого можно
+ достичь, установив пакет nginx-extras.
+
+В раздел «http» конфига нужно добавить:
+upload_progress uploads 1m;
+
+В nginx-конфиг сайта, в «location /bootstrap.php» нужно добавить:
+track_uploads   uploads 30s;
+
+Также в nginx-конфиг сайта нужно добавить новый локейшн:
+location ^~ /progress {
+	upload_progress_json_output;
+	report_uploads uploads;
+}
