@@ -106,7 +106,7 @@ ajaxer.notify = function( lang, message ) {
 			'<div class="overlay-inner" style="display:none">' +
 			'<div class="close-button" onclick="ajaxer.close(this)"></div>' +
 			'<p>' + message + '</p>' +
-			'<a href="#" onclick="ajaxer.close(this)" class="button">' + lang.close + '</a>' +
+			'<a href="#" onclick="ajaxer.close(this)" class="button">' + ( lang.close ? lang.close : 'OK' ) + '</a>' +
 			'</div>' +
 			'</div>' +
 			'</div>'
@@ -124,7 +124,7 @@ ajaxer.error = function( lang, message ) {
 ajaxer.require = function( form, name ) {
 
 	var el = $( form ).find( '[name=' + name + ']' );
-	if( !el ) {
+	if( !el.length || el.attr( 'type' ) == 'hidden' ) {
 		ajaxer.error( {}, 'Field "' + name + '" is required.' );
 		return;
 	}
@@ -139,7 +139,7 @@ ajaxer.require = function( form, name ) {
 		return;
 	}
 	var req = container.find( '.required' );
-	if( !req ) {
+	if( !req.length ) {
 		cke = $( form ).find( '#cke_' + name );
 		if( cke.length ) {
 			cke.addClass( 'problem' );
@@ -154,7 +154,7 @@ ajaxer.require = function( form, name ) {
 ajaxer.invalid = function( form, name, message ) {
 
 	var el = $( form ).find( '[name=' + name + ']' );
-	if( !el ) {
+	if( !el.length || el.attr( 'type' ) == 'hidden' ) {
 		ajaxer.error( {}, 'Invalid value for field "' + name + '".' );
 		return;
 	}
@@ -169,7 +169,7 @@ ajaxer.invalid = function( form, name, message ) {
 		return;
 	}
 	var req = container.find( '.invalid' );
-	if( !req ) {
+	if( !req.length ) {
 		cke = $( form ).find( '#cke_' + name );
 		if( cke.length ) {
 			cke.addClass( 'problem' );
