@@ -88,6 +88,7 @@ ajaxer.process = function( data, form ) {
 				break;
 			case 'reset':	// сделать форме reset
 				this.reset( form );
+				break;
 			default:
 				console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
 			}
