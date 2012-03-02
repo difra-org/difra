@@ -318,6 +318,9 @@ ajaxer.fetchProgress = function( uuid ) {
 		}
 		progressbar.find( '.td1' )
 			.css( 'width', Math.ceil( ( progressbar.width() - 20 ) * res.received / res.size ) + 'px' );
+	} else if( res.state == 'done' ) {
+		progressbar.find( 'td1' )
+			.css( 'width', Math.ceil( progressbar.width() - 20 ) + 'px' );
 	}
 };
 

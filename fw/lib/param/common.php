@@ -2,7 +2,11 @@
 
 namespace Difra\Param;
 
-class Common {
+abstract class Common {
+
+	const type = null;
+	const source = null;
+	const named = null;
 
 	protected $value = null;
 
@@ -56,7 +60,6 @@ class Common {
 		default:
 			return $this->value;
 		}
-		return $this->value;
 	}
 
 	public static function getSource() {
