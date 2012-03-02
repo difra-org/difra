@@ -36,7 +36,7 @@ abstract class XML extends Common {
 				}
 				$this->_mergeXML( $xml1->$name, $node );
 			} else {
-				$new = $xml1->addChild( $name, $node );
+				$new = $xml1->addChild( $name, trim( $node ) ? $node : '' );
 				foreach( $node->attributes() as $key => $value ) {
 					$new->addAttribute( $key, $value );
 				}
