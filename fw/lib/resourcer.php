@@ -13,7 +13,6 @@ class Resourcer {
 	 */
 	static public function getInstance( $type, $quiet = false ) {
 
-		// TODO: перевести все классы на неймспейсы
 		switch( $type ) {
 			case 'css':
 				return Resourcer\CSS::getInstance();
@@ -27,7 +26,7 @@ class Resourcer {
 				return Resourcer\Locale::getInstance();
 			default:
 				if( !$quiet ) {
-					throw new exception( "Resourcer does not support resource type '$type'" );
+					throw new Exception( "Resourcer does not support resource type '$type'" );
 				}
 		}
 	}

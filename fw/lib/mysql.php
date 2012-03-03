@@ -6,28 +6,33 @@ class MySQL {
 
 	private $config = null;
 	public $connected = false;
+	/**
+	 * @var \mysqli
+	 */
 	public $db = null;
 	public $queries = 0;
 
 	/**
 	 * Конструктор
-	 * @param bool $reset	Создать новое соединение с базой
+	 * @param bool $new	Создать новое соединение с базой
 	 */
-	public function __construct( $reset = false ) {
+	public function __construct( $new = false ) {
 
-		$this->config = Site::getInstance( $reset )->getDbConfig();
+		$this->config = Site::getInstance( $new )->getDbConfig();
 	}
 
 	/**
 	 * Синглтон
 	 * @static
-	 * @param bool $reset	Создать новое соединение с базой
+	 *
+	 * @param bool $new	Создать новое соединение с базой
+	 *
 	 * @return MySQL
 	 */
-	static public function getInstance( $reset = false ) {
+	static public function getInstance( $new = false ) {
 
 		static $_self = null;
-		return ( $_self and !$reset ) ? $_self : $_self = new self( $reset );
+		return ( $_self and !$new ) ? $_self : $_self = new self( $new );
 	}
 
 	/**
@@ -52,23 +57,25 @@ class MySQL {
 	/**
 	 * Сделать запрос в базу
 	 * @throws exception
-	 * @param string $qstring	SQL-запрос
+	 *
+	 * @param string|array $query	SQL-запрос
+	 *
 	 * @return void
 	 */
-	public function query( $qstring ) {
+	public function query( $query ) {
 
-		if( !is_array( $qstring ) ) {
+		if( !is_array( $query ) ) {
 			$this->connect();
-			$this->db->query( $qstring );
+			$this->db->query( $query );
 			$this->queries++;
-			Debugger::getInstance()->addLine( "MySQL: " . $qstring );
+			Debugger::getInstance()->addLine( "MySQL: " . $query );
 			if( $err = $this->db->error ) {
-				throw new Exception( "MySQL error: [$err] on request [$qstring]" );
+				throw new Exception( "MySQL error: [$err] on request [$query]" );
 			}
 		} else {
 			try {
 				$this->db->autocommit( false );
-				foreach( $qstring as $subQuery ) {
+				foreach( $query as $subQuery ) {
 					$this->query( $subQuery );
 				}
 				$this->db->autocommit( true );
@@ -83,8 +90,10 @@ class MySQL {
 	/**
 	 * Возвращает результат запроса
 	 * @throws exception
-	 * @param string $query	SQL-запрос
-	 * @param bool $replica	Позволить читать данные из реплики
+	 *
+	 * @param string $query          SQL-запрос
+	 * @param bool   $replica	Позволить читать данные из реплики
+	 *
 	 * @return array
 	 */
 	public function fetch( $query, $replica = false ) {
@@ -107,8 +116,10 @@ class MySQL {
 	/**
 	 * Возвращает результаты запроса в ассоциативном массиве id => row
 	 * @throws exception
-	 * @param string $query	SQL-запрос
-	 * @param bool $replica	Позволить читать данные из реплики
+	 *
+	 * @param string $query         SQL-запрос
+	 * @param bool   $replica	Позволить читать данные из реплики
+	 *
 	 * @return array
 	 */
 	public function fetchWithId( $query, $replica = false ) {
@@ -129,8 +140,10 @@ class MySQL {
 
 	/**
 	 * Возвращает одну строку результатов запроса
-	 * @param string $query	SQL-запрос
-	 * @param bool $replica	Позволить читать данные из реплики
+	 *
+	 * @param string $query          SQL-запрос
+	 * @param bool   $replica	Позволить читать данные из реплики
+	 *
 	 * @return array|bool
 	 */
 	public function fetchRow( $query, $replica = false ) {
@@ -141,8 +154,10 @@ class MySQL {
 
 	/**
 	 * Возвращает одно значение из результатов запроса
-	 * @param string $query	SQL-запрос
-	 * @param bool $replica	Позволить читать данные из реплики
+	 *
+	 * @param string $query         SQL-запрос
+	 * @param bool   $replica	Позволить читать данные из реплики
+	 *
 	 * @return mixed|null
 	 */
 	public function fetchOne( $query, $replica = false ) {
@@ -153,9 +168,11 @@ class MySQL {
 
 	/**
 	 * Возвращает результат SQL-запроса в виде дерева XML
-	 * @param DOMNode $node		XML-Нода
-	 * @param string $query		Запрос
-	 * @param bool $replica		Позволить читать данные из реплики
+	 *
+	 * @param \DOMNode $node	XML-Нода
+	 * @param string   $query	Запрос
+	 * @param bool     $replica	Позволить читать данные из реплики
+	 *
 	 * @return bool
 	 */
 	public function fetchXML( $node, $query, $replica = false ) {
@@ -166,16 +183,44 @@ class MySQL {
 		}
 		foreach( $data as $row ) {
 			$subnode = $node->appendChild( $node->ownerDocument->createElement( 'item' ) );
-			foreach( $row as $k => $v ) { 
-				if( trim( $v ) and preg_match( '/^(i|s|a|o|d)(.*);/si', $v ) ) { // serialize!
-					$arr = unserialize( $v );
-					$subnode2 = $subnode->appendChild( $node->ownerDocument->createElement( $k ) );
-					foreach( $arr as $k2 => $v2 ) {
-						$subnode2->setAttribute( $k2, $v2 );
-					}
-				} else {
-					$subnode->setAttribute( $k, $v );
-				}
+			$this->getRowAsXML( $subnode, $row );
+		}
+		return true;
+	}
+
+	/**
+	 * Возвращает строку из базы данных в XML
+	 *
+	 * @param \DOMElement $node
+	 * @param string      $query
+	 * @param bool        $replica
+	 *
+	 * @return bool
+	 */
+	public function fetchRowXML( $node, $query, $replica = false ) {
+
+		$row = $this->fetchRow( $query, $replica );
+		return $this->getRowAsXML( $node, $row );
+	}
+
+	/**
+	 * Берет значения из массива и возвращает их в виде дерева XML
+	 * @param $node
+	 * @param $row
+	 * @return bool
+	 */
+	private function getRowAsXML( $node, $row ) {
+
+		if( empty( $row ) ) {
+			return false;
+		}
+		foreach( $row as $k => $v ) {
+			if( trim( $v ) and preg_match( '/^(i|s|a|o|d)(.*);/si', $v ) ) { // serialize!
+				$arr     = @unserialize( $v );
+				$subnode = $node->appendChild( $node->ownerDocument->createElement( $k ) );
+				$this->getRowAsXML( $subnode, $arr );
+			} else {
+				$node->setAttribute( $k, $v );
 			}
 		}
 		return true;
@@ -183,7 +228,9 @@ class MySQL {
 
 	/**
 	 * Безопасно «обернуть» строку для SQL-запроса
+	 *
 	 * @param string $string	Строка
+	 *
 	 * @return string
 	 */
 	public function escape( $string ) {
@@ -194,6 +241,7 @@ class MySQL {
 
 	/**
 	 * Возвращает last_insert_id()
+	 *
 	 * @return int
 	 */
 	public function getLastId() {
@@ -203,6 +251,7 @@ class MySQL {
 
 	/**
 	 * Возвращает affected_rows()
+	 *
 	 * @return int
 	 */
 	public function getAffectedRows() {
@@ -212,6 +261,7 @@ class MySQL {
 
 	/**
 	 * Возвращает found_rows()
+	 *
 	 * @return int
 	 */
 	public function getFoundRows() {

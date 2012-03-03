@@ -61,7 +61,11 @@ final class Images {
 	 * @return string
 	 */
 	public function scaleAndCrop( $data, $maxWidth, $maxHeight, $type = 'png', $tobig = false ) {
-		$img = imagecreatefromstring( $data );
+
+		$img = @imagecreatefromstring( $data );
+		if( !$img ) {
+			return false;
+		}
 		$sizeX = imagesx( $img );
 		$sizeY = imagesy( $img );
 
