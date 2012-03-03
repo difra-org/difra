@@ -199,6 +199,9 @@ class Updater {
 		$res = '';
 		$tables = array();
 		foreach( $queries as $query ) {
+			if( !$query instanceof \Difra\MySQL\Query\Create ) {
+				continue;
+			}
 			$tables[] = $table = $query->getTable();
 			try {
 				$currentStr = $db->fetchRow( 'SHOW CREATE TABLE `' . $db->escape( $table ) . '`' );
