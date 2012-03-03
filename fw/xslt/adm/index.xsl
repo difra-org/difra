@@ -79,10 +79,12 @@
 		<h3>База данных</h3>
 		<xsl:choose>
 			<xsl:when test="stats/mysql/@ok=1">
-				Всё в порядке.
+				<div class="message">Всё в порядке.</div>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:value-of disable-output-escaping="yes" select="stats/mysql"/>
+				<div class="message">
+					<xsl:value-of disable-output-escaping="yes" select="stats/mysql"/>
+				</div>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
