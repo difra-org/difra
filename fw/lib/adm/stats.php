@@ -28,8 +28,14 @@ class Stats {
 		$cacheNode->setAttribute( 'type', \Difra\Cache::getInstance()->adapter );
 
 		// stats/mysql
-		$mysqlNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'mysql' ) );
-		$mysqlNode->setAttribute( 'uptodate', \Difra\MySQL\Updater::getInstance()->check() ? '0' : '1' );
+		$sqlState = \Difra\MySQL\Updater::getInstance()->check();
+		$mysqlNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'mysql', $sqlState ) );
+		if( $sqlState ) {
+			$mysqlNode->setAttribute( 'ok', '0' );
+		} else {
+			$mysqlNode->setAttribute( 'ok', '1' );
+
+		}
 
 		// stats/system
 		$systemNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'system' ) );

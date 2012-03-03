@@ -76,6 +76,14 @@
 				</td>
 			</tr>
 		</table>
-
+		<h3>База данных</h3>
+		<xsl:choose>
+			<xsl:when test="stats/mysql/@ok=1">
+				Всё в порядке.
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:value-of disable-output-escaping="yes" select="stats/mysql"/>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>

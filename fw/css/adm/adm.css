@@ -233,3 +233,10 @@ span.disabled {
 	font-size: 16px;
 	color:     #999999;
 }
+
+.wideInfo {
+	display: block;
+	width: 100%;
+	white-space: nowrap;
+	overflow: auto;
+}

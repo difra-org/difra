@@ -2,9 +2,7 @@
 
 namespace Difra\MySQL;
 
-class Query {
-
-	private $fragments = array();
+abstract class Query {
 
 	static public function factory( $fragments ) {
 
@@ -23,9 +21,9 @@ class Query {
 		return $query;
 	}
 
-	public function toString( $str = false ) {
+	public function toString( $str = null ) {
 
-		if( !$str ) {
+		if( is_null( $str ) ) {
 			$str = $this->fragments;
 		}
 		foreach( $str as $k=>$ent ) {
@@ -56,4 +54,5 @@ class Query {
 		}
 		return $str;
 	}
+
 }

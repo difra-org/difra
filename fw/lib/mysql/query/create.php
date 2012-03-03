@@ -9,7 +9,28 @@ class Create extends \Difra\MySQL\Query {
 	private $definitions = null;
 	private $options = array();
 
+	const type = 'CREATE';
+
 	public function __construct( $fragments ) {
+
+		// remove AUTO_INCREMENT=... option
+		while( $pos = array_keys( $fragments, 'AUTO_INCREMENT' ) ) {
+			$found = false;
+			if( !empty( $pos ) ) {
+				foreach( $pos as $k ) {
+					if( $fragments[$k + 1] == '=' ) {
+						$fragments = array_slice( $fragments, 0, $k ) + array_slice( $fragments, $k + 3, null,
+						true
+					);
+						$found = true;
+						break;
+					}
+				}
+			}
+			if( !$found ) {
+				break;
+			}
+		}
 
 		$this->fragments = $fragments;
 		// CREATE
@@ -111,5 +132,10 @@ class Create extends \Difra\MySQL\Query {
 				'text' => $this->toString( $def )
 			);
 		}
+	}
+
+	public function getTable() {
+
+		return $this->table;
 	}
 }
