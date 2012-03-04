@@ -205,7 +205,9 @@ class Updater {
 			$tables[] = $table = $query->getTable();
 			try {
 				$currentStr = $db->fetchRow( 'SHOW CREATE TABLE `' . $db->escape( $table ) . '`' );
-			} catch( \Difra\Exception $e ) {};
+			} catch( \Difra\Exception $e ) {
+				$currentStr = '';
+			};
 			if( empty( $currentStr ) ) {
 				$res .= "<strong>Table `$table` does not exist:</strong><br/>";
 				$res .= "<div class=\"wideInfo\">" . $query->toString() . "</div>";
