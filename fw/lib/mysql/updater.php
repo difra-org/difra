@@ -4,6 +4,13 @@ namespace Difra\MySQL;
 
 class Updater {
 
+	public $keywords = array();
+
+	public function __construct() {
+
+		$this->keywords = include( 'keywords.php' );
+	}
+
 	static public function getInstance() {
 
 		static $_instance = null;
@@ -58,13 +65,14 @@ class Updater {
 				continue;
 			}
 			// проверка на начало строки
-			if( !$comm ) {
-				if( $a == '"' or $a == "'" ) {
+			if( !$comm and !$linecomm ) {
+				if( $a == '"' or $a == "'" or $a == '`' ) {
 					if( $next !== '' ) {
 						$shards[] = $next;
 						$next = '';
 					}
 					$str = $a;
+					continue;
 				}
 			}
 
@@ -153,6 +161,21 @@ class Updater {
 		}
 		if( $next !== '' ) {
 			$shards[] = $next;
+		}
+		return $this->toUpper( $shards );
+	}
+
+	private function toUpper( $shards ) {
+
+		foreach( $shards as $k => $shard ) {
+			if( is_array( $shard ) ) {
+				$shards[$k] = $this->toUpper( $shard );
+			} else {
+				$up = strtoupper( $shard );
+				if( in_array( $up, $this->keywords ) ) {
+					$shards[$k] = $up;
+				}
+			}
 		}
 		return $shards;
 	}
