@@ -25,7 +25,7 @@ class View {
 		if( $this->redirect or $this->error ) {
 			return;
 		}
-		$errors = include ( 'http_errors.php' );
+		$errors = include ( 'view/http_errors.php' );
 
 		if( isset( $errors[$err] ) ) {
 			$error = $errors[$err];
