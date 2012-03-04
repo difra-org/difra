@@ -10,8 +10,12 @@ input {
 input.problem,
 textarea.problem,
 .cke_editor_body.problem {
-	border-color: #fb7a53;
+	border-color: #fb7a53 !important;
 	background:   #fffcfd;
+}
+
+input[type="file"] {
+/*	border: 0; */
 }
 
 input[type="submit"],
@@ -69,7 +73,8 @@ table.form tr td:last-child {
 	width:   100%;
 }
 
-table.form tr td:last-child input[type="text"] {
+table.form tr td:last-child input[type="text"],
+table.form tr td:last-child input[type="file"] {
 	width: 100%;
 }
 
