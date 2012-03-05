@@ -7,6 +7,7 @@ abstract class Common {
 	const type = null;
 	const source = null;
 	const named = null;
+	const auto = false;
 
 	protected $value = null;
 
