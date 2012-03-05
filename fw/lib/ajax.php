@@ -18,7 +18,13 @@ class Ajax {
 
 		if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) {
 			$this->isAjax = true;
-			$this->parameters = $this->getRequest();
+			$parameters = $this->getRequest();
+			if( empty( $parameters ) ) {
+				return;
+			}
+			foreach( $parameters as $k => $v ) {
+				$this->parseParam( $k, $v );
+			}
 		} elseif( isset( $_POST['_method'] ) and $_POST['_method'] == 'iframe' ) {
 			$this->isAjax = true;
 			$this->isIframe = true;
@@ -33,6 +39,42 @@ class Ajax {
 				}
 			}
 		}
+	}
+
+	private function parseParam( $k, $v ) {
+
+		$keys = array();
+		$keys = explode( '[', $k );
+		if( sizeof( $keys ) == 1 ) {
+			$this->parameters[$k] = $v;
+			return;
+		}
+		for( $i = 1; $i < sizeof( $keys ); $i++ ) {
+			if( $keys[$i]{strlen($keys[$i])-1} == ']' ) {
+				$keys[$i] = substr( $keys[$i], 0, -1 );
+			}
+		}
+		$this->putParam( $this->parameters, $keys, $v );
+	}
+
+	private function putParam( &$arr, $keys, $v ) {
+
+		if( empty( $keys ) ) {
+			$arr = $v;
+			return;
+		}
+		$k = array_shift( $keys );
+		if( $k ) {
+			if( !isset( $arr[$k] ) ) {
+				$arr[$k] = array();
+			}
+			$arr2 = &$arr[$k];
+		} else {
+			$arr[] = array();
+			end( $arr );
+			$arr2 = &$arr[key( $arr )];
+		}
+		$this->putParam( $arr2, $keys, $v );
 	}
 
 	/**
