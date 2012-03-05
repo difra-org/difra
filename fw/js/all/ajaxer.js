@@ -293,9 +293,10 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				form.attr( 'action', originalAction );
 				form.find( 'input[name=_method]' ).remove();
 				$( 'iframe#ajaxerFrame' ).remove();
-				loading.fadeOut( 'fast', function() {
-					loading.find( '#upprog' ).remove();
+				loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
+				loading.fadeOut( 'slow', function() {
 					window.clearTimeout( interval );
+					loading.find( '#upprog' ).remove();
 				} );
 				ajaxer.process( val, form );
 			} );
@@ -306,7 +307,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 ajaxer.fetchProgress = function( uuid ) {
 
 	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID': uuid } );
-	res = $.parseJSON( res ); // new Object({ 'state' : 'uploading', 'received' : 3486881, 'size' : 6971123 })
+	res = $.parseJSON( res );
 	if( res.state == 'uploading' ) {
 		var progressbar = $( '#upprog' );
 		if( !progressbar.length ) {
@@ -318,9 +319,6 @@ ajaxer.fetchProgress = function( uuid ) {
 		}
 		progressbar.find( '.td1' )
 			.css( 'width', Math.ceil( ( progressbar.width() - 20 ) * res.received / res.size ) + 'px' );
-	} else if( res.state == 'done' ) {
-		progressbar.find( 'td1' )
-			.css( 'width', Math.ceil( progressbar.width() - 20 ) + 'px' );
 	}
 };
 
