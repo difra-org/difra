@@ -23,7 +23,7 @@ class Ajax {
 				return;
 			}
 			foreach( $parameters as $k => $v ) {
-				$this->parseParam( $k, $v );
+				$this->parseParam( $this->parameters, $k, $v );
 			}
 		} elseif( isset( $_POST['_method'] ) and $_POST['_method'] == 'iframe' ) {
 			$this->isAjax = true;
@@ -31,22 +31,43 @@ class Ajax {
 			$this->parameters = $_POST;
 			unset( $this->parameters['method_'] );
 			if( !empty( $_FILES ) ) {
-				foreach( $_FILES as $k => $file ) {
-					if( $file['error'] == UPLOAD_ERR_NO_FILE ) {
+				foreach( $_FILES as $k => $files ) {
+					if( isset( $files['name'] ) and !is_array( $files['name'] ) ) {
+						$this->parseParam( $this->parameters, $k, $files );
 						continue;
 					}
-					$this->parameters[$k] = $file;
+					if( substr( $k, -2 ) != '[]' ) {
+						$k = $k . '[]';
+					}
+					if( isset( $files['name'] ) and is_array( $files['name'] ) ) {
+						$files2 = $files;
+						$files = array();
+						foreach( $files2['name'] as $k2 => $v2 ) {
+							$files[] = array(
+								'name' => $v2,
+								'type' => $files2['type'][$k2],
+								'tmp_name' => $files2['type'][$k2],
+								'error' => $files2['error'][$k2],
+								'size' => $files2['size'][$k2]
+							);
+						}
+					}
+					foreach( $files as $file ) {
+						if( $file['error'] == UPLOAD_ERR_NO_FILE ) {
+							continue;
+						}
+						$this->parseParam( $this->parameters, $k, $file );
+					}
 				}
 			}
 		}
 	}
 
-	private function parseParam( $k, $v ) {
+	private function parseParam( &$arr, $k, $v ) {
 
-		$keys = array();
 		$keys = explode( '[', $k );
 		if( sizeof( $keys ) == 1 ) {
-			$this->parameters[$k] = $v;
+			$arr[$k] = $v;
 			return;
 		}
 		for( $i = 1; $i < sizeof( $keys ); $i++ ) {
@@ -54,7 +75,7 @@ class Ajax {
 				$keys[$i] = substr( $keys[$i], 0, -1 );
 			}
 		}
-		$this->putParam( $this->parameters, $keys, $v );
+		$this->putParam( $arr, $keys, $v );
 	}
 
 	private function putParam( &$arr, $keys, $v ) {

@@ -25,6 +25,12 @@ abstract class Common {
 				$this->value['content'] = file_get_contents( $this->value['tmp_name'] );
 			}
 			break;
+		case 'float':
+			$this->value = (float) $value;
+			break;
+		case 'data':
+			$this->value = $value;
+			break;
 		default:
 			throw new \Difra\Exception( 'No wrapper for type ' . ( static::type ) . ' in Param\Common constructor.' );
 		}
@@ -46,6 +52,10 @@ abstract class Common {
 			if( $value['error'] ) {
 				return false;
 			}
+			return true;
+		case 'float':
+			return is_numeric( $value );
+		case 'data':
 			return true;
 		default:
 			throw new \Difra\Exception( 'Can\'t check param of type: ' . static::type );
