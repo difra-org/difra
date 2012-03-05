@@ -23,6 +23,7 @@ return array(
 	'TEXT',
 	'TIMESTAMP',
 	'TINYBLOB',
+	'TINYINT',
 	'TINYTEXT',
 	'UPDATE',
 	'VARCHAR'
