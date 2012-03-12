@@ -12,13 +12,15 @@ final class Images {
 	/**
 	 * Resizes image from binary string to given resolution keeping aspect ratio
 	 *
-	 * @param $data		binary string with image in it
-	 * @param $maxWidth	maximum height of thumbnail
-	 * @param $maxHeight	maximum width of thumbnail
-	 * @param $type		resulting image type
+	 * @param string $data		binary string with image in it
+	 * @param int    $maxWidth      maximum height of thumbnail
+	 * @param int    $maxHeight     maximum width of thumbnail
+	 * @param string $type		resulting image type
+	 *
 	 * @return string
 	 */
-	public function createThumbnail( $data, $maxWidth, $maxHeight, $type ) {
+	public function createThumbnail( $data, $maxWidth, $maxHeight, $type = 'png' ) {
+
 		$img = imagecreatefromstring( $data );
 		$sizeX = imagesx( $img );
 		$sizeY = imagesy( $img );
@@ -53,11 +55,12 @@ final class Images {
 	/**
 	 * Resizes image from binary string to given resolution keeping aspect ratio
 	 *
-	 * @param string $data		binary string with image in it
-	 * @param int $maxWidth		maximum width of thumbnail
-	 * @param int $maxHeight	maximum height of thumbnail
-	 * @param string $type		resulting image type
-	 * @param bool $tobig		should we scale image to bigger if needed
+	 * @param string $data                    binary string with image in it
+	 * @param int    $maxWidth		  maximum width of thumbnail
+	 * @param int    $maxHeight               maximum height of thumbnail
+	 * @param string $type                    resulting image type
+	 * @param bool   $tobig                   should we scale image to bigger if needed
+	 *
 	 * @return string
 	 */
 	public function scaleAndCrop( $data, $maxWidth, $maxHeight, $type = 'png', $tobig = false ) {

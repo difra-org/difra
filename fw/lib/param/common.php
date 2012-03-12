@@ -22,9 +22,15 @@ abstract class Common {
 			break;
 		case 'file':
 			$this->value = $value;
-			if( !$this->value['error'] ) {
-				$this->value['content'] = file_get_contents( $this->value['tmp_name'] );
+			break;
+		case 'files':
+			$files = array();
+			foreach( $value as $file ) {
+				if( $file['error'] == UPLOAD_ERR_OK ) {
+					$files[] = new AjaxFile( $file );
+				}
 			}
+			$this->value = $files;
 			break;
 		case 'float':
 			$this->value = (float) $value;
@@ -54,6 +60,16 @@ abstract class Common {
 				return false;
 			}
 			return true;
+		case 'files':
+			if( !is_array( $value ) or empty( $value ) ) {
+				return false;
+			}
+			foreach( $value as $fileData ) {
+				if( $fileData['error'] === UPLOAD_ERR_OK ) {
+					return true;
+				}
+			}
+			return false;
 		case 'float':
 			return is_numeric( $value );
 		case 'data':
@@ -67,10 +83,24 @@ abstract class Common {
 
 		switch( static::type ) {
 		case 'file':
-			return $this->value['content'];
+			if( !$this->value['error'] ) {
+				return file_get_contents( $this->value['tmp_name'] );
+			}
+			return null;
+		case 'files':
+			$res = array();
+			foreach( $this->value as $file ) {
+				$res[] = $file->val();
+			}
+			return $res;
 		default:
 			return $this->value;
 		}
+	}
+
+	public function raw() {
+
+		return $this->value;
 	}
 
 	public static function getSource() {
