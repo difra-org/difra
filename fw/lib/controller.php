@@ -188,12 +188,9 @@ abstract class Controller {
 			$this->xml->formatOutput = true;
 			$this->xml->encoding = 'utf-8';
 			echo( rawurldecode( $this->xml->saveXML() ) );
-		} elseif( ! $this->view->rendered and $this->ajax->isAjax and $response = $this->ajax->getResponse() ) {
-			if( !$this->ajax->isIframe ) {
-				header( 'Content-type: text/javascript' );
-			}
-			echo( $response );
-
+		} elseif( ! $this->view->rendered and $this->ajax->isAjax ) {
+			header( 'Content-type: application/json' );
+			echo( $this->ajax->getResponse() );
 		} elseif( !$this->view->rendered ) {
 			$this->view->render( $this->xml );
 		}

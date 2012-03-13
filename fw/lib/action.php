@@ -37,7 +37,7 @@ class Action {
 	public function find() {
 
 		if( $this->className ) {
-			return false;
+			return;
 		}
 		$uri = $this->getUri();
 		$cacheKey = 'action:uri:' . $uri;

@@ -51,7 +51,7 @@ ajaxer.query = function( url, data ) {
 ajaxer.process = function( data, form ) {
 
 	try {
-		console.info( 'Server said: ' + data );
+		console.info( 'Server said:', data );
 		var data1 = $.parseJSON( data );
 		if( !data1.actions ) {
 			throw "data error";
@@ -282,13 +282,17 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				1000
 			);
 			frame.load( function() {
-				var rawframe = frame.get(0);
+				var rawframe = frame.get( 0 );
 				if( rawframe.contentDocument ) {
 					var val = rawframe.contentDocument.body.innerHTML;
 				} else if( rawframe.contentWindow ) {
 					val = rawframe.contentWindow.document.body.innerHTML;
 				} else if( rawframe.document ) {
 					val = rawframe.document.body.innerHTML;
+				}
+				var fc = $( val ).text();
+				if( fc ) {
+					val = fc;
 				}
 				form.attr( 'action', originalAction );
 				form.find( 'input[name=_method]' ).remove();
