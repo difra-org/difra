@@ -135,14 +135,14 @@ ajaxer.require = function( form, name ) {
 		ajaxer.error( {}, 'Field "' + name + '" is required.' );
 		return;
 	}
+	var cke = $( form ).find( '#cke_' + name );
+	if( cke.length ) {
+		cke.addClass( 'problem' );
+	} else {
+		el.addClass( 'problem' );
+	}
 	var container = el.closest( '.container' );
 	if( !container.length ) {
-		var cke = $( form ).find( '#cke_' + name );
-		if( cke.length ) {
-			cke.addClass( 'problem' );
-		} else {
-			el.addClass( 'problem' );
-		}
 		return;
 	}
 	cke = $( form ).find( '#cke_' + name );
@@ -165,14 +165,14 @@ ajaxer.invalid = function( form, name, message ) {
 		ajaxer.error( {}, 'Invalid value for field "' + name + '".' );
 		return;
 	}
+	var cke = $( form ).find( '#cke_' + name );
+	if( cke.length ) {
+		cke.addClass( 'problem' );
+	} else {
+		el.addClass( 'problem' );
+	}
 	var container = el.closest( '.container' );
 	if( !container.length ) {
-		var cke = $( form ).find( '#cke_' + name );
-		if( cke.length ) {
-			cke.addClass( 'problem' );
-		} else {
-			el.addClass( 'problem' );
-		}
 		return;
 	}
 	cke = $( form ).find( '#cke_' + name );

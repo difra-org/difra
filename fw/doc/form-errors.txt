@@ -8,7 +8,7 @@
 <div class="container">
 	<input name="inputname" type="text">
 </div>
-При ошибке класс .problem будет добавляться к .container.
+При ошибке класс .problem будет добавляться к input и .container.
 
 Если обязательное поле не заполнено и внутри .container есть .required, то к нему будет применен .fadeIn().
 
