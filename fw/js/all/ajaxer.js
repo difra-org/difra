@@ -145,14 +145,14 @@ ajaxer.require = function( form, name ) {
 		}
 		return;
 	}
+	cke = $( form ).find( '#cke_' + name );
+	if( cke.length ) {
+		cke.addClass( 'problem' );
+	} else {
+		container.addClass( 'problem' );
+	}
 	var req = container.find( '.required' );
 	if( !req.length ) {
-		cke = $( form ).find( '#cke_' + name );
-		if( cke.length ) {
-			cke.addClass( 'problem' );
-		} else {
-			container.addClass( 'problem' );
-		}
 		return;
 	}
 	req.fadeIn();
@@ -175,14 +175,14 @@ ajaxer.invalid = function( form, name, message ) {
 		}
 		return;
 	}
+	cke = $( form ).find( '#cke_' + name );
+	if( cke.length ) {
+		cke.addClass( 'problem' );
+	} else {
+		container.addClass( 'problem' );
+	}
 	var req = container.find( '.invalid' );
 	if( !req.length ) {
-		cke = $( form ).find( '#cke_' + name );
-		if( cke.length ) {
-			cke.addClass( 'problem' );
-		} else {
-			container.addClass( 'problem' );
-		}
 		return;
 	}
 	if( message ) {
