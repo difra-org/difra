@@ -35,7 +35,7 @@ switcher.ajaxConfig = {
 				switcher.hashChanged = true;
 				window.location = '/#!' + switcher.url;
 			}
-			if( _gaq && _gaq.push ) {
+			if( typeof _gaq == 'object' && _gaq.push ) {
 				_gaq.push( ['_trackPageview', switcher.url] );
 			}
 		}
