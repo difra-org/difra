@@ -1,3 +1,6 @@
 <menu>
-	<settings href="/adm"/>
+	<common href="">
+		<site href="/"/>
+		<settings href="/adm"/>
+	</common>
 </menu>
