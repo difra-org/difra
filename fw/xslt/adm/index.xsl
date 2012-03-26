@@ -38,6 +38,25 @@
 					<td><xsl:value-of select="./text()"/></td>
 				</tr>
 			</xsl:for-each>
+			<tr>
+				<th>
+					<xsl:value-of select="$locale/adm/stats/permissions"/>
+				</th>
+				<td>
+					<xsl:choose>
+						<xsl:when test="stats/permissions/@*">
+							<xsl:for-each select="stats/permissions/@*">
+								<div style="color:red">
+									<xsl:value-of select="."/>
+								</div>
+							</xsl:for-each>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:value-of select="$locale/adm/stats/permissions-ok"/>
+						</xsl:otherwise>
+					</xsl:choose>
+				</td>
+			</tr>
 		</table>
 		<h3>Расширения PHP</h3>
 		<table class="summary">

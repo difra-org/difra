@@ -5,6 +5,8 @@
 				<webserver>Веб-сервер</webserver>
 				<phpversion>Версия PHP</phpversion>
 			</server>
+			<permissions>Файлы и папки</permissions>
+			<permissions-ok>проблем не обнаружено</permissions-ok>
 		</stats>
 	</adm>
 </locale>

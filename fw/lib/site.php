@@ -87,6 +87,7 @@ class Site {
 		define( 'DIR_SITE', $_SERVER['DOCUMENT_ROOT'] . 'sites/' . $this->siteDir . '/' );
 		define( 'DIR_PLUGINS', $_SERVER['DOCUMENT_ROOT'] . 'plugins/' );
 		define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
+		define( 'DIR_DATA', DIR_SITE . 'data/' );
 	}
 
 	public function configurePHP() {

@@ -64,6 +64,18 @@ class Stats {
 		$extensionsNode->setAttribute( 'ok', implode( ', ', $extensionsOk ) );
 		$extensionsNode->setAttribute( 'required', implode( ', ', $extensionsRequired ) );
 		$extensionsNode->setAttribute( 'extra', implode( ', ', $extensionsExtra ) );
+
+		$this->verifyPermissions( $statsNode );
+	}
+
+	public function verifyPermissions( $node ) {
+
+		$permNode = $node->appendChild( $node->ownerDocument->createElement( 'permissions' ) );
+		if( !is_dir( DIR_DATA ) ) {
+			$permNode->setAttribute( 'data', 'Directory ' . DIR_DATA . ' does not exist!' );
+		} elseif( !is_writable( DIR_SITE . '/data' ) ) {
+			$permNode->setAttribute( 'data', 'Directory ' . DIR_DATA . ' is not writeable!' );
+		}
 	}
 
 }
