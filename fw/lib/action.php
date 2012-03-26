@@ -9,7 +9,6 @@ class Action {
 
 	public $dispatchers = array();
 
-	public $class = null;
 	public $className = null;
 	public $controller = null;
 
@@ -50,7 +49,7 @@ class Action {
 				foreach( $data['vars'] as $k => $v ) {
 					$this->$k = $v;
 				}
-				new $this->class;
+//				new $this->class;
 				break;
 			case '404':
 				View::getInstance()->httpError( 404 );
@@ -132,7 +131,7 @@ class Action {
 		if( $cname != 'index' ) {
 			$dirDepth++;
 		}
-		$this->class = $className = $className . ucfirst( $cname ) . 'Controller';
+		$className = $className . ucfirst( $cname ) . 'Controller';
 
 		$match['controllers'] = $controllers;
 		foreach( $controllers as $fileName ) {
@@ -141,7 +140,7 @@ class Action {
 		if( !class_exists( $className ) ) {
 			throw new exception( "Error! Controller class $className not found" );
 		}
-		$match['vars']['class'] = $className;
+		$match['vars']['className'] = $className;
 
 		// detect action method
 		$methodName = false;

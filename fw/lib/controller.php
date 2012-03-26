@@ -201,7 +201,7 @@ abstract class Controller {
 		$this->xml = new \DOMDocument;
 		$this->root = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
 		$this->root->setAttribute( 'lang', $this->locale->locale );
-		$this->root->setAttribute( 'controller', $this->action->class );
+		$this->root->setAttribute( 'controller', $this->action->className );
 		$this->root->setAttribute( 'action', $this->action->method );
 		$this->root->setAttribute( 'host', Site::getInstance()->getHost() );
 		$this->root->setAttribute( 'hostname', Site::getInstance()->getHostname() );
