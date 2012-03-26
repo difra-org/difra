@@ -115,13 +115,15 @@ class Site {
 	 */
 	private function _stripSlashes() {
 
-		if( get_magic_quotes_gpc() !== 1 ) {
+		if( get_magic_quotes_gpc() != 1 ) {
 			return;
 		}
-		$_GET = json_decode( stripslashes( json_encode( $_GET, JSON_HEX_APOS ) ), true );
-		$_POST = json_decode( stripslashes( json_encode( $_POST, JSON_HEX_APOS ) ), true );
-		$_COOKIE = json_decode( stripslashes( json_encode( $_COOKIE, JSON_HEX_APOS ) ), true );
-		$_REQUEST = json_decode( stripslashes( json_encode( $_REQUEST, JSON_HEX_APOS ) ), true );
+		$strip_slashes_deep = function ( $value ) use ( &$strip_slashes_deep ) {
+			return is_array( $value ) ? array_map( $strip_slashes_deep, $value ) : stripslashes( $value );
+		};
+		$_GET               = array_map( $strip_slashes_deep, $_GET );
+		$_POST              = array_map( $strip_slashes_deep, $_POST );
+		$_COOKIE            = array_map( $strip_slashes_deep, $_COOKIE );
 	}
 
 	public function getDbConfig() {
