@@ -290,10 +290,12 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				} else if( rawframe.document ) {
 					val = rawframe.document.body.innerHTML;
 				}
-				var fc = $( val ).text();
-				if( fc ) {
-					val = fc;
-				}
+				try {
+					var fc = $( val ).text();
+					if( fc ) {
+						val = fc;
+					}
+				} catch( e ) {}
 				form.attr( 'action', originalAction );
 				form.find( 'input[name=_method]' ).remove();
 				$( 'iframe#ajaxerFrame' ).remove();
