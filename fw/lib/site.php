@@ -31,7 +31,7 @@ class Site {
 		$this->configurePHP();
 		$this->configurePaths();
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
-			$this->siteConfig = include ( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
+			$this->siteConfig = include( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		}
 
 		Events::register( 'core-init', 'Difra\\Debugger' );
@@ -97,14 +97,15 @@ class Site {
 		$this->phpVersion = $this->phpVersion[0] * 100 + $this->phpVersion[1];
 
 		// other
-		setlocale( LC_ALL, 'UTF8' );
+		setlocale( LC_ALL, array( $this->locale . '.UTF-8', $this->locale . '.utf8' ) );
+		setlocale( LC_NUMERIC, array( 'en_US.UTF-8', 'en_US.utf8' ) );
 		mb_internal_encoding( 'UTF-8' );
 		ini_set( 'short_open_tag', false );
 		ini_set( 'asp_tags', false );
 		
 		// set session domain
 		ini_set( 'session.cookie_domain', '.' . $this->getMainhost() );
-		
+
 		// prepare data
 		$this->_stripSlashes();
 	}

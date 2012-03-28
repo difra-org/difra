@@ -12,15 +12,18 @@ final class Images {
 	/**
 	 * Resizes image from binary string to given resolution keeping aspect ratio
 	 *
-	 * @param string $data		binary string with image in it
-	 * @param int    $maxWidth      maximum height of thumbnail
-	 * @param int    $maxHeight     maximum width of thumbnail
-	 * @param string $type		resulting image type
+	 * @param string|\Difra\Param\AjaxFile $data		binary string with image in it
+	 * @param int                          $maxWidth        maximum height of thumbnail
+	 * @param int                          $maxHeight       maximum width of thumbnail
+	 * @param string                       $type		resulting image type
 	 *
 	 * @return string
 	 */
 	public function createThumbnail( $data, $maxWidth, $maxHeight, $type = 'png' ) {
 
+		if( $data instanceof \Difra\Param\AjaxFile ) {
+			$data = $data->val();
+		}
 		$img = imagecreatefromstring( $data );
 		$sizeX = imagesx( $img );
 		$sizeY = imagesy( $img );

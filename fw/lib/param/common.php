@@ -33,6 +33,7 @@ abstract class Common {
 			$this->value = $files;
 			break;
 		case 'float':
+			$value = str_replace( ',', '.', $value );
 			$this->value = (float) $value;
 			break;
 		case 'data':
