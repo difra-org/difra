@@ -77,8 +77,8 @@
 						<xsl:text>').removeClass('moveDownHighlight')</xsl:text>
 					</xsl:attribute>
 				</xsl:otherwise>
-				<xsl:value-of select="$locale/actions/down"/>
 			</xsl:choose>
+			<xsl:value-of select="$locale/actions/down"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
