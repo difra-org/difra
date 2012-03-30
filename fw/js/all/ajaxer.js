@@ -266,6 +266,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				uuid += Math.floor( Math.random() * 16 ).toString( 16 );
 			}
 			var originalAction = form.attr( 'action' );
+			form.attr( 'method', 'post' );
 			form.attr( 'action', form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
 			$( 'body' ).append( frame );
 			form.attr( 'target', 'ajaxerFrame' );
