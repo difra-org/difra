@@ -9,5 +9,6 @@
 			<down>Вниз</down>
 			<add>Добавить</add>
 		</actions>
+		<save>Сохранить</save>
 	</adm>
 </locale>

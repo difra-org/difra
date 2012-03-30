@@ -43,6 +43,10 @@ body {
 	font-weight:      bold;
 }
 
+#menu .sup {
+	font-style: italic;
+}
+
 /* common elements */
 
 a {

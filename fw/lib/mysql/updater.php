@@ -26,6 +26,7 @@ class Updater {
 	private function collectGoal() {
 
 		$paths = \Difra\Plugger::getInstance()->getPaths();
+		$paths[] = DIR_FW;
 		$paths[] = DIR_ROOT;
 		$tables = array();
 		foreach( $paths as $path ) {

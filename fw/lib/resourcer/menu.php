@@ -20,6 +20,11 @@ class Menu extends Abstracts\XML {
 	private function _recursiveProcessor( $node, $href, $prefix ) {
 		
 		foreach( $node as $subname => $subnode ) {
+			if( $subnode->attributes()->sup and $subnode->attributes()->sup == '1' ) {
+				if( !\Difra\Debugger::getInstance()->isEnabled() ) {
+					$subnode->addAttribute( 'hidden', 1 );
+				}
+			}
 			$newHref = "$href/$subname";
 			$newPrefix = "{$prefix}_{$subname}";
 			$subnode->addAttribute( 'id', $newPrefix );
