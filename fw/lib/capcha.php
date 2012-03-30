@@ -10,9 +10,8 @@ class Capcha {
 	private $keyLength = 5;
 
 	public function __construct() {
-		if( !isset( $_SESSION ) ) {
-			session_start();
-		}
+
+		Site::getInstance()->sessionStart();
 		$this->key = isset( $_SESSION['capcha_key'] ) ? $_SESSION['capcha_key'] : false;
 	}
 
@@ -94,9 +93,7 @@ class Capcha {
 	public function viewCapcha() {
 		$this->key = $this->genKey( $this->keyLength );
 		$data = $this->mkCapcha( $this->sizeX, $this->sizeY, $this->key );
-		if( !isset( $_SESSION ) ) {
-			session_start();
-		}
+		Site::getInstance()->sessionStart();
 		$_SESSION['capcha_key'] = $this->key;
 		return $data;
 	}

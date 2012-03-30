@@ -53,7 +53,7 @@ class Sys_Auth {
 		$needed_parts = array( 'nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1 );
 		$data = array();
    
-		// php docs using @(\w+)=(?:([\'"])([^\2]+)\2|([^\s,]+))@ regexp, but it doesn't work
+		// php docs use @(\w+)=(?:([\'"])([^\2]+)\2|([^\s,]+))@ regexp, but it doesn't work
 		preg_match_all( '@(\w+)=[\'"]?([^\s,\'"]+)@', $txt, $matches, PREG_SET_ORDER );
 		foreach( $matches as $m ) {
 			$data[$m[1]] = $m[2];
@@ -64,7 +64,8 @@ class Sys_Auth {
 	}
 
 	private function getNonce( $regen = false ) {
-		@session_start();
+
+		\Difra\Site::getInstance()->sessionStart();
 		if( $regen ) {
 			$key = '';
 			for( $i = 0; $i < 16; $i++ ) {
@@ -77,7 +78,8 @@ class Sys_Auth {
 	}
 
 	private function checkNC( $nc ) {
-		@session_start();
+
+		\Difra\Site::getInstance()->sessionStart();
 		if( !isset( $_SESSION['digest_nc'] ) or $_SESSION['digest_nc'] >= $nc ) {
 			return false;
 		}
