@@ -269,7 +269,7 @@ class Site {
 
 		if( !isset( $_SESSION ) and isset( $_COOKIE[ini_get( 'session.name' )] ) ) {
 			session_start();
-			if( $_SESSION['dhost'] != $this->getHost() ) {
+			if( !isset( $_SESSION['dhost'] ) or $_SESSION['dhost'] != $this->getHost() ) {
 				$_SESSION = array();
 			}
 		}
