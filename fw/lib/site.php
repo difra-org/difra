@@ -30,6 +30,7 @@ class Site {
 		$this->detectHost();
 		$this->configurePHP();
 		$this->configurePaths();
+		$this->sessionLoad();
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
 			$this->siteConfig = include( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		}
@@ -39,6 +40,11 @@ class Site {
 		Events::register( 'action-find', 'Difra\\Action', 'find' );
 		Events::register( 'action-run', 'Difra\\Action', 'run' );
 		Events::register( 'render-run', 'Difra\\Action', 'render' );
+	}
+
+	public function __destruct() {
+
+		$this->sessionSave();
 	}
 
 	public function detectHost() {
@@ -69,8 +75,6 @@ class Site {
 			$this->siteDir = $this->host;
 		} elseif( is_dir( $sitesDir . 'www.' . $this->host ) ) {
 			$this->siteDir = 'www.' . $this->host;
-		} elseif( is_dir( $sitesDir . 'default' ) ) {
-			$this->siteDir = 'default';
 		} else {
 			header( 'HTTP/1.1 500 Internal Server Error' );
 			die( 'Internal server error: difra can not find the configuration.' );
@@ -104,6 +108,8 @@ class Site {
 		ini_set( 'asp_tags', false );
 		
 		// set session domain
+		ini_set( 'session.use_cookies', true );
+		ini_set( 'session.use_only_cookies', true );
 		ini_set( 'session.cookie_domain', '.' . $this->getMainhost() );
 
 		// prepare data
@@ -257,5 +263,32 @@ class Site {
 		$node->setAttribute( 'host', $this->getHost() );
 		$node->setAttribute( 'hostname', $this->getHostname() );
 		$node->setAttribute( 'mainhost', $this->getMainhost() );
+	}
+
+	public function sessionLoad() {
+
+		if( !isset( $_SESSION ) and isset( $_COOKIE[ini_get( 'session.name' )] ) ) {
+			session_start();
+			if( $_SESSION['dhost'] != $this->getHost() ) {
+				$_SESSION = array();
+			}
+		}
+	}
+
+	public function sessionStart() {
+
+		$this->sessionLoad();
+		if( !isset( $_SESSION ) ) {
+			session_start();
+			$_SESSION = array();
+			$_SESSION['dhost'] = $this->getHost();
+		}
+	}
+
+	public function sessionSave() {
+
+		if( !empty( $_SESSION ) and empty( $_SESSION['dhost'] ) ) {
+			$_SESSION['dhost'] = $this->getHost();
+		}
 	}
 }

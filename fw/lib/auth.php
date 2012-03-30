@@ -63,9 +63,7 @@ class Auth {
 
 	private function _save() {
 
-		if( !isset( $_SESSION ) ) {
-			session_start();
-		}
+		Site::getInstance()->sessionStart();
 		if( $this->logged ) {
 			$_SESSION['auth'] = array(
 				'id'	=> $this->id,
@@ -81,9 +79,7 @@ class Auth {
 
 	private function _load() {
 
-		if( !isset( $_SESSION ) and isset( $_COOKIE[ini_get( 'session.name' )] ) ) {
-			session_start();
-		}
+		Site::getInstance()->sessionLoad();
 		if( !isset( $_SESSION['auth'] ) ) {
 			return false;
 		}
