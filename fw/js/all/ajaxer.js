@@ -329,7 +329,10 @@ ajaxer.fetchProgress = function( uuid ) {
 };
 
 $( 'a.ajaxer' ).live( 'click dblclick', function( e ) {
-	ajaxer.query( $( this ).attr( 'href' ) );
+	var href = $( this ).attr( 'href' );
+	if( href && href != '#' ) {
+		ajaxer.query( href );
+	}
 	e.preventDefault();
 } );
 

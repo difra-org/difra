@@ -20,12 +20,16 @@
 	<xsl:template name="actionUp">
 		<xsl:param name="link"/>
 		<xsl:param name="idPrefix"/>
-		<a href="{$link}">
+		<a>
 			<xsl:choose>
 				<xsl:when test="position()=1">
+					<xsl:attribute name="href">#</xsl:attribute>
 					<xsl:attribute name="class">action up disabled ajaxer</xsl:attribute>
 				</xsl:when>
 				<xsl:otherwise>
+					<xsl:attribute name="href">
+						<xsl:value-of select="$link"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">action up ajaxer</xsl:attribute>
 					<xsl:attribute name="onmouseover">
 						<xsl:text>$('#</xsl:text>
@@ -49,12 +53,16 @@
 	<xsl:template name="actionDown">
 		<xsl:param name="link"/>
 		<xsl:param name="idPrefix"/>
-		<a href="{$link}">
+		<a>
 			<xsl:choose>
 				<xsl:when test="position()=last()">
+					<xsl:attribute name="href">#</xsl:attribute>
 					<xsl:attribute name="class">action down disabled ajaxer</xsl:attribute>
 				</xsl:when>
 				<xsl:otherwise>
+					<xsl:attribute name="href">
+						<xsl:value-of select="$link"/>
+					</xsl:attribute>
 					<xsl:attribute name="class">action down ajaxer</xsl:attribute>
 					<xsl:attribute name="onmouseover">
 						<xsl:text>$('#</xsl:text>
@@ -69,8 +77,8 @@
 						<xsl:text>').removeClass('moveDownHighlight')</xsl:text>
 					</xsl:attribute>
 				</xsl:otherwise>
+				<xsl:value-of select="$locale/actions/down"/>
 			</xsl:choose>
-			<xsl:value-of select="$locale/actions/down"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
