@@ -18,6 +18,11 @@ input[type="file"] {
 /*	border: 0; */
 }
 
+input[type="file"] {
+	border: none;
+	padding-left: 0;
+}
+
 input[type="submit"],
 input[type="cancel"],
 input[type="button"],
