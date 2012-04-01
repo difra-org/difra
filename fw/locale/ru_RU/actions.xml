@@ -8,6 +8,7 @@
 			<up>Вверх</up>
 			<down>Вниз</down>
 			<add>Добавить</add>
+			<content>Содержимое</content>
 		</actions>
 		<save>Сохранить</save>
 	</adm>

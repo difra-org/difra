@@ -244,3 +244,13 @@ span.disabled {
 	white-space: nowrap;
 	overflow: auto;
 }
+
+/* messages */
+
+.warning {
+	margin-top: 8px;
+	padding: 3px 0 3px 5px;
+	border-radius: 4px;
+	background-color: #c42929;
+	color: #ffffff;
+}
