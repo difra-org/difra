@@ -130,6 +130,7 @@ final class Images {
 	}
 
 	private function gdDataToFile( $newImg, $type ) {
+
 		ob_start();
 		try {
 			switch( strtolower( $type ) ) {
@@ -153,6 +154,17 @@ final class Images {
 
 		@ob_end_clean();
 		return $newData;
+	}
+
+	public function convert( $data, $type = 'png' ) {
+
+		try {
+			$img = imagecreatefromstring( $data );
+			$img = $this->gdDataToFile( $img, $type );
+		} catch( Exception $ex ) {
+			return false;
+		}
+		return $img ? $img : false;
 	}
 }
 
