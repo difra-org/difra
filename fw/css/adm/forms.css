@@ -100,26 +100,24 @@ table .info {
 	display:          inline-block;
 	border:           1px solid #c3c3c3;
 	border-radius:    5px;
-	background-image: linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(249, 249, 249) 100%);
-	background-image: -o-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
-	background-image: -moz-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
-	background-image: -webkit-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(249, 249, 249) 100%);
-	background-image: -ms-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
-	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, rgb(214, 214, 214)), color-stop(1, rgb(249, 249, 249)));
+	background-image: linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background-image: -o-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background-image: -moz-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background-image: -webkit-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background-image: -ms-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
 	color:            #000;
 	font-size:        13px;
 	font-family:      arial;
 	box-shadow:       0 1px 3px rgba(0, 0, 0, 0.25);
-	margin:           0 -8px 0 0;
+	margin:           0 -5px 0 0;
+	padding:	  2px 5px 0 5px;
 	text-decoration:  none;
 	text-align:       center;
-	padding:          5px;
 	cursor:           pointer;
 	font-style:       normal;
 	font-variant:     normal;
 	font-weight:      normal;
-	line-height:      8px;
-	height:           8px;
+	height:           17px;
 }
 
 table {
