@@ -77,7 +77,7 @@ class Action {
 		$controllerDirs = Plugger::getInstance()->getPaths();
 		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
 		foreach( $controllerDirs as $k => $v ) {
-			$controllerDirs[$k] = "$v/controllers/";
+			$controllerDirs[$k] = $v . '/controllers/';
 		}
 		$dirs = $controllerDirs;
 		foreach( $parts as $part ) {
@@ -99,18 +99,22 @@ class Action {
 		// find controller
 		$cname = '';
 		$controller = null;
-		foreach( $dirs as $tmpDir ) {
-			if( isset( $parts[$dirDepth] ) ) {
+		if( isset( $parts[$dirDepth] ) ) {
+			foreach( $dirs as $tmpDir ) {
 				if( is_file( $tmpDir . $parts[$dirDepth] . '.php' ) ) {
 					$cname      = $parts[$dirDepth];
 					$controller = "{$tmpDir}{$cname}.php";
 					break;
 				}
 			}
-			if( is_file( $tmpDir . 'index.php' ) ) {
-				$cname      = 'index';
-				$controller = "{$tmpDir}index.php";
-				break;
+		}
+		if( !$controller ) {
+			foreach( $dirs as $tmpDir ) {
+				if( is_file( $tmpDir . 'index.php' ) ) {
+					$cname      = 'index';
+					$controller = "{$tmpDir}index.php";
+					break;
+				}
 			}
 		}
 
