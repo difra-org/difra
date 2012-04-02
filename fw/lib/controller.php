@@ -45,7 +45,7 @@ abstract class Controller {
 			$this->dispatch();
 		}
 		Plugger::getInstance()->runDispatchers( $this );
-		$this->action->runDispatchers( $this );
+		//$this->action->runDispatchers( $this );
 
 		// add XML data
 		$this->auth->getAuthXML( $realRoot );

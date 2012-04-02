@@ -38,18 +38,17 @@ class Action {
 		if( $this->className ) {
 			return;
 		}
+
+		// try to load cached data for this url
 		$uri = $this->getUri();
 		$cacheKey = 'action:uri:' . $uri;
 		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $cacheKey ) ) {
 			switch( $data['result'] ) {
 			case 'action':
-				foreach( $data['controllers'] as $cont ) {
-					include_once( $cont );
-				}
+				include_once( $data['controller'] );
 				foreach( $data['vars'] as $k => $v ) {
 					$this->$k = $v;
 				}
-//				new $this->class;
 				break;
 			case '404':
 				View::getInstance()->httpError( 404 );
@@ -72,18 +71,15 @@ class Action {
 			}
 		}
 
-		// get controller path
+		// collect possible controller dirs
 		$path = '';
 		$depth = $dirDepth = 0;
 		$controllerDirs = Plugger::getInstance()->getPaths();
-		$controllerDirs = array_merge( array(
-							    DIR_SITE, DIR_ROOT, DIR_FW
-						       ), $controllerDirs );
+		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
 		foreach( $controllerDirs as $k => $v ) {
 			$controllerDirs[$k] = "$v/controllers/";
 		}
 		$dirs = $controllerDirs;
-
 		foreach( $parts as $part ) {
 			$path .= "$part/";
 			$depth++;
@@ -100,30 +96,31 @@ class Action {
 			$dirs = $newDirs;
 		}
 
+		// find controller
 		$cname = '';
-		$controllers = array();
-		if( isset( $parts[$dirDepth] ) ) {
-			foreach( $dirs as $tmpDir ) {
+		$controller = null;
+		foreach( $dirs as $tmpDir ) {
+			if( isset( $parts[$dirDepth] ) ) {
 				if( is_file( $tmpDir . $parts[$dirDepth] . '.php' ) ) {
-					$cname = $parts[$dirDepth];
-					$controllers[] = "{$tmpDir}{$cname}.php";
+					$cname      = $parts[$dirDepth];
+					$controller = "{$tmpDir}{$cname}.php";
+					break;
 				}
 			}
-		}
-		if( empty( $controllers ) ) {
-			foreach( $dirs as $tmpDir ) {
-				if( is_file( $tmpDir . 'index.php' ) ) {
-					$cname = 'index';
-					$controllers[] = "{$tmpDir}index.php";
-				}
+			if( is_file( $tmpDir . 'index.php' ) ) {
+				$cname      = 'index';
+				$controller = "{$tmpDir}index.php";
+				break;
 			}
 		}
-		if( empty( $controllers ) ) {
+
+		// 404
+		if( !$controller ) {
 			$this->saveCache( $cacheKey, array( 'result' => '404' ) );
 			View::getInstance()->httpError( 404 );
 		}
 
-		// load controller and dispatchers
+		// assemble controller class name
 		$className = '';
 		for( $i = 0; $i < $dirDepth; $i++ ) {
 			$className .= ucfirst( $parts[$i] );
@@ -133,14 +130,13 @@ class Action {
 		}
 		$className = $className . ucfirst( $cname ) . 'Controller';
 
-		$match['controllers'] = $controllers;
-		foreach( $controllers as $fileName ) {
-			include_once( $fileName );
-		}
+		// include controller
+		$match['controller'] = $controller;
+		$match['vars']['className'] = $className;
+		include_once( $controller );
 		if( !class_exists( $className ) ) {
 			throw new exception( "Error! Controller class $className not found" );
 		}
-		$match['vars']['className'] = $className;
 
 		// detect action method
 		$methodName = false;
@@ -160,12 +156,11 @@ class Action {
 		}
 		$parts = array_slice( $parts, $dirDepth );
 
+		// cache data for this url
 		$this->parameters = $parts;
 		$match['vars']['parameters'] = $this->parameters;
 		$match['result'] = 'action';
-
 		$this->saveCache( $cacheKey, $match );
-
 		$this->className = $className;
 	}
 
@@ -179,6 +174,7 @@ class Action {
 		Cache::getInstance()->put( $key, $match, 300 );
 	}
 
+	/*
 	public function dispatch( $plugin, $dispatcher ) {
 
 		$plugger = Plugger::getInstance();
@@ -207,6 +203,7 @@ class Action {
 		}
 		return true;
 	}
+	*/
 
 	public function getUri() {
 
