@@ -1,5 +1,5 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:variable name="actionSpacer"> &#160; </xsl:variable>
+	<xsl:variable name="actionSpacer"></xsl:variable>
 
 	<xsl:template name="actionEdit">
 		<xsl:param name="link"/>
