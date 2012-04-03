@@ -10,6 +10,50 @@ final class Images {
 	}
 
 	/**
+	 * Получение объекта из строки данных
+	 * @param string|\Difra\Param\AjaxFile $data
+	 * @return \Imagick|null
+	 */
+	private function data2image( $data ) {
+
+		if( $data instanceof \Difra\Param\AjaxFile ) {
+			$data = $data->val();
+		}
+		try {
+			$img = new \Imagick;
+			$img->readImageBlob( $data );
+			return $img;
+		} catch( Exception $ex ) {
+			return null;
+		}
+	}
+
+	/**
+	 * Получение строки данных из объекта
+	 * @param \Imagick $img
+	 * @param string   $type
+	 *
+	 * @return string mixed
+	 */
+	private function image2data( $img, $type = 'png' ) {
+
+		$img->setImageFormat( $type );
+		return $img->getImageBlob();
+	}
+
+	/**
+	 * Перевод строки данных в другой формат
+	 * @param string $data
+	 * @param string $type
+	 * @return bool|string
+	 */
+	public function convert( $data, $type = 'png' ) {
+
+		$img = $this->data2image( $data );
+		return $img ? $this->image2data( $img, $type ) : false;
+	}
+
+	/**
 	 * Resizes image from binary string to given resolution keeping aspect ratio
 	 *
 	 * @param string|\Difra\Param\AjaxFile $data		binary string with image in it
@@ -21,38 +65,9 @@ final class Images {
 	 */
 	public function createThumbnail( $data, $maxWidth, $maxHeight, $type = 'png' ) {
 
-		if( $data instanceof \Difra\Param\AjaxFile ) {
-			$data = $data->val();
-		}
-		$img = imagecreatefromstring( $data );
-		$sizeX = imagesx( $img );
-		$sizeY = imagesy( $img );
-		if( ( $maxHeight >= $sizeY ) && ( $maxWidth >= $sizeX ) ) {
-			$newX = $sizeX;
-			$newY = $sizeY;
-		} elseif( $sizeX / $maxWidth > $sizeY / $maxHeight ) {
-			$newX = $maxWidth;
-			$newY = round( $sizeY * $maxWidth / $sizeX );
-		} else {
-			$newY = $maxHeight;
-			$newX = round( $sizeX * $maxHeight / $sizeY );
-		}
-		if( strtolower( $type ) == 'gif' ) {
-			$newImg = imagecreate( $newX, $newY );
-		} else {
-			$newImg = imagecreatetruecolor( $newX, $newY );
-		}
-		imagecopyresampled( $newImg, $img,
-				   0, 0, // destination x and y
-				   0, 0, // source x and y
-				   $newX, $newY, // destination width and height
-				   $sizeX, $sizeY // source width and height
-				   );
-		$newData = $this->gdDataToFile( $newImg, $type );
-		imagedestroy( $img );
-		imagedestroy( $newImg );
-
-		return $newData;
+		$img = $this->data2image( $data );
+		$img->resizeImage( $maxWidth, $maxHeight, \Imagick::FILTER_LANCZOS, 0.9, true );
+		return $this->image2data( $img, $type );
 	}
 
 	/**
@@ -62,109 +77,15 @@ final class Images {
 	 * @param int    $maxWidth		  maximum width of thumbnail
 	 * @param int    $maxHeight               maximum height of thumbnail
 	 * @param string $type                    resulting image type
-	 * @param bool   $tobig                   should we scale image to bigger if needed
 	 *
 	 * @return string
 	 */
-	public function scaleAndCrop( $data, $maxWidth, $maxHeight, $type = 'png', $tobig = false ) {
+	public function scaleAndCrop( $data, $maxWidth, $maxHeight, $type = 'png' ) {
 
-		$img = @imagecreatefromstring( $data );
-		if( !$img ) {
-			return false;
-		}
-		$sizeX = imagesx( $img );
-		$sizeY = imagesy( $img );
-
-		// scale if image is too big
-		if( ( ( $maxHeight < $sizeY ) and ( $maxWidth < $sizeX ) ) or $tobig ) {
-			if( $sizeX / $maxWidth < $sizeY / $maxHeight ) {
-				$newX = $maxWidth;
-				$newY = round( $sizeY * $maxWidth / $sizeX );
-			} else {
-				$newY = $maxHeight;
-				$newX = round( $sizeX * $maxHeight / $sizeY );
-			}
-		} else {
-			$newX = $sizeX;
-			$newY = $sizeY;
-		}
-
-		// crop
-		$sizeX1 = 0; $sizeX2 = $sizeX;
-		$sizeY1 = 0; $sizeY2 = $sizeY;
-		$newX1  = 0; $newX2  = $newX;
-		$newY1  = 0; $newY2  = $newY;
-		if( ( $newX2 - $newX1 ) > $maxWidth ) {
-			$dA = ( $newX2 - $newX1 ) / $maxWidth;
-			$dS = ( $sizeX2 - $sizeX1 ) / $dA / 2;
-			$dM = ( $sizeX2 - $sizeX1 ) / 2;
-			$sizeX1 = $dM - $dS;
-			$sizeX2 = $dM + $dS;
-			$newX1 = 0; $newX2 = $maxWidth;
-		}
-		if( ( $newY2 - $newY1 ) > $maxHeight ) {
-			$dA = ( $newY2 - $newY1 ) / $maxHeight;
-			$dS = ( $sizeY2 - $sizeY1 ) / $dA / 2;
-			$dM = ( $sizeY2 - $sizeY1 ) / 2;
-			$sizeY1 = $dM - $dS;
-			$sizeY2 = $dM + $dS;
-			$newY1 = 0; $newY2 = $maxHeight;
-		}
-
-		if( strtolower( $type ) == 'gif' ) {
-			$newImg = imagecreate( $newX2 - $newX1, $newY2 - $newY1 );
-		} else {
-			$newImg = imagecreatetruecolor( $newX2 - $newX1, $newY2 - $newY1 );
-		}
-		imagecopyresampled( $newImg, $img,
-				   $newX1, $newY1, // destination x and y
-				   $sizeX1, $sizeY1, // source x and y
-				   $newX2 - $newX1, $newY2 - $newY1, // destination width and height
-				   $sizeX2 - $sizeX1, $sizeY2 - $sizeY1 // source width and height
-				   );
-		$newData = $this->gdDataToFile( $newImg, $type );
-		imagedestroy( $img );
-		imagedestroy( $newImg );
-
-		return $newData;
+		$img = $this->data2image( $data );
+		$img->cropThumbnailImage( $maxWidth, $maxHeight );
+		return $this->image2data( $img, $type );
 	}
 
-	private function gdDataToFile( $newImg, $type ) {
-
-		ob_start();
-		try {
-			switch( strtolower( $type ) ) {
-			case 'jpg':
-			case 'jpeg':
-				imagejpeg( $newImg, null, 100 );
-				break;
-			case 'gif':
-				imagegif( $newImg );
-				break;
-			case 'png':
-				imagepng( $newImg, null, 9 );
-				break;
-			default:
-				throw new exception( "Unknown image type: $type" );
-			}
-			$newData = ob_get_contents();
-		} catch( exception $ex ) {
-			throw new exception( 'Exception: ' . $ex->getMessage() );
-		}
-
-		@ob_end_clean();
-		return $newData;
-	}
-
-	public function convert( $data, $type = 'png' ) {
-
-		try {
-			$img = imagecreatefromstring( $data );
-			$img = $this->gdDataToFile( $img, $type );
-		} catch( Exception $ex ) {
-			return false;
-		}
-		return $img ? $img : false;
-	}
 }
 
