@@ -7,16 +7,27 @@ class Config {
 	private $config = null;
 	private $modified = false;
 
+	/**
+	 * Синглтон
+	 * @static
+	 * @return Config
+	 */
 	static public function getInstance() {
 		static $instance;
 		return $instance ? $instance : $instance = new self;
 	}
 
+	/**
+	 * Деструктор
+	 */
 	public function __destruct() {
 
 		$this->save();
 	}
 
+	/**
+	 * Загрузка настроек
+	 */
 	private function load() {
 
 		if( !is_null( $this->config ) ) {
@@ -36,6 +47,9 @@ class Config {
 		}
 	}
 
+	/**
+	 * Сохранение настроек
+	 */
 	private function save() {
 
 		if( !$this->modified ) {
@@ -48,16 +62,53 @@ class Config {
 		$this->modified = false;
 	}
 
+	/**
+	 * Получение значение настройки
+	 * @param string $key
+	 * @return mixed
+	 */
 	public function get( $key ) {
 
 		$this->load();
 		return isset( $this->config[$key] ) ? $this->config[$key] : null;
 	}
 
+	/**
+	 * Установка значения настройки
+	 * @param string $key
+	 * @param mixed $value
+	 */
 	public function set( $key, $value ) {
 
 		$this->load();
 		$this->config[$key] = $value;
-		$this->modified = true;
+		$this->modified     = true;
+	}
+
+	/**
+	 * Получение значения настройки (для массивов)
+	 * @param string $key
+	 * @param string $arrayKey
+	 * @return mixed
+	 */
+	public function getValue( $key, $arrayKey ) {
+
+		$this->load();
+		return isset( $this->config[$key][$arrayKey] ) ? $this->config[$key][$arrayKey] : null;
+	}
+
+	/**
+	 * Установка значения настройки (для массивов)
+	 * @param string $key
+	 * @param string $arrayKey
+	 * @param mixed $arrayValue
+	 */
+	public function setValue( $key, $arrayKey, $arrayValue ) {
+
+		$this->load();
+		if( !isset( $this->config[$key] ) ) {
+			$this->config[$key] = array();
+		}
+		$this->config[$key][$arrayKey] = $arrayValue;
 	}
 }
