@@ -48,7 +48,7 @@ class Stats {
 		$extensionsOk = array();
 		$extensionsExtra = array();
 		$extensionsRequired = array(
-			'dom', 'SimpleXML', 'xsl', 'zlib', 'ctype', 'json', 'mbstring', 'Reflection', 'Phar', 'gd', 'imagick', 'mysqli'
+			'dom', 'SimpleXML', 'xsl', 'zlib', 'ctype', 'json', 'mbstring', 'Reflection', 'Phar', 'imagick', 'mysqli'
 		);
 		foreach( $extensions as $extension ) {
 			if( in_array( $extension, $extensionsRequired ) ) {
