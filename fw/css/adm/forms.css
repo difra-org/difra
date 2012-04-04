@@ -1,4 +1,4 @@
-input {
+input, textarea {
 	border:        1px solid #c4c3c3;
 	border-radius: 5px;
 /*	height:        22px;
@@ -79,7 +79,8 @@ table.form tr td:last-child {
 }
 
 table.form tr td:last-child input[type="text"],
-table.form tr td:last-child input[type="file"] {
+table.form tr td:last-child input[type="file"],
+table.form tr td:last-child textarea {
 	width: 100%;
 }
 
