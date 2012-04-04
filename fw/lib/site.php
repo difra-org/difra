@@ -10,7 +10,6 @@ class Site {
 	const PATH_PART = '/../../sites/';
 
 	// libs
-	private $locales = array();
 	private $locale = 'ru_RU';
 
 	private $siteDir = null;
@@ -28,12 +27,13 @@ class Site {
 	public function __construct() {
 
 		$this->detectHost();
-		$this->configurePHP();
-		$this->configurePaths();
-		$this->sessionLoad();
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
 			$this->siteConfig = include( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		}
+		$this->configureLocale();
+		$this->configurePHP();
+		$this->configurePaths();
+		$this->sessionLoad();
 
 		Events::register( 'core-init', 'Difra\\Debugger' );
 		Events::register( 'plugins-load', 'Difra\Plugger' );
@@ -144,35 +144,15 @@ class Site {
 		return $this->locale;
 	}
 
-	public function getLocalesList() {
-
-		return array_keys( $this->locales );
-	}
-
 	public function getLocaleObj( $locale = null ) {
 
-		if( is_null( $locale ) ) {
-			$locale = $this->locale;
-		}
-		if( empty( $this->locales[$locale] ) ) {
-			$this->locales[$locale] = new Locales( $locale );
-		}
-		return $this->locales[$locale];
+		return Locales::getInstance( $locale );
 	}
 
-	public function configureLocales() {
+	public function configureLocale() {
 
-		if( !isset( $this->siteConfig['locales'] ) ) {
-			$this->locale = 'ru_RU';
-			$this->locales = array( 'ru_RU' => null );
-		} elseif( !is_array( $this->siteConfig['locales'] ) ) {
-			$this->locale = $this->siteConfig['locales'];
-			$this->locales = array( $this->siteConfig['locales'] => null );
-		} else {
-			$this->locale = $this->siteConfig['locales'][0];
-			foreach( $this->siteConfig['locales'] as $loc ) {
-				$this->locales[$loc] = null;
-			}
+		if( isset( $this->siteConfig['locale'] ) ) {
+			$this->locale = $this->siteConfig['locale'];
 		}
 	}
 
@@ -244,18 +224,21 @@ class Site {
 		return $_build = '-';
 	}
 
+	/**
+	 * Возвращает текущие настройки в XML
+	 * @param \DOMNode $node
+	 */
 	public function getConfigXML( $node ) {
 
-		$data = $this->getLocalesList();
-		if( !empty( $data ) ) {
-			foreach( $data as $lang ) {
-				$langNode = $node->appendChild( $node->ownerDocument->createElement( 'lang' ) );
-				$langNode->setAttribute( 'name', $lang );
-			}
-		}
+		$node->setAttribute( 'locale', $this->locale );
 		$node->setAttribute( 'host', $this->getHost() );
 		$node->setAttribute( 'hostname', $this->getHostname() );
 		$node->setAttribute( 'mainhost', $this->getMainhost() );
+	}
+
+	public function getData( $key ) {
+
+		return isset( $this->siteConfig[$key] ) ? $this->siteConfig[$key] : false;
 	}
 
 	public function sessionLoad() {

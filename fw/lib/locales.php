@@ -15,7 +15,15 @@ class Locales {
 	 */
 	static function getInstance( $locale = null ) {
 
-		return Site::getInstance()->getLocaleObj( $locale );
+		static $locales = array();
+		if( !$locale ) {
+			$locale = Site::getInstance()->getLocale();
+		}
+		if( isset( $locales[$locale] ) ) {
+			return $locales[$locale];
+		}
+		$locales[$locale] = new self( $locale );
+		return $locales[$locale];
 	}
 
 	public function __construct( $locale ) {
