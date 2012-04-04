@@ -53,7 +53,7 @@ class MySQL {
 			}
 		} catch( Exception $e ) {
 			header( "HTTP/1.1 500 Internal Server Error" );
-			die( '<center><h1 style="padding:350px 0px 0px 0px">Database connection failed.</h1></center>' );
+			die( '<center><h1 style="padding:350px 0 0 0">Database connection failed.</h1></center>' );
 		}
 		$this->connected = true;
 		$this->db->set_charset( 'utf8' );

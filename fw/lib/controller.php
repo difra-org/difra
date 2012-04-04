@@ -50,8 +50,11 @@ abstract class Controller {
 		// add XML data
 		$this->auth->getAuthXML( $realRoot );
 		$this->locale->getLocaleXML( $realRoot );
-		Menu::getAllXML( $this->view->instance, $realRoot );
-		//$this->root->setAttribute( 'menuitem', Menu::getInstance()->getCurrent( $this->action->uri ) );
+
+		// load menu from Resources
+		$menuXML = new \DOMDocument();
+		$menuXML->loadXML( Resourcer::getInstance( 'menu' )->compile( $this->view->instance ) );
+		$realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
 
 		// run action method
 		$this->_runAction();

@@ -106,7 +106,8 @@ class Site {
 		mb_internal_encoding( 'UTF-8' );
 		ini_set( 'short_open_tag', false );
 		ini_set( 'asp_tags', false );
-		
+		ini_set( 'mysql.trace_mode', false );
+
 		// set session domain
 		ini_set( 'session.use_cookies', true );
 		ini_set( 'session.use_only_cookies', true );
@@ -175,14 +176,6 @@ class Site {
 		}
 	}
 
-	public function getData( $key ) {
-
-		if( !isset( $this->siteConfig[$key] ) ) {
-			return null;
-		}
-		return $this->siteConfig[$key];
-	}
-	
 	public function getHostname() {
 
 		if( !empty( $_SERVER['HTTP_HOST'] ) ) {
