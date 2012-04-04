@@ -110,5 +110,6 @@ class Config {
 			$this->config[$key] = array();
 		}
 		$this->config[$key][$arrayKey] = $arrayValue;
+		$this->modified = true;
 	}
 }
