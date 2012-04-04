@@ -136,6 +136,12 @@ class Plugger {
 		return isset( $this->plugins[$name] ) ? $this->plugins[$name] : null;
 	}
 
+	// XXX: from pnd: пролазил везде где только можно, но не нашел ничего готового для определения наличия плагина.
+	public function isPlugin( $name ) {
+
+		return in_array( $name, $this->allPlugins );
+	}
+
 	public function runDispatchers( &$controller ) {
 
 		foreach( $this->plugins as $plugin ) {
