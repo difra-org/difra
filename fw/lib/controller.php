@@ -32,7 +32,7 @@ abstract class Controller {
 
 		// load essentials
 		$this->view	= View::getInstance();
-		$this->locale	= Site::getInstance()->getLocaleObj();
+		$this->locale	= Locales::getInstance();
 		$this->action	= Action::getInstance();
 		$this->auth	= Auth::getInstance();
 		$this->ajax	= Ajax::getInstance();

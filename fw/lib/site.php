@@ -144,11 +144,6 @@ class Site {
 		return $this->locale;
 	}
 
-	public function getLocaleObj( $locale = null ) {
-
-		return Locales::getInstance( $locale );
-	}
-
 	public function configureLocale() {
 
 		if( isset( $this->siteConfig['locale'] ) ) {
