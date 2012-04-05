@@ -15,6 +15,7 @@
 			<xsl:variable name="instance" select="/root/menu/@instance"/>
 			<ul>
 				<xsl:for-each select="*">
+					<xsl:sort select="@priority" order="descending"/>
 					<xsl:if test="not(@hidden=1)">
 						<li id="{@id}">
 							<xsl:if test="@sup=1">
