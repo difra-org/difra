@@ -201,24 +201,21 @@ abstract class Common {
 	// собирает папки ресурсов по папкам фреймворка, сайта и плагинов
 	private function find( $instance ) {
 		
-		$plugger = Difra\Plugger::getInstance();
-
-		// Формируем список папок, где будем искать ресурсы
 		$parents = array(
-				 DIR_ROOT . "fw/{$this->type}/{$instance}",
-				 DIR_ROOT . "fw/{$this->type}/all",
-			         DIR_ROOT . "{$this->type}/{$instance}",
-			         DIR_ROOT . "{$this->type}/all",
-				 DIR_SITE . "{$this->type}/{$instance}",
-				 DIR_SITE . "{$this->type}/all",
-				 );
-		$paths = $plugger->getPaths();
+			DIR_SITE . "{$this->type}/{$instance}",
+			DIR_SITE . "{$this->type}/all",
+			DIR_ROOT . "{$this->type}/{$instance}",
+			DIR_ROOT . "{$this->type}/all",
+		);
+		$paths = Difra\Plugger::getInstance()->getPaths();
 		if( !empty( $paths ) ) {
 			foreach( $paths as $dir ) {
 				$parents[] = "{$dir}/{$this->type}/{$instance}";
 				$parents[] = "{$dir}/{$this->type}/all";
 			}
 		}
+		$parents[] = DIR_FW . "{$this->type}/{$instance}";
+		$parents[] = DIR_FW . "{$this->type}/all";
 		
 		if( empty( $parents ) ) {
 			return false;
@@ -227,7 +224,47 @@ abstract class Common {
 			return true;
 		}
 	}
-	
+
+	/**
+	 * Находит названия всех возможных инстансов для данного ресурса
+	 * @return array|bool
+	 */
+	public function findInstances() {
+
+		$plugger = Difra\Plugger::getInstance();
+
+		// Формируем список папок, где будем искать ресурсы
+		$parents = array(
+			DIR_FW . $this->type,
+			DIR_ROOT . $this->type,
+			DIR_SITE . $this->type,
+		);
+		$paths   = $plugger->getPaths();
+		if( !empty( $paths ) ) {
+			foreach( $paths as $dir ) {
+				$parents[] = "{$dir}/{$this->type}";
+			}
+		}
+
+		if( empty( $parents ) ) {
+			return false;
+		}
+		$instances = array();
+		foreach( $parents as $path ) {
+			if( !is_dir( $path ) ) {
+				continue;
+			};
+			$dir = opendir( $path );
+			while( false !== ( $subdir = readdir( $dir ) ) ) {
+				if( $subdir{0} == '.' ) {
+					continue;
+				}
+				$instances[$subdir] = 1;
+			}
+		}
+		return array_keys( $instances );
+	}
+
 	private function addDirs( $instance, $dirs ) {
 		
 		// handle arrays

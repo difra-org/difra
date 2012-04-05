@@ -8,8 +8,6 @@ abstract class XSLT extends Common {
 	protected function processData( $instance ) {
 
 		$files = $this->getFiles( $instance );
-
-		// create master template
 		$template = '<' . '?xml version="1.0" encoding="UTF-8"?' . '>
 				<!DOCTYPE xsl:stylesheet [
 					<!ENTITY % lat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "' . DIR_ROOT . 'fw/xslt/xhtml-lat1.ent">
@@ -21,18 +19,43 @@ abstract class XSLT extends Common {
 				]>
 				<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 				<xsl:output method="xml" indent="yes" encoding="utf-8" omit-xml-declaration="yes" doctype-system="about:legacy-compat"/>
-				';
-		$templateInner = '';
+				</xsl:stylesheet>';
+		$dom = new \DOMDocument();
+		$dom->loadXML( $template );
+		$usedNames = array();
+		$usedMatches = array();
 		foreach( $files as $filename ) {
-			$templateInner .= "<xsl:include href=\"{$filename['raw']}\"/>\n";
+			$template = new \DOMDocument();
+			$template->load( $filename['raw'] );
+			foreach( $template->documentElement->childNodes as $child ) {
+				switch( $child->nodeType ) {
+				case XML_TEXT_NODE:
+				case XML_COMMENT_NODE:
+					continue 2;
+				}
+				if( $child->nodeName == 'xsl:template' ) {
+					if( $child->hasAttribute( 'match' ) ) {
+						$m = $child->getAttribute( 'match' );
+						if( in_array( $m, $usedMatches ) ) {
+							continue;
+						}
+						$usedMatches[] = $m;
+					} elseif( $child->hasAttribute( 'name' ) ) {
+						$n = $child->getAttribute( 'name' );
+						if( in_array( $n, $usedNames ) ) {
+							continue;
+						}
+						$usedNames[] = $n;
+					}
+				}
+				$dom->documentElement->appendChild( $dom->importNode( $child, true ) );
+			}
 		}
-		if( !Difra\Debugger::getInstance( )->isEnabled( ) ) {
-			$templateInner = $this->_extendXSL( $templateInner );
-		}
-		$template .= $templateInner . '</xsl:stylesheet>';
-		return $template;
+		return $dom->saveXML();
 	}
 
+	/*
+	// функция, рекурсивно раскрывающая <xsl:include> в шаблоне.
 	private function _extendXSL( $text, $path = '/', $depth = 1 ) {
 
 		if( $depth > 10 ) {
@@ -46,9 +69,10 @@ abstract class XSLT extends Common {
 			preg_match( '/<xsl\:stylesheet.*?\>(.*)<\/xsl\:stylesheet\>/is', file_get_contents( $matches[2]{0} != '/' ? "$path/{$matches[2]}"
 															    : $matches[2] ), $newMatches );
 			if( empty( $newMatches ) ) {
-				throw new exception( "Can't find <xsl:stylesheet> section in {$matches[2]}" );
+				continue;
 			}
 			$text = $matches[1] . $this->_extendXSL( $newMatches[1], dirname( $matches[2] ), $depth + 1 ) . $matches[3];
 		}
 	}
+	*/
 }
