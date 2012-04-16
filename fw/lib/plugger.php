@@ -123,7 +123,7 @@ class Plugger {
 			$list = $this->getList();
 			if( !empty( $list ) ) {
 				foreach( $list as $dir ) {
-					$paths[] = "{$this->path}/{$dir}";
+					$paths[] = $this->path . $dir;
 				}
 			}
 			$_paths = $paths;

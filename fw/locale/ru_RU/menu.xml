@@ -4,6 +4,7 @@
 			<menu_common></menu_common>
 			<menu_common_site>Перейти на сайт</menu_common_site>
 			<menu_common_settings>Общая информация</menu_common_settings>
+			<menu_common_locales>Состояние локализации</menu_common_locales>
 		</adm>
 	</menu>
 </locale>

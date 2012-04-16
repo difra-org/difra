@@ -131,7 +131,7 @@ abstract class Common {
 	}
 	
 	// собирает всё в единый документ
-	public function compile( $instance ) {
+	public function compile( $instance, $withSources = false ) {
 
 		if( !$this->checkInstance( $instance ) ) {
 			return false;
@@ -174,7 +174,7 @@ abstract class Common {
 			}
 
 			// compile resource
-			$resource = $this->_subCompile( $instance );
+			$resource = $this->_subCompile( $instance, $withSources );
 
 			// cache data
 			$cache->put( $cacheKey, $resource, self::CACHE_TTL );
@@ -186,16 +186,16 @@ abstract class Common {
 
 			return $resource;
 		} else {
-			return $this->_subCompile( $instance );
+			return $this->_subCompile( $instance, $withSources );
 		}
 		
 	}
 	
-	private function _subCompile( $instance ) {
+	private function _subCompile( $instance, $withSources = false ) {
 	
 		$this->find( $instance );
 		$this->processDirs( $instance );
-		return $this->processData( $instance );
+		return $this->processData( $instance, $withSources );
 	}
 
 	// собирает папки ресурсов по папкам фреймворка, сайта и плагинов
