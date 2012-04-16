@@ -4,7 +4,7 @@
 	<xsl:template name="actionEdit">
 		<xsl:param name="link"/>
 		<a href="{$link}" class="action edit">
-			<xsl:value-of select="$locale/actions/edit"/>
+			<xsl:value-of select="$locale/adm/actions/edit"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
@@ -12,7 +12,7 @@
 	<xsl:template name="actionDelete">
 		<xsl:param name="link"/>
 		<a href="{$link}" class="action delete ajaxer">
-			<xsl:value-of select="$locale/actions/delete"/>
+			<xsl:value-of select="$locale/adm/actions/delete"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
@@ -45,7 +45,7 @@
 					</xsl:attribute>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:value-of select="$locale/actions/up"/>
+			<xsl:value-of select="$locale/adm/actions/up"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
@@ -78,9 +78,47 @@
 					</xsl:attribute>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:value-of select="$locale/actions/down"/>
+			<xsl:value-of select="$locale/adm/actions/down"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
 
-</xsl:stylesheet>
+	<xsl:template name="actionLeft">
+		<xsl:param name="link"/>
+		<a>
+			<xsl:choose>
+				<xsl:when test="position()=1">
+					<xsl:attribute name="href">#</xsl:attribute>
+					<xsl:attribute name="class">action left disabled ajaxer</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="href">
+						<xsl:value-of select="$link"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">action left ajaxer</xsl:attribute>
+				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:value-of select="$locale/adm/actions/left"/>
+		</a>
+		<xsl:value-of select="$actionSpacer"/>
+	</xsl:template>
+
+	<xsl:template name="actionRight">
+		<xsl:param name="link"/>
+		<a>
+			<xsl:choose>
+				<xsl:when test="position()=last()">
+					<xsl:attribute name="href">#</xsl:attribute>
+					<xsl:attribute name="class">action right disabled ajaxer</xsl:attribute>
+				</xsl:when>
+				<xsl:otherwise>
+					<xsl:attribute name="href">
+						<xsl:value-of select="$link"/>
+					</xsl:attribute>
+					<xsl:attribute name="class">action right ajaxer</xsl:attribute>
+=				</xsl:otherwise>
+			</xsl:choose>
+			<xsl:value-of select="$locale/adm/actions/right"/>
+		</a>
+		<xsl:value-of select="$actionSpacer"/>
+	</xsl:template></xsl:stylesheet>

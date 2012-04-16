@@ -7,6 +7,8 @@
 			<delete>Удалить</delete>
 			<up>Вверх</up>
 			<down>Вниз</down>
+			<left>Влево</left>
+			<right>Вправо</right>
 			<add>Добавить</add>
 			<content>Содержимое</content>
 		</actions>

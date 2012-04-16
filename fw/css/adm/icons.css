@@ -3,6 +3,8 @@
 .action.delete,
 .action.up,
 .action.down,
+.action.left,
+.action.right,
 .action.view {
 	/*
 	background-image: -webkit-gradient(linear, left bottom, left top, color-stop(0, #d6d6d6), color-stop(1, #f9f9f9));
@@ -36,6 +38,14 @@
 
 .action.down {
 	background-position: -141px 3px, 0 0;
+}
+
+.action.left {
+	background-position: -204px 3px, 0 0;
+}
+
+.action.right {
+	background-position: -174px 3px, 0 0;
 }
 
 .action.view {
