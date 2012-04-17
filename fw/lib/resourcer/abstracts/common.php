@@ -256,10 +256,9 @@ abstract class Common {
 			};
 			$dir = opendir( $path );
 			while( false !== ( $subdir = readdir( $dir ) ) ) {
-				if( $subdir{0} == '.' ) {
-					continue;
+				if( $subdir{0} != '.' and is_dir( $path . '/' . $subdir ) ) {
+					$instances[$subdir] = 1;
 				}
-				$instances[$subdir] = 1;
 			}
 		}
 		return array_keys( $instances );

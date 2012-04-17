@@ -71,15 +71,11 @@ class Action {
 			}
 		}
 
-		// collect possible controller dirs
+		// get possible controller dirs
 		$path = '';
 		$depth = $dirDepth = 0;
-		$controllerDirs = Plugger::getInstance()->getPaths();
-		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
-		foreach( $controllerDirs as $k => $v ) {
-			$controllerDirs[$k] = $v . '/controllers/';
-		}
-		$dirs = $controllerDirs;
+
+		$controllerDirs = $dirs = $this->getControllerPaths();
 		foreach( $parts as $part ) {
 			$path .= "$part/";
 			$depth++;
@@ -221,5 +217,15 @@ class Action {
 	public function render() {
 
 		$this->controller->render();
+	}
+
+	public function getControllerPaths() {
+
+		$controllerDirs = Plugger::getInstance()->getPaths();
+		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
+		foreach( $controllerDirs as $k => $v ) {
+			$controllerDirs[$k] = $v . '/controllers/';
+		}
+		return $controllerDirs;
 	}
 }

@@ -15,9 +15,9 @@ class Menu extends Abstracts\XML {
 		} else {
 			$prefix = '/' . $instance;
 		}
-		$this->_recursiveProcessor( $xml, $prefix, 'menu' );
+		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance );
 	}
-	private function _recursiveProcessor( $node, $href, $prefix ) {
+	private function _recursiveProcessor( $node, $href, $prefix, $instance ) {
 		
 		foreach( $node as $subname => $subnode ) {
 			if( $subnode->attributes()->sup and $subnode->attributes()->sup == '1' ) {
@@ -31,7 +31,8 @@ class Menu extends Abstracts\XML {
 			if( !isset( $subnode->attributes()->href ) ) {
 				$subnode->addAttribute( 'href', $newHref );
 			};
-			$this->_recursiveProcessor( $subnode, $newHref, $newPrefix );
+			$subnode->addAttribute( 'xpath', 'locale/menu/' . $instance . '/' . $newPrefix );
+			$this->_recursiveProcessor( $subnode, $newHref, $newPrefix, $instance );
 		}
 	}
 }
