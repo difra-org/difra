@@ -44,10 +44,9 @@
 										</a>
 										<div id="u_{../@name}_{position()}" style="display:none">
 											<xsl:for-each select="item[@usage=0]">
-												<xsl:value-of select="@xpath"/>
-												<xsl:text> (</xsl:text>
 												<xsl:value-of select="@source"/>
-												<xsl:text>)</xsl:text>
+												<xsl:text>: </xsl:text>
+												<xsl:value-of select="@xpath"/>
 												<br/>
 											</xsl:for-each>
 										</div>
@@ -63,6 +62,8 @@
 										</a>
 										<div id="m_{../@name}_{position()}" style="display:none">
 											<xsl:for-each select="item[@missing=1]">
+												<xsl:value-of select="@source"/>
+												<xsl:text>: </xsl:text>
 												<xsl:value-of select="@xpath"/>
 												<br/>
 											</xsl:for-each>

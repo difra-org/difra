@@ -75,6 +75,7 @@ class Localemanage {
 						$strNode = $moduleNode->appendChild( $moduleNode->ownerDocument->createElement( 'item' ) );
 						$strNode->setAttribute( 'xpath', $k );
 						$strNode->setAttribute( 'missing', 1 );
+						$strNode->setAttribute( 'source', basename( $v ) );
 					}
 				}
 			}
@@ -102,7 +103,7 @@ class Localemanage {
 					$arr[$module] = array();
 				}
 				$arr[$module][$xpath] = array(
-					'source' => $source,
+					'source' => basename( $source ),
 					'text' => $item->nodeValue,
 					'usage' => ( $usage = $this->findUsages( $xpath ) )
 				);
@@ -110,7 +111,7 @@ class Localemanage {
 					if( !isset( $allxpaths[$module] ) ) {
 						$allxpaths[$module] = array();
 					}
-					$allxpaths[$module][$xpath] = 1;
+					$allxpaths[$module][$xpath] = $source;
 				}
 				break;
 			}
