@@ -25,7 +25,7 @@
 							<xsl:value-of select="count(item[@usage>0])"/>
 							<xsl:text> (</xsl:text>
 							<xsl:choose>
-								<xsl:when test="count(item[@usage>0])">
+								<xsl:when test="count(item[@usage>0])>1">
 									<xsl:value-of select="round( 100  * count(item[@usage>0][@missing=0]) div count(item[@usage>0]) )"/>
 									<xsl:text>%</xsl:text>
 								</xsl:when>
@@ -34,7 +34,7 @@
 							<xsl:text>)</xsl:text>
 							<br/>
 							<xsl:choose>
-								<xsl:when test="count(item[@usage=0])">
+								<xsl:when test="count(item[@usage=0])>1">
 									<div>
 										<a href="#"
 										   onclick="$('#u_{../@name}_{position()}').toggle('fast')"
@@ -54,7 +54,7 @@
 								</xsl:when>
 							</xsl:choose>
 							<xsl:choose>
-								<xsl:when test="count(item[@missing=1])">
+								<xsl:when test="count(item[@missing=1])>1">
 									<div>
 										<a href="#" onclick="$('#m_{../@name}_{position()}').toggle()" class="dotted">
 											<xsl:text>Не хватает строк: </xsl:text>
