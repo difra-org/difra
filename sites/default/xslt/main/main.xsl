@@ -26,6 +26,23 @@
 		</html>
 	</xsl:template>
 
+	<xsl:template name="ajax-page">
+		<html>
+			<head>
+				<title>
+					<xsl:value-of select="$locale/seo/index/title"/>
+					<xsl:if test="/root/@title">
+						<xsl:text> — </xsl:text>
+						<xsl:value-of select="/root/@title"/>
+					</xsl:if>
+				</title>
+			</head>
+			<body>
+				<xsl:call-template name="content"/>
+			</body>
+		</html>
+	</xsl:template>
+
 	<xsl:template name="content">
 		<div id="content">
 			<xsl:apply-templates select="*[not(@autorender=0)]"/>
@@ -35,20 +52,7 @@
 	<xsl:template match="/root">
 		<xsl:choose>
 			<xsl:when test="/root/@ajax=1">
-				<html>
-					<head>
-						<title>
-							<xsl:value-of select="$locale/seo/index/title"/>
-							<xsl:if test="/root/@title">
-								<xsl:text> — </xsl:text>
-								<xsl:value-of select="/root/@title"/>
-							</xsl:if>
-						</title>
-					</head>
-					<body>
-						<xsl:call-template name="content"/>
-					</body>
-				</html>
+				<xsl:call-template name="ajax-page"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:call-template name="page"/>
