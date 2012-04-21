@@ -24,7 +24,7 @@ switcher.ajaxConfig = {
 	success: function( data, status, xhr ) {
 		$( document ).triggerHandler( 'destruct' );
 		var newdata = $( data );
-		var a = newdata.children( '#content' );
+		var a = newdata.filter( '#content' );
 		if( !a.length ) {
 			$( '#loading' ).css( 'display', 'none' );
 			document.location = switcher.url;
