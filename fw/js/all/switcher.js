@@ -40,6 +40,7 @@ switcher.ajaxConfig = {
 				_gaq.push( ['_trackPageview', switcher.url] );
 			}
 		}
+		$( window ).scrollTop( 0 );
 		$( document ).triggerHandler( 'switch' );
 		$( '#content' ).replaceWith( a ).remove();
 		var title = newdata.filter( 'title' ).text();
