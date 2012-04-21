@@ -23,7 +23,8 @@ switcher.ajaxConfig = {
 	},
 	success: function( data, status, xhr ) {
 		$( document ).triggerHandler( 'destruct' );
-		var a = $( data ).children( '#content' );
+		var newdata = $( data );
+		var a = newdata.children( '#content' );
 		if( !a.length ) {
 			$( '#loading' ).css( 'display', 'none' );
 			document.location = switcher.url;
@@ -31,7 +32,7 @@ switcher.ajaxConfig = {
 		if( !switcher.noPush ) {
 			if( history.pushState ) {
 				history.pushState( { url: switcher.url }, null, switcher.url );
-			} else { // workaround для убогих (IE, Opera)
+			} else { // workaround для убогих (IE, Opera, Android)
 				switcher.hashChanged = true;
 				window.location = '/#!' + switcher.url;
 			}
@@ -41,6 +42,10 @@ switcher.ajaxConfig = {
 		}
 		$( document ).triggerHandler( 'switch' );
 		$( '#content' ).replaceWith( a ).remove();
+		var title = newdata.filter( 'title' ).text();
+		if( title.length ) {
+			document.title = title;
+		}
 		$( '#loading' ).css( 'display', 'none' );
 		$( document ).triggerHandler( 'construct' );
 	},
