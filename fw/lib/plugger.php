@@ -39,7 +39,7 @@ class Plugger {
 		if( is_null( $_plugins ) ) {
 			$plugins = array();
 			if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
-				if( $dir = opendir( $this->path ) ) {
+				if( is_dir( $this->path ) and $dir = opendir( $this->path ) ) {
 					while( false !== ( $subdir = readdir( $dir ) ) ) {
 						if( $subdir != '.' and $subdir != '..' and is_dir( "{$this->path}/$subdir" ) ) {
 							if( is_readable( "{$this->path}/$subdir/plugin.php" ) ) {
