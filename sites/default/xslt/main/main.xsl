@@ -4,8 +4,7 @@
 		doctype-system="http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"
 		doctype-public="-//W3C//DTD XHTML 1.0 Transitional//EN" />
 
-	<!-- common html part -->
-	<xsl:template match="/root">
+	<xsl:template name="page">
 		<html>
 			<head>
 				<title><xsl:value-of select="$locale/seo/index/title"/></title>
@@ -22,8 +21,39 @@
 				<h1>
 					<xsl:value-of select="$locale/index/welcome"/>
 				</h1>
-				<xsl:apply-templates select="*[not(@autorender=0)]"/>
+				<xsl:call-template name="content"/>
 			</body>
 		</html>
 	</xsl:template>
+
+	<xsl:template name="content">
+		<div id="content">
+			<xsl:apply-templates select="*[not(@autorender=0)]"/>
+		</div>
+	</xsl:template>
+
+	<xsl:template match="/root">
+		<xsl:choose>
+			<xsl:when test="/root/@ajax=1">
+				<html>
+					<head>
+						<title>
+							<xsl:value-of select="$locale/seo/index/title"/>
+							<xsl:if test="/root/@title">
+								<xsl:text> — </xsl:text>
+								<xsl:value-of select="/root/@title"/>
+							</xsl:if>
+						</title>
+					</head>
+					<body>
+						<xsl:call-template name="content"/>
+					</body>
+				</html>
+			</xsl:when>
+			<xsl:otherwise>
+				<xsl:call-template name="page"/>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+
 </xsl:stylesheet>
