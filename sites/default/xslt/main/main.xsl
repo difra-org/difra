@@ -14,7 +14,7 @@
 				<meta name="description" content="{$locale/seo/index/description}" />
 				<meta http-equiv="pragma" content="no-cache" />
 				<meta http-equiv="proxy" content="no-cache" />
-				<link href="/css/style.css" rel="stylesheet" type="text/css" />
+				<link href="/css/main.css" rel="stylesheet" type="text/css" />
 				<script type="text/javascript" src="/js/common/main.js"></script>
 			</head>
 			<body>
