@@ -245,7 +245,7 @@ class Site {
 
 		if( !isset( $_SESSION ) and isset( $_COOKIE[ini_get( 'session.name' )] ) ) {
 			session_start();
-			if( !isset( $_SESSION['dhost'] ) or $_SESSION['dhost'] != $this->getHost() ) {
+			if( !isset( $_SESSION['dhost'] ) or $_SESSION['dhost'] != $this->getMainhost() ) {
 				$_SESSION = array();
 			}
 		}
@@ -257,14 +257,14 @@ class Site {
 		if( !isset( $_SESSION ) ) {
 			session_start();
 			$_SESSION = array();
-			$_SESSION['dhost'] = $this->getHost();
+			$_SESSION['dhost'] = $this->getMainhost();
 		}
 	}
 
 	public function sessionSave() {
 
 		if( !empty( $_SESSION ) and empty( $_SESSION['dhost'] ) ) {
-			$_SESSION['dhost'] = $this->getHost();
+			$_SESSION['dhost'] = $this->getMainhost();
 		}
 	}
 }
