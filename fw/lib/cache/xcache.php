@@ -24,7 +24,7 @@ class XCache extends Common {
 				return false;
 			}
 			@xcache_isset( 'test' );
-			if( error_get_last() ) {
+			if( $e = error_get_last() and $e['file'] == __FILE__ ) {
 				return false;
 			}
 		} catch( Difra\Exception $ex ) {
