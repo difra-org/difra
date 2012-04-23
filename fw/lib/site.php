@@ -32,7 +32,8 @@ class Site {
 			$this->siteConfig = include( dirname( __FILE__ ) . self::PATH_PART2 . '/config.php' );
 		}
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
-			$this->siteConfig = include( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
+			$conf = include( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
+			$this->siteConfig = array_merge( $this->siteConfig, $conf );
 		}
 		$this->configureLocale();
 		$this->configurePHP();
