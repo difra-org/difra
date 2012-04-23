@@ -8,6 +8,7 @@ class Site {
 	const BUILD = '$Rev$';
 
 	const PATH_PART = '/../../sites/';
+	const PATH_PART2 = '/../..';
 
 	// libs
 	private $locale = 'ru_RU';
@@ -27,6 +28,9 @@ class Site {
 	public function __construct() {
 
 		$this->detectHost();
+		if( is_file( dirname( __FILE__ ) . self::PATH_PART2 . '/config.php' ) ) {
+			$this->siteConfig = include( dirname( __FILE__ ) . self::PATH_PART2 . '/config.php' );
+		}
 		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
 			$this->siteConfig = include( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
 		}
@@ -77,7 +81,7 @@ class Site {
 			$this->siteDir = 'www.' . $this->host;
 		} else {
 			header( 'HTTP/1.1 500 Internal Server Error' );
-			die( 'Internal server error: difra can not find the configuration.' );
+			die( 'Internal server error: can not find site.' );
 		}
 				
 		return true;
