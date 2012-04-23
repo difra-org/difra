@@ -24,7 +24,7 @@ switcher.ajaxConfig = {
 	success: function( data, status, xhr ) {
 		$( document ).triggerHandler( 'destruct' );
 		var newdata = $( data );
-		var a = newdata.filter( '#content' );
+		var a = newdata.filter( '#content, .switcher' );
 		if( !a.length ) {
 			$( '#loading' ).css( 'display', 'none' );
 			document.location = switcher.url;
@@ -40,9 +40,15 @@ switcher.ajaxConfig = {
 				_gaq.push( ['_trackPageview', switcher.url] );
 			}
 		}
-		$( window ).scrollTop( 0 );
 		$( document ).triggerHandler( 'switch' );
-		$( '#content' ).replaceWith( a ).remove();
+
+		a.each( function( k, v ) {
+			try {
+				$( '#' + $( v ).attr( 'id' ) ).replaceWith( v ).remove();
+			} catch( e ) {}
+		} );
+		$( window ).scrollTop( 0 );
+
 		var title = newdata.filter( 'title' ).text();
 		if( title.length ) {
 			document.title = title;
