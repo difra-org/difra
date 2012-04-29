@@ -36,12 +36,18 @@ abstract class XSLT extends Common {
 				if( $child->nodeName == 'xsl:template' ) {
 					if( $child->hasAttribute( 'match' ) ) {
 						$m = $child->getAttribute( 'match' );
+						if( $child->hasAttribute( 'mode' ) ) {
+							$m .= ':' . $child->getAttribute( 'mode' );
+						}
 						if( in_array( $m, $usedMatches ) ) {
 							continue;
 						}
 						$usedMatches[] = $m;
 					} elseif( $child->hasAttribute( 'name' ) ) {
 						$n = $child->getAttribute( 'name' );
+						if( $child->hasAttribute( 'mode' ) ) {
+							$n .= ':' . $child->getAttribute( 'mode' );
+						}
 						if( in_array( $n, $usedNames ) ) {
 							continue;
 						}

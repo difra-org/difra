@@ -126,7 +126,7 @@ $( document ).ready( function() {
 
 $( 'a' ).live( 'click dblclick',
 	function( event ) {
-		if( $( this ).hasClass( 'ajaxer' ) ) {
+		if( $( this ).hasClass( 'ajaxer' ) || $( this ).hasClass( 'noAjaxer' ) ) {
 			return;
 		}
 		if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 11 ) == 'javascript:' ) {
