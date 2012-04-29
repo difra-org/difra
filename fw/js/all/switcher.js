@@ -24,7 +24,7 @@ switcher.ajaxConfig = {
 	success: function( data, status, xhr ) {
 		$( document ).triggerHandler( 'destruct' );
 		var newdata = $( data );
-		var a = newdata.filter( '#content, .switcher' );
+		var a = newdata.filter( '#content,.switcher' );
 		if( !a.length ) {
 			$( '#loading' ).css( 'display', 'none' );
 			document.location = switcher.url;
@@ -67,11 +67,12 @@ switcher.page = function( url, noPush, data ) {
 
 	switcher.noPush = noPush ? true : false;
 	switcher.url = url;
+	// filter protocol://host part
 	var host = window.location.protocol + "//" + window.location.host + "/";
 	if( host == switcher.url.substring( 0, host.length ) ) {
 		switcher.url = switcher.url.substring( host.length - 1 );
 	}
-	if( !$( '#content' ).length ) {
+	if( !$( '#content,.switcher' ).length ) {
 		$( document ).triggerHandler( 'destruct' );
 		$( '#loading' ).css( 'display', 'none' );
 		document.location = switcher.url;
@@ -116,6 +117,10 @@ $( document ).ready( function() {
 		}
 	} else if( !history.pushState && document.location.hash.substring( 0, 2 ) != '#!' ) {
 //		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
+	} else {
+		if( !switcher.url ) {
+			switcher.url = document.location.pathname;
+		}
 	}
 } );
 
@@ -133,18 +138,3 @@ $( 'a' ).live( 'click dblclick',
 			switcher.page( $( this ).attr( 'href' ) );
 		}
 	} );
-
-/*
-// проблемная функция — не передаёт $_POST, если не получилось загрузить страницу ajax-ом
-$( 'form' ).live( 'submit', function( event ) {
-	if( $( this ).hasClass( 'ajaxer' ) ) {
-		return;
-	}
-	event.preventDefault();
-	if( !$( event.target ).attr( 'action' ) ) {
-		event.target = $( event.target ).closest( 'form' );
-
-	}
-	switcher.page( $( event.target ).attr( 'action' ), true, $( event.target ).serialize() );
-} );
-*/
