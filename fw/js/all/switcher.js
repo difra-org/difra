@@ -22,48 +22,52 @@ switcher.ajaxConfig = {
 		$( '#loading' ).css( 'display', 'block' );
 	},
 	success: function( data, status, xhr ) {
-		$( document ).triggerHandler( 'destruct' );
-		var newdata = $( data );
-		var a1 = newdata.find( '#content,.switcher' );
-		var a2 = newdata.filter( '#content,.switcher' );
-		if( !a1.length && !a2.length ) {
-			$( '#loading' ).css( 'display', 'none' );
-			document.location = switcher.url;
+		try {
+			var newdata = $( data );
+		} catch( e ) {
+			switcher.fallback();
 		}
+		var a = newdata.filter( '#content,.switcher' ).add( newdata.find( '#content,.switcher' ) );
+		if( !a.length ) {
+			switcher.fallback();
+		}
+		$( document ).triggerHandler( 'destruct' );
 		if( !switcher.noPush ) {
-			if( history.pushState ) {
+			if( typeof history.pushState == 'function' ) {
 				history.pushState( { url: switcher.url }, null, switcher.url );
 			} else { // workaround для убогих (IE, Opera, Android)
 				switcher.hashChanged = true;
 				window.location = '/#!' + switcher.url;
 			}
-			if( typeof _gaq == 'object' && _gaq.push ) {
+			if( typeof _gaq == 'object' && typeof _gaq.push == 'function' ) {
 				_gaq.push( ['_trackPageview', switcher.url] );
 			}
 		}
 		$( document ).triggerHandler( 'switch' );
 
-		f = function( k, v ) {
+		a.each( function( k, v ) {
 			try {
 				$( '#' + $( v ).attr( 'id' ) ).replaceWith( v ).remove();
 			} catch( e ) {}
-		};
-		a1.each( f );
-		a2.each( f );
+		} );
 		$( window ).scrollTop( 0 );
 
 		var title = newdata.filter( 'title' ).text();
 		if( title.length ) {
 			document.title = title;
 		}
-		$( '#loading' ).css( 'display', 'none' );
 		$( document ).triggerHandler( 'construct' );
+		$( '#loading' ).css( 'display', 'none' );
 	},
 	error: function( xhr ) {
-		$( document ).triggerHandler( 'destruct' );
-		$( '#loading' ).css( 'display', 'none' );
-		document.location = switcher.url;
+		switcher.fallback();
 	}
+};
+
+switcher.fallback = function() {
+	$( document ).triggerHandler( 'destruct' );
+	$( '#loading' ).css( 'display', 'none' );
+	document.location = switcher.url;
 };
 
 switcher.page = function( url, noPush, data ) {
@@ -114,11 +118,11 @@ $( document ).ready( function() {
 
 	if( document.location.hash && document.location.hash.substring( 0, 2 ) == '#!' ) {
 		switcher.page( document.location.hash.substring( 2 ), true );
-		if( history.replaceState ) {
+		if( typeof history.replaceState == 'function' ) {
 			switcher.hashChanged = true;
 			history.replaceState( { url: switcher.url }, null, switcher.url );
 		}
-	} else if( !history.pushState && document.location.hash.substring( 0, 2 ) != '#!' ) {
+	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' ) {
 //		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
 	} else {
 		if( !switcher.url ) {
