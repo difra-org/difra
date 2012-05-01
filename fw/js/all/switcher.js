@@ -24,8 +24,9 @@ switcher.ajaxConfig = {
 	success: function( data, status, xhr ) {
 		$( document ).triggerHandler( 'destruct' );
 		var newdata = $( data );
-		var a = newdata.find( '#content,.switcher' );
-		if( !a.length ) {
+		var a1 = newdata.find( '#content,.switcher' );
+		var a2 = newdata.filter( '#content,.switcher' );
+		if( !a1.length && !a2.length ) {
 			$( '#loading' ).css( 'display', 'none' );
 			document.location = switcher.url;
 		}
@@ -42,11 +43,13 @@ switcher.ajaxConfig = {
 		}
 		$( document ).triggerHandler( 'switch' );
 
-		a.each( function( k, v ) {
+		f = function( k, v ) {
 			try {
 				$( '#' + $( v ).attr( 'id' ) ).replaceWith( v ).remove();
 			} catch( e ) {}
-		} );
+		};
+		a1.each( f );
+		a2.each( f );
 		$( window ).scrollTop( 0 );
 
 		var title = newdata.filter( 'title' ).text();
