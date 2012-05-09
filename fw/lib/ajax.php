@@ -32,6 +32,9 @@ class Ajax {
 			unset( $this->parameters['method_'] );
 			if( !empty( $_FILES ) ) {
 				foreach( $_FILES as $k => $files ) {
+					if( isset( $files['error'] ) and $files['error'] == UPLOAD_ERR_NO_FILE ) {
+						continue;
+					}
 					if( isset( $files['name'] ) and !is_array( $files['name'] ) ) {
 						$this->parseParam( $this->parameters, $k, $files );
 						continue;
