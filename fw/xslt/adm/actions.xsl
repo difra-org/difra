@@ -1,6 +1,14 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 	<xsl:variable name="actionSpacer"></xsl:variable>
 
+	<xsl:template name="actionContent">
+		<xsl:param name="link"/>
+		<a href="{$link}" class="action content">
+			<xsl:value-of select="$locale/adm/actions/content"/>
+		</a>
+		<xsl:value-of select="$actionSpacer"/>
+	</xsl:template>
+
 	<xsl:template name="actionEdit">
 		<xsl:param name="link"/>
 		<a href="{$link}" class="action edit">
