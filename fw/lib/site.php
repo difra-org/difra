@@ -118,6 +118,11 @@ class Site {
 		ini_set( 'session.use_only_cookies', true );
 		ini_set( 'session.cookie_domain', '.' . $this->getMainhost() );
 
+		// set default time zone
+		if( !ini_get( 'date.timezone' ) ) {
+			date_default_timezone_set( 'Europe/Moscow' );
+		}
+
 		// prepare data
 		$this->_stripSlashes();
 	}
