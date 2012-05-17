@@ -31,13 +31,22 @@
 		</table>
 		<h3><xsl:value-of select="$locale/adm/stats/server/title"/></h3>
 		<table class="summary">
-			<xsl:for-each select="stats/system/*">
-				<tr>
-					<xsl:variable name="statName" select="name()"/>
-					<th><xsl:value-of select="$locale/adm/stats/server/*[name()=$statName]"/></th>
-					<td><xsl:value-of select="./text()"/></td>
-				</tr>
-			</xsl:for-each>
+			<tr>
+				<th>
+					<xsl:value-of select="$locale/adm/stats/server/webserver"/>
+				</th>
+				<td>
+					<xsl:value-of select="stats/system/webserver"/>
+				</td>
+			</tr>
+			<tr>
+				<th>
+					<xsl:value-of select="$locale/adm/stats/server/phpversion"/>
+				</th>
+				<td>
+					<xsl:value-of select="stats/system/phpversion"/>
+				</td>
+			</tr>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/adm/stats/permissions"/>
