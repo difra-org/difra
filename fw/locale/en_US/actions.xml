@@ -1,0 +1,17 @@
+<locale>
+	<adm>
+		<actions>
+			<title>Actions</title>
+			<view>View</view>
+			<edit>Edit</edit>
+			<delete>Delete</delete>
+			<up>Up</up>
+			<down>Down</down>
+			<left>Left</left>
+			<right>Right</right>
+			<add>Add</add>
+			<content>Contents</content>
+		</actions>
+		<save>Save</save>
+	</adm>
+</locale>
