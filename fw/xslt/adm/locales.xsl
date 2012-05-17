@@ -26,7 +26,7 @@
 							<xsl:text> (</xsl:text>
 							<xsl:choose>
 								<xsl:when test="count(item[@usage>0])>1">
-									<xsl:value-of select="round( 100  * count(item[@usage>0][@missing=0]) div count(item[@usage>0]) )"/>
+									<xsl:value-of select="round( 100  * count(item[@usage>0][@missing=0]) div count(item[@usage>0 or @missing=1]) )"/>
 									<xsl:text>%</xsl:text>
 								</xsl:when>
 								<xsl:otherwise>0%</xsl:otherwise>
@@ -62,8 +62,10 @@
 										</a>
 										<div id="m_{../@name}_{position()}" style="display:none">
 											<xsl:for-each select="item[@missing=1]">
+												<!--
 												<xsl:value-of select="@source"/>
 												<xsl:text>: </xsl:text>
+												-->
 												<xsl:value-of select="@xpath"/>
 												<br/>
 											</xsl:for-each>

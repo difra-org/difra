@@ -129,6 +129,8 @@ class Localemanage {
 			return 'fw';
 		} elseif( strpos( $filename, DIR_SITE ) === 0 ) {
 			return 'site';
+		} elseif( strpos( $filename, DIR_ROOT . 'locale' ) === 0 ) {
+			return '/';
 		} else {
 			return 'unknown';
 		}
