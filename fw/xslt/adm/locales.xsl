@@ -5,9 +5,9 @@
 		</h2>
 		<table>
 			<tr>
-				<th>Язык</th>
-				<th>Модуль</th>
-				<th>Информация</th>
+				<th><xsl:value-of select="$locale/adm/locales/locale"/></th>
+				<th><xsl:value-of select="$locale/adm/locales/module"/></th>
+				<th><xsl:value-of select="$locale/adm/locales/info"/></th>
 			</tr>
 			<xsl:for-each select="locale">
 				<xsl:for-each select="module">
@@ -21,7 +21,8 @@
 							<xsl:value-of select="@name"/>
 						</td>
 						<td>
-							<xsl:text>Локализовано: </xsl:text>
+							<xsl:value-of select="$locale/adm/locales/localized"/>
+							<xsl:text>: </xsl:text>
 							<xsl:value-of select="count(item[@usage>0])"/>
 							<xsl:text> (</xsl:text>
 							<xsl:choose>
@@ -39,7 +40,8 @@
 										<a href="#"
 										   onclick="$('#u_{../@name}_{position()}').toggle('fast')"
 										   class="dotted">
-											<xsl:text>Лишних строк: </xsl:text>
+											<xsl:value-of select="$locale/adm/locales/unused-lines"/>
+											<xsl:text>: </xsl:text>
 											<xsl:value-of select="count(item[@usage=0])"/>
 										</a>
 										<div id="u_{../@name}_{position()}" style="display:none">
@@ -57,7 +59,8 @@
 								<xsl:when test="count(item[@missing=1])>1">
 									<div>
 										<a href="#" onclick="$('#m_{../@name}_{position()}').toggle()" class="dotted">
-											<xsl:text>Не хватает строк: </xsl:text>
+											<xsl:value-of select="$locale/adm/locales/missing-lines"/>
+											<xsl:text>: </xsl:text>
 											<xsl:value-of select="count(item[@missing=1])"/>
 										</a>
 										<div id="m_{../@name}_{position()}" style="display:none">
