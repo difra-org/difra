@@ -1,35 +1,35 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 	<xsl:template match="/root/index">
-		<h2>Общая информация</h2>
+		<h2><xsl:value-of select="$locale/adm/stats/h2"/></h2>
 
 		<h3>Difra</h3>
 		<table class="summary">
 			<tr>
-				<th>Версия платформы</th>
+				<th><xsl:value-of select="$locale/adm/stats/summary/platform-version"/></th>
 				<td><xsl:value-of select="stats/difra/@version"/></td>
 			</tr>
 			<tr>
-				<th>Загруженные плагины</th>
+				<th><xsl:value-of select="$locale/adm/stats/summary/loaded-plugins"/></th>
 				<td>
 					<xsl:value-of select="stats/plugins/@loaded"/>
 				</td>
 			</tr>
 			<xsl:if test="not(stats/plugins/@disabled='')">
 				<tr>
-					<th>Отключенные плагины</th>
+					<th><xsl:value-of select="$locale/adm/stats/summary/disabled-plugins"/></th>
 					<td style="color:red">
 						<xsl:value-of select="stats/plugins/@disabled"/>
 					</td>
 				</tr>
 			</xsl:if>
 			<tr>
-				<th>Тип кеширования</th>
+				<th><xsl:value-of select="$locale/adm/stats/summary/cache-type"/></th>
 				<td>
 					<xsl:value-of select="stats/cache/@type"/>
 				</td>
 			</tr>
 		</table>
-		<h3>Окружение</h3>
+		<h3><xsl:value-of select="$locale/adm/stats/server/title"/></h3>
 		<table class="summary">
 			<xsl:for-each select="stats/system/*">
 				<tr>
@@ -58,10 +58,10 @@
 				</td>
 			</tr>
 		</table>
-		<h3>Расширения PHP</h3>
+		<h3><xsl:value-of select="$locale/adm/stats/extensions/title"/></h3>
 		<table class="summary">
 			<tr>
-				<th>Необходимые расширения</th>
+				<th><xsl:value-of select="$locale/adm/stats/extensions/required-extensions"/></th>
 				<td>
 					<xsl:choose>
 						<xsl:when test="not(stats/extensions/@ok='')">
@@ -75,14 +75,14 @@
 			</tr>
 			<xsl:if test="not(stats/extensions/@required='')">
 				<tr>
-					<th>Требуются расширения</th>
+					<th><xsl:value-of select="$locale/adm/stats/extensions/missing-extensions"/></th>
 					<td style="color:red">
 						<xsl:value-of select="stats/extensions/@required"/>
 					</td>
 				</tr>
 			</xsl:if>
 			<tr>
-				<th>Другие расширения</th>
+				<th><xsl:value-of select="$locale/adm/stats/extensions/extra-extensions"/></th>
 				<td>
 					<xsl:choose>
 						<xsl:when test="not(stats/extensions/@extra='')">
@@ -95,10 +95,10 @@
 				</td>
 			</tr>
 		</table>
-		<h3>База данных</h3>
+		<h3><xsl:value-of select="$locale/adm/stats/database/title"/></h3>
 		<xsl:choose>
 			<xsl:when test="stats/mysql/@ok=1">
-				<div class="message">Всё в порядке.</div>
+				<div class="message"><xsl:value-of select="$locale/adm/stats/database/status-ok"/></div>
 			</xsl:when>
 			<xsl:otherwise>
 				<div class="message">
