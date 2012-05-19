@@ -9,7 +9,9 @@
 	<xsl:template match="/root">
 		<html>
 			<head>
-				<title>Панель администратора</title>
+				<title>
+					<xsl:value-of select="$locale/adm/global-title"/>
+				</title>
 				<link rel="SHORTCUT ICON" href="/favicon.ico" />
 				<link rel="ICON" href="/favicon.ico" type="image/x-icon" />
 				<meta name="keywords" content="" />
