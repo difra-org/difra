@@ -216,6 +216,12 @@ abstract class Controller {
 									      $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? 1
 							 : 0 );
 		$this->root->setAttribute( 'build', Site::getInstance()->getBuild() );
+		$dateNode = $this->root->appendChild( $this->xml->createElement( 'date' ) );
+		$dateFields = 'deAamBbYycxHMS';
+		$t = time();
+		for( $i = 0; $i < strlen( $dateFields ); $i++ ) {
+			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
+		}
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );
 	}
