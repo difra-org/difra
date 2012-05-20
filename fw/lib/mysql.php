@@ -18,14 +18,21 @@ class MySQL {
 	 */
 	public function __construct( $new = false ) {
 
-		$this->config = Site::getInstance( $new )->getDbConfig();
+		$this->config = Config::getInstance()->get( 'db' );
+		if( !$this->config ) {
+			$this->config = array(
+				'username' => '',
+				'password' => '',
+				'database' => ''
+			);
+		}
 	}
 
 	/**
 	 * Синглтон
 	 * @static
 	 *
-	 * @param bool $new	Создать новое соединение с базой
+	 * @param bool $new        Создать новое соединение с базой
 	 *
 	 * @return MySQL
 	 */

@@ -5,6 +5,7 @@ namespace Difra;
 class Config {
 
 	private $config = null;
+	private $dbconf = array();
 	private $modified = false;
 
 	/**
@@ -37,10 +38,20 @@ class Config {
 			$cache = Cache::getInstance();
 			if( $c = $cache->get( 'config' ) and !Debugger::getInstance()->isEnabled() ) {
 				$this->config = $c;
+				return;
+			}
+			$this->config = array();
+			if( is_file( DIR_ROOT . '/config.php' ) ) {
+				$this->config = include( DIR_ROOT . '/config.php' );
+			}
+			if( is_file( DIR_SITE . '/config.php' ) ) {
+				$conf         = include( DIR_SITE . '/config.php' );
+				$this->config = array_merge( $this->config, $conf );
 			}
 			$db = MySQL::getInstance();
 			$conf = $db->fetchOne( 'SELECT `config` FROM `config`' );
-			$this->config = @unserialize( $conf );
+			$this->dbconf = @unserialize( $conf );
+			$this->config = array_merge( $this->config, $this->dbconf );
 			$cache->put( 'config', $this->config );
 		} catch( Exception $e ) {
 			$this->config = array();
@@ -57,7 +68,7 @@ class Config {
 		}
 		$db = MySQL::getInstance();
 		$db->query( 'DELETE FROM `config`' );
-		$db->query( "INSERT INTO `config` SET `config`='" . $db->escape( serialize( $this->config ) ) . "'" );
+		$db->query( "INSERT INTO `config` SET `config`='" . $db->escape( serialize( $this->dbconf ) ) . "'" );
 		Cache::getInstance()->remove( 'config' );
 		$this->modified = false;
 	}
@@ -81,12 +92,12 @@ class Config {
 	public function set( $key, $value ) {
 
 		$this->load();
-		$this->config[$key] = $value;
+		$this->config[$key] = $this->dbconf[$key] = $value;
 		$this->modified     = true;
 	}
 
 	/**
-	 * Получение значения настройки (для массивов)
+	 * Получение значения элемента массива настроек
 	 * @param string $key
 	 * @param string $arrayKey
 	 * @return mixed
@@ -98,7 +109,7 @@ class Config {
 	}
 
 	/**
-	 * Установка значения настройки (для массивов)
+	 * Установка значения элемента массива настроек
 	 * @param string $key
 	 * @param string $arrayKey
 	 * @param mixed $arrayValue
@@ -109,7 +120,10 @@ class Config {
 		if( !isset( $this->config[$key] ) ) {
 			$this->config[$key] = array();
 		}
-		$this->config[$key][$arrayKey] = $arrayValue;
+		if( !isset( $this->dbconf[$key] ) ) {
+			$this->dbconf[$key] = array();
+		}
+		$this->config[$key][$arrayKey] = $this->dbconf[$key][$arrayKey] = $arrayValue;
 		$this->modified = true;
 	}
 }

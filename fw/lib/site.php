@@ -4,17 +4,13 @@ namespace Difra;
 
 class Site {
 
-	const VERSION = '2.0';
+	const VERSION = '2.1';
 	const BUILD = '$Rev$';
-
 	const PATH_PART = '/../../sites/';
-	const PATH_PART2 = '/../..';
 
-	// libs
 	private $locale = 'ru_RU';
 
 	private $siteDir = null;
-	private $siteConfig = array();
 	private $host = null;
 
 	private $phpVersion = null;
@@ -27,24 +23,21 @@ class Site {
 
 	public function __construct() {
 
-		$this->detectHost();
-		if( is_file( dirname( __FILE__ ) . self::PATH_PART2 . '/config.php' ) ) {
-			$this->siteConfig = include( dirname( __FILE__ ) . self::PATH_PART2 . '/config.php' );
-		}
-		if( is_file( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' ) ) {
-			$conf = include( dirname( __FILE__ ) . self::PATH_PART . $this->siteDir . '/config.php' );
-			$this->siteConfig = array_merge( $this->siteConfig, $conf );
-		}
-		$this->configureLocale();
-		$this->configurePHP();
-		$this->configurePaths();
-		$this->sessionLoad();
-
+		Events::register( 'core-init', 'Difra\\Site', 'init' );
 		Events::register( 'core-init', 'Difra\\Debugger' );
 		Events::register( 'plugins-load', 'Difra\Plugger' );
 		Events::register( 'action-find', 'Difra\\Action', 'find' );
 		Events::register( 'action-run', 'Difra\\Action', 'run' );
 		Events::register( 'render-run', 'Difra\\Action', 'render' );
+	}
+
+	public function init() {
+
+		$this->detectHost();
+		$this->configurePaths();
+		$this->configureLocale();
+		$this->configurePHP();
+		$this->sessionLoad();
 	}
 
 	public function __destruct() {
@@ -75,14 +68,9 @@ class Site {
 			$this->host = 'default';
 		}
 
-		// ищем папку сайта
-		if( is_dir( $sitesDir . $this->host ) ) {
-			$this->siteDir = $this->host;
-		} elseif( is_dir( $sitesDir . 'www.' . $this->host ) ) {
+		$this->siteDir = $this->host;
+		if( !is_dir( $sitesDir . $this->host ) and is_dir( $sitesDir . 'www.' . $this->host ) ) {
 			$this->siteDir = 'www.' . $this->host;
-		} else {
-			header( 'HTTP/1.1 500 Internal Server Error' );
-			die( 'Internal server error: can not find site.' );
 		}
 				
 		return true;
@@ -144,11 +132,6 @@ class Site {
 		$_COOKIE            = array_map( $strip_slashes_deep, $_COOKIE );
 	}
 
-	public function getDbConfig() {
-
-		return isset( $this->siteConfig['db'] ) ? $this->siteConfig['db'] : array( 'username' => '', 'password' => '', 'database' => '' );
-	}
-
 	public function getLocale() {
 
 		return $this->locale;
@@ -156,8 +139,8 @@ class Site {
 
 	public function configureLocale() {
 
-		if( isset( $this->siteConfig['locale'] ) ) {
-			$this->locale = $this->siteConfig['locale'];
+		if( $locale = Config::getInstance()->get( 'locale' ) ) {
+			$this->locale = $locale;
 		}
 	}
 
@@ -243,7 +226,8 @@ class Site {
 
 	public function getData( $key ) {
 
-		return isset( $this->siteConfig[$key] ) ? $this->siteConfig[$key] : false;
+		trigger_error( 'Site->getData() is deprecated, please use Config->get', E_USER_NOTICE );
+		return Config::getInstance()->get( $key );
 	}
 
 	public function sessionLoad() {
