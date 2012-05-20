@@ -51,7 +51,11 @@ class Config {
 			$db = MySQL::getInstance();
 			$conf = $db->fetchOne( 'SELECT `config` FROM `config`' );
 			$this->dbconf = @unserialize( $conf );
-			$this->config = array_merge( $this->config, $this->dbconf );
+			if( is_array( $this->dbconf ) ) {
+				$this->config = array_merge( $this->config, $this->dbconf );
+			} else {
+				$this->dbconf = array();
+			}
 			$cache->put( 'config', $this->config );
 		} catch( Exception $e ) {
 			$this->config = array();
