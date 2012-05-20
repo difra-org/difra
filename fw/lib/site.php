@@ -33,11 +33,16 @@ class Site {
 
 	public function init() {
 
+		static $initDone = false;
+		if( $initDone ) {
+			return;
+		}
 		$this->detectHost();
 		$this->configurePaths();
 		$this->configureLocale();
 		$this->configurePHP();
 		$this->sessionLoad();
+		$initDone = true;
 	}
 
 	public function __destruct() {
