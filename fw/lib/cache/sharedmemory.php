@@ -16,7 +16,7 @@ class SharedMemory extends Common {
 	public function __construct() {
 		
 		if( !self::isAvailable() ) {
-			error( 'Shared Memory is not enabled in PHP!', __FILE__, __LINE__ );
+			throw new \Difra\Exception( 'Shared Memory is not enabled in PHP!', __FILE__, __LINE__ );
 		}
 	}
 	
@@ -67,16 +67,18 @@ class SharedMemory extends Common {
 	 * @return boolean
 	 */
 	public function test( $id ) {
-		$data = $this->load( $id );
+		$data = $this->get( $id );
 		return !empty( $data );
 	}
-    
+
 	/**
 	 * Save some string datas into a cache record
-	 * @param string $id cache id
-	 * @param string $data datas to cache
-	 * @param int $specificLifetime if != false, set a specific lifetime for this cache record (null => infinite lifetime)
-	 * @return boolean true if no problem
+	 *
+	 * @param string   $id               cache id
+	 * @param string   $data             datas to cache
+	 * @param bool|int $specificLifetime if != false, set a specific lifetime for this cache record (null => infinite lifetime)
+	 *
+	 * @return bool
 	 */
 	public function realPut( $id, $data, $specificLifetime = false ) {
 		
@@ -86,8 +88,12 @@ class SharedMemory extends Common {
 
 		if( $struc_id ) {
 			// Get the size of the structure
-			$size = shm_get_var( $struc_id, '1' );
-			$size = hexdec( $size );
+			if( shm_has_var( $struc_id, '1' ) ) {
+				$size = shm_get_var( $struc_id, '1' );
+				$size = hexdec( $size );
+			} else {
+				$size = 0;
+			}
 
 	    		// Fetch the structure
 			if( $size > 0 ) {
@@ -103,6 +109,7 @@ class SharedMemory extends Common {
 			}
 	    
 			// Get lowest unused segment id
+			$segment = 0;
 			for( $i = 1; $i <= $highest + 1; $i++ ) {
 				if( !in_array( $i, $structure ) ) {
 					$segment = $i;

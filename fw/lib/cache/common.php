@@ -21,7 +21,7 @@ abstract class Common {
 	// constructor
 	public function __construct() {
 		
-		if( !method_exists( self, 'isAvailable') or !self::isAvailable() ) {
+		if( !method_exists( $this, 'isAvailable') or !$this::isAvailable() ) {
 			throw new Difra\Exception( __CLASS__ . ' requested, but that cache is not available!' );
 		}
 	}
