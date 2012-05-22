@@ -195,7 +195,9 @@ class Site {
 		foreach( $list as $name ) {
 			if( is_file( DIR_PLUGINS . "$name/.svn/entries" ) ) {
 				$svn = file( DIR_PLUGINS . "$name/.svn/entries" );
-				$plugVer += trim( $svn[3] );
+				if( isset( $svn[3] ) ) {
+					$plugVer += trim( $svn[3] );
+				}
 			}
 		}
 		if( $plugVer ) {
