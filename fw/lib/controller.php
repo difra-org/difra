@@ -187,12 +187,12 @@ abstract class Controller {
 			return;
 		}
 		if( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
-			header( 'Content-Type: text/plain' ); // application/json не катит в опере
+			header( 'Content-Type: text/plain' );
 			$this->xml->formatOutput = true;
 			$this->xml->encoding = 'utf-8';
 			echo( rawurldecode( $this->xml->saveXML() ) );
 		} elseif( ! $this->view->rendered and $this->ajax->isAjax ) {
-			header( 'Content-type: text/plain' );
+			header( 'Content-type: text/plain' ); // application/json не катит в опере
 			echo( $this->ajax->getResponse() );
 		} elseif( !$this->view->rendered ) {
 			$this->view->render( $this->xml );
