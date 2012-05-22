@@ -181,8 +181,11 @@ class Site {
 		
 		// fw version and build
 		$svnVer = array();
+		$svn = false;
 		if( is_file( DIR_FW . '.svn/entries' ) ) {
 			$svn = file( DIR_FW . '.svn/entries' );
+		}
+		if( isset( $svn[3] ) ) {
 			$svnVer[] = self::VERSION . '.' . trim( $svn[3] );
 		} elseif( preg_match( '/\d+/', self::BUILD, $match ) ) {
 			$svnVer[] = self::VERSION . '.' . $match[0];
