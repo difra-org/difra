@@ -21,7 +21,8 @@ class SharedMemory extends Common {
 	}
 	
 	public static function isAvailable() {
-		
+
+		return false; // временно отключен, надо тестить, что с ним не так
 		return function_exists( 'shmop_open' );
 	}
 
