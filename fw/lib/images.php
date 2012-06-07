@@ -42,6 +42,10 @@ final class Images {
 			switch( $type ) {
 			case 'png':
 				$img->setImageInterlaceScheme( \imagick::INTERLACE_PNG );
+				break;
+			case 'jpeg':
+				$img->setImageInterlaceScheme( \imagick::INTERLACE_JPEG );
+				break;
 			}
 		}
 		return $img->getImageBlob();
