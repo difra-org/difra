@@ -22,6 +22,7 @@
 				<script type="text/javascript" src="/js/adm.js"/>
 			</head>
 			<body>
+				<xsl:call-template name="config"/>
 				<xsl:apply-templates select="menu">
 					<xsl:with-param name="auto" select="0"/>
 				</xsl:apply-templates>
