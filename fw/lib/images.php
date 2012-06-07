@@ -41,10 +41,10 @@ final class Images {
 		if( $img->getImageWidth() * $img->getImageHeight() > 40000 ) {
 			switch( $type ) {
 			case 'png':
-				$img->setImageInterlaceScheme( \imagick::INTERLACE_PNG );
+				$img->setInterlaceScheme( \imagick::INTERLACE_PNG );
 				break;
 			case 'jpeg':
-				$img->setImageInterlaceScheme( \imagick::INTERLACE_JPEG );
+				$img->setInterlaceScheme( \imagick::INTERLACE_JPEG );
 				break;
 			}
 		}
