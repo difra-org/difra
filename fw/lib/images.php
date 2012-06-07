@@ -38,6 +38,12 @@ final class Images {
 	private function image2data( $img, $type = 'png' ) {
 
 		$img->setImageFormat( $type );
+		if( $img->getImageWidth() * $img->getImageHeight() > 40000 ) {
+			switch( $type ) {
+			case 'png':
+				$img->setImageInterlaceScheme( \imagick::INTERLACE_PNG );
+			}
+		}
 		return $img->getImageBlob();
 	}
 
