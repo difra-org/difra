@@ -229,7 +229,7 @@ class Updater {
 			}
 			$tables[] = $table = $query->getTable();
 			try {
-				$currentStr = $db->fetchRow( 'SHOW CREATE TABLE `' . $db->escape( $table ) . '`' );
+				$currentStr = @$db->fetchRow( 'SHOW CREATE TABLE `' . $db->escape( $table ) . '`' );
 			} catch( \Difra\Exception $e ) {
 				$currentStr = '';
 			};
