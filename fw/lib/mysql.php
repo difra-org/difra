@@ -116,7 +116,7 @@ class MySQL {
 		$this->queries++;
 		Debugger::getInstance()->addLine( 'MySQL: ' . $query );
 		if( $err = $this->db->error ) {
-			throw new Exception( 'MySQL: ' . $err );
+			throw new \Difra\Exception( 'MySQL: ' . $err );
 		}
 		// XXX: вместо этого, по идее, надо делать fetch_all, но оно требует mysqlnd
 		while( $row = $result->fetch_array( MYSQLI_ASSOC ) ) {
