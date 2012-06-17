@@ -73,7 +73,7 @@ class Stats {
 		$permNode = $node->appendChild( $node->ownerDocument->createElement( 'permissions' ) );
 		if( !is_dir( DIR_DATA ) ) {
 			$permNode->setAttribute( 'data', 'Directory ' . DIR_DATA . ' does not exist!' );
-		} elseif( !is_writable( DIR_SITE . '/data' ) ) {
+		} elseif( !is_writable( DIR_DATA ) ) {
 			$permNode->setAttribute( 'data', 'Directory ' . DIR_DATA . ' is not writeable!' );
 		}
 	}
