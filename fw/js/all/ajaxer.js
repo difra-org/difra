@@ -372,9 +372,9 @@ ajaxer.watcher = function() {
 			ajaxer.notify( mc.lang, mc.message );
 		}
 		if( config.mainhost ) {
-			$.cookie( 'notify', null, { path:"/", domain:config.mainhost } );
+			$.cookie( 'notify', null, { path:"/", domain:'.' + config.mainhost } );
 		} else {
-			$.cookie( 'notify', null, { path:"/", domain:window.location.host } );
+			$.cookie( 'notify', null, { path:"/", domain:'.' + window.location.host } );
 		}
 	}
 };
