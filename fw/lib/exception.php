@@ -10,8 +10,7 @@ if( !function_exists( 'Difra\\exceptionHandler' ) ) {
 	/**
 	 * @param \Difra\Exception $exception
 	 */
-	function exceptionHandler( $exception )
-	{
+	function exceptionHandler( $exception ) {
 
 		if( !Debugger::getInstance()->isEnabled() ) {
 			$date   = date( 'r' );
@@ -42,13 +41,7 @@ $post
 $cookie
 MSG;
 
-			mail( 'errors@a-jam.ru', 'Report from ' . $_SERVER['HTTP_HOST'], $text );
-			echo 'Error.';
-		} else {
-//			if( method_exists( $exception, 'callPrevious' ) ) {
-//				$exception->callPrevious();
-//			}
+			mail( 'errors@a-jam.ru', $_SERVER['HTTP_HOST'] . ': ' . $exception->getMessage(), $text );
 		}
 	}
-	set_exception_handler( 'Difra\\exceptionHandler' );
 }

@@ -12,19 +12,22 @@ final class Images {
 	/**
 	 * Получение объекта из строки данных
 	 * @param string|\Difra\Param\AjaxFile $data
+	 * @throws Exception
 	 * @return \Imagick|null
 	 */
-	private function data2image( $data ) {
+	public function data2image( $data ) {
 
 		if( $data instanceof \Difra\Param\AjaxFile ) {
 			$data = $data->val();
+		} elseif( $data instanceof \Imagick ) {
+			return $data;
 		}
 		try {
 			$img = new \Imagick;
 			$img->readImageBlob( $data );
 			return $img;
-		} catch( Exception $ex ) {
-			return null;
+		} catch( \ImagickException $ex ) {
+			throw new Exception( 'Invalid image file format' );
 		}
 	}
 
@@ -32,10 +35,9 @@ final class Images {
 	 * Получение строки данных из объекта
 	 * @param \Imagick $img
 	 * @param string   $type
-	 *
 	 * @return string mixed
 	 */
-	private function image2data( $img, $type = 'png' ) {
+	public function image2data( $img, $type = 'png' ) {
 
 		$img->setImageFormat( $type );
 		if( $img->getImageWidth() * $img->getImageHeight() > 40000 ) {
