@@ -3,14 +3,18 @@
 namespace Difra;
 
 class Exception extends \exception {
-}
 
-// TODO: повесить это дело на событие
-if( !function_exists( 'Difra\\exceptionHandler' ) ) {
+	public function notify() {
+
+		self::notifyObj( $this );
+	}
+
 	/**
-	 * @param \Difra\Exception $exception
+	 * @static
+	 *
+	 * @param \Difra\Exception|\exception $exception
 	 */
-	function exceptionHandler( $exception ) {
+	static public function notifyObj( $exception = null ) {
 
 		if( !Debugger::getInstance()->isEnabled() ) {
 			$date   = date( 'r' );
@@ -43,5 +47,16 @@ MSG;
 
 			mail( 'errors@a-jam.ru', $_SERVER['HTTP_HOST'] . ': ' . $exception->getMessage(), $text );
 		}
+	}
+}
+
+// TODO: повесить это дело на событие
+if( !function_exists( 'Difra\\exceptionHandler' ) ) {
+	/**
+	 * @param \Difra\Exception $exception
+	 */
+	function exceptionHandler( $exception ) {
+
+		Exception::notifyObj( $exception );
 	}
 }
