@@ -371,7 +371,11 @@ ajaxer.watcher = function() {
 		} else {
 			ajaxer.notify( mc.lang, mc.message );
 		}
-		$.cookie( 'notify', null, { path: "/", domain: config.mainhost ? '.' + config.mainhost : false } );
+		if( config.mainhost ) {
+			$.cookie( 'notify', null, { path:"/", domain:config.mainhost } );
+		} else {
+			$.cookie( 'notify', null, { path:"/" } );
+		}
 	}
 };
 
