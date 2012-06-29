@@ -374,7 +374,7 @@ ajaxer.watcher = function() {
 		if( config.mainhost ) {
 			$.cookie( 'notify', null, { path:"/", domain:config.mainhost } );
 		} else {
-			$.cookie( 'notify', null, { path:"/" } );
+			$.cookie( 'notify', null, { path:"/", domain:window.location.host } );
 		}
 	}
 };
