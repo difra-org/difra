@@ -3,27 +3,34 @@
 namespace Difra;
 
 class Exception extends \exception {
+}
 
-	public function __construct( $message = null, $code = 0, \Exception $previous = null ) {
+// TODO: повесить это дело на событие
+if( !function_exists( 'Difra\\exceptionHandler' ) ) {
+	/**
+	 * @param \Difra\Exception $exception
+	 */
+	function exceptionHandler( $exception )
+	{
 
 		if( !Debugger::getInstance()->isEnabled() ) {
-			$date = date( 'r' );
+			$date   = date( 'r' );
 			$server = print_r( $_SERVER, true );
-			$post = print_r( $_POST, true );
+			$post   = print_r( $_POST, true );
 			$cookie = print_r( $_COOKIE, true );
-			$user = Auth::getInstance()->data['email'];
+			$user   = Auth::getInstance()->data['email'];
 
 			$text = <<<MSG
-$message
+{$exception->getMessage()}
 
 Page:	{$_SERVER['REQUEST_URI']}
 Time:	$date
 Host:	{$_SERVER['HTTP_HOST']}
-File:		{$this->getFile()}
-Line:	{$this->getLine()}
+File:		{$exception->getFile()}
+Line:	{$exception->getLine()}
 User:	$user
 
-{$this->getTraceAsString()}
+{$exception->getTraceAsString()}
 
 \$_SERVER:
 $server
@@ -38,7 +45,10 @@ MSG;
 			mail( 'errors@a-jam.ru', 'Report from ' . $_SERVER['HTTP_HOST'], $text );
 			echo 'Error.';
 		} else {
-			parent::__construct( $message, $code, $previous );
+//			if( method_exists( $exception, 'callPrevious' ) ) {
+//				$exception->callPrevious();
+//			}
 		}
 	}
+	set_exception_handler( 'Difra\\exceptionHandler' );
 }
