@@ -83,12 +83,12 @@ final class Images {
 		if( $maxWidth < $w or $maxHeight < $h ) {
 			if( $w / $maxWidth > $h / $maxHeight ) {
 				$nw = $maxWidth;
-				$nh = round( $h * $maxWidth / $w );
+				$nh = round( $h * $nw / $w );
 			} else {
 				$nh = $maxHeight;
-				$nw = round( $w * $maxHeight / $h );
+				$nw = round( $w * $nh / $h );
 			}
-			$img->resizeImage( $nw, $nh, \Imagick::FILTER_LANCZOS, 0.9, true );
+			$img->resizeImage( $nw, $nh, \Imagick::FILTER_LANCZOS, 0.9, false );
 		}
 		return $this->image2data( $img, $type );
 	}
