@@ -78,7 +78,9 @@ final class Images {
 	public function createThumbnail( $data, $maxWidth, $maxHeight, $type = 'png' ) {
 
 		$img = $this->data2image( $data );
-		if( $maxWidth < ( $w = $img->getimagewidth() ) or $maxHeight < ( $h = $img->getimageheight() ) ) {
+		$w = $img->getimagewidth();
+		$h = $img->getimageheight();
+		if( $maxWidth < $w or $maxHeight < $h ) {
 			if( $w / $maxWidth > $h / $maxHeight ) {
 				$nw = $maxWidth;
 				$nh = round( $h * $maxWidth / $w );
