@@ -78,7 +78,8 @@ final class Images {
 	public function createThumbnail( $data, $maxWidth, $maxHeight, $type = 'png' ) {
 
 		$img = $this->data2image( $data );
-		$img->resizeImage( $maxWidth, $maxHeight, \Imagick::FILTER_LANCZOS, 0.9, true );
+
+		$img->resizeImage( $maxWidth, $maxHeight, \Imagick::FILTER_LANCZOS, 0.9, false );
 		return $this->image2data( $img, $type );
 	}
 
