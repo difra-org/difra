@@ -20,7 +20,7 @@ final class Images {
 		if( $data instanceof \Difra\Param\AjaxFile ) {
 			$data = $data->val();
 		} elseif( $data instanceof \Imagick ) {
-			return $data;
+			return clone $data;
 		}
 		try {
 			$img = new \Imagick;
