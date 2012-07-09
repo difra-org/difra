@@ -98,6 +98,7 @@ class View {
 
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
+			$this->postProcess( $html, $xml );
 			$devMode = Debugger::getInstance()->isEnabled();
 			$html->formatOutput = $devMode;
 			$html->preserveWhiteSpace = $devMode;
@@ -119,5 +120,24 @@ class View {
 		$this->redirect = true;
 		header( 'Location: ' . $url );
 		die();
+	}
+
+	private function postProcess( $html, $xml ) {
+
+		$htmlRoot = $html->documentElement;
+		if( $htmlRoot->nodeName != 'html' ) {
+			return;
+		}
+		$xmlRoot = $xml->documentElement;
+		if( $xmlRoot->hasAttribute( 'uaClass' ) ) {
+			$uac = $xmlRoot->getAttribute( 'uaClass' );
+			if( $htmlRoot->hasAttribute( 'class' ) ) {
+				$uac = $htmlRoot->getAttribute( 'class' ) . ' ' . $uac;
+			}
+			$uac = trim( $uac );
+			if( $uac ) {
+				$htmlRoot->setAttribute( 'class', $uac );
+			}
+		}
 	}
 }

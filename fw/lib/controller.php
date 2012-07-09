@@ -45,7 +45,6 @@ abstract class Controller {
 			$this->dispatch();
 		}
 		Plugger::getInstance()->runDispatchers( $this );
-		//$this->action->runDispatchers( $this );
 
 		// add XML data
 		$this->auth->getAuthXML( $realRoot );
@@ -212,16 +211,22 @@ abstract class Controller {
 		if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
 			$this->root->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
 		}
+		// get user agent
+		Site::getInstance()->getUserAgent( $this->root );
+		// ajax flag
 		$this->root->setAttribute( 'ajax', ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
 									      $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? 1
 							 : 0 );
+		// build number
 		$this->root->setAttribute( 'build', Site::getInstance()->getBuild() );
+		// date
 		$dateNode = $this->root->appendChild( $this->xml->createElement( 'date' ) );
 		$dateFields = 'deAamBbYycxHMS';
 		$t = time();
 		for( $i = 0; $i < strlen( $dateFields ); $i++ ) {
 			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
 		}
+		// config values (for js variable)
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );
 	}
