@@ -19,8 +19,11 @@ textarea.problem,
 }
 
 input[type="file"] {
-	border: none;
 	padding-left: 0;
+}
+
+.Safari input[type="file"] {
+	border: none;
 }
 
 input[type="submit"],
