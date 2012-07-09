@@ -34,6 +34,7 @@ input[type="button"],
 	height:           24px;
 	border:           1px solid #51add2;
 	border-radius:    5px;
+	background-color: #51b4d6;
 	background-image: linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
 	background-image: -o-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
 	background-image: -moz-linear-gradient(bottom, rgb(81, 173, 210) 0%, rgb(82, 189, 218) 100%);
