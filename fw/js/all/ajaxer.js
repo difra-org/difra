@@ -261,6 +261,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 		// iframe method
 		if( !$( '#ajaxerFrame' ).length ) {
 			var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none"></iframe>' );
+			$( 'body' ).append( frame );
 			var uuid = '';
 			for( var i = 0; i < 32; i++ ) {
 				uuid += Math.floor( Math.random() * 16 ).toString( 16 );
@@ -269,7 +270,6 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 			form.attr( 'method', 'post' );
 			form.attr( 'enctype', 'multipart/form-data' );
 			form.attr( 'action', form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
-			$( 'body' ).append( frame );
 			form.attr( 'target', 'ajaxerFrame' );
 			form.append( '<input type="hidden" name="_method" value="iframe"/>' );
 			var loading = $( '#loading' );
@@ -279,35 +279,41 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 			loading.fadeIn();
 			var interval = window.setInterval(
 				function() {
-					ajaxer.fetchProgress( uuid );
+					frame.load( function() {
+						var rawframe = frame.get( 0 );
+						if( rawframe.contentDocument ) {
+							var val = rawframe.contentDocument.body.innerHTML;
+						} else if( rawframe.contentWindow ) {
+							val = rawframe.contentWindow.document.body.innerHTML;
+						} else if( rawframe.document ) {
+							val = rawframe.document.body.innerHTML;
+						}
+						try {
+							var fc = $( val ).text();
+							if( fc ) {
+								val = fc;
+							}
+						} catch( e ) {
+						}
+						form.attr( 'action', originalAction );
+						form.find( 'input[name=_method]' ).remove();
+						$( 'iframe#ajaxerFrame' ).remove();
+						loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
+						loading.fadeOut( 'slow', function() {
+							window.clearTimeout( interval );
+							loading.find( '#upprog' ).remove();
+						} );
+						ajaxer.process( val, form );
+					} );
+					interval = window.setInterval(
+						function() {
+							ajaxer.fetchProgress( uuid );
+						},
+						1000
+					);
 				},
-				1000
+				50
 			);
-			frame.load( function() {
-				var rawframe = frame.get( 0 );
-				if( rawframe.contentDocument ) {
-					var val = rawframe.contentDocument.body.innerHTML;
-				} else if( rawframe.contentWindow ) {
-					val = rawframe.contentWindow.document.body.innerHTML;
-				} else if( rawframe.document ) {
-					val = rawframe.document.body.innerHTML;
-				}
-				try {
-					var fc = $( val ).text();
-					if( fc ) {
-						val = fc;
-					}
-				} catch( e ) {}
-				form.attr( 'action', originalAction );
-				form.find( 'input[name=_method]' ).remove();
-				$( 'iframe#ajaxerFrame' ).remove();
-				loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
-				loading.fadeOut( 'slow', function() {
-					window.clearTimeout( interval );
-					loading.find( '#upprog' ).remove();
-				} );
-				ajaxer.process( val, form );
-			} );
 		}
 	}
 } );
