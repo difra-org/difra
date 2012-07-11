@@ -22,9 +22,9 @@ abstract class XML extends Common {
 		}
 		return $newXml->asXML();
 	}
-	
+
 	private function _mergeXML( &$xml1, &$xml2, &$filename ) {
-		
+
 		foreach( $xml2 as $name => $node ) {
 			if( !$filename and property_exists( $xml1, $name ) ) {
 				$attr = $xml1->$name->attributes();
@@ -48,5 +48,5 @@ abstract class XML extends Common {
 			}
 		}
 	}
-			
+
 }

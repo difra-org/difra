@@ -99,9 +99,7 @@ class View {
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
 			$this->postProcess( $html, $xml );
-			$devMode = Debugger::getInstance()->isEnabled();
-			$html->formatOutput = $devMode;
-			$html->preserveWhiteSpace = $devMode;
+			$html->formatOutput = Debugger::getInstance()->isEnabled();
 			if( $dontEcho ) {
 				return $html->saveXML();
 			}
@@ -122,6 +120,10 @@ class View {
 		die();
 	}
 
+	/**
+	 * @param \DOMDocument $html
+	 * @param \DOMDocument $xml
+	 */
 	private function postProcess( $html, $xml ) {
 
 		$htmlRoot = $html->documentElement;
@@ -129,6 +131,7 @@ class View {
 			return;
 		}
 		$xmlRoot = $xml->documentElement;
+		// Добавление классов на основе User-Agent
 		if( $xmlRoot->hasAttribute( 'uaClass' ) ) {
 			$uac = $xmlRoot->getAttribute( 'uaClass' );
 			if( $htmlRoot->hasAttribute( 'class' ) ) {
@@ -137,6 +140,23 @@ class View {
 			$uac = trim( $uac );
 			if( $uac ) {
 				$htmlRoot->setAttribute( 'class', $uac );
+			}
+		}
+		// Добавление объекта config для js
+		$config = '';
+		if( $conf = $xmlRoot->getElementsByTagName( 'config' ) and $conf = $conf->item( 0 ) ) {
+			if( $body = $htmlRoot->getElementsByTagName( 'body' ) and $body = $body->item(0) ) {
+				$attrs = $conf->attributes;
+				if( !empty( $attrs ) ) {
+					foreach( $attrs as $attr ) {
+						$config .= "config.{$attr->name}='" . addslashes( $attr->value ) . "';";
+					}
+				}
+				if( $config ) {
+					$scriptNode = $body->insertBefore( $html->createElement( 'script' ), $body->firstChild );
+					$scriptNode->setAttribute( 'type', 'text/javascript' );
+					$scriptNode->appendChild( $html->createComment( " var config={};" . $config . " " ) );
+				}
 			}
 		}
 	}

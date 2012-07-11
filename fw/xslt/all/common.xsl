@@ -7,6 +7,7 @@
 	<xsl:template match="/root/locale"/>
 
 	<xsl:template name="config">
+		<!--
 		<script type="text/javascript">
 			var config = {};
 			<xsl:for-each select="@*">
@@ -17,10 +18,12 @@
 				<xsl:text>";</xsl:text>
 			</xsl:for-each>
 		</script>
+		-->
+		<xsl:comment>WARNING: 'config' template is deprecated</xsl:comment>
 	</xsl:template>
 
 	<xsl:template name="wrappers">
-		<xsl:call-template name="config"/>
+		<xsl:comment>WARNING: 'wrappers' template is deprecated</xsl:comment>
 	</xsl:template>
 
 	<xsl:template name="repeat">

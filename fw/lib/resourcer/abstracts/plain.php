@@ -6,7 +6,6 @@ abstract class Plain extends Common {
 	
 	protected function processData( $instance ) {
 
-//		$t = microtime( true );
 		$result = '';
 		if( !empty( $this->resources[$instance]['specials'] ) ) {
 			foreach( $this->resources[$instance]['specials'] as $resource ) {
@@ -23,7 +22,6 @@ abstract class Plain extends Common {
 				$result .= $this->getFile( $file );
 			}
 		}
-//		echo "// " . ( microtime( true ) - $t ) . "\n";
 		return $result;
 	}
 
