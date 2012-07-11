@@ -155,7 +155,7 @@ class View {
 				if( $config ) {
 					$scriptNode = $body->insertBefore( $html->createElement( 'script' ), $body->firstChild );
 					$scriptNode->setAttribute( 'type', 'text/javascript' );
-					$scriptNode->appendChild( $html->createComment( " var config={};" . $config . " " ) );
+					$scriptNode->appendChild( $html->createTextNode( "var config={};" . $config ) );
 				}
 			}
 		}
