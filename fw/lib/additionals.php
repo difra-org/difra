@@ -25,7 +25,7 @@ class Additionals {
 	public static function getStatus( $module, $data ) {
 
 		$err = array();
-		$conf = Site::getInstance()->getData( $module );
+        $conf = Config::getInstance()->get( $module );
 		if( !$conf or !isset( $conf['fields'] ) or empty( $conf['fields'] ) ) {
 			return $err;
 		}
@@ -74,7 +74,8 @@ class Additionals {
 	// сохранение дополнительных полей из конфига сайта
 	public static function saveAdditionals( $module, $id, $data ) {
 
-		if( !$conf = Site::getInstance()->getData( $module ) ) {
+        $conf = Config::getInstance()->get( $module );
+		if( !$conf ) {
 			return;
 		}
 		if( !isset( $conf['fields'] ) or empty( $conf['fields'] ) ) {
@@ -165,7 +166,8 @@ class Additionals {
 	 * @return void
 	 */
 	public static function unSetAdditionalField( $module, $id, $name ) {
-		if( !$conf = Site::getInstance()->getData( $module ) ) {
+        $conf = Config::getInstance()->get( $module );
+		if( !$conf ) {
 			return;
 		}
 		if( isset( $conf['fields'][$name] ) ) {
