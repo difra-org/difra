@@ -170,6 +170,31 @@ class Site {
 		return $this->host;
 	}
 
+	/**
+	 * Получить версию ревизии SVN
+	 * @param string $dir Путь к папке со слэшем в конце
+	 *
+	 * @return int|bool
+	 */
+	private function getSVNRev( $dir ) {
+
+		// try to get svn 1.7 revision
+		if( class_exists( '\SQLite3' ) and is_readable( $dir . '.svn/wc.db' ) ) {
+			$sqlite   = new \SQLite3( $dir . '.svn/wc.db' );
+			$res      = $sqlite->query( 'SELECT MAX(revision) FROM `NODES`' );
+			$res      = $res->fetchArray();
+			return $res[0];
+		} else { // try to get old svn revision
+			if( is_file( $dir . '.svn/entries' ) ) {
+				$svn = file( $dir . '.svn/entries' );
+			}
+			if( isset( $svn[3] ) ) {
+				return trim( $svn[3] );
+			}
+		}
+		return false;
+	}
+
 	public function getBuild( $asArray = false ) {
 	
 		static $_build = null;
@@ -181,47 +206,38 @@ class Site {
 			return $_array;
 		}
 		
-		// fw version and build
 		$svnVer = array();
-		$svn = false;
-		if( is_file( DIR_FW . '.svn/entries' ) ) {
-			$svn = file( DIR_FW . '.svn/entries' );
-		}
-		if( isset( $svn[3] ) ) {
-			$svnVer[] = self::VERSION . '.' . trim( $svn[3] );
+		// fw version and build
+		$fwVer = $this->getSVNRev( DIR_FW );
+		if( $fwVer !== false ) {
+			$svnVer[] = self::VERSION . '.' . $fwVer;
 		} elseif( preg_match( '/\d+/', self::BUILD, $match ) ) {
 			$svnVer[] = self::VERSION . '.' . $match[0];
 		} else {
 			$svnVer[] = self::VERSION;
 		}
-		// plugins builds summary
+		// plugins build summ
 		$list = Plugger::getInstance()->getList();
 		$plugVer = 0;
 		foreach( $list as $name ) {
-			if( is_file( DIR_PLUGINS . "$name/.svn/entries" ) ) {
-				$svn = file( DIR_PLUGINS . "$name/.svn/entries" );
-				if( isset( $svn[3] ) ) {
-					$plugVer += trim( $svn[3] );
-				}
-			}
+			$plugVer += $this->getSVNRev( DIR_PLUGINS . $name . '/' );
 		}
 		if( $plugVer ) {
 			$svnVer[] = $plugVer;
 		}
 		// site revision
-		if( is_file( DIR_SITE . '.svn/entries' ) ) {
-			$svn = file( DIR_SITE . '.svn/entries' );
-			$svnVer[] = trim( $svn[3] );
+		$siteVer = $this->getSVNRev( DIR_ROOT );
+		if( $siteVer !== false ) {
+			$svnVer[] = $siteVer;
 		}
 
-		$_array = $svnVer;
 		if( $asArray ) {
 			return $svnVer;
 		} elseif( !empty( $svnVer ) ) {
 			return $_build = implode( '.', $svnVer );
+		} else {
+			return $_build = '-';
 		}
-
-		return $_build = '-';
 	}
 
 	/**
