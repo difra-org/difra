@@ -4,6 +4,8 @@ namespace Difra;
 
 class Autoloader {
 
+	static $bl = array( 'sqlite3' );
+
 	public static function getInstance() {
 
 		static $_instance = null;
@@ -15,6 +17,9 @@ class Autoloader {
 
 	public static function load( $class ) {
 
+		if( in_array( strtolower( trim( $class, '\\' ) ), self::$bl ) ) {
+			return;
+		}
 		static $basePath = null;
 		$basePath ? : $basePath = realpath( dirname( __FILE__ ) . '/../..' );
 		$class = ltrim( $class, '\\' );
