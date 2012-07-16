@@ -72,6 +72,7 @@ abstract class Common {
 			}
 			return false;
 		case 'float':
+			$value = str_replace( ',', '.', $value );
 			return is_numeric( $value );
 		case 'data':
 			return true;
