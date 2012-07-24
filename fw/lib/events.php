@@ -8,7 +8,7 @@ class Events {
 		// инициализация
 		'core-init',	// загрузка нужных классов
 		'plugins-load',	// загрузка плагинов
-		'config',// загрузка полных настроек
+		'config',	// загрузка полных настроек
 		'plugins-init',	// инициализация плагинов
 
 		// поиск подходящего решения
@@ -63,8 +63,9 @@ class Events {
 
 	public function run() {
 
+		Site::getInstance(); // инициализация сайта
 		foreach( $this->events as $type => $foo ) {
-			$handlers = $this->events[$type]; // это не баг, просьба не ломать
+			$handlers = $this->events[$type];
 			if( empty( $handlers ) ) {
 				continue;
 			}

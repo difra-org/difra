@@ -167,6 +167,7 @@ class Action {
 	public function run() {
 
 		$this->controller = new $this->className;
+		$this->controller->run();
 	}
 
 	private function saveCache( $key, $match ) {

@@ -333,5 +333,21 @@ class Ajax {
 				       'action' => 'reset'
 				  ) );
 	}
+
+	public function confirm( $text ) {
+
+		$action = Action::getInstance();
+		$this->addAction( array(
+					'action' => 'display',
+					'html' =>
+						'<form action="/' . $action->getUri() . '" class="ajaxer">' .
+						'<input type="hidden" name="confirm" value="1"/>' .
+						'<div>' . $text . '</div>' .
+						'<input type="submit" value="' . $action->controller->locale->getXPath( 'ajaxer/confirm-yes' ) . '"/>' .
+						'<input type="button" value="' . $action->controller->locale->getXPath( 'ajaxer/confirm-no' ) . '"
+						onclick="ajaxer.close(this)"/>' .
+				  		'</form>'
+				  ) );
+	}
 }
 

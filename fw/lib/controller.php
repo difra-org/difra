@@ -6,7 +6,7 @@ abstract class Controller {
 
  	public $view = null;
  	protected $action = null;
- 	protected $locale = null;
+ 	public $locale = null;
  	protected $ajax = null;
 	protected $auth = null;
 	protected $method = null;
@@ -21,12 +21,14 @@ abstract class Controller {
 	 * @var \DOMElement
 	 */
  	public $root;
-	
+
+	/*
 	public static function getInstance( $action ) {
 
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self( $action );
 	}
+	*/
 
 	public function __construct() {
 
@@ -55,11 +57,9 @@ abstract class Controller {
 		$menuXML->loadXML( Resourcer::getInstance( 'menu' )->compile( $this->view->instance ) );
 		$realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
 
-		// run action method
-		$this->_runAction();
 	}
 
-	private function _runAction() {
+	public function run() {
 
 		if( $this->method = $this->_chooseMehod() ) {
 			$this->_callMethod( $this->method );
@@ -226,6 +226,8 @@ abstract class Controller {
 		for( $i = 0; $i < strlen( $dateFields ); $i++ ) {
 			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
 		}
+		// debug flag
+		$this->root->setAttribute( 'debug', Debugger::getInstance()->isEnabled() ? '1' : '0' );
 		// config values (for js variable)
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );

@@ -129,4 +129,5 @@
 			<xsl:value-of select="$locale/adm/actions/right"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
-	</xsl:template></xsl:stylesheet>
+	</xsl:template>
+</xsl:stylesheet>
