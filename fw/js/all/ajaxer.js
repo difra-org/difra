@@ -251,11 +251,10 @@ main.httpRequest = ajaxer.httpRequest;
 $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 
 	var form = $( this );
-	var files = form.find( 'input[type=file]' );
 	$( document ).triggerHandler( 'form-submit' );
-	if( !files.length ) {
+	event.preventDefault();
+	if( !form.find( 'input[type=file]' ).length ) {
 		// serialize method
-		event.preventDefault();
 		ajaxer.sendForm( this, event );
 	} else {
 		// iframe method
@@ -279,6 +278,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 			loading.fadeIn();
 			var interval = window.setInterval(
 				function() {
+					form.submit();
 					frame.load( function() {
 						window.clearTimeout( interval );
 						ajaxer.fetchProgress( uuid );
