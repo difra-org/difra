@@ -281,6 +281,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				function() {
 					frame.load( function() {
 						window.clearTimeout( interval );
+						ajaxer.fetchProgress( uuid );
 						var rawframe = frame.get( 0 );
 						if( rawframe.contentDocument ) {
 							var val = rawframe.contentDocument.body.innerHTML;
