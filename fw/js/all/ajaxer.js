@@ -280,6 +280,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 			var interval = window.setInterval(
 				function() {
 					frame.load( function() {
+						window.clearTimeout( interval );
 						var rawframe = frame.get( 0 );
 						if( rawframe.contentDocument ) {
 							var val = rawframe.contentDocument.body.innerHTML;
@@ -300,7 +301,6 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 						$( 'iframe#ajaxerFrame' ).remove();
 						loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
 						loading.fadeOut( 'slow', function() {
-							window.clearTimeout( interval );
 							loading.find( '#upprog' ).remove();
 						} );
 						ajaxer.process( val, form );
