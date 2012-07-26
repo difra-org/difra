@@ -248,8 +248,12 @@ ajaxer.reset = function( form ) {
 var main = {};
 main.httpRequest = ajaxer.httpRequest;
 
+ajaxer.submitting = false;
 $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 
+	if( ajaxer.submitting ) {
+		return;
+	}
 	var form = $( this );
 	$( document ).triggerHandler( 'form-submit' );
 	event.preventDefault();
@@ -278,7 +282,9 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 			loading.fadeIn();
 			var interval = window.setInterval(
 				function() {
+					ajaxer.submitting = true;
 					form.submit();
+					ajaxer.submitting = false;
 					frame.load( function() {
 						window.clearTimeout( interval );
 						ajaxer.fetchProgress( uuid );
