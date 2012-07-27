@@ -25,7 +25,9 @@
 				<xsl:apply-templates select="menu">
 					<xsl:with-param name="auto" select="0"/>
 				</xsl:apply-templates>
-				<xsl:apply-templates select="*"/>
+				<div id="content" basepath="/adm">
+					<xsl:apply-templates select="*"/>
+				</div>
 			</body>
 		</html>
 	</xsl:template>

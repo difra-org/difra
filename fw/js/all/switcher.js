@@ -13,6 +13,7 @@ var switcher = [];
 switcher.hashChanged = false;
 switcher.noPush = false;
 switcher.url = false;
+switcher.basePath = '/';
 switcher.ajaxConfig = {
 	async: true,
 	cache: false,
@@ -25,19 +26,30 @@ switcher.ajaxConfig = {
 		try {
 			var newdata = $( data );
 		} catch( e ) {
-			switcher.fallback();
+			return switcher.fallback();
 		}
 		var a = newdata.filter( '#content,.switcher' ).add( newdata.find( '#content,.switcher' ) );
 		if( !a.length ) {
-			switcher.fallback();
+			return switcher.fallback();
+		}
+		var newPath = '/';
+		var content = newdata.filter( '#content' );
+		if( !content.length ) {
+			content = newdata.find( '#content' );
+		}
+		if( content.length && content.attr( 'basepath' ) ) {
+			newPath = content.attr( 'basepath' );
+		}
+		if( switcher.basePath != newPath ) {
+			return switcher.fallback();
 		}
 		$( document ).triggerHandler( 'destruct' );
 		if( !switcher.noPush ) {
 			if( typeof history.pushState == 'function' ) {
 				history.pushState( { url: switcher.url }, null, switcher.url );
-			} else { // workaround для убогих (IE, Opera, Android)
+			} else { // нет pushState — используем хеши
 				switcher.hashChanged = true;
-				window.location = '/#!' + switcher.url;
+				return window.location = switcher.basePath + '#!' + switcher.url;
 			}
 			if( typeof _gaq == 'object' && typeof _gaq.push == 'function' ) {
 				_gaq.push( ['_trackPageview', switcher.url] );
@@ -72,23 +84,23 @@ switcher.fallback = function() {
 
 switcher.page = function( url, noPush, data ) {
 
-	switcher.noPush = noPush ? true : false;
-	switcher.url = url;
 	// filter protocol://host part
 	var host = window.location.protocol + "//" + window.location.host + "/";
-	if( host == switcher.url.substring( 0, host.length ) ) {
-		switcher.url = switcher.url.substring( host.length - 1 );
+	if( host == url.substring( 0, host.length ) ) {
+		return switcher.page( url.substring( host.length - 1 ) );
 	}
-	if( !$( '#content,.switcher' ).length ) {
-		$( document ).triggerHandler( 'destruct' );
-		$( '#loading' ).css( 'display', 'none' );
-		document.location = switcher.url;
-	}
+	switcher.noPush = noPush ? true : false;
+	switcher.url = url;
+	console.warn( 'redirect to ', switcher.url );
 	if( data ) {
 		var conf = switcher.ajaxConfig;
 		conf.type = 'POST';
 		conf.data = data;
 		$.ajax( url, conf );
+	} else if( !$( '#content,.switcher' ).length ) {
+		$( document ).triggerHandler( 'destruct' );
+		$( '#loading' ).css( 'display', 'none' );
+		window.location = switcher.url;
 	} else {
 		$.ajax( url, switcher.ajaxConfig );
 	}
@@ -116,6 +128,12 @@ window.onpopstate = function() {
 
 $( document ).ready( function() {
 
+	var content = $( '#content' );
+	if( content.length && content.attr( 'basepath' ) ) {
+		switcher.basePath = content.attr( 'basepath' );
+	} else {
+		switcher.basePath = '/';
+	}
 	if( document.location.hash && document.location.hash.substring( 0, 2 ) == '#!' ) {
 		switcher.page( document.location.hash.substring( 2 ), true );
 		if( typeof history.replaceState == 'function' ) {
@@ -123,7 +141,7 @@ $( document ).ready( function() {
 			history.replaceState( { url: switcher.url }, null, switcher.url );
 		}
 	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' ) {
-//		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
+		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
 	} else {
 		if( !switcher.url ) {
 			switcher.url = document.location.pathname;

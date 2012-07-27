@@ -41,10 +41,9 @@ class Autoloader {
 			array_shift( $parts );
 		}
 		$filename = $basePath . strtolower( "/$path" . implode( '/', $parts ) ) . '.php';
-/*		if( !is_file( $filename ) ) {
-			throw new exception( "Class $class not found" );
-		}*/
-		include_once( $filename );
+		if( Debugger::getInstance()->isEnabled() or file_exists( $filename ) ) {
+			include_once( $filename );
+		}
 	}
 
 	public static function register() {

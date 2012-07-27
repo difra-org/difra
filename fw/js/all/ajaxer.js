@@ -94,8 +94,9 @@ ajaxer.process = function( data, form ) {
 				console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
 			}
 		}
-	} catch( ex ) {
+	} catch( err ) {
 		this.notify( {close:'OK'}, 'Unknown error.' );
+		console.warn( 'Error: ', err.message );
 		console.warn( 'Server returned:', data );
 	}
 };
@@ -263,67 +264,88 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 	} else {
 		// iframe method
 		if( !$( '#ajaxerFrame' ).length ) {
-			var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none"></iframe>' );
-			$( 'body' ).append( frame );
+			// генерируем uuid для прогрессбара
 			var uuid = '';
 			for( var i = 0; i < 32; i++ ) {
 				uuid += Math.floor( Math.random() * 16 ).toString( 16 );
 			}
-			var originalAction = form.attr( 'action' );
+			// модифицируем форму для отправки через iframe
 			form.attr( 'method', 'post' );
 			form.attr( 'enctype', 'multipart/form-data' );
+			var originalAction = form.attr( 'action' );
+			form.attr( 'originalAction', originalAction );
 			form.attr( 'action', form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
 			form.attr( 'target', 'ajaxerFrame' );
+			form.attr( 'uuid', uuid );
 			form.append( '<input type="hidden" name="_method" value="iframe"/>' );
+			// добавляем на страницу iframe
+			var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none" src="/iframe"></iframe>' );
+			frame.one( 'load', function( event ) { ajaxer.initIframe( form, event ) } );
+			$( 'body' ).append( frame );
+			// добавляем слой loading
 			var loading = $( '#loading' );
 			if( !loading.length ) {
 				$( 'body' ).append( loading = $( '<div id="loading"></div>' ) );
 			}
 			loading.fadeIn();
-			var interval = window.setInterval(
-				function() {
-					ajaxer.submitting = true;
-					form.submit();
-					ajaxer.submitting = false;
-					frame.load( function() {
-						window.clearTimeout( interval );
-						ajaxer.fetchProgress( uuid );
-						var rawframe = frame.get( 0 );
-						if( rawframe.contentDocument ) {
-							var val = rawframe.contentDocument.body.innerHTML;
-						} else if( rawframe.contentWindow ) {
-							val = rawframe.contentWindow.document.body.innerHTML;
-						} else if( rawframe.document ) {
-							val = rawframe.document.body.innerHTML;
-						}
-						try {
-							var fc = $( val ).text();
-							if( fc ) {
-								val = fc;
-							}
-						} catch( e ) {
-						}
-						form.attr( 'action', originalAction );
-						form.find( 'input[name=_method]' ).remove();
-						$( 'iframe#ajaxerFrame' ).remove();
-						loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
-						loading.fadeOut( 'slow', function() {
-							loading.find( '#upprog' ).remove();
-						} );
-						ajaxer.process( val, form );
-					} );
-					interval = window.setInterval(
-						function() {
-							ajaxer.fetchProgress( uuid );
-						},
-						1000
-					);
-				},
-				50
-			);
 		}
 	}
 } );
+
+ajaxer.initIframe = function( form, event ) {
+	var interval;
+	var frame = $( 'iframe#ajaxerFrame' );
+	event.stopPropagation();
+	// цепляем новую функцию onload на iframe
+	frame.off( 'load' );
+	frame.one( 'load', function() {
+		window.clearInterval( interval );
+		// получаем данные из iframe
+		var rawframe = frame.get( 0 );
+		if( rawframe.contentDocument ) {
+			var val = rawframe.contentDocument.body.innerHTML;
+		} else if( rawframe.contentWindow ) {
+			val = rawframe.contentWindow.document.body.innerHTML;
+		} else if( rawframe.document ) {
+			val = rawframe.document.body.innerHTML;
+		}
+		try {
+			var fc = $( val ).text();
+			if( fc ) {
+				val = fc;
+			}
+		} catch( e ) {
+		}
+		// восстанавливаем форму в первоначальный вид и подчищаем документ
+		form.attr( 'action', form.attr( 'originalAction' ) );
+		form.removeAttr( 'originalAction' );
+		form.removeAttr( 'uuid' );
+		form.find( 'input[name=_method]' ).remove();
+		$( 'iframe#ajaxerFrame' ).remove();
+		var loading = $( '#loading' );
+		var upprog = $( '#upprog' );
+		if( upprog.length ) {
+			loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
+			loading.fadeOut( 'slow', function() {
+				loading.find( '#upprog' ).remove();
+			} );
+		}
+		ajaxer.process( val, form );
+	} );
+	// сабмиттим форму
+	ajaxer.submitting = true;
+	form.submit();
+	ajaxer.submitting = false;
+	// получаем статус закачки и обновляем прогрессбар раз в секунду
+	var uuid = form.attr( 'uuid' );
+	ajaxer.fetchProgress( uuid );
+	interval = window.setInterval(
+		function() {
+			ajaxer.fetchProgress( uuid );
+		},
+		1000
+	);
+};
 
 ajaxer.fetchProgress = function( uuid ) {
 
