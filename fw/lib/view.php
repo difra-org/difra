@@ -107,6 +107,9 @@ class View {
 			//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
 			echo( $html->saveXML() );
 			Debugger::getInstance()->printOutput();
+			if( function_exists( 'fastcgi_finish_request' ) ) {
+				fastcgi_finish_request();
+			}
 		} else {
 			throw new exception( "Can't render templates" );
 		}
