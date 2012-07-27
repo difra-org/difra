@@ -41,9 +41,9 @@ class Autoloader {
 			array_shift( $parts );
 		}
 		$filename = $basePath . strtolower( "/$path" . implode( '/', $parts ) ) . '.php';
-		if( Debugger::getInstance()->isEnabled() or file_exists( $filename ) ) {
+		//if( !class_exists( '\\Difra\\Debugger' ) or Debugger::getInstance()->isEnabled() or file_exists( $filename ) ) {
 			include_once( $filename );
-		}
+		//}
 	}
 
 	public static function register() {
