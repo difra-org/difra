@@ -323,10 +323,10 @@ ajaxer.initIframe = function( form, event ) {
 		form.find( 'input[name=_method]' ).remove();
 		$( 'iframe#ajaxerFrame' ).remove();
 		var upprog = $( '#upprog' );
+		var loading = $( '#loading' );
 		if( upprog.length ) {
 			loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
 		}
-		var loading = $( '#loading' );
 		loading.fadeOut( 'slow', function() {
 			loading.find( '#upprog' ).remove();
 		} );
