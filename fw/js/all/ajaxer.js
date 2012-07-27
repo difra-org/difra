@@ -322,14 +322,14 @@ ajaxer.initIframe = function( form, event ) {
 		form.removeAttr( 'uuid' );
 		form.find( 'input[name=_method]' ).remove();
 		$( 'iframe#ajaxerFrame' ).remove();
-		var loading = $( '#loading' );
 		var upprog = $( '#upprog' );
 		if( upprog.length ) {
 			loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
-			loading.fadeOut( 'slow', function() {
-				loading.find( '#upprog' ).remove();
-			} );
 		}
+		var loading = $( '#loading' );
+		loading.fadeOut( 'slow', function() {
+			loading.find( '#upprog' ).remove();
+		} );
 		ajaxer.process( val, form );
 	} );
 	// сабмиттим форму
