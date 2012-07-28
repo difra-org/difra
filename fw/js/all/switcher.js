@@ -49,7 +49,7 @@ switcher.ajaxConfig = {
 				history.pushState( { url: switcher.url }, null, switcher.url );
 			} else { // нет pushState — используем хеши
 				switcher.hashChanged = true;
-				return window.location = switcher.basePath + '#!' + switcher.url;
+				window.location = switcher.basePath + '#!' + switcher.url;
 			}
 			if( typeof _gaq == 'object' && typeof _gaq.push == 'function' ) {
 				_gaq.push( ['_trackPageview', switcher.url] );
@@ -91,7 +91,6 @@ switcher.page = function( url, noPush, data ) {
 	}
 	switcher.noPush = noPush ? true : false;
 	switcher.url = url;
-	console.warn( 'redirect to ', switcher.url );
 	if( data ) {
 		var conf = switcher.ajaxConfig;
 		conf.type = 'POST';

@@ -4,6 +4,20 @@
 		<xsl:param name="pages"/>
 		<xsl:param name="link"/>
 		<xsl:param name="current"/>
+		<div class="paginator">
+			<xsl:call-template name="paginatorSub">
+				<xsl:with-param name="i" select="$i"/>
+				<xsl:with-param name="pages" select="$pages"/>
+				<xsl:with-param name="link" select="$link"/>
+				<xsl:with-param name="current" select="$current"/>
+			</xsl:call-template>
+		</div>
+	</xsl:template>
+	<xsl:template name="paginatorSub">
+		<xsl:param name="i" select="1"/>
+		<xsl:param name="pages"/>
+		<xsl:param name="link"/>
+		<xsl:param name="current"/>
 
 		<xsl:if test="$pages &gt; 1 or $current != 1">
 			<!-- кнопка назад -->
@@ -44,7 +58,7 @@
 				<!-- скипаем от первого в середину -->
 				<xsl:when test="$i &lt; $current - 6">
 					<div class="pagerItem pagerSkip">…</div>
-					<xsl:call-template name="paginator">
+					<xsl:call-template name="paginatorSub">
 						<xsl:with-param name="pages" select="$pages"/>
 						<xsl:with-param name="current" select="$current"/>
 						<xsl:with-param name="link" select="$link"/>
@@ -54,7 +68,7 @@
 				<!-- скипаем от средних до последних -->
 				<xsl:when test="$i &gt; $current + 3 and $i &lt; $pages">
 					<div class="pagerItem pagerSkip">…</div>
-					<xsl:call-template name="paginator">
+					<xsl:call-template name="paginatorSub">
 						<xsl:with-param name="pages" select="$pages"/>
 						<xsl:with-param name="current" select="$current"/>
 						<xsl:with-param name="link" select="$link"/>
@@ -63,7 +77,7 @@
 				</xsl:when>
 				<!-- показываемые страницы -->
 				<xsl:when test="$i &lt; $pages">
-					<xsl:call-template name="paginator">
+					<xsl:call-template name="paginatorSub">
 						<xsl:with-param name="pages" select="$pages"/>
 						<xsl:with-param name="current" select="$current"/>
 						<xsl:with-param name="link" select="$link"/>
