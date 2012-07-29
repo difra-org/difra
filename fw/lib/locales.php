@@ -169,6 +169,24 @@ class Locales {
 		return $this->getDate( mktime( $date[1][0], $date[1][1], $date[1][2], $date[0][1], $date[0][2], $date[0][0] ) );
 	}
 
+    /**
+     * Создаёт строчку для ссылки
+     * @param string $string
+     * @return string
+     */
+    public function makeLink( $string ) {
+
+        $link = '';
+        $num = preg_match_all( '/[A-Za-zА-Яа-я0-9Ёё]*/u', $string, $matches );
+        if( $num and ! empty( $matches[0] ) ) {
+            $matches = array_filter( $matches[0], 'strlen' );
+            $link = implode( '-', $matches );
+        }
+        if( $link == '' ) {
+            $link = '-';
+        }
+        return $link;
+    }
 }
 
 
