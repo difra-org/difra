@@ -26,7 +26,7 @@ class Auth {
 		$authNode = $node->appendChild( $node->ownerDocument->createElement( 'auth' ) );
 		if( !$this->logged ) {
 			$authNode->appendChild( $node->ownerDocument->createElement( 'unauthorized' ) );
-			return false;
+			return;
 		} else {
 			$subNode = $authNode->appendChild( $node->ownerDocument->createElement( 'authorized' ) );
 			$subNode->setAttribute( 'id', $this->id );

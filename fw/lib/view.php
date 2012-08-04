@@ -54,6 +54,15 @@ class View {
 		die();
 	}
 
+	/**
+	 * @param \DOMDocument $xml
+	 * @param bool|string  $instance
+	 * @param bool         $dontEcho
+	 * @param bool         $errorPage
+	 *
+	 * @throws exception
+	 * @return bool|string
+	 */
 	public function render( $xml, $instance = false, $dontEcho = false, $errorPage = false ) {
 
 		if( !$dontEcho ) {
@@ -129,7 +138,9 @@ class View {
 	 */
 	private function postProcess( $html, $xml ) {
 
-		$htmlRoot = $html->documentElement;
+		if( !$htmlRoot = $html->documentElement ) {
+			return;
+		}
 		if( $htmlRoot->nodeName != 'html' ) {
 			return;
 		}
