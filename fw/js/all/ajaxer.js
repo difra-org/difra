@@ -38,7 +38,6 @@ ajaxer.sendForm = function( form, event ) {
 	//var data = $( event.target ).serialize();
 	$( form ).find( '.required' ).fadeOut( 'fast' );
 	$( form ).find( '.invalid' ).fadeOut( 'fast' );
-	$( form ).find( '.status' ).fadeOut( 'fast' );
 	$( form ).find( '.problem' ).removeClass( 'problem' );
 	ajaxer.process( this.httpRequest( $( form ).attr( 'action' ), data ), form );
 };
@@ -50,13 +49,14 @@ ajaxer.query = function( url, data ) {
 
 ajaxer.process = function( data, form ) {
 
+	this.clean( form );
+	ajaxer.statusInit();
 	try {
 		console.info( 'Server said:', data );
 		var data1 = $.parseJSON( data );
 		if( !data1.actions ) {
 			throw "data error";
 		}
-		this.clean( form );
 		for( var key in data1.actions ) {
 			var action = data1.actions[key];
 			switch( action.action ) {
@@ -99,6 +99,7 @@ ajaxer.process = function( data, form ) {
 		console.warn( 'Error: ', err.message );
 		console.warn( 'Server returned:', data );
 	}
+	ajaxer.statusUpdate( form );
 };
 
 ajaxer.clean = function( form ) {
@@ -192,13 +193,82 @@ ajaxer.invalid = function( form, name, message ) {
 	req.fadeIn( 'fast' );
 };
 
+ajaxer.statuses = {};
+
+// инициализация статусов
+ajaxer.statusInit = function() {
+
+	ajaxer.statuses = {};
+};
+
+// эта функция устанавливает статус
 ajaxer.status = function( form, name, message, classname ) {
 
+	ajaxer.statuses[name] = { message: message, classname: classname, used: 0 };
+	/*
+	// старый код функции ajaxer.status()
 	var status = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.status' );
 	if( status ) {
 		status.fadeIn( 'fast' );
 		status.attr( 'class', 'status ' + classname );
 		status.html( message );
+	}
+	*/
+};
+
+// эта функция обновляет поля статусов в соответствии со значениями, установленными через ajaxer.status()
+ajaxer.statusUpdate = function( form ) {
+
+	$( form ).find( '.status' ).each( function( i, obj1 ) {
+		var obj = $( obj1 );
+		// получаем имя элемента, к которому относится это поле статуса
+		var container = obj.closest( '.container' );
+		if( typeof container == 'undefined' ) {
+			return;
+		}
+		var formElement = container.find( 'input, textarea' );
+		if( typeof formElement == 'undefined' ) {
+			return;
+		}
+		var name = formElement.attr( 'name' );
+		if( !name ) {
+			return;
+		}
+		// сохраняем оригинальный текст
+		if( typeof obj.attr( 'original-text' ) == "undefined" ) {
+			obj.attr( 'original-text', obj.html() );
+		}
+		if( name in ajaxer.statuses ) {
+			// вероятно, новый статус или стиль
+			if( ajaxer.statuses[name].message != obj.html() || obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
+				obj.animate( { opacity: 0 }, 'fast', function() {
+					if( obj.attr( 'status-class' ) ) {
+						if( obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
+							obj.removeClass( obj.attr( 'status-class' ) );
+							obj.removeAttr( 'status-class' );
+							obj.attr( 'status-class', ajaxer.statuses[name].classname );
+							obj.addClass( ajaxer.statuses[name].classname );
+						}
+					} else {
+						obj.attr( 'status-class', ajaxer.statuses[name].classname );
+						obj.addClass( ajaxer.statuses[name].classname );
+					}
+					obj.html( ajaxer.statuses[name].message );
+					obj.animate( { opacity: 1 }, 'fast' );
+				} );
+			}
+			ajaxer.statuses[name].used = 1;
+		} else if( obj.attr( 'status-class' ) ) {
+			// статус был изменен, но теперь нет
+			obj.removeClass( obj.attr( 'status-class' ) );
+			obj.removeAttr( 'status-class' );
+			obj.html( obj.attr( 'original-text' ) );
+		}
+	} );
+	for( var i in ajaxer.statuses ) {
+		if( !ajaxer.statuses[i].used ) {
+			ajaxer.notify( {}, ajaxer.statuses[i].message );
+		}
 	}
 };
 
