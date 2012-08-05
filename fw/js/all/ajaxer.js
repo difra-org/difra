@@ -54,7 +54,7 @@ ajaxer.process = function( data, form ) {
 	try {
 		console.info( 'Server said:', data );
 		var data1 = $.parseJSON( data );
-		if( !data1.actions ) {
+		if( typeof data1 == 'undefined' || typeof data1.actions == 'undefined' ) {
 			throw "data error";
 		}
 		for( var key in data1.actions ) {
