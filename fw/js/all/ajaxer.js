@@ -240,29 +240,30 @@ ajaxer.statusUpdate = function( form ) {
 		}
 		if( name in ajaxer.statuses ) {
 			// вероятно, новый статус или стиль
-			if( ajaxer.statuses[name].message != obj.html() || obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
-				obj.animate( { opacity: 0 }, 'fast', function() {
-					if( obj.attr( 'status-class' ) ) {
-						if( obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
-							obj.removeClass( obj.attr( 'status-class' ) );
-							obj.removeAttr( 'status-class' );
-							obj.attr( 'status-class', ajaxer.statuses[name].classname );
-							obj.addClass( ajaxer.statuses[name].classname );
-						}
-					} else {
+			obj.animate( { opacity: 0 }, 'fast', function() {
+				if( obj.attr( 'status-class' ) ) {
+					if( obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
+						obj.removeClass( obj.attr( 'status-class' ) );
+						obj.removeAttr( 'status-class' );
 						obj.attr( 'status-class', ajaxer.statuses[name].classname );
 						obj.addClass( ajaxer.statuses[name].classname );
 					}
-					obj.html( ajaxer.statuses[name].message );
-					obj.animate( { opacity: 1 }, 'fast' );
-				} );
-			}
+				} else {
+					obj.attr( 'status-class', ajaxer.statuses[name].classname );
+					obj.addClass( ajaxer.statuses[name].classname );
+				}
+				obj.html( ajaxer.statuses[name].message );
+				obj.animate( { opacity: 1 }, 'fast' );
+			} );
 			ajaxer.statuses[name].used = 1;
 		} else if( obj.attr( 'status-class' ) ) {
 			// статус был изменен, но теперь нет
-			obj.removeClass( obj.attr( 'status-class' ) );
-			obj.removeAttr( 'status-class' );
-			obj.html( obj.attr( 'original-text' ) );
+			obj.animate( { opacity: 0 }, 'fast', function() {
+				obj.removeClass( obj.attr( 'status-class' ) );
+				obj.removeAttr( 'status-class' );
+				obj.html( obj.attr( 'original-text' ) );
+				obj.animate( { opacity: 1 }, 'fast' );
+			} );
 		}
 	} );
 	for( var i in ajaxer.statuses ) {
