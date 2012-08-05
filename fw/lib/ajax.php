@@ -189,6 +189,12 @@ class Ajax {
 		return $this->problem;
 	}
 
+	public function clearResponse() {
+
+		$this->response = array();
+		$this->problem = false;
+	}
+
 	/**
 	 * Показать сообщение
 	 * @param string $message	Текст сообщения

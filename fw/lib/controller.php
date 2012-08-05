@@ -7,7 +7,10 @@ abstract class Controller {
  	public $view = null;
  	protected $action = null;
  	public $locale = null;
- 	protected $ajax = null;
+	/**
+	 * @var Ajax
+	 */
+	public $ajax = null;
 	protected $auth = null;
 	protected $method = null;
 

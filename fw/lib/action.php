@@ -10,6 +10,9 @@ class Action {
 	public $dispatchers = array();
 
 	public $className = null;
+	/**
+	 * @var Controller
+	 */
 	public $controller = null;
 
 	public $method = null;
@@ -24,6 +27,10 @@ class Action {
 		array( 'Ajax',	'Auth'	)
 	);
 
+	/**
+	 * @static
+	 * @return Action
+	 */
 	static public function getInstance() {
 
 		static $_instance = null;
