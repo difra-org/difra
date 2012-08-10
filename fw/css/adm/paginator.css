@@ -1,0 +1,15 @@
+.paginator {
+    padding: 20px 0px 20px 0px;
+}
+
+.paginator .pagerItem {
+    border-radius: 4px;
+    margin: 2px;
+    padding: 5px;
+    float: left;
+    background-color: #ececec;
+}
+
+.paginator .pagerItem.pagerSelected {
+    background-color: #fbfbfb;
+}
