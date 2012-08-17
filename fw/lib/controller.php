@@ -4,26 +4,27 @@ namespace Difra;
 
 abstract class Controller {
 
- 	public $view = null;
- 	protected $action = null;
- 	public $locale = null;
-	/**
-	 * @var Ajax
-	 */
+	/** @var \Difra\View */
+	public $view = null;
+	/** @var \Difra\Action */
+	protected $action = null;
+	/** @var \Difra\Locales */
+	public $locale = null;
+	/** @var \Difra\Ajax */
 	public $ajax = null;
+	/** @var \Difra\Auth */
 	protected $auth = null;
+
+	/** @var string */
 	protected $method = null;
 
- 	protected $output = null;
-	
-	/**
-	 * @var \DOMDocument
-	 */
- 	public $xml;
-	/**
-	 * @var \DOMElement
-	 */
- 	public $root;
+	/** @var string */
+	protected $output = null;
+
+	/** @var \DOMDocument */
+	public $xml;
+	/** @var \DOMElement */
+	public $root;
 
 	/*
 	public static function getInstance( $action ) {
@@ -36,11 +37,11 @@ abstract class Controller {
 	public function __construct() {
 
 		// load essentials
-		$this->view	= View::getInstance();
-		$this->locale	= Locales::getInstance();
-		$this->action	= Action::getInstance();
-		$this->auth	= Auth::getInstance();
-		$this->ajax	= Ajax::getInstance();
+		$this->view   = View::getInstance();
+		$this->locale = Locales::getInstance();
+		$this->action = Action::getInstance();
+		$this->auth   = Auth::getInstance();
+		$this->ajax   = Ajax::getInstance();
 
 		$this->_initXML();
 		$realRoot = $this->root;
@@ -59,7 +60,6 @@ abstract class Controller {
 		$menuXML = new \DOMDocument();
 		$menuXML->loadXML( Resourcer::getInstance( 'menu' )->compile( $this->view->instance ) );
 		$realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
-
 	}
 
 	public function run() {
@@ -97,7 +97,7 @@ abstract class Controller {
 
 	private function _callMethod( $method ) {
 
-		$actionMethod = $this->action->$method;
+		$actionMethod     = $this->action->$method;
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
 
@@ -120,12 +120,12 @@ abstract class Controller {
 		// получаем значения параметров
 		$callParameters = array();
 		foreach( $actionParameters as $parameter ) {
-			$name = $parameter->getName();
+			$name  = $parameter->getName();
 			$class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
 			switch( call_user_func( array( "$class", "getSource" ) ) ) {
 			case 'query':
 				// параметр из query — нужно соблюдать очередность параметров
-				if( call_user_func( array( "$class", "isNamed" )) ) {
+				if( call_user_func( array( "$class", "isNamed" ) ) ) {
 					// именованный параметр
 					if( sizeof( $this->action->parameters ) >= 2 and $this->action->parameters[0] == $name ) {
 						array_shift( $this->action->parameters );
@@ -145,7 +145,7 @@ abstract class Controller {
 										      empty( $namedParameters ) or
 										      $this->action->parameters[0] != $namedParameters[0] )
 					) {
-						if( !call_user_func( array( "$class", 'verify'), $this->action->parameters[0] ) ) {
+						if( !call_user_func( array( "$class", 'verify' ), $this->action->parameters[0] ) ) {
 							$this->view->httpError( 404 );
 						}
 						$callParameters[$name] = new $class( array_shift( $this->action->parameters ) );
@@ -191,9 +191,9 @@ abstract class Controller {
 		if( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
 			header( 'Content-Type: text/plain' );
 			$this->xml->formatOutput = true;
-			$this->xml->encoding = 'utf-8';
+			$this->xml->encoding     = 'utf-8';
 			echo( rawurldecode( $this->xml->saveXML() ) );
-		} elseif( ! $this->view->rendered and $this->ajax->isAjax ) {
+		} elseif( !$this->view->rendered and $this->ajax->isAjax ) {
 			header( 'Content-type: text/plain' ); // application/json не катит в опере
 			echo( $this->ajax->getResponse() );
 		} elseif( !$this->view->rendered ) {
@@ -203,7 +203,7 @@ abstract class Controller {
 
 	private function _initXML() {
 
-		$this->xml = new \DOMDocument;
+		$this->xml  = new \DOMDocument;
 		$this->root = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
 		$this->root->setAttribute( 'lang', $this->locale->locale );
 		$this->root->setAttribute( 'controller', $this->action->className );
@@ -219,13 +219,13 @@ abstract class Controller {
 		// ajax flag
 		$this->root->setAttribute( 'ajax', ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
 									      $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? 1
-							 : 0 );
+			: 0 );
 		// build number
 		$this->root->setAttribute( 'build', Site::getInstance()->getBuild() );
 		// date
-		$dateNode = $this->root->appendChild( $this->xml->createElement( 'date' ) );
+		$dateNode   = $this->root->appendChild( $this->xml->createElement( 'date' ) );
 		$dateFields = 'deAamBbYycxHMS';
-		$t = time();
+		$t          = time();
 		for( $i = 0; $i < strlen( $dateFields ); $i++ ) {
 			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
 		}
