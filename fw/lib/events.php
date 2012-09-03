@@ -5,29 +5,23 @@ namespace Difra;
 class Events {
 
 	private $types = array(
-		// инициализация
 		'core-init', // загрузка нужных классов
 		'plugins-load', // загрузка плагинов
 		'config', // загрузка полных настроек
 		'plugins-init', // инициализация плагинов
 
-		// поиск подходящего решения
-		'pre-action',
-		'action-find',
-		'init-done',
+		'pre-action', // событие, позволяющее переопределить стандартный поиск действия
+		'action-find', // стандартный поиск действия
+		'init-done', // выход из состояния инициализации сайта
 
-		// выполнение найденного action
-		'action-run',
+		'action-run', // выполнение найденного действия
 
-		// диспатчеры
-		'dispatch',
+		'dispatch', // выполнение диспатчеров
 
-		// рендер
-		'render-init',
-		'render-run',
+		'render-init', // подготовка к рендеру
+		'render-run', // рендер
 
-		// статистика и прочее
-		'done'
+		'done' // статистика и прочее
 	);
 	private $events = null;
 
