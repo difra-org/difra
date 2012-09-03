@@ -6,14 +6,17 @@ class Events {
 
 	private $types = array(
 		// инициализация
-		'core-init',	// загрузка нужных классов
-		'plugins-load',	// загрузка плагинов
-		'config',	// загрузка полных настроек
-		'plugins-init',	// инициализация плагинов
+		'core-init', // загрузка нужных классов
+		'plugins-load', // загрузка плагинов
+		'config', // загрузка полных настроек
+		'plugins-init', // инициализация плагинов
 
 		// поиск подходящего решения
 		'pre-action',
 		'action-find',
+		'init-done',
+
+		// выполнение найденного action
 		'action-run',
 
 		// диспатчеры
@@ -42,7 +45,6 @@ class Events {
 	}
 
 	public function __destruct() {
-
 	}
 
 	public static function register( $type, $class, $method = false ) {

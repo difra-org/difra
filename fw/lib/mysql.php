@@ -14,7 +14,7 @@ class MySQL {
 
 	/**
 	 * Конструктор
-	 * @param bool $new	Создать новое соединение с базой
+	 * @param bool $new        Создать новое соединение с базой
 	 */
 	public function __construct( $new = false ) {
 
@@ -54,7 +54,7 @@ class MySQL {
 		}
 		try {
 			$this->db = @new \mysqli( 'p:' . ( isset( $this->config['hostname'] ) ? $this->config['hostname'] : 'localhost' ),
-				$this->config['username'], $this->config['password'], $this->config['database'] );
+						  $this->config['username'], $this->config['password'], $this->config['database'] );
 			if( $this->db->connect_errno ) {
 				throw new Exception( 'Can\'t connect to MySQL: ' . $this->db->connect_error );
 			}
@@ -70,7 +70,7 @@ class MySQL {
 	 * Сделать запрос в базу
 	 * @throws exception
 	 *
-	 * @param string|array $query	SQL-запрос
+	 * @param string|array $query        SQL-запрос
 	 *
 	 * @return void
 	 */
@@ -81,7 +81,7 @@ class MySQL {
 			$this->db->query( $query );
 			$this->queries++;
 			Debugger::getInstance()->addLine( "MySQL: " . $query );
-			if( $err = $this->db->error ) {
+			if( $err = $this->db->error and !Site::isInit() ) {
 				throw new Exception( "MySQL error: [$err] on request [$query]" );
 			}
 		} else {
@@ -94,7 +94,9 @@ class MySQL {
 			} catch( Exception $ex ) {
 				$this->db->rollback();
 				$this->db->autocommit( true );
-				throw new Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
+				if( !Site::isInit() ) {
+					throw new Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
+				}
 			}
 		}
 	}
@@ -104,19 +106,22 @@ class MySQL {
 	 * @throws exception
 	 *
 	 * @param string $query          SQL-запрос
-	 * @param bool   $replica	Позволить читать данные из реплики
+	 * @param bool   $replica        Позволить читать данные из реплики
 	 *
 	 * @return array
 	 */
 	public function fetch( $query, $replica = false ) {
 
 		$this->connect();
-		$table = array();
+		$table  = array();
 		$result = $this->db->query( $query );
 		$this->queries++;
 		Debugger::getInstance()->addLine( 'MySQL: ' . $query );
 		if( $err = $this->db->error ) {
-			throw new \Difra\Exception( 'MySQL: ' . $err );
+			if( !Site::isInit() ) {
+				throw new \Difra\Exception( 'MySQL: ' . $err );
+			}
+			return null;
 		}
 		// XXX: вместо этого, по идее, надо делать fetch_all, но оно требует mysqlnd
 		while( $row = $result->fetch_array( MYSQLI_ASSOC ) ) {
@@ -127,17 +132,18 @@ class MySQL {
 
 	/**
 	 * Возвращает результаты запроса в ассоциативном массиве id => row
+	 *
 	 * @throws exception
 	 *
-	 * @param string $query         SQL-запрос
-	 * @param bool   $replica	Позволить читать данные из реплики
+	 * @param string $query          SQL-запрос
+	 * @param bool   $replica        Позволить читать данные из реплики
 	 *
 	 * @return array
 	 */
 	public function fetchWithId( $query, $replica = false ) {
 
 		$this->connect();
-		$table = array();
+		$table  = array();
 		$result = $this->db->query( $query );
 		$this->queries++;
 		Debugger::getInstance()->addLine( "MySQL: " . $query );
@@ -152,9 +158,8 @@ class MySQL {
 
 	/**
 	 * Возвращает одну строку результатов запроса
-	 *
 	 * @param string $query          SQL-запрос
-	 * @param bool   $replica	Позволить читать данные из реплики
+	 * @param bool   $replica        Позволить читать данные из реплики
 	 *
 	 * @return array|bool
 	 */
@@ -166,14 +171,13 @@ class MySQL {
 
 	/**
 	 * Возвращает одно значение из результатов запроса
-	 *
-	 * @param string $query         SQL-запрос
-	 * @param bool   $replica	Позволить читать данные из реплики
+	 * @param string $query          SQL-запрос
+	 * @param bool   $replica        Позволить читать данные из реплики
 	 *
 	 * @return mixed|null
 	 */
 	public function fetchOne( $query, $replica = false ) {
-		
+
 		$data = $this->fetchRow( $query, $replica );
 		return !empty( $data ) ? array_shift( $data ) : null;
 	}
@@ -181,9 +185,9 @@ class MySQL {
 	/**
 	 * Возвращает результат SQL-запроса в виде дерева XML
 	 *
-	 * @param \DOMNode $node	XML-Нода
-	 * @param string   $query	Запрос
-	 * @param bool     $replica	Позволить читать данные из реплики
+	 * @param \DOMNode $node           XML-Нода
+	 * @param string   $query          Запрос
+	 * @param bool     $replica        Позволить читать данные из реплики
 	 *
 	 * @return bool
 	 */
@@ -217,8 +221,10 @@ class MySQL {
 
 	/**
 	 * Берет значения из массива и возвращает их в виде дерева XML
+	 *
 	 * @param $node
 	 * @param $row
+	 *
 	 * @return bool
 	 */
 	private function getRowAsXML( $node, $row ) {
@@ -241,7 +247,7 @@ class MySQL {
 	/**
 	 * Безопасно «обернуть» строку для SQL-запроса
 	 *
-	 * @param string $string	Строка
+	 * @param string $string        Строка
 	 *
 	 * @return string
 	 */

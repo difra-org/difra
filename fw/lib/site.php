@@ -4,8 +4,8 @@ namespace Difra;
 
 class Site {
 
-	const VERSION = '2.1';
-	const BUILD = '$Rev$';
+	const VERSION   = '2.1';
+	const BUILD     = '$Rev$';
 	const PATH_PART = '/../../sites/';
 
 	private $locale = 'ru_RU';
@@ -16,6 +16,7 @@ class Site {
 	private $phpVersion = null;
 
 	private $userAgent = null;
+	static $siteInit = false;
 
 	static public function getInstance() {
 
@@ -28,6 +29,7 @@ class Site {
 		Events::register( 'core-init', 'Difra\\Site', 'init' );
 		Events::register( 'core-init', 'Difra\\Debugger' );
 		Events::register( 'plugins-load', 'Difra\Plugger' );
+		Events::register( 'init-done', 'Difra\\Site', 'initDone' );
 		Events::register( 'action-find', 'Difra\\Action', 'find' );
 		Events::register( 'action-run', 'Difra\\Action', 'run' );
 		Events::register( 'render-run', 'Difra\\Action', 'render' );
@@ -36,6 +38,7 @@ class Site {
 	public function init() {
 
 		static $initDone = false;
+		self::$siteInit = true;
 		if( $initDone ) {
 			return;
 		}
@@ -47,6 +50,16 @@ class Site {
 		$initDone = true;
 	}
 
+	public function initDone() {
+
+		self::$siteInit = false;
+	}
+
+	public static function isInit() {
+
+		return self::$siteInit;
+	}
+
 	public function __destruct() {
 
 		$this->sessionSave();
@@ -55,11 +68,11 @@ class Site {
 	public function detectHost() {
 
 		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
-		
+
 		// хост передаётся от веб-сервера
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
 			$this->host = $_SERVER['VHOST_NAME'];
-		// определяем хост по hostname
+			// определяем хост по hostname
 		} elseif( $host = $this->getHostname() ) {
 			while( $host ) {
 				if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
@@ -79,7 +92,7 @@ class Site {
 		if( !is_dir( $sitesDir . $this->host ) and is_dir( $sitesDir . 'www.' . $this->host ) ) {
 			$this->siteDir = 'www.' . $this->host;
 		}
-				
+
 		return true;
 	}
 
@@ -124,6 +137,7 @@ class Site {
 
 	/**
 	 * Убирает слеши из $_GET, $_POST, $_COOKIE, $_REQUEST, если включены magic quotes
+	 *
 	 * @return
 	 */
 	private function _stripSlashes() {
@@ -132,6 +146,7 @@ class Site {
 			return;
 		}
 		$strip_slashes_deep = function ( $value ) use ( &$strip_slashes_deep ) {
+
 			return is_array( $value ) ? array_map( $strip_slashes_deep, $value ) : stripslashes( $value );
 		};
 		$_GET               = array_map( $strip_slashes_deep, $_GET );
@@ -172,6 +187,7 @@ class Site {
 
 	/**
 	 * Получить версию ревизии SVN
+	 *
 	 * @param string $dir Путь к папке со слэшем в конце
 	 *
 	 * @return int|bool
@@ -180,9 +196,9 @@ class Site {
 
 		// try to get svn 1.7 revision
 		if( class_exists( '\SQLite3' ) and is_readable( $dir . '.svn/wc.db' ) ) {
-			$sqlite   = new \SQLite3( $dir . '.svn/wc.db' );
-			$res      = $sqlite->query( 'SELECT MAX(revision) FROM `NODES`' );
-			$res      = $res->fetchArray();
+			$sqlite = new \SQLite3( $dir . '.svn/wc.db' );
+			$res    = $sqlite->query( 'SELECT MAX(revision) FROM `NODES`' );
+			$res    = $res->fetchArray();
 			return $res[0];
 		} else { // try to get old svn revision
 			if( is_file( $dir . '.svn/entries' ) ) {
@@ -196,7 +212,7 @@ class Site {
 	}
 
 	public function getBuild( $asArray = false ) {
-	
+
 		static $_build = null;
 		static $_array = null;
 
@@ -205,7 +221,7 @@ class Site {
 		} elseif( $asArray and !is_null( $_array ) ) {
 			return $_array;
 		}
-		
+
 		$svnVer = array();
 		// fw version and build
 		$fwVer = $this->getSVNRev( DIR_FW );
@@ -217,7 +233,7 @@ class Site {
 			$svnVer[] = self::VERSION;
 		}
 		// plugins build summ
-		$list = Plugger::getInstance()->getList();
+		$list    = Plugger::getInstance()->getList();
 		$plugVer = 0;
 		foreach( $list as $name ) {
 			$plugVer += $this->getSVNRev( DIR_PLUGINS . $name . '/' );
@@ -242,6 +258,7 @@ class Site {
 
 	/**
 	 * Возвращает текущие настройки в XML
+	 *
 	 * @param \DOMNode $node
 	 */
 	public function getConfigXML( $node ) {
@@ -273,7 +290,7 @@ class Site {
 		$this->sessionLoad();
 		if( !isset( $_SESSION ) ) {
 			session_start();
-			$_SESSION = array();
+			$_SESSION          = array();
 			$_SESSION['dhost'] = $this->getMainhost();
 		}
 	}
@@ -291,18 +308,18 @@ class Site {
 			$this->userAgent = false;
 		} else {
 			// разбиваем строку User-Agent на ассоциативный массив
-			$ua = $_SERVER['HTTP_USER_AGENT'];
+			$ua  = $_SERVER['HTTP_USER_AGENT'];
 			$ua1 = explode( ' ', $ua );
-			$k = '';
-			$v = $ua2 = array();
+			$k   = '';
+			$v   = $ua2 = array();
 			foreach( $ua1 as $p ) {
 				if( strpos( $p, '/' ) !== false ) {
 					if( $k ) {
 						$ua2[$k] = implode( ' ', $v );
-						$v = array();
+						$v       = array();
 					}
-					$p2 = explode( '/', $p, 2 );
-					$k = $p2[0];
+					$p2  = explode( '/', $p, 2 );
+					$k   = $p2[0];
 					$v[] = $p2[1];
 				} else {
 					$v[] = $p;
@@ -312,10 +329,10 @@ class Site {
 				$ua2[$k] = implode( ' ', $v );
 			}
 			$a = array(
-				'agent' => '',
+				'agent'   => '',
 				'version' => '',
-				'os' => '',
-				'engine' => ''
+				'os'      => '',
+				'engine'  => ''
 			);
 			// пытаемся определить название браузера
 			if( isset( $ua2['Chrome'] ) ) {
@@ -342,7 +359,7 @@ class Site {
 			// пытаемся определить версию
 			if( isset( $ua2['Version'] ) ) {
 				$a['version'] = $ua2['Version'];
-			} elseif( isset( $ua2[$a['agent'] ] ) ) {
+			} elseif( isset( $ua2[$a['agent']] ) ) {
 				$a['version'] = $ua2[$a['agent']];
 				if( $a['agent'] == 'Opera' ) {
 					$a['version'] = explode( ' ', $a['version'] )[0];
@@ -372,7 +389,7 @@ class Site {
 				}
 			}
 			if( !$a['os'] ) {
-			if( $a['agent'] == 'Opera' and isset( $ua2['Tablet'] ) ) {
+				if( $a['agent'] == 'Opera' and isset( $ua2['Tablet'] ) ) {
 					$a['os'] = 'Tablet';
 				} elseif( $a['agent'] == 'Opera' and isset( $ua2['Mobi'] ) ) {
 					$a['os'] = 'Mobile';
