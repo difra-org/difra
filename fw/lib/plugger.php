@@ -4,14 +4,12 @@ namespace Difra;
 
 class Plugger {
 
-	// путь к папке плагинов
-	private $path;
-	// список всех плагинов
-	private $allPlugins = array();
-	// список включенных плагинов
-	private $enabled = array();
-	// массив загруженных плагинов
-	private $plugins = array();
+	/** @var string */
+	private $path = '';
+	/** @var string[] */
+	private $pluginsNames = null;
+	/** @var \Difra\Plugin[] */
+	private $plugins = null;
 
 	static public function getInstance() {
 
@@ -21,22 +19,21 @@ class Plugger {
 
 	public function __construct() {
 
-		$this->path = defined( 'DIR_PLUGINS' ) ? DIR_PLUGINS : realpath( dirname( __FILE__ ) . '/../../plugins' );
-
-		$this->allPlugins = $this->getAllPlugins();
-		$this->enabled = $this->getEnabled( $this->allPlugins );
-		sort( $this->enabled );
-
-		foreach( $this->enabled as $plugin ) {
-			$this->load( $plugin );
-		}
-		ksort( $this->plugins );
+		$this->path = DIR_PLUGINS;
 	}
 
-	private function getAllPlugins() {
+	public function init() {
 
-		static $_plugins = null;
-		if( is_null( $_plugins ) ) {
+		$this->smartPluginsEnable();
+	}
+
+	/**
+	 * Возвращает список всех доступных плагинов
+	 * @return string[]
+	 */
+	private function getPluginsNames() {
+
+		if( is_null( $this->pluginsNames ) ) {
 			$plugins = array();
 			if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
 				if( is_dir( $this->path ) and $dir = opendir( $this->path ) ) {
@@ -50,119 +47,94 @@ class Plugger {
 				}
 				Cache::getInstance()->put( 'plugger_plugins', $plugins, 300 );
 			}
-			$_plugins = $plugins;
+			$this->pluginsNames = $plugins;
 		}
-		return $_plugins;
+		return $this->pluginsNames;
 	}
 
-	private function getEnabled( $plugins ) {
+	/**
+	 * Возвращает массив с объектами всех доступных плагинов
+	 * @return \Difra\Plugin[]
+	 */
+	public function getAllPlugins() {
 
-		// XXX: заглушка
-		return $plugins;
+		if( is_null( $this->plugins ) ) {
+			$plugins = array();
+			$dirs    = $this->getPluginsNames();
+			if( !empty( $dirs ) ) {
+				foreach( $dirs as $dir ) {
+					include( "{$this->path}/$dir/plugin.php" );
+					$ucf           = ucfirst( $dir );
+					$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
+				}
+			}
+			$this->plugins = $plugins;
+		}
+		return $this->plugins;
 	}
 
-	private function load( $plugin, $requirement = false ) {
+	private function smartPluginsEnable() {
 
-		if( isset( $this->plugins[$plugin] ) ) {
+		$plugins = $this->getAllPlugins();
+		if( empty( $plugins ) ) {
 			return;
 		}
-		try {
-			include_once( "{$this->path}/$plugin/plugin.php" );
-			$className = "\\Difra\\Plugins\\$plugin\\Plugin";
-			$this->plugins[$plugin] = new $className;
-			if( method_exists( $this->plugins[$plugin], 'getRequirements' ) ) {
-				$req = call_user_func( array( $this->plugins[$plugin], 'getRequirements' ) );
-				if( is_array( $req ) and !empty( $req ) ) {
-					foreach( $req as $req1 ) {
-						$this->load( $req1, true );
-					}
-				}
-			}
-			if( method_exists( $this->plugins[$plugin], 'init' ) ) {
-				call_user_func( array( $this->plugins[$plugin], 'init' ) );
-			}
-		} catch( Exception $ex ) {
-			if( !$requirement ) {
-				throw new Exception( "Can't load plugin {$path['name']}: " . $ex->getMessage() );
-			} else {
-				throw new Exception( "Can't load dependency plugin {$path['name']}: " . $ex->getMessage() );
+		$enabledPlugins = Config::getInstance()->get( 'plugins' );
+		foreach( $plugins as $name => $obj ) {
+			if( empty( $enabledPlugins ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ) ) {
+				$obj->enable();
 			}
 		}
-	}
-
-	public function getDisabled() {
-
-		static $_disabled = null;
-		if( is_null( $_disabled ) ) {
-			$disabled = array();
-			foreach( $this->allPlugins as $name ) {
-				if( !isset( $this->plugins[$name] ) ) {
-					$disabled[] = array();
-				}
-			}
-			$_disabled = $disabled;
-		}
-		return $_disabled;
-	}
-	
-	public function getPath() {
-
-		return $this->path;
-	}
-
-	public function getList() {
-
-		return array_keys( $this->plugins );
 	}
 
 	public function getPaths() {
 
-		static $_paths = null;
-		if( is_null( $_paths ) ) {
-			$paths = array();
-			$list = $this->getList();
-			if( !empty( $list ) ) {
-				foreach( $list as $dir ) {
-					$paths[] = $this->path . $dir;
-				}
-			}
-			$_paths = $paths;
+		$paths   = array();
+		$plugins = $this->getAllPlugins();
+		if( empty( $plugins ) ) {
+			return array();
 		}
-		return $_paths;
+		foreach( $plugins as $name=> $plugin ) {
+			if( $plugin->isEnabled() ) {
+				$paths[$name] = $plugin->getPath();
+			}
+		}
+		return $paths;
 	}
 
-	public function getPlugin( $name ) {
+	/**
+	 * Позволяет узнать, включен ли плагин с таким названием
+	 * @param string $pluginName
+	 *
+	 * @return bool
+	 */
+	public function isEnabled( $pluginName ) {
 
-		return isset( $this->plugins[$name] ) ? $this->plugins[$name] : null;
+		if( !isset( $this->plugins[$pluginName] ) ) {
+			return false;
+		}
+		return $this->plugins[$pluginName]->isEnabled();
 	}
+
+	/**************************** Дальше идёт старый код, который в итоге будет выпилен! ****************************/
 
 	// XXX: from pnd: пролазил везде где только можно, но не нашел ничего готового для определения наличия плагина.
+	// переименовано в isEnabled()
+	// Добавлено сообщение DEPRECATED 04-sep-12.
 	public function isPlugin( $name ) {
 
-		return in_array( $name, $this->allPlugins );
+		trigger_error( 'Please use Plugger->isEnabled() instead of Plugger->isPlugin()', E_USER_DEPRECATED );
+		return $this->isEnabled( $name );
 	}
 
+	// Deprecated function. Added DEPRECATED MESSAGE on 04-sep-12.
 	public function runDispatchers( &$controller ) {
 
 		foreach( $this->plugins as $plugin ) {
 			if( method_exists( $plugin, 'dispatch' ) ) {
+				trigger_error( 'Plugin ' . $plugin . ' uses old-style dispatcher. Please use events.', E_USER_DEPRECATED );
 				$plugin->dispatch( $controller );
 			}
 		}
 	}
-
-	/*
-	public function getFormDirs() {
-
-		$dirs = array();
-		if( !empty( $this->plugins ) ) {
-			foreach( $this->plugins as $dir => $plugin ) {
-				if( is_dir( $p = "{$this->path}/$dir/forms/" ) ) {
-					$dirs[] = $p;
-				}
-			}
-		}
-		return $dirs;
-	}
-	*/
 }

@@ -28,7 +28,7 @@ class Site {
 
 		Events::register( 'core-init', 'Difra\\Site', 'init' );
 		Events::register( 'core-init', 'Difra\\Debugger' );
-		Events::register( 'plugins-load', 'Difra\Plugger' );
+		Events::register( 'plugins-load', 'Difra\Plugger', 'init' );
 		Events::register( 'init-done', 'Difra\\Site', 'initDone' );
 		Events::register( 'action-find', 'Difra\\Action', 'find' );
 		Events::register( 'action-run', 'Difra\\Action', 'run' );
@@ -233,10 +233,10 @@ class Site {
 			$svnVer[] = self::VERSION;
 		}
 		// plugins build summ
-		$list    = Plugger::getInstance()->getList();
-		$plugVer = 0;
-		foreach( $list as $name ) {
-			$plugVer += $this->getSVNRev( DIR_PLUGINS . $name . '/' );
+		$pluginPaths = Plugger::getInstance()->getPaths();
+		$plugVer     = 0;
+		foreach( $pluginPaths as $path ) {
+			$plugVer += $this->getSVNRev( $path );
 		}
 		if( $plugVer ) {
 			$svnVer[] = $plugVer;

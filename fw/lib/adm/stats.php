@@ -5,6 +5,7 @@ namespace Difra\Adm;
 class Stats {
 
 	public static function getInstance() {
+
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
 	}
@@ -15,12 +16,12 @@ class Stats {
 
 		// stats/difra
 		$difraNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'difra' ) );
-		$ver = \Difra\Site::getInstance()->getBuild( true );
+		$ver       = \Difra\Site::getInstance()->getBuild( true );
 		$difraNode->setAttribute( 'version', $ver[0] );
 
 		// stats/plugins
 		$pluginsNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
-		$pluginsNode->setAttribute( 'loaded', implode( ', ', \Difra\Plugger::getInstance()->getList() ) );
+		$pluginsNode->setAttribute( 'loaded', implode( ', ', \Difra\Plugger::getInstance()->getEnabledList() ) );
 		$pluginsNode->setAttribute( 'disabled', implode( ', ', \Difra\Plugger::getInstance()->getDisabled() ) );
 
 		// stats/cache
@@ -28,13 +29,12 @@ class Stats {
 		$cacheNode->setAttribute( 'type', \Difra\Cache::getInstance()->adapter );
 
 		// stats/mysql
-		$sqlState = \Difra\MySQL\Updater::getInstance()->check();
+		$sqlState  = \Difra\MySQL\Updater::getInstance()->check();
 		$mysqlNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'mysql', $sqlState ) );
 		if( $sqlState ) {
 			$mysqlNode->setAttribute( 'ok', '0' );
 		} else {
 			$mysqlNode->setAttribute( 'ok', '1' );
-
 		}
 
 		// stats/system
@@ -43,17 +43,17 @@ class Stats {
 		$systemNode->appendChild( $node->ownerDocument->createElement( 'phpversion', phpversion() ) );
 
 		// stats/extensions
-		$extensionsNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'extensions' ) );
-		$extensions = get_loaded_extensions();
-		$extensionsOk = array();
-		$extensionsExtra = array();
+		$extensionsNode     = $statsNode->appendChild( $node->ownerDocument->createElement( 'extensions' ) );
+		$extensions         = get_loaded_extensions();
+		$extensionsOk       = array();
+		$extensionsExtra    = array();
 		$extensionsRequired = array(
 			'dom', 'SimpleXML', 'xsl', 'zlib', 'ctype', 'json', 'mbstring', 'Reflection', 'Phar', 'imagick', 'mysqli'
 		);
 		foreach( $extensions as $extension ) {
 			if( in_array( $extension, $extensionsRequired ) ) {
 				$extensionsOk[] = $extension;
-				unset( $extensionsRequired[ array_search( $extension, $extensionsRequired ) ] );
+				unset( $extensionsRequired[array_search( $extension, $extensionsRequired )] );
 			} else {
 				$extensionsExtra[] = $extension;
 			}
@@ -77,5 +77,4 @@ class Stats {
 			$permNode->setAttribute( 'data', 'Directory ' . DIR_DATA . ' is not writeable!' );
 		}
 	}
-
 }
