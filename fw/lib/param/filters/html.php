@@ -15,15 +15,39 @@ class HTML {
 	protected $attrArray = array( 'href', 'src', 'style' );
 	// allowed styles
 	protected $styleArray = array(
-			'font-weight' => array( 'bold', 'bolder' ),
-			'text-align' => array( 'left', 'center', 'right' ),
-			'color' => 'all' );
+		'font-weight' => array( 'bold', 'bolder' ),
+		'text-align'  => array( 'left', 'center', 'right' ),
+		'color'       => 'all'
+	);
 
 	protected $tagsMethod; // default = 0
 	protected $attrMethod; // default = 0
 
 	protected $xssAuto; // default = 1
-	protected $tagBlacklist = array( 'applet', 'body', 'bgsound', 'base', 'basefont', 'embed', 'frame', 'frameset', 'head', 'html', 'id', 'iframe', 'ilayer', 'layer', 'link', 'meta', 'name', 'object', 'script', 'style', 'title', 'xml' );
+	protected $tagBlacklist = array(
+		'applet',
+		'body',
+		'bgsound',
+		'base',
+		'basefont',
+		'embed',
+		'frame',
+		'frameset',
+		'head',
+		'html',
+		'id',
+		'iframe',
+		'ilayer',
+		'layer',
+		'link',
+		'meta',
+		'name',
+		'object',
+		'script',
+		'style',
+		'title',
+		'xml'
+	);
 	protected $attrBlacklist = array( 'action', 'background', 'codebase', 'dynsrc', 'lowsrc' ); // also will strip ALL event handlers
 
 	static public function getInstance() {
@@ -34,14 +58,17 @@ class HTML {
 
 	/**
 	 * Constructor for inputFilter class. Only first parameter is required.
-	 * @access constructor
-	 * @param array $tagsArray - list of user-defined tags
-	 * @param array $attrArray - list of user-defined attributes
-	 * @param int $tagsMethod - 0= allow just user-defined, 1= allow all but user-defined
-	 * @param int $attrMethod - 0= allow just user-defined, 1= allow all but user-defined
-	 * @param int $xssAuto - 0= only auto clean essentials, 1= allow clean blacklisted tags/attr
-	 * @return \Difra\Param\Filters\HTML
 	 *
+	 * @access constructor
+	 *
+	 * @param array $tagsArray  - list of user-defined tags
+	 * @param array $attrArray  - list of user-defined attributes
+	 * @param int   $tagsMethod - 0= allow just user-defined, 1= allow all but user-defined
+	 * @param int   $attrMethod - 0= allow just user-defined, 1= allow all but user-defined
+	 * @param int   $xssAuto    - 0= only auto clean essentials, 1= allow clean blacklisted tags/attr
+	 *
+	 * @return \Difra\Param\Filters\HTML
+
 	 */
 	public function __construct( $tagsArray = array(), $attrArray = array(), $tagsMethod = 0, $attrMethod = 0, $xssAuto = 1 ) {
 
@@ -59,16 +86,20 @@ class HTML {
 		}
 		$this->tagsMethod = $tagsMethod;
 		$this->attrMethod = $attrMethod;
-		$this->xssAuto = $xssAuto;
+		$this->xssAuto    = $xssAuto;
 	}
 
 	/**
 	 * Method to be called by another php script. Processes for XSS and specified bad code.
+	 *
 	 * @access public
+	 *
 	 * @param string|array $source - input string/array-of-string to be 'cleaned'
+	 *
 	 * @return string $source - 'cleaned' version of input parameter
 	 */
 	public function process( $source ) {
+
 		// clean all elements in this array
 		if( is_array( $source ) ) {
 			foreach( $source as $key => $value ) // filter element for XSS and other 'bad' code etc.
@@ -92,11 +123,15 @@ class HTML {
 
 	/**
 	 * Internal method to iteratively remove all unwanted tags and attributes
+	 *
 	 * @access protected
+	 *
 	 * @param String $source - input string to be 'cleaned'
+	 *
 	 * @return String $source - 'cleaned' version of input parameter
 	 */
 	protected function remove( $source ) {
+
 		$loopCounter = 0;
 		// provides nested-tag protection
 		while( $source != $this->filterTags( $source ) ) {
@@ -108,13 +143,17 @@ class HTML {
 
 	/**
 	 * Internal method to strip a string of certain tags
+	 *
 	 * @access protected
+	 *
 	 * @param String $source - input string to be 'cleaned'
+	 *
 	 * @return String $source - 'cleaned' version of input parameter
 	 */
 	protected function filterTags( $source ) {
+
 		// filter pass setup
-		$preTag = NULL;
+		$preTag  = NULL;
 		$postTag = $source;
 		// find initial tag's position
 		$tagOpen_start = mb_strpos( $source, '<' );
@@ -122,7 +161,7 @@ class HTML {
 		while( $tagOpen_start !== FALSE ) {
 			// process tag interatively
 			$preTag .= mb_substr( $postTag, 0, $tagOpen_start );
-			$postTag = mb_substr( $postTag, $tagOpen_start );
+			$postTag     = mb_substr( $postTag, $tagOpen_start );
 			$fromTagOpen = substr( $postTag, 1 );
 			// end of tag
 			$tagOpen_end = mb_strpos( $fromTagOpen, '>' );
@@ -133,20 +172,20 @@ class HTML {
 			$tagOpen_nested = mb_strpos( $fromTagOpen, '<' );
 			if( ( $tagOpen_nested !== false ) && ( $tagOpen_nested < $tagOpen_end ) ) {
 				$preTag .= mb_substr( $postTag, 0, ( $tagOpen_nested + 1 ) );
-				$postTag = mb_substr( $postTag, ( $tagOpen_nested + 1 ) );
+				$postTag       = mb_substr( $postTag, ( $tagOpen_nested + 1 ) );
 				$tagOpen_start = strpos( $postTag, '<' );
 				continue;
 			}
 			$tagOpen_nested = ( mb_strpos( $fromTagOpen, '<' ) + $tagOpen_start + 1 );
-			$currentTag = mb_substr( $fromTagOpen, 0, $tagOpen_end );
-			$tagLength = mb_strlen( $currentTag );
+			$currentTag     = mb_substr( $fromTagOpen, 0, $tagOpen_end );
+			$tagLength      = mb_strlen( $currentTag );
 			if( !$tagOpen_end ) {
 				$preTag .= $postTag;
 				$tagOpen_start = mb_strpos( $postTag, '<' );
 			}
 			// iterate through tag finding attribute pairs - setup
-			$tagLeft = $currentTag;
-			$attrSet = array( );
+			$tagLeft      = $currentTag;
+			$attrSet      = array();
 			$currentSpace = mb_strpos( $tagLeft, ' ' );
 			// is end tag
 			if( substr( $currentTag, 0, 1 ) == "/" ) {
@@ -159,17 +198,19 @@ class HTML {
 				list( $tagName ) = explode( ' ', $currentTag );
 			}
 			// excludes all "non-regular" tagnames OR no tagname OR remove if xssauto is on and tag is blacklisted
-			if( ( !preg_match( "/^[a-z][a-z0-9]*$/i", $tagName ) ) || ( !$tagName ) || ( ( in_array( mb_strtolower( $tagName ), $this->tagBlacklist ) ) && ( $this->xssAuto ) ) ) {
-				$postTag = mb_substr( $postTag, ( $tagLength + 2 ) );
+			if( ( !preg_match( "/^[a-z][a-z0-9]*$/i", $tagName ) ) || ( !$tagName )
+			    || ( ( in_array( mb_strtolower( $tagName ), $this->tagBlacklist ) ) && ( $this->xssAuto ) )
+			) {
+				$postTag       = mb_substr( $postTag, ( $tagLength + 2 ) );
 				$tagOpen_start = mb_strpos( $postTag, '<' );
 				// don't append this tag
 				continue;
 			}
 			// this while is needed to support attribute values with spaces in!
 			while( $currentSpace !== FALSE ) {
-				$fromSpace = mb_substr( $tagLeft, ( $currentSpace + 1 ) );
-				$nextSpace = mb_strpos( $fromSpace, ' ' );
-				$openQuotes = mb_strpos( $fromSpace, '"' );
+				$fromSpace   = mb_substr( $tagLeft, ( $currentSpace + 1 ) );
+				$nextSpace   = mb_strpos( $fromSpace, ' ' );
+				$openQuotes  = mb_strpos( $fromSpace, '"' );
 				$closeQuotes = mb_strpos( substr( $fromSpace, ( $openQuotes + 1 ) ), '"' ) + $openQuotes + 1;
 				// another equals exists
 				if( strpos( $fromSpace, '=' ) !== FALSE ) {
@@ -191,7 +232,7 @@ class HTML {
 				// add to attribute pairs array
 				$attrSet[] = $attr;
 				// next inc
-				$tagLeft = mb_substr( $fromSpace, mb_strlen( $attr ) );
+				$tagLeft      = mb_substr( $fromSpace, mb_strlen( $attr ) );
 				$currentSpace = mb_strpos( $tagLeft, ' ' );
 			}
 			// appears in array specified by user
@@ -217,7 +258,7 @@ class HTML {
 				}
 			}
 			// find next tag's start
-			$postTag = mb_substr( $postTag, ( $tagLength + 2 ) );
+			$postTag       = mb_substr( $postTag, ( $tagLength + 2 ) );
 			$tagOpen_start = mb_strpos( $postTag, '<' );
 		}
 		// append any code after end of tags
@@ -227,12 +268,16 @@ class HTML {
 
 	/**
 	 * Internal method to strip a tag of certain attributes
+	 *
 	 * @access protected
+	 *
 	 * @param Array $attrSet
+	 *
 	 * @return Array $newSet
 	 */
 	protected function filterAttr( $attrSet ) {
-		$newSet = array( );
+
+		$newSet = array();
 		// process attributes
 		for( $i = 0; $i < count( $attrSet ); $i++ ) {
 			// skip blank spaces in tag
@@ -243,7 +288,10 @@ class HTML {
 			$attrSubSet = explode( '=', trim( $attrSet[$i] ) );
 			list( $attrSubSet[0] ) = explode( ' ', $attrSubSet[0] );
 			// removes all "non-regular" attr names AND also attr blacklisted
-			if( ( !ctype_alnum( $attrSubSet[0] ) ) || ( ( $this->xssAuto ) && ( ( in_array( mb_strtolower( $attrSubSet[0] ), $this->attrBlacklist ) ) || ( mb_substr( $attrSubSet[0], 0, 2 ) == 'on' ) ) ) ) {
+			if( ( !ctype_alnum( $attrSubSet[0] ) )
+			    || ( ( $this->xssAuto )
+				 && ( ( in_array( mb_strtolower( $attrSubSet[0] ), $this->attrBlacklist ) ) || ( mb_substr( $attrSubSet[0], 0, 2 ) == 'on' ) ) )
+			) {
 				continue;
 			}
 			// xss attr value filtering
@@ -255,7 +303,9 @@ class HTML {
 				// strip double quotes
 				$attrSubSet[1] = str_replace( '"', '', $attrSubSet[1] );
 				// [requested feature] convert single quotes from either side to doubles (Single quotes shouldn't be used to pad attr value)
-				if( ( mb_substr( $attrSubSet[1], 0, 1 ) == "'" ) && ( mb_substr( $attrSubSet[1], ( mb_strlen( $attrSubSet[1] ) - 1 ), 1 ) == "'" ) ) {
+				if( ( mb_substr( $attrSubSet[1], 0, 1 ) == "'" )
+				    && ( mb_substr( $attrSubSet[1], ( mb_strlen( $attrSubSet[1] ) - 1 ), 1 ) == "'" )
+				) {
 					$attrSubSet[1] = mb_substr( $attrSubSet[1], 1, ( mb_strlen( $attrSubSet[1] ) - 2 ) );
 				}
 				// strip slashes
@@ -300,11 +350,15 @@ class HTML {
 
 	/**
 	 * Try to convert to plaintext
+	 *
 	 * @access protected
+	 *
 	 * @param String $source
+	 *
 	 * @return String $source
 	 */
 	protected function decode( $source ) {
+
 		// url decode
 		$source = html_entity_decode( $source, ENT_QUOTES, "UTF-8" );
 		// convert decimal
@@ -316,14 +370,16 @@ class HTML {
 
 	/**
 	 * дуже проста обрізання стилей от pnd
+	 *
 	 * @param $attr
-	 * @return void
+	 *
+	 * @return string
 	 */
 	protected function filterStyle( $attr ) {
 
 		$returnStyle = '';
-		$stylesSet = explode( ';', $attr );
-		$stylesSet = array_map( 'trim', $stylesSet );
+		$stylesSet   = explode( ';', $attr );
+		$stylesSet   = array_map( 'trim', $stylesSet );
 		foreach(
 			$stylesSet as $value
 		) {
@@ -340,7 +396,6 @@ class HTML {
 						if( in_array( $styleElements[1], $this->styleArray[$styleElements[0]] ) ) {
 							$returnStyle .= $styleElements[0] . ': ' . $styleElements[1] . '; ';
 						}
-						
 					} elseif( $this->styleArray[$styleElements[0]] == 'all' ) {
 						$returnStyle .= $styleElements[0] . ': ' . $styleElements[1] . '; ';
 					}
