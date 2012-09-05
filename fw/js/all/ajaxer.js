@@ -2,15 +2,15 @@
  * Отправляет ajax-запросы и обрабатывает результаты.
  *
  * Добавляет события:
- * form-submit		— срабатывает перед отправкой данных формы
+ * form-submit                — срабатывает перед отправкой данных формы
  */
 $.ajaxSetup( {
-	async : false,
-	cache :	false,
-	headers : {
-		'X-Requested-With' : 'XMLHttpRequest'
-	}
-} );
+		     async:false,
+		     cache:false,
+		     headers:{
+			     'X-Requested-With':'XMLHttpRequest'
+		     }
+	     } );
 
 var ajaxer = {};
 ajaxer.id = 1;
@@ -33,7 +33,7 @@ ajaxer.httpRequest = function( url, params, headers ) {
 ajaxer.sendForm = function( form, event ) {
 
 	var data = {
-		form: $( form ).serializeArray()
+		form:$( form ).serializeArray()
 	};
 	//var data = $( event.target ).serialize();
 	$( form ).find( '.required' ).fadeOut( 'fast' );
@@ -43,7 +43,7 @@ ajaxer.sendForm = function( form, event ) {
 };
 
 ajaxer.query = function( url, data ) {
-	
+
 	ajaxer.process( this.httpRequest( url, data ) );
 };
 
@@ -60,13 +60,13 @@ ajaxer.process = function( data, form ) {
 		for( var key in data1.actions ) {
 			var action = data1.actions[key];
 			switch( action.action ) {
-			case 'notify':	// сообщение
+			case 'notify':        // сообщение
 				this.notify( action.lang, action.message );
 				break;
 			case 'require':// не заполнено обязательное поле формы
 				this.require( form, action.name );
 				break;
-			case 'invalid':	// не правильное значение поля формы
+			case 'invalid':        // не правильное значение поля формы
 				this.invalid( form, action.name, action.message );
 				break;
 			case 'status': // текстовый статус для поля
@@ -75,7 +75,7 @@ ajaxer.process = function( data, form ) {
 			case 'redirect':// перенаправление
 				this.redirect( action.url );
 				break;
-			case 'display':	// показать окно с пришедшим html
+			case 'display':        // показать окно с пришедшим html
 				this.display( action.html );
 				break;
 			case 'reload': // перезагрузить страницу
@@ -84,10 +84,10 @@ ajaxer.process = function( data, form ) {
 			case 'close':
 				this.close( form );
 				break;
-			case 'error':	// сообщение об ошибке
+			case 'error':        // сообщение об ошибке
 				this.error( action.lang, action.message );
 				break;
-			case 'reset':	// сделать форме reset
+			case 'reset':        // сделать форме reset
 				this.reset( form );
 				break;
 			default:
@@ -204,16 +204,16 @@ ajaxer.statusInit = function() {
 // эта функция устанавливает статус
 ajaxer.status = function( form, name, message, classname ) {
 
-	ajaxer.statuses[name] = { message: message, classname: classname, used: 0 };
+	ajaxer.statuses[name] = { message:message, classname:classname, used:0 };
 	/*
-	// старый код функции ajaxer.status()
-	var status = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.status' );
-	if( status ) {
-		status.fadeIn( 'fast' );
-		status.attr( 'class', 'status ' + classname );
-		status.html( message );
-	}
-	*/
+	 // старый код функции ajaxer.status()
+	 var status = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.status' );
+	 if( status ) {
+	 status.fadeIn( 'fast' );
+	 status.attr( 'class', 'status ' + classname );
+	 status.html( message );
+	 }
+	 */
 };
 
 // эта функция обновляет поля статусов в соответствии со значениями, установленными через ajaxer.status()
@@ -240,7 +240,7 @@ ajaxer.statusUpdate = function( form ) {
 		}
 		if( name in ajaxer.statuses ) {
 			// вероятно, новый статус или стиль
-			obj.animate( { opacity: 0 }, 'fast', function() {
+			obj.animate( { opacity:0 }, 'fast', function() {
 				if( obj.attr( 'status-class' ) ) {
 					if( obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
 						obj.removeClass( obj.attr( 'status-class' ) );
@@ -253,22 +253,23 @@ ajaxer.statusUpdate = function( form ) {
 					obj.addClass( ajaxer.statuses[name].classname );
 				}
 				obj.html( ajaxer.statuses[name].message );
-				obj.animate( { opacity: 1 }, 'fast' );
+				obj.animate( { opacity:1 }, 'fast' );
 			} );
 			ajaxer.statuses[name].used = 1;
 		} else if( obj.attr( 'status-class' ) ) {
 			// статус был изменен, но теперь нет
-			obj.animate( { opacity: 0 }, 'fast', function() {
+			obj.animate( { opacity:0 }, 'fast', function() {
 				obj.removeClass( obj.attr( 'status-class' ) );
 				obj.removeAttr( 'status-class' );
 				obj.html( obj.attr( 'original-text' ) );
-				obj.animate( { opacity: 1 }, 'fast' );
+				obj.animate( { opacity:1 }, 'fast' );
 			} );
 		}
 	} );
 	for( var i in ajaxer.statuses ) {
 		if( !ajaxer.statuses[i].used ) {
-			ajaxer.notify( {}, ajaxer.statuses[i].message );
+			console.warn( 'Status for ' + ajaxer.statuses[i].classname + ': ' + ajaxer.statuses[i].message );
+			//ajaxer.notify( {}, ajaxer.statuses[i].message );
 		}
 	}
 };
@@ -351,7 +352,9 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 			form.append( '<input type="hidden" name="_method" value="iframe"/>' );
 			// добавляем на страницу iframe
 			var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none" src="/iframe"></iframe>' );
-			frame.one( 'load', function( event ) { ajaxer.initIframe( form, event ) } );
+			frame.one( 'load', function( event ) {
+				ajaxer.initIframe( form, event )
+			} );
 			$( 'body' ).append( frame );
 			// добавляем слой loading
 			var loading = $( '#loading' );
@@ -420,7 +423,7 @@ ajaxer.initIframe = function( form, event ) {
 
 ajaxer.fetchProgress = function( uuid ) {
 
-	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID': uuid } );
+	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID':uuid } );
 	res = $.parseJSON( res );
 	if( res.state == 'uploading' ) {
 		var progressbar = $( '#upprog' );
@@ -454,7 +457,7 @@ $( '.ajaxer input' ).live( 'keypress', function( e ) {
 $( '.submit' ).live( 'click dblclick', function( e ) {
 	$( this ).parents( 'form' ).submit();
 	e.preventDefault();
-});
+} );
 
 $( '.reset' ).live( 'click dblclick', function( e ) {
 	ajaxer.reset( $( this ).parents( 'form' ) );
@@ -467,7 +470,7 @@ ajaxer.watcher = function() {
 	if( mc ) {
 		mc = $.parseJSON( mc );
 		ajaxer.query( mc.url );
-		$.cookie( 'query', null, { path: "/", domain: config.mainhost ? '.' + config.mainhost : false } );
+		$.cookie( 'query', null, { path:"/", domain:config.mainhost ? '.' + config.mainhost : false } );
 	}
 	mc = $.cookie( 'notify' );
 	if( mc ) {
