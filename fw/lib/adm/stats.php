@@ -20,9 +20,18 @@ class Stats {
 		$difraNode->setAttribute( 'version', $ver[0] );
 
 		// stats/plugins
-		$pluginsNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
-		$pluginsNode->setAttribute( 'loaded', implode( ', ', \Difra\Plugger::getInstance()->getEnabledList() ) );
-		$pluginsNode->setAttribute( 'disabled', implode( ', ', \Difra\Plugger::getInstance()->getDisabled() ) );
+		$pluginsNode    = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
+		$plugins        = \Difra\Plugger::getInstance()->getAllPlugins();
+		$enabledPlugins = $disabledPlugins = array();
+		foreach( $plugins as $plugin ) {
+			if( $plugin->isEnabled() ) {
+				$enabledPlugins[] = $plugin->getName();
+			} else {
+				$disabledPlugins[] = $plugin->getName();
+			}
+		}
+		$pluginsNode->setAttribute( 'loaded', implode( ', ', $enabledPlugins ) );
+		$pluginsNode->setAttribute( 'disabled', implode( ', ', $disabledPlugins ) );
 
 		// stats/cache
 		$cacheNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'cache' ) );
