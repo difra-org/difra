@@ -5,6 +5,7 @@ namespace Difra;
 abstract class Plugin {
 
 	private $class;
+	private $name = null;
 	private $enabled = false;
 	private $path = '';
 
@@ -58,6 +59,14 @@ abstract class Plugin {
 			$this->path = dirname( $reflection->getFileName() );
 		}
 		return $this->path;
+	}
+
+	public function getName() {
+
+		if( !$this->name ) {
+			$this->name = basename( dirname( str_replace( '\\', '/', $this->class ) ) );
+		}
+		return $this->name;
 	}
 	/*
 	public function dispatch() {
