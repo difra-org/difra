@@ -2,6 +2,9 @@
 
 namespace Difra;
 
+/**
+ * @deprecated
+ */
 class Images {
 
 	static public function getInstance() {

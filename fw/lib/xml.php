@@ -2,6 +2,9 @@
 
 namespace Difra;
 
+/**
+ * @deprecated
+ */
 class XML {
 
 	static public function getInstance() {

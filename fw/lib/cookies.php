@@ -2,6 +2,9 @@
 
 namespace Difra;
 
+/**
+ * @deprecated
+ */
 class Cookies {
 
 	static public function getInstance() {
