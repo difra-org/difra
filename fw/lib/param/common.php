@@ -4,10 +4,10 @@ namespace Difra\Param;
 
 abstract class Common {
 
-	const type = null;
+	const type   = null;
 	const source = null;
-	const named = null;
-	const auto = false;
+	const named  = null;
+	const auto   = false;
 
 	protected $value = null;
 
@@ -18,7 +18,7 @@ abstract class Common {
 			$this->value = (string) $value;
 			break;
 		case 'int':
-			$this->value = (int) $value;
+			$this->value = filter_var( $value, FILTER_SANITIZE_NUMBER_INT );
 			break;
 		case 'file':
 			$this->value = $value;
@@ -33,11 +33,20 @@ abstract class Common {
 			$this->value = $files;
 			break;
 		case 'float':
-			$value = str_replace( ',', '.', $value );
-			$this->value = (float) $value;
+			$value       = str_replace( ',', '.', $value );
+			$this->value = filter_var( $value, FILTER_SANITIZE_NUMBER_FLOAT );
 			break;
 		case 'data':
 			$this->value = $value;
+			break;
+		case 'url':
+			$this->value = filter_var( $value, FILTER_SANITIZE_URL );
+			break;
+		case 'email':
+			$this->value = filter_var( $value, FILTER_SANITIZE_EMAIL );
+			break;
+		case 'ip':
+			$this->value = filter_var( $value, FILTER_VALIDATE_IP ) ? $value : null;
 			break;
 		default:
 			throw new \Difra\Exception( 'No wrapper for type ' . ( static::type ) . ' in Param\Common constructor.' );
@@ -46,7 +55,7 @@ abstract class Common {
 
 	public function __toString() {
 
-		return (string)$this->val();
+		return (string) $this->val();
 	}
 
 	public static function verify( $value ) {
@@ -55,7 +64,7 @@ abstract class Common {
 		case 'string':
 			return true;
 		case 'int':
-			return ctype_digit( $value );
+			return filter_var( $value, FILTER_VALIDATE_INT );
 		case 'file':
 			if( $value['error'] ) {
 				return false;
@@ -73,9 +82,15 @@ abstract class Common {
 			return false;
 		case 'float':
 			$value = str_replace( ',', '.', $value );
-			return is_numeric( $value );
+			return filter_var( $value, FILTER_VALIDATE_FLOAT );
 		case 'data':
 			return true;
+		case 'url':
+			return filter_var( $value, FILTER_VALIDATE_URL );
+		case 'email':
+			return filter_var( $value, FILTER_VALIDATE_EMAIL );
+		case 'ip':
+			return filter_var( $value, FILTER_VALIDATE_IP );
 		default:
 			throw new \Difra\Exception( 'Can\'t check param of type: ' . static::type );
 		}
