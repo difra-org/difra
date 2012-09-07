@@ -186,7 +186,7 @@ class HTML {
 			$node->parentNode->removeChild( $node );
 			return;
 		}
-		\Difra\Libs\DOM::renameNode( $node, 'span' );
+		\Difra\Libs\XML\DOM::renameNode( $node, 'span' );
 	}
 
 	/**

@@ -4,6 +4,7 @@ namespace Difra;
 
 class Config {
 
+	/** @var array */
 	private $config = null;
 	private $dbconf = array();
 	private $modified = false;
@@ -49,7 +50,7 @@ class Config {
 				$this->config = array_merge( $this->config, $conf );
 			}
 			$db = MySQL::getInstance();
-			$conf = $db->fetchOne( 'SELECT `config` FROM `config`' );
+			$conf = $db->fetchOne( 'SELECT `config` FROM `config` LIMIT 1' );
 			$this->dbconf = @unserialize( $conf );
 			if( is_array( $this->dbconf ) ) {
 				$this->config = array_merge( $this->config, $this->dbconf );

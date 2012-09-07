@@ -12,7 +12,7 @@ class None extends Common {
 	public function __construct() {
 
 		if( !self::isAvailable() ) {
-			throw new \Difra\Exception( 'Cache_None is not available!', __FILE__, __LINE__ );
+			throw new \Difra\Exception( 'Cache_None is not available!' );
 		}
 	}
 

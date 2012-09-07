@@ -24,7 +24,7 @@ class Sys_Auth {
 		header('HTTP/1.1 401 Unauthorized');
 		header('WWW-Authenticate: Digest realm="' . $this->realm . '",qop="auth",nonce="' . $this->getNonce( true ) . '",opaque="' . md5( $this->realm ) . '"' . ( $this->stale ? ',stale=TRUE' : '' ) );
 
-		Sys_View::httpError( 401 );
+		\Difra\View::getInstance()->httpError( 401 );
 	}
 
 	public function verify() {

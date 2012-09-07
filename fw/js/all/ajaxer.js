@@ -430,7 +430,7 @@ ajaxer.fetchProgress = function( uuid ) {
 		if( !progressbar.length ) {
 			$( '#loading' )
 				.css( 'background-image', 'none' )
-				.append( '<div id="upprog" class="auto-center"><div class="td1"/></div>' );
+				.append( '<div id="upprog" class="auto-center"><div class="td1"></div></div>' );
 			autocenter();
 			progressbar = $( '#upprog' );
 		}

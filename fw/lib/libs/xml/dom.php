@@ -51,6 +51,11 @@ class DOM {
 		}
 	}
 
+	/**
+	 * @deprecated
+	 * @param $node
+	 * @param $array
+	 */
 	public function array2xml( &$node, &$array ) {
 
 		trigger_error( 'Function \Difra\Libs\XML\DOM->array2xml() is deprecated. Please use function \Difra\Libs\XML\DOM::array2dom().' );

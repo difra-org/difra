@@ -9,7 +9,7 @@ $( document ).keydown( function ( e ) {
 				}
 				break;
 			case 0x25:
-				var h = $( '.pagerPrev > a' ).attr( 'href' );
+				h = $( '.pagerPrev > a' ).attr( 'href' );
 				if( typeof h !== 'undefined' ) {
 					window.location = h;
 				}

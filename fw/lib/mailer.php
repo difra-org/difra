@@ -35,7 +35,6 @@ class Mailer {
 		$subj = '=?utf-8?B?' . base64_encode( $subject ) . '==?=';
 		if( !mail( $email, $subj, $body, $headers ) ) {
 			throw new exception( "Failed to send message to $email." );
-			return false;
 		}
 		return true;
 	}
