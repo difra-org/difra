@@ -11,7 +11,7 @@ class Capcha {
 
 	public function __construct() {
 
-		Site::getInstance()->sessionStart();
+		\Difra\Site::getInstance()->sessionStart();
 		$this->key = isset( $_SESSION['capcha_key'] ) ? $_SESSION['capcha_key'] : false;
 	}
 
@@ -98,7 +98,7 @@ class Capcha {
 
 		$this->key = $this->genKey( $this->keyLength );
 		$data      = $this->mkCapcha( $this->sizeX, $this->sizeY, $this->key );
-		Site::getInstance()->sessionStart();
+		\Difra\Site::getInstance()->sessionStart();
 		$_SESSION['capcha_key'] = $this->key;
 		return $data;
 	}

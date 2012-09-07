@@ -54,7 +54,10 @@ class XMLRPC {
 
 		$server = xmlrpc_server_create();
 
-		foreach( ( $methods ? $methods : $handler->getMethods() ) as $method ) {
+		if( !$methods ) {
+			$methods = $handler->getMethods();
+		}
+		foreach( $methods as $method ) {
 			xmlrpc_server_register_method( $server, $method, array( $handler, $method ) );
 		}
 		$request = ( isset ( $HTTP_RAW_POST_DATA ) and $HTTP_RAW_POST_DATA ) ? $HTTP_RAW_POST_DATA : file_get_contents( 'php://input' );

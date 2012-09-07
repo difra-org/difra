@@ -116,13 +116,14 @@ final class Images {
 
 	/**
 	 * Создаёт на картинке водный знак из текста или другого изображения
-	 * @param string $image
-	 * @param string $text
-	 * @param string $watermarkImage
-	 * @param string $type
-	 * @param int    $padding
-	 * @param int    $opacity
-	 * return string
+	 * @param string    $image
+	 * @param string    $text
+	 * @param string    $watermarkImage
+	 * @param string    $type
+	 * @param int       $padding
+	 * @param float|int $opacity
+	 *
+	 * @return string
 	 */
 	public function setWatermark( $image, $text = null, $watermarkImage = null, $type = 'png', $padding = 0, $opacity = 0.5 ) {
 

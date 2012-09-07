@@ -30,12 +30,10 @@ class Cookies {
 
 	/**
 	 * Cookies::__construct()
-	 *
-	 * @return \Difra\Cookies
 	 */
 	private function __construct() {
 
-		$this->domain = Site::getInstance()->getMainhost();
+		$this->domain = \Difra\Site::getInstance()->getMainhost();
 		if( strstr( $this->domain, 'www.' ) !== false ) {
 			$this->domain = str_replace( 'www.', '.', $this->domain );
 		} else {
@@ -122,7 +120,7 @@ class Cookies {
 
 		$this->set( 'notify', array(
 					   'type' => $error ? 'error' : 'ok', 'message' => (string) $message, 'lang' => array(
-				'close' => Locales::getInstance()->getXPath( 'notifications/close' )
+				'close' => \Difra\Locales::getInstance()->getXPath( 'notifications/close' )
 			)
 				      ) );
 	}
