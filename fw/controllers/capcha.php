@@ -4,7 +4,7 @@ class CapchaController extends Difra\Controller {
 
 	public function indexAction() {
 
-		$Capcha = Difra\Capcha::getInstance();
+		$Capcha = Difra\Libs\Capcha::getInstance();
 		$Capcha->setSize( 105, 36 );
 		//$Capcha->setKeyLength( 4 );
 		header( 'Content-type: image/png' );
@@ -16,5 +16,4 @@ class CapchaController extends Difra\Controller {
 		echo $Capcha->viewCapcha();
 		$this->view->rendered = true;
 	}
-
 }
