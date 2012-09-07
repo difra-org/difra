@@ -138,7 +138,7 @@ class Site {
 	/**
 	 * Убирает слеши из $_GET, $_POST, $_COOKIE, $_REQUEST, если включены magic quotes
 	 *
-	 * @return
+	 * @return void
 	 */
 	private function _stripSlashes() {
 

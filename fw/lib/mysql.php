@@ -45,7 +45,7 @@ class MySQL {
 	/**
 	 * Устанавливает соединение с базой
 	 * @throws Exception
-	 * @return
+	 * @return void
 	 */
 	private function connect() {
 
