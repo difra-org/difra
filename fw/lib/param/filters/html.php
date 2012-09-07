@@ -186,16 +186,7 @@ class HTML {
 			$node->parentNode->removeChild( $node );
 			return;
 		}
-		$newNode = $node->ownerDocument->createElement( 'span' );
-		if( $node->hasAttributes() ) {
-			foreach( $node->attributes as $attribute ) {
-				$newNode->setAttribute( $attribute->nodeName, $attribute->nodeValue );
-			}
-		}
-		while( $node->firstChild ) {
-			$newNode->appendChild( $node->firstChild );
-		}
-		$node->parentNode->replaceChild( $newNode, $node );
+		\Difra\Libs\DOM::renameNode( $node, 'span' );
 	}
 
 	/**
