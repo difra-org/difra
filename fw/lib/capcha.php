@@ -2,6 +2,9 @@
 
 namespace Difra;
 
+/**
+ * @deprecated
+ */
 class Capcha {
 
 	static public function getInstance() {
