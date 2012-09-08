@@ -2,8 +2,16 @@
 
 namespace Difra\Libs;
 
+/**
+ * Класс работы с изображениями
+ */
 final class Images {
 
+	/**
+	 * Синглтон
+	 * @static
+	 * @return Images
+	 */
 	static function getInstance() {
 
 		static $self = null;

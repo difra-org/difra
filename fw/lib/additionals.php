@@ -123,7 +123,7 @@ class Additionals {
 		$query  = "SELECT `name`, `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "'";
 		$res    = $db->fetch( $query );
 		$fields = array();
-		foreach( $res as $k => $data ) {
+		foreach( $res as $data ) {
 			$fields[$data['name']] = $data['value'];
 		}
 		return !empty( $fields ) ? $fields : false;

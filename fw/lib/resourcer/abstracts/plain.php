@@ -2,8 +2,18 @@
 
 namespace Difra\Resourcer\Abstracts;
 
+/**
+ * Абстрактный класс работы с текстовыми ресурсами
+ */
 abstract class Plain extends Common {
 
+	/**
+	 * Сборка ресурсов в единую строку
+	 *
+	 * @param $instance
+	 *
+	 * @return string
+	 */
 	protected function processData( $instance ) {
 
 		$result = '';

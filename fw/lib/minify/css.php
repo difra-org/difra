@@ -2,8 +2,19 @@
 
 namespace Difra\Minify;
 
+/**
+ * Класс для минификации CSS
+ * Использование: \Difra\Minify\CSS::getInstance()->minify( $css )
+ */
 class CSS extends Common {
 
+	/**
+	 * Минификация CSS
+	 *
+	 * @param string $data
+	 *
+	 * @return string
+	 */
 	public function minify( $data ) {
 
 		$data = preg_replace( '/\/\*.*?\*\//s', '', $data ); // remove comments

@@ -2,8 +2,19 @@
 
 namespace Difra\Resourcer\Abstracts;
 
+/**
+ * Абстрактный класс для работы с ресурсами типа XML
+ */
 abstract class XML extends Common {
-	
+
+	/**
+	 * Сборка ресурсов в единый XML
+	 *
+	 * @param      $instance
+	 * @param bool $withFilenames
+	 *
+	 * @return mixed
+	 */
 	protected function processData( $instance, $withFilenames = false ) {
 		
 		$files = $this->getFiles( $instance );

@@ -2,11 +2,16 @@
 
 namespace Difra\Libs\XML;
 
+/**
+ * Класс для организации интерфейсов XML-RPC
+ */
 class XMLRPC {
 
-	public function __construct() {
-	}
-
+	/**
+	 * Синглтон
+	 * @static
+	 * @return self
+	 */
 	static function getInstance() {
 
 		static $_instance = null;
@@ -18,10 +23,12 @@ class XMLRPC {
 
 	/**
 	 * Обращается к удалённому серверу по протоколу XML-RPC.
-	 * $url — адрес XML-RPC сервера
-	 * $method — имя метода
-	 * $params — передаваемые параметры
-	 * Возвращаемое значение: результат работы удалённой процедуры или ошибка в формате:
+	 *
+	 * @param string $url    адрес XML-RPC сервера
+	 * @param string $method имя метода
+	 * @param        $params передаваемые параметры
+	 *
+	 * @return mixed результат работы удалённой процедуры или ошибка в формате:
 	 * array( "faultString" => "server error. method not found. te1st", "faultCode" => -32601 )
 	 */
 	public function sendRequest( $url, $method, $params ) {
@@ -45,10 +52,13 @@ class XMLRPC {
 
 	/**
 	 * Функция, выполняющая обработку XML-RPC запроса.
-	 * $handler — экземпляр класса удалённых процедур. Имена методов должны соответствовать именам
+	 *
+	 * @param            $handler экземпляр класса удалённых процедур. Имена методов должны соответствовать именам
 	 *                 запрашиваемых методов, либо класс должен именть magic метод __call()
-	 * $methods — список доступных методов (если не указан, класс должен иметь метод getMethods(),
+	 * @param array|bool $methods список доступных методов (если не указан, класс должен иметь метод getMethods(),
 	 *                 возвращающий соответствующий список)
+	 *
+	 * @return string
 	 */
 	public function processRequest( $handler, $methods = false ) {
 
