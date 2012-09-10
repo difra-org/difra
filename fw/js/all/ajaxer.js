@@ -90,6 +90,8 @@ ajaxer.process = function( data, form ) {
 			case 'reset':        // сделать форме reset
 				this.reset( form );
 				break;
+			case 'load':
+				this.load( action.target, action.html );
 			default:
 				console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
 			}
@@ -318,6 +320,16 @@ ajaxer.reset = function( form ) {
 	$( form ).get( 0 ).reset();
 };
 
+ajaxer.load = function( target, html ) {
+
+	var cut = $( html ).filter( target );
+	if( cut ) {
+		$( target ).replaceWith( cut );
+	} else {
+		$( target ).html( html );
+	}
+};
+
 var main = {};
 main.httpRequest = ajaxer.httpRequest;
 
@@ -346,7 +358,8 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 			form.attr( 'enctype', 'multipart/form-data' );
 			var originalAction = form.attr( 'action' );
 			form.attr( 'originalAction', originalAction );
-			form.attr( 'action', form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
+			form.attr( 'action',
+				   form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
 			form.attr( 'target', 'ajaxerFrame' );
 			form.attr( 'uuid', uuid );
 			form.append( '<input type="hidden" name="_method" value="iframe"/>' );

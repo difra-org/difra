@@ -141,7 +141,7 @@ class View {
 		if( !$htmlRoot = $html->documentElement ) {
 			return;
 		}
-		if( Debugger::getInstance()->isEnabled() and $instance != 'debug' ) {
+		if( Debugger::getInstance()->isEnabled() and $instance != 'debug' and !Action::getInstance()->controller->ajax->isAjax ) {
 			$body = false;
 			if( $htmlRoot->nodeName == 'html' ) {
 				$bodyList = $htmlRoot->getElementsByTagName( 'body' );
@@ -152,7 +152,7 @@ class View {
 				$body = $htmlRoot;
 			}
 			if( $body ) {
-				$ins    = Debugger::getInstance()->addXML();
+				$ins    = Debugger::getInstance()->debugHTML();
 				$debdom = new \DOMDocument();
 				$debdom->loadXML( $ins );
 				$body->appendChild( $html->importNode( $debdom->documentElement, true ) );

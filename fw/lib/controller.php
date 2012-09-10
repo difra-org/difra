@@ -12,6 +12,8 @@ abstract class Controller {
 	public $locale = null;
 	/** @var \Difra\Ajax */
 	public $ajax = null;
+	/** @var bool */
+	public $isAjaxAction = false;
 	/** @var \Difra\Auth */
 	protected $auth = null;
 
@@ -78,9 +80,11 @@ abstract class Controller {
 
 		$finalMethod = null;
 		if( $this->ajax->isAjax and $this->action->methodAjaxAuth and $this->auth->logged ) {
-			$finalMethod = 'methodAjaxAuth';
+			$this->isAjaxAction = true;
+			$finalMethod        = 'methodAjaxAuth';
 		} elseif( $this->ajax->isAjax and $this->action->methodAjax ) {
-			$finalMethod = 'methodAjax';
+			$this->isAjaxAction = true;
+			$finalMethod        = 'methodAjax';
 		} elseif( $this->action->methodAuth and $this->auth->logged ) {
 			$finalMethod = 'methodAuth';
 		} elseif( $this->action->method ) {

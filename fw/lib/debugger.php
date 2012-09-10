@@ -71,7 +71,7 @@ class Debugger {
 		self::$output[] = $array;
 	}
 
-	public function addXML( $standalone = false ) {
+	public function debugHTML( $standalone = false ) {
 
 		if( !$this->enabled ) {
 			return '';
@@ -112,7 +112,7 @@ class Debugger {
 			'traceback'     => $exception->getTrace()
 		);
 		self::getInstance()->addLineAsArray( $err );
-		self::getInstance()->addXML();
+		self::getInstance()->debugHTML();
 	}
 
 	/** @var array Типы ошибок, которые ловятся captureNormal — не надо их ловить в captureShutdown */
@@ -175,7 +175,14 @@ class Debugger {
 		self::getInstance()->addLineAsArray( $error );
 		// если по каким-то причинам рендер не случился, отрендерим свою страничку с блэкджеком и шлюхами
 		if( !View::getInstance()->rendered ) {
-			echo self::getInstance()->addXML( true );
+			$controller = Action::getInstance()->controller;
+			$ajax       = $controller->ajax;
+			if( !$ajax->isAjax ) {
+				echo self::getInstance()->debugHTML( true );
+			} else {
+				echo $ajax->getResponse();
+			}
+			$controller->view->rendered = true;
 		}
 	}
 }
