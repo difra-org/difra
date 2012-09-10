@@ -4,9 +4,9 @@
  * которые данный скрипт заменяет при переключении.
  *
  * Добавляет события:
- * construct	— срабатывает после смены страницы
- * destruct	— срабатывает перед сменой страницы (в том числе при перенаправлении на новый адрес в случае неудачи)
- * switch	— срабатывает перед удачной ajax-сменой страницы
+ * construct        — срабатывает после смены страницы
+ * destruct        — срабатывает перед сменой страницы (в том числе при перенаправлении на новый адрес в случае неудачи)
+ * switch        — срабатывает перед удачной ajax-сменой страницы
  */
 var switcher = [];
 
@@ -15,14 +15,14 @@ switcher.noPush = false;
 switcher.url = false;
 switcher.basePath = '/';
 switcher.ajaxConfig = {
-	async: true,
-	cache: false,
-	headers: { 'X-Requested-With' : 'SwitchPage' },
-	type: 'GET',
-	beforeSend: function() {
+	async:true,
+	cache:false,
+	headers:{ 'X-Requested-With':'SwitchPage' },
+	type:'GET',
+	beforeSend:function() {
 		$( '#loading' ).css( 'display', 'block' );
 	},
-	success: function( data, status, xhr ) {
+	success:function( data, status, xhr ) {
 		try {
 			var newdata = $( data );
 		} catch( e ) {
@@ -46,7 +46,7 @@ switcher.ajaxConfig = {
 		$( document ).triggerHandler( 'destruct' );
 		if( !switcher.noPush ) {
 			if( typeof history.pushState == 'function' ) {
-				history.pushState( { url: switcher.url }, null, switcher.url );
+				history.pushState( { url:switcher.url }, null, switcher.url );
 			} else { // нет pushState — используем хеши
 				switcher.hashChanged = true;
 				window.location = switcher.basePath + '#!' + switcher.url;
@@ -60,7 +60,8 @@ switcher.ajaxConfig = {
 		a.each( function( k, v ) {
 			try {
 				$( '#' + $( v ).attr( 'id' ) ).replaceWith( v ).remove();
-			} catch( e ) {}
+			} catch( e ) {
+			}
 		} );
 		$( window ).scrollTop( 0 );
 
@@ -71,7 +72,7 @@ switcher.ajaxConfig = {
 		$( document ).triggerHandler( 'construct' );
 		$( '#loading' ).css( 'display', 'none' );
 	},
-	error: function( xhr ) {
+	error:function( xhr ) {
 		switcher.fallback();
 	}
 };
@@ -88,6 +89,9 @@ switcher.page = function( url, noPush, data ) {
 	var host = window.location.protocol + "//" + window.location.host + "/";
 	if( host == url.substring( 0, host.length ) ) {
 		return switcher.page( url.substring( host.length - 1 ) );
+	}
+	if( debug ) {
+		debug.addReq( 'Switching page: ' + url );
 	}
 	switcher.noPush = noPush ? true : false;
 	switcher.url = url;
@@ -137,7 +141,7 @@ $( document ).ready( function() {
 		switcher.page( document.location.hash.substring( 2 ), true );
 		if( typeof history.replaceState == 'function' ) {
 			switcher.hashChanged = true;
-			history.replaceState( { url: switcher.url }, null, switcher.url );
+			history.replaceState( { url:switcher.url }, null, switcher.url );
 		}
 	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' ) {
 		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
@@ -149,16 +153,16 @@ $( document ).ready( function() {
 } );
 
 $( 'a' ).live( 'click dblclick',
-	function( event ) {
-		if( $( this ).hasClass( 'ajaxer' ) || $( this ).hasClass( 'noAjaxer' ) ) {
-			return;
-		}
-		if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 11 ) == 'javascript:' ) {
-		} else if( $( this ).attr( 'href' ) == '#' ) {
-			event.preventDefault();
-		} else if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 1 ) == '#' ) {
-		} else if( $( this ).attr( 'href' ) ) {
-			event.preventDefault();
-			switcher.page( $( this ).attr( 'href' ) );
-		}
-	} );
+	       function( event ) {
+		       if( $( this ).hasClass( 'ajaxer' ) || $( this ).hasClass( 'noAjaxer' ) ) {
+			       return;
+		       }
+		       if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 11 ) == 'javascript:' ) {
+		       } else if( $( this ).attr( 'href' ) == '#' ) {
+			       event.preventDefault();
+		       } else if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 1 ) == '#' ) {
+		       } else if( $( this ).attr( 'href' ) ) {
+			       event.preventDefault();
+			       switcher.page( $( this ).attr( 'href' ) );
+		       }
+	       } );

@@ -44,6 +44,9 @@ ajaxer.sendForm = function( form, event ) {
 
 ajaxer.query = function( url, data ) {
 
+	if( debug ) {
+		debug.addReq( 'Ajaxer request: ' + url );
+	}
 	ajaxer.process( this.httpRequest( url, data ) );
 };
 
@@ -59,6 +62,9 @@ ajaxer.process = function( data, form ) {
 		}
 		for( var key in data1.actions ) {
 			var action = data1.actions[key];
+			if( debug ) {
+				debug.addReq( 'Processing ajaxer method: ' + action.action );
+			}
 			switch( action.action ) {
 			case 'notify':        // сообщение
 				this.notify( action.lang, action.message );
@@ -92,6 +98,7 @@ ajaxer.process = function( data, form ) {
 				break;
 			case 'load':
 				this.load( action.target, action.html );
+				break;
 			default:
 				console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
 			}
@@ -100,6 +107,12 @@ ajaxer.process = function( data, form ) {
 		this.notify( {close:'OK'}, 'Unknown error.' );
 		console.warn( 'Error: ', err.message );
 		console.warn( 'Server returned:', data );
+		if( debug ) {
+			debug.addReq( 'Server returned data ajaxer could not parse: ' + data );
+		}
+	}
+	if( debug ) {
+		debug.addReq();
 	}
 	ajaxer.statusUpdate( form );
 };

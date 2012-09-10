@@ -5,6 +5,8 @@
 	-ms-transition:     all 0.5s ease;
 	transition:         all 0.5s ease;
 	z-index:            99999;
+	font-family:        Arial, Helvetica, Garuda, sans-serif;
+	font-size:          12px;
 }
 
 #debug #debug_body ul {
@@ -22,10 +24,16 @@
 	-moz-transition:    all 0.5s ease;
 	-ms-transition:     all 0.5s ease;
 	transition:         all 0.5s ease;
+	border-radius:      5px;
+	height:             19px;
 }
 
 #debug #debug_body ul li.selected {
-	text-decoration: underline;
+	text-decoration:            underline;
+	height:                     24px;
+	border-bottom-left-radius:  0;
+	border-bottom-right-radius: 0;
+	background-color:           #eee;
 }
 
 #debug #debug_body ul li .tab-title {
@@ -58,14 +66,14 @@
 	position:                fixed;
 	bottom:                  0;
 	left:                    50%;
-	margin:                  0 0 0 -24px;
-	height:                  12px;
-	width:                   40px;
+	margin:                  0 0 0 -18px;
+	height:                  9px;
+	width:                   30px;
 	padding:                 0;
 	background:              rgba(255, 255, 255, 0.5);
-	border-top:              4px solid rgba(0, 0, 0, 0.5);
-	border-left:             4px solid rgba(0, 0, 0, 0.5);
-	border-right:            4px solid rgba(0, 0, 0, 0.5);
+	border-top:              3px solid rgba(0, 0, 0, 0.5);
+	border-left:             3px solid rgba(0, 0, 0, 0.5);
+	border-right:            3px solid rgba(0, 0, 0, 0.5);
 	border-bottom:           none;
 	border-top-left-radius:  5px;
 	border-top-right-radius: 5px;
@@ -77,13 +85,17 @@
 	transition:              all 0.5s ease;
 }
 
+#debug.panel #debug_toggle:hover {
+	background: rgba(255, 255, 255, 0.8);
+}
+
 #debug.panel #debug_toggle:after {
 	position:    relative;
-	top:         -3px;
+	top:         -5px;
 	font-weight: bold;
 	display:     block;
-	width:       40px;
-	height:      12px;
+	width:       30px;
+	height:      9px;
 	text-align:  center;
 	content:     '˄';
 }

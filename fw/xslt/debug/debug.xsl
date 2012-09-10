@@ -66,6 +66,12 @@
 							</table>
 						</div>
 					</li>
+					<li>
+						<span class="tab-title">Запросы</span>
+						<div class="tab-content">
+							<table id="debug-requests"></table>
+						</div>
+					</li>
 				</ul>
 			</div>
 		</div>
