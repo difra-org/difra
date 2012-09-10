@@ -65,6 +65,7 @@ abstract class Controller {
 	public function run() {
 
 		if( $this->method = $this->_chooseMehod() ) {
+			Debugger::addLine( "Selected method {$this->action->method}" );
 			$this->_callMethod( $this->method );
 		}
 	}
@@ -133,7 +134,8 @@ abstract class Controller {
 							$this->view->httpError( 404 );
 							return;
 						}
-						$callParameters[$parameter->getName()] = new $class( array_shift( $this->action->parameters ) );
+						$callParameters[$parameter->getName()] =
+							new $class( array_shift( $this->action->parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						$this->view->httpError( 404 );
 					} else {
@@ -186,16 +188,20 @@ abstract class Controller {
 		}
 		if( !is_null( $this->output ) ) {
 			echo $this->output;
+			$this->view->rendered = true;
 			return;
 		}
-		if( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
-			header( 'Content-Type: text/plain' );
+		$debuggerEnabled = Debugger::getInstance()->isEnabled();
+		if( $debuggerEnabled and isset( $_GET['xml'] ) and $_GET['xml'] ) {
+			header( 'Content-Type: text/plain; charset="utf-8"' );
 			$this->xml->formatOutput = true;
 			$this->xml->encoding     = 'utf-8';
-			echo( rawurldecode( $this->xml->saveXML() ) );
+			echo rawurldecode( $this->xml->saveXML() );
+			$this->view->rendered = true;
 		} elseif( !$this->view->rendered and $this->ajax->isAjax ) {
 			header( 'Content-type: text/plain' ); // application/json не катит в опере
 			echo( $this->ajax->getResponse() );
+			$this->view->rendered = true;
 		} elseif( !$this->view->rendered ) {
 			$this->view->render( $this->xml );
 		}

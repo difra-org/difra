@@ -62,10 +62,13 @@ class Events {
 		Site::getInstance(); // инициализация сайта
 		foreach( $this->events as $type => $foo ) {
 			$handlers = $this->events[$type];
+			Debugger::addEventLine( 'Event ' . $type . ' started' );
 			if( empty( $handlers ) ) {
 				continue;
 			}
 			foreach( $handlers as $handler ) {
+				Debugger::addEventLine( 'Event ' . $type . ' > ' . $handler['class'] . '->' . ( $handler['method']
+					? $handler['method'] : 'getInstance' ) );
 				$inst = call_user_func( array( $handler['class'], 'getInstance' ) );
 				if( $handler['method'] ) {
 					$inst->{$handler['method']}();

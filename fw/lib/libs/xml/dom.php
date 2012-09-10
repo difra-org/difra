@@ -4,7 +4,13 @@ namespace Difra\Libs\XML;
 
 class DOM {
 
-	/* Временно для array2xml */
+	/**
+	 * Временно для array2xml
+	 *
+	 * @deprecated
+	 * @static
+	 * @return DOM
+	 */
 	static public function getInstance() {
 
 		static $_instance = null;
@@ -34,6 +40,10 @@ class DOM {
 	}
 
 	/**
+	 * Создаёт XML, в котором значения элементов массива становятся значениями нод
+	 *
+	 * @static
+	 *
 	 * @param \DOMNode $node
 	 * @param array    $array
 	 */
@@ -52,7 +62,45 @@ class DOM {
 	}
 
 	/**
+	 * Создаёт XML, в котором значения элементов массива становятся значениями аттрибутов
+	 *
+	 * @static
+	 *
+	 * @param \DOMElement $node
+	 * @param array       $array
+	 * @param bool        $verbal
+	 */
+	public static function array2domAttr( &$node, &$array, $verbal = false ) {
+
+		if( is_array( $array ) and !empty( $array ) ) {
+			foreach( $array as $k => $v ) {
+				if( is_numeric( $k ) ) {
+					$k = "_$k";
+				}
+				if( is_array( $v ) ) {
+					$newNode = $node->appendChild( $node->ownerDocument->createElement( $k ) );
+					/** @var $newNode \DOMElement */
+					self::array2domAttr( $newNode, $v, $verbal );
+				} elseif( is_object( $v ) ) {
+				} else {
+					if( is_null( $v ) ) {
+						$v = 'null';
+					} elseif( $v === false ) {
+						$v = 'false';
+					} elseif( $v === true ) {
+						$v = 'true';
+					} elseif( $v === 0 ) {
+						$v = '0';
+					}
+					$node->setAttribute( $k, $v );
+				}
+			}
+		}
+	}
+
+	/**
 	 * @deprecated
+	 *
 	 * @param $node
 	 * @param $array
 	 */

@@ -17,7 +17,6 @@ class View {
 	}
 
 	public function __construct() {
-
 	}
 
 	public function httpError( $err ) {
@@ -33,8 +32,9 @@ class View {
 			$error = 'Unknown';
 		}
 		header( "HTTP/1.1 $err $error" );
+		$this->rendered = true;
 		try {
-			$xml = new \DOMDocument( );
+			$xml  = new \DOMDocument();
 			$root = $xml->appendChild( $xml->createElement( 'error' . $err ) );
 			$root->setAttribute( 'host', Site::getInstance()->getHost() );
 			$root->setAttribute( 'hostname', Site::getInstance()->getHostname() );
@@ -65,9 +65,6 @@ class View {
 	 */
 	public function render( $xml, $instance = false, $dontEcho = false, $errorPage = false ) {
 
-		if( !$dontEcho ) {
-			$this->rendered = true;
-		}
 		if( $this->error or $this->redirect ) {
 			return false;
 		}
@@ -80,16 +77,16 @@ class View {
 				$instance = 'main';
 			}
 		}
-		
-		$xslDom = new \DomDocument;
-		$xslDom->resolveExternals = true;
+
+		$xslDom                     = new \DomDocument;
+		$xslDom->resolveExternals   = true;
 		$xslDom->substituteEntities = true;
 		if( !$xslDom->loadXML( Resourcer::getInstance( 'xslt' )->compile( $instance ) ) ) {
 			throw new exception( "XSLT loader problem." );
 		}
 		if( $errorPage ) {
 			$hasTemplate = false;
-			$li = $xslDom->documentElement->childNodes;
+			$li          = $xslDom->documentElement->childNodes;
 			foreach( $li as $el ) {
 				if( $el->nodeName == 'xsl:template' ) {
 					$hasTemplate = true;
@@ -100,14 +97,14 @@ class View {
 				throw new Exception( 'Error page template not found' );
 			}
 		}
-		$xslProc = new \XsltProcessor();
-		$xslProc->resolveExternals = true;
+		$xslProc                     = new \XsltProcessor();
+		$xslProc->resolveExternals   = true;
 		$xslProc->substituteEntities = true;
 		$xslProc->importStyleSheet( $xslDom );
 
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
-			$this->postProcess( $html, $xml );
+			$this->postProcess( $html, $xml, $instance );
 			$html->formatOutput = Debugger::getInstance()->isEnabled();
 			if( $dontEcho ) {
 				return $html->saveXML();
@@ -115,7 +112,9 @@ class View {
 			// эта строка ломает CKEditor, поэтому она накакзана
 			//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
 			echo( $html->saveXML() );
-			Debugger::getInstance()->printOutput();
+			if( !$dontEcho ) {
+				$this->rendered = true;
+			}
 			if( function_exists( 'fastcgi_finish_request' ) ) {
 				fastcgi_finish_request();
 			}
@@ -135,11 +134,29 @@ class View {
 	/**
 	 * @param \DOMDocument $html
 	 * @param \DOMDocument $xml
+	 * @param string       $instance
 	 */
-	private function postProcess( $html, $xml ) {
+	private function postProcess( $html, $xml, $instance ) {
 
 		if( !$htmlRoot = $html->documentElement ) {
 			return;
+		}
+		if( Debugger::getInstance()->isEnabled() and $instance != 'debug' ) {
+			$body = false;
+			if( $htmlRoot->nodeName == 'html' ) {
+				$bodyList = $htmlRoot->getElementsByTagName( 'body' );
+				if( $bodyList->length ) {
+					$body = $bodyList->item( 0 );
+				}
+			} else {
+				$body = $htmlRoot;
+			}
+			if( $body ) {
+				$ins    = Debugger::getInstance()->addXML();
+				$debdom = new \DOMDocument();
+				$debdom->loadXML( $ins );
+				$body->appendChild( $html->importNode( $debdom->documentElement, true ) );
+			}
 		}
 		if( $htmlRoot->nodeName != 'html' ) {
 			return;
@@ -159,7 +176,7 @@ class View {
 		// Добавление объекта config для js
 		$config = '';
 		if( $conf = $xmlRoot->getElementsByTagName( 'config' ) and $conf = $conf->item( 0 ) ) {
-			if( $body = $htmlRoot->getElementsByTagName( 'body' ) and $body = $body->item(0) ) {
+			if( $body = $htmlRoot->getElementsByTagName( 'body' ) and $body = $body->item( 0 ) ) {
 				$attrs = $conf->attributes;
 				if( !empty( $attrs ) ) {
 					foreach( $attrs as $attr ) {

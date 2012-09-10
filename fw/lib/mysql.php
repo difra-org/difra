@@ -53,7 +53,9 @@ class MySQL {
 			return;
 		}
 		try {
-			$this->db = @new \mysqli( 'p:' . ( isset( $this->config['hostname'] ) ? $this->config['hostname'] : 'localhost' ),
+			$this->db = @new \mysqli( 'p:' . ( isset( $this->config['hostname'] ) ?
+					      $this->config['hostname']
+					      : 'localhost' ),
 						  $this->config['username'], $this->config['password'], $this->config['database'] );
 			if( $this->db->connect_errno ) {
 				throw new Exception( 'Can\'t connect to MySQL: ' . $this->db->connect_error );
@@ -80,7 +82,7 @@ class MySQL {
 			$this->connect();
 			$this->db->query( $query );
 			$this->queries++;
-			Debugger::getInstance()->addLine( "MySQL: " . $query );
+			Debugger::getInstance()->addDBLine( 'MySQL', $query );
 			if( $err = $this->db->error and !Site::isInit() ) {
 				throw new Exception( "MySQL error: [$err] on request [$query]" );
 			}
@@ -116,7 +118,7 @@ class MySQL {
 		$table  = array();
 		$result = $this->db->query( $query );
 		$this->queries++;
-		Debugger::getInstance()->addLine( 'MySQL: ' . $query );
+		Debugger::getInstance()->addDBLine( 'MySQL', $query );
 		if( $err = $this->db->error ) {
 			if( !Site::isInit() ) {
 				throw new \Difra\Exception( 'MySQL: ' . $err );
@@ -146,7 +148,7 @@ class MySQL {
 		$table  = array();
 		$result = $this->db->query( $query );
 		$this->queries++;
-		Debugger::getInstance()->addLine( "MySQL: " . $query );
+		Debugger::getInstance()->addDBLine( 'MySQL', $query );
 		if( $err = $this->db->error ) {
 			throw new exception( 'MySQL: ' . $err );
 		}

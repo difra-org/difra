@@ -4,6 +4,10 @@ namespace Difra;
 
 class Exception extends \exception {
 
+	/**
+	 * Задумка следующая: в случае, если ловим исключение, которое мы не должны были поймать,
+	 * вызываем $ex->notify() и на почту приходит письмо с информацией об ошибке.
+	 */
 	public function notify() {
 
 		self::notifyObj( $this );
@@ -46,17 +50,7 @@ $cookie
 MSG;
 
 			mail( 'errors@a-jam.ru', $_SERVER['HTTP_HOST'] . ': ' . $exception->getMessage(), $text );
+		} else {
 		}
-	}
-}
-
-// TODO: повесить это дело на событие
-if( !function_exists( 'Difra\\exceptionHandler' ) ) {
-	/**
-	 * @param \Difra\Exception $exception
-	 */
-	function exceptionHandler( $exception ) {
-
-		Exception::notifyObj( $exception );
 	}
 }

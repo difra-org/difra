@@ -21,10 +21,10 @@ class Action {
 	public $methodAjaxAuth = null;
 
 	public $methodTypes = array(
-		array( '',	''	),
-		array( '',	'Auth'	),
-		array( 'Ajax',	''	),
-		array( 'Ajax',	'Auth'	)
+		array( '', '' ),
+		array( '', 'Auth' ),
+		array( 'Ajax', '' ),
+		array( 'Ajax', 'Auth' )
 	);
 
 	/**
@@ -47,7 +47,7 @@ class Action {
 		}
 
 		// try to load cached data for this url
-		$uri = $this->getUri();
+		$uri      = $this->getUri();
 		$cacheKey = 'action:uri:' . $uri;
 		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $cacheKey ) ) {
 			switch( $data['result'] ) {
@@ -71,6 +71,7 @@ class Action {
 			if( $resourcer and $resourcer->isPrintable() ) {
 				try {
 					$resourcer->view( $parts[1] );
+					View::getInstance()->rendered = true;
 					die();
 				} catch( Exception $ex ) {
 					View::getInstance()->httpError( 404 );
@@ -79,7 +80,7 @@ class Action {
 		}
 
 		// get possible controller dirs
-		$path = '';
+		$path  = '';
 		$depth = $dirDepth = 0;
 
 		$controllerDirs = $dirs = $this->getControllerPaths();
@@ -90,7 +91,7 @@ class Action {
 			foreach( $controllerDirs as $nextDir ) {
 				if( is_dir( $nextDir . $path ) ) {
 					$newDirs[] = $nextDir . $path;
-					$dirDepth = $depth;
+					$dirDepth  = $depth;
 				}
 			}
 			if( empty( $newDirs ) ) {
@@ -100,7 +101,7 @@ class Action {
 		}
 
 		// find controller
-		$cname = '';
+		$cname      = '';
 		$controller = null;
 		if( isset( $parts[$dirDepth] ) ) {
 			foreach( $dirs as $tmpDir ) {
@@ -138,7 +139,7 @@ class Action {
 		$className = $className . ucfirst( $cname ) . 'Controller';
 
 		// include controller
-		$match['controller'] = $controller;
+		$match['controller']        = $controller;
 		$match['vars']['className'] = $className;
 		include_once( $controller );
 		if( !class_exists( $className ) ) {
@@ -146,13 +147,13 @@ class Action {
 		}
 
 		// detect action method
-		$methodName = false;
+		$methodName  = false;
 		$methodNames = isset( $parts[$dirDepth] ) ? array( $parts[$dirDepth], 'index' ) : array( 'index' );
 		foreach( $methodNames as $methodTmp ) {
 			foreach( $this->methodTypes as $methodType ) {
 				if( method_exists( $className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
-					$methodName = $methodTmp;
-					$methodVar = "method{$methodType[0]}{$methodType[1]}";
+					$methodName       = $methodTmp;
+					$methodVar        = "method{$methodType[0]}{$methodType[1]}";
 					$this->$methodVar = $match['vars'][$methodVar] = $m;
 				}
 			}
@@ -164,11 +165,12 @@ class Action {
 		$parts = array_slice( $parts, $dirDepth );
 
 		// cache data for this url
-		$this->parameters = $parts;
+		$this->parameters            = $parts;
 		$match['vars']['parameters'] = $this->parameters;
-		$match['result'] = 'action';
+		$match['result']             = 'action';
 		$this->saveCache( $cacheKey, $match );
 		$this->className = $className;
+		Debugger::addLine( "Selected controller $className from $controller" );
 	}
 
 	public function run() {
