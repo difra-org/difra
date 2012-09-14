@@ -4,7 +4,7 @@ namespace Difra;
 
 class Site {
 
-	const VERSION   = '2.1';
+	const VERSION   = '2.2';
 	const BUILD     = '$Rev$';
 	const PATH_PART = '/../../sites/';
 
@@ -18,12 +18,20 @@ class Site {
 	private $userAgent = null;
 	static $siteInit = false;
 
+	/**
+	 * Singleton
+	 *
+	 * @return Site
+	 */
 	static public function getInstance() {
 
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
 	}
 
+	/**
+	 * Constructor
+	 */
 	public function __construct() {
 
 		Events::register( 'core-init', 'Difra\\Site', 'init' );
@@ -33,6 +41,9 @@ class Site {
 		Events::register( 'action-find', 'Difra\\Action', 'find' );
 		Events::register( 'action-run', 'Difra\\Action', 'run' );
 		Events::register( 'render-run', 'Difra\\Action', 'render' );
+		if( file_exists( dirname( __FILE__ ) . '/../../lib/init.php' ) ) {
+			\Init::run();
+		}
 	}
 
 	public function init() {
@@ -55,6 +66,11 @@ class Site {
 		self::$siteInit = false;
 	}
 
+	/**
+	 * Возвращает true, если в данный момент происходит инициализация сайта
+	 *
+	 * @return bool
+	 */
 	public static function isInit() {
 
 		return self::$siteInit;
@@ -65,7 +81,16 @@ class Site {
 		$this->sessionSave();
 	}
 
-	public function detectHost() {
+	/**
+	 * Определяет имя папки в sites в следующем порядке:
+	 * 1. Переменная VHOST_NAME, передаваемая от сервера.
+	 * 2. Имя хоста в по алгоритму sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
+	 *    www.subdomain.domain.com domain.com www.domain.com.
+	 * 3. "default".
+	 *
+	 * @return bool
+	 */
+	private function detectHost() {
 
 		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
 
@@ -83,14 +108,14 @@ class Site {
 				$host = !empty( $host[1] ) ? $host[1] : false;
 			}
 		}
-		// не нашли подходящий хост. ставим по умолчанию — default
-		if( !$this->host ) {
-			$this->host = 'default';
-		}
-
 		$this->siteDir = $this->host;
 		if( !is_dir( $sitesDir . $this->host ) and is_dir( $sitesDir . 'www.' . $this->host ) ) {
 			$this->siteDir = 'www.' . $this->host;
+		}
+
+		// не нашли подходящий хост. ставим по умолчанию — default
+		if( !$this->host ) {
+			$this->host = 'default';
 		}
 
 		return true;
@@ -154,6 +179,10 @@ class Site {
 		$_COOKIE            = array_map( $strip_slashes_deep, $_COOKIE );
 	}
 
+	/**
+	 * Возвращает название локали
+	 * @return string
+	 */
 	public function getLocale() {
 
 		return $this->locale;
@@ -166,6 +195,11 @@ class Site {
 		}
 	}
 
+	/**
+	 * Определяет имя хоста из URL
+	 *
+	 * @return string|null
+	 */
 	public function getHostname() {
 
 		if( !empty( $_SERVER['HTTP_HOST'] ) ) {
@@ -175,11 +209,21 @@ class Site {
 		}
 	}
 
+	/**
+	 * Возвращает имя главного хоста, если он установлен в переменной веб-сервера VHOST_MAIN, либо имя текущего хоста
+	 *
+	 * @return string
+	 */
 	public function getMainhost() {
 
 		return !empty( $_SERVER['VHOST_MAIN'] ) ? $_SERVER['VHOST_MAIN'] : $this->getHostname();
 	}
 
+	/**
+	 * Возвращает имя сайта, которое определено в $this->detectHost()
+	 *
+	 * @return null
+	 */
 	public function getHost() {
 
 		return $this->host;
@@ -211,6 +255,12 @@ class Site {
 		return false;
 	}
 
+	/**
+	 * Возвращает строку, условно обозначающую текущую ревизию
+	 * @param bool $asArray
+	 *
+	 * @return array|string
+	 */
 	public function getBuild( $asArray = false ) {
 
 		static $_build = null;
@@ -259,7 +309,7 @@ class Site {
 	/**
 	 * Возвращает текущие настройки в XML
 	 *
-	 * @param \DOMNode $node
+	 * @param \DOMElement $node
 	 */
 	public function getConfigXML( $node ) {
 
@@ -269,9 +319,16 @@ class Site {
 		$node->setAttribute( 'mainhost', $this->getMainhost() );
 	}
 
+	/**
+	 * @deprecated
+	 *
+	 * @param $key
+	 *
+	 * @return mixed
+	 */
 	public function getData( $key ) {
 
-		trigger_error( 'Site->getData() is deprecated, please use Config->get', E_USER_NOTICE );
+		trigger_error( 'Site->getData() is deprecated, please use Config->get', E_USER_DEPRECATED );
 		return Config::getInstance()->get( $key );
 	}
 
@@ -302,9 +359,14 @@ class Site {
 		}
 	}
 
+	/**
+	 * Дополняет XML-ноду аттрибутами с информацией о версии браузера пользователя
+	 *
+	 * @param \DOMElement $node
+	 */
 	public function getUserAgent( $node ) {
 
-		if( is_null( $this->userAgent ) and !isset( $_SERVER['HTTP_USER_AGENT'] ) or !$_SERVER['HTTP_USER_AGENT'] ) {
+		if( is_null( $this->userAgent ) and ( !isset( $_SERVER['HTTP_USER_AGENT'] ) or !$_SERVER['HTTP_USER_AGENT'] ) ) {
 			$this->userAgent = false;
 		} else {
 			// разбиваем строку User-Agent на ассоциативный массив
