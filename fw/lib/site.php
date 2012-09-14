@@ -41,8 +41,8 @@ class Site {
 		Events::register( 'action-find', 'Difra\\Action', 'find' );
 		Events::register( 'action-run', 'Difra\\Action', 'run' );
 		Events::register( 'render-run', 'Difra\\Action', 'render' );
-		if( file_exists( dirname( __FILE__ ) . '/../../lib/init.php' ) ) {
-			\Init::run();
+		if( file_exists( $initPHP = ( dirname( __FILE__ ) . '/../../lib/init.php' ) ) ) {
+			include_once( $initPHP );
 		}
 	}
 
