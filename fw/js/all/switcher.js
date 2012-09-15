@@ -104,7 +104,7 @@ switcher.page = function( url, noPush, data ) {
 		conf.type = 'POST';
 		conf.data = data;
 		$.ajax( url, conf );
-	} else if( !$( '#content,.switcher' ).length ) {
+	} else if( !$( '#content' ).length ) {
 		$( document ).triggerHandler( 'destruct' );
 		$( '#loading' ).css( 'display', 'none' );
 		window.location = switcher.url;
@@ -164,8 +164,7 @@ $( 'a' ).live( 'click dblclick',
 		       var href = $( this ).attr( 'href' );
 		       if( href == '#' ) {
 			       event.preventDefault();
-		       } else if( href && href.substring( 0, 11 ) != 'javascript:' && href.substr( 0, 1 ) != '#' &&
-			       $( '#content' ).length ) {
+		       } else if( href && href.substring( 0, 11 ) != 'javascript:' && href.substr( 0, 1 ) != '#' ) {
 			       event.preventDefault();
 			       switcher.page( $( this ).attr( 'href' ) );
 		       }
