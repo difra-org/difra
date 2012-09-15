@@ -26,11 +26,13 @@ switcher.ajaxConfig = {
 		try {
 			var newdata = $( data );
 		} catch( e ) {
-			return switcher.fallback();
+			switcher.fallback();
+			return;
 		}
 		var a = newdata.filter( '#content,.switcher' ).add( newdata.find( '#content,.switcher' ) );
 		if( !a.length ) {
-			return switcher.fallback();
+			switcher.fallback();
+			return;
 		}
 		var newPath = '/';
 		var content = newdata.filter( '#content' );
@@ -41,7 +43,8 @@ switcher.ajaxConfig = {
 			newPath = content.attr( 'basepath' );
 		}
 		if( switcher.basePath != newPath ) {
-			return switcher.fallback();
+			switcher.fallback();
+			return;
 		}
 		$( document ).triggerHandler( 'destruct' );
 		if( !switcher.noPush ) {
@@ -88,7 +91,8 @@ switcher.page = function( url, noPush, data ) {
 	// filter protocol://host part
 	var host = window.location.protocol + "//" + window.location.host + "/";
 	if( host == url.substring( 0, host.length ) ) {
-		return switcher.page( url.substring( host.length - 1 ) );
+		switcher.page( url.substring( host.length - 1 ) );
+		return;
 	}
 	if( debug ) {
 		debug.addReq( 'Switching page: ' + url );
@@ -157,11 +161,11 @@ $( 'a' ).live( 'click dblclick',
 		       if( $( this ).hasClass( 'ajaxer' ) || $( this ).hasClass( 'noAjaxer' ) ) {
 			       return;
 		       }
-		       if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 11 ) == 'javascript:' ) {
-		       } else if( $( this ).attr( 'href' ) == '#' ) {
+		       var href = $( this ).attr( 'href' );
+		       if( href == '#' ) {
 			       event.preventDefault();
-		       } else if( $( this ).attr( 'href' ) && $( this ).attr( 'href' ).substring( 0, 1 ) == '#' ) {
-		       } else if( $( this ).attr( 'href' ) ) {
+		       } else if( href && href.substring( 0, 11 ) != 'javascript:' && href.substr( 0, 1 ) != '#' &&
+			       $( '#content' ).length ) {
 			       event.preventDefault();
 			       switcher.page( $( this ).attr( 'href' ) );
 		       }
