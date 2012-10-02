@@ -7,6 +7,7 @@ class Debugger {
 	private $enabled = false;
 	static $output = array();
 	private $startTime;
+	private $hadError = false;
 
 	static public function getInstance() {
 
@@ -68,6 +69,9 @@ class Debugger {
 		if( !$this->enabled ) {
 			return;
 		}
+		if( $array['class'] == 'errors' ) {
+			$this->hadError = true;
+		}
 		self::$output[] = $array;
 	}
 
@@ -100,6 +104,8 @@ class Debugger {
 	 * @static
 	 *
 	 * @param \Difra\Exception $exception
+	 *
+	 * @return bool
 	 */
 	public static function captureException( $exception ) {
 
@@ -112,10 +118,10 @@ class Debugger {
 			'traceback'     => $exception->getTrace()
 		);
 		self::getInstance()->addLineAsArray( $err );
-		self::getInstance()->debugHTML();
+		return false;
 	}
 
-	/** @var array Типы ошибок, которые ловятся captureNormal — не надо их ловить в captureShutdown */
+	/** @var array Текст последней ошибки, пойманной captureNormal, чтобы не поймать её ещё раз в captureShutdown */
 	private static $handledByNormal = array();
 
 	/**
@@ -132,9 +138,7 @@ class Debugger {
 	 */
 	public static function captureNormal( $type, $message, $file, $line ) {
 
-		if( !in_array( $type, self::$handledByNormal ) ) {
-			self::$handledByNormal[] = $type;
-		}
+		self::$handledByNormal = $message;
 		if( error_reporting() == 0 ) {
 			return false;
 		}
@@ -163,16 +167,14 @@ class Debugger {
 		if( !$error ) {
 			return;
 		}
-		// это не остатки информации об ошибке, которую уже поймал captureNormal?
-		if( !isset( $error['type'] ) or in_array( $error['type'], self::$handledByNormal ) ) {
-			return;
-		}
 		// сохраняем информацию об ошибке
-		$error['error']     = \Difra\Libs\Debug\errorConstants::getInstance()->getVerbalError( $error['type'] );
-		$error['class']     = 'errors';
-		$error['traceback'] = debug_backtrace();
-		@array_shift( $error['traceback'] );
-		self::getInstance()->addLineAsArray( $error );
+		if( self::$handledByNormal != $error['message'] ) {
+			$error['error']     = \Difra\Libs\Debug\errorConstants::getInstance()->getVerbalError( $error['type'] );
+			$error['class']     = 'errors';
+			$error['traceback'] = debug_backtrace();
+			@array_shift( $error['traceback'] );
+			self::getInstance()->addLineAsArray( $error );
+		}
 		// если по каким-то причинам рендер не случился, отрендерим свою страничку с блэкджеком и шлюхами
 		if( !View::getInstance()->rendered ) {
 			$controller = Action::getInstance()->controller;
@@ -184,5 +186,10 @@ class Debugger {
 			}
 			$controller->view->rendered = true;
 		}
+	}
+
+	public function hadError() {
+
+		return $this->hadError;
 	}
 }

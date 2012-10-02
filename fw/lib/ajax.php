@@ -164,8 +164,12 @@ class Ajax {
 	 */
 	public function getResponse() {
 
-		if( Debugger::getInstance()->isEnabled() ) {
-			$this->load( '#debug', Debugger::getInstance()->debugHTML( false ) );
+		$debugger = Debugger::getInstance();
+		if( $debugger->isEnabled() ) {
+			if( $debugger->hadError() ) {
+				$this->clean( true );
+			}
+			$this->load( '#debug', $debugger->debugHTML( false ) );
 		}
 		if( !empty( $this->actions ) ) {
 			$this->setResponse( 'actions', $this->actions );
@@ -199,10 +203,20 @@ class Ajax {
 		return $this->problem;
 	}
 
+	/**
+	 * @deprecated
+	 */
 	public function clearResponse() {
 
 		$this->response = array();
 		$this->problem  = false;
+	}
+
+	public function clean( $problem = false ) {
+
+		$this->actions  = array();
+		$this->response = array();
+		$this->problem  = $problem;
 	}
 
 	/**
@@ -214,8 +228,9 @@ class Ajax {
 	public function notify( $message ) {
 
 		$this->addAction( array(
-				       'action' => 'notify', 'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
-				       'lang'   => array(
+				       'action'  => 'notify',
+				       'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
+				       'lang'    => array(
 					       'close' => Locales::getInstance()->getXPath( 'notifications/close' )
 				       )
 				  ) );
@@ -230,9 +245,11 @@ class Ajax {
 	public function error( $message ) {
 
 		$this->addAction( array(
-				       'action' => 'error', 'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ), 'lang' => array(
-				'close' => Locales::getInstance()->getXPath( 'notifications/close' )
-			)
+				       'action'  => 'error',
+				       'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
+				       'lang'    => array(
+					       'close' => Locales::getInstance()->getXPath( 'notifications/close' )
+				       )
 				  ) );
 	}
 
@@ -246,7 +263,8 @@ class Ajax {
 
 		$this->problem = true;
 		$this->addAction( array(
-				       'action' => 'require', 'name' => $name
+				       'action' => 'require',
+				       'name'   => $name
 				  ) );
 	}
 
@@ -294,7 +312,8 @@ class Ajax {
 	public function redirect( $url ) {
 
 		$this->addAction( array(
-				       'action' => 'redirect', 'url' => $url
+				       'action' => 'redirect',
+				       'url'    => $url
 				  ) );
 	}
 
@@ -327,7 +346,8 @@ class Ajax {
 	public function display( $html ) {
 
 		$this->addAction( array(
-				       'action' => 'display', 'html' => $html
+				       'action' => 'display',
+				       'html'   => $html
 				  ) );
 	}
 
@@ -341,7 +361,9 @@ class Ajax {
 	public function load( $target, $html ) {
 
 		$this->addAction( array(
-				       'action' => 'load', 'target' => $target, 'html' => $html
+				       'action' => 'load',
+				       'target' => $target,
+				       'html'   => $html
 				  ) );
 	}
 
