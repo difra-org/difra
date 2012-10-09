@@ -2,7 +2,7 @@
 
 namespace Difra\Libs\Debug;
 
-class errorconstants {
+class errorConstants {
 
 	private $errors = array(
 		E_ERROR             => 'E_ERROR',
