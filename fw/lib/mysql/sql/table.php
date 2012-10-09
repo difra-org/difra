@@ -31,7 +31,7 @@ class Table extends Common {
 	 */
 	public static function getByName( $name ) {
 
-		return self::$list[$name] ? self::$list[$name] : null;
+		return isset( self::$list[$name] ) ? self::$list[$name] : null;
 	}
 
 	/**
@@ -73,12 +73,13 @@ class Table extends Common {
 		if( $chunks[0] != 'CREATE' or $chunks[1] != 'TABLE' ) {
 			throw new \Difra\Exception( 'Expected to get CREATE TABLE chunks' );
 		}
-		if( $name = self::chunk2name( $chunks[2] ) ) {
-			$o = self::getByName( $name );
-		} else {
+		$name = self::chunk2name( $chunks[2] );
+		if( !$o = self::getByName( $name ) ) {
 			$o = self::create();
 		}
-		$o->loadChunks( $chunks );
+		if( $o ) {
+			$o->loadChunks( $chunks );
+		}
 	}
 
 	/**
