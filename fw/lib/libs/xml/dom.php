@@ -79,7 +79,6 @@ class DOM {
 				}
 				if( is_array( $v ) ) {
 					$newNode = $node->appendChild( $node->ownerDocument->createElement( $k ) );
-					/** @var $newNode \DOMElement */
 					self::array2domAttr( $newNode, $v, $verbal );
 				} elseif( is_object( $v ) ) {
 				} else {

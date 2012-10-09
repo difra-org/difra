@@ -65,7 +65,7 @@ h3 {
 	padding:       6px 0;
 	margin:        20px 0 10px 0;
 	font-weight:   normal;
-	font-size: 14px;
+	font-size:     14px;
 }
 
 h4 {
@@ -111,16 +111,18 @@ th {
 table.summary {
 	width: 100%;
 }
+
 table.summary th {
-	width: 20%;
+	width:            20%;
 	background-color: transparent;
 
 }
+
 table.summary td {
-	line-height: 29px;
-	border-radius: 5px;
+	line-height:      29px;
+	border-radius:    5px;
 	background-color: #E6E6E6;
-	border: 0;
+	border:           0;
 }
 
 /* forms */
@@ -239,18 +241,45 @@ span.disabled {
 }
 
 .wideInfo {
-	display: block;
-	width: 100%;
+	display:     block;
+	width:       100%;
 	white-space: nowrap;
-	overflow: auto;
+	overflow:    auto;
 }
 
 /* messages */
 
 .warning {
-	margin-top: 8px;
-	padding: 3px 0 3px 5px;
-	border-radius: 4px;
+	margin-top:       8px;
+	padding:          3px 0 3px 5px;
+	border-radius:    4px;
 	background-color: #c42929;
-	color: #ffffff;
+	color:            #ffffff;
+}
+
+/* mysql diff */
+
+.mysql-diff, .mysql-diff table {
+	border-spacing: 0 !important;
+	width:          100%;
+}
+
+.mysql-diff tr {
+	margin:         0;
+	padding:        0;
+	border-spacing: 0;
+}
+
+.mysql-diff tr td {
+	border:  none;
+	margin:  0;
+	padding: 0;
+}
+
+.bg-green {
+	background-color: #aaffaa;
+}
+
+.bg-red {
+	background-color: #ffaaaa;
 }
