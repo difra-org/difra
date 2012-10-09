@@ -129,7 +129,7 @@ class Site {
 		define( 'DIR_SITE', $_SERVER['DOCUMENT_ROOT'] . 'sites/' . $this->siteDir . '/' );
 		define( 'DIR_PLUGINS', $_SERVER['DOCUMENT_ROOT'] . 'plugins/' );
 		define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
-		define( 'DIR_DATA', realpath( isset( $_SERVER['VHOST_DATA'] ) ? $_SERVER['VHOST_DATA'] : DIR_SITE . 'data/' ) . '/' );
+		define( 'DIR_DATA', !empty( $_SERVER['VHOST_DATA'] ) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/' );
 	}
 
 	public function configurePHP() {
