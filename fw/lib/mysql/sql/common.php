@@ -13,7 +13,7 @@ abstract class Common {
 	 *
 	 * @return mixed
 	 */
-	abstract public static function create( $chunks = null );
+	//abstract public static function create( $chunks = null );
 
 	/**
 	 * Возвращает массив всех загруженных в данный момент объектов данного типа
