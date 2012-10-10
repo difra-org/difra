@@ -4,22 +4,23 @@ namespace Difra;
 
 class Action {
 
+	/** @var string[] */
 	public $parameters = array();
+	/** @var string */
 	public $uri = '';
-
-	public $dispatchers = array();
-
+	/** @var string */
 	public $className = null;
-	/**
-	 * @var Controller
-	 */
+	/** @var Controller */
 	public $controller = null;
-
+	/** @var string */
 	public $method = null;
+	/** @var string */
 	public $methodAuth = null;
+	/** @var string */
 	public $methodAjax = null;
+	/** @var string */
 	public $methodAjaxAuth = null;
-
+	/** @var array */
 	public $methodTypes = array(
 		array( '', '' ),
 		array( '', 'Auth' ),
@@ -28,6 +29,7 @@ class Action {
 	);
 
 	/**
+	 * Синглтон
 	 * @static
 	 * @return Action
 	 */
@@ -37,9 +39,11 @@ class Action {
 		return $_instance ? $_instance : $_instance = new self;
 	}
 
-	public function __construct() {
-	}
-
+	/**
+	 * Ищет контроллер и action для текущего URI (запускается из события)
+	 *
+	 * @throws exception
+	 */
 	public function find() {
 
 		if( $this->className ) {
@@ -124,8 +128,9 @@ class Action {
 
 		// 404
 		if( !$controller ) {
-			$this->saveCache( $cacheKey, array( 'result' => '404' ) );
+			Cache::getInstance()->put( $cacheKey, $match, 300 );
 			View::getInstance()->httpError( 404 );
+			return;
 		}
 
 		// assemble controller class name
@@ -168,55 +173,29 @@ class Action {
 		$this->parameters            = $parts;
 		$match['vars']['parameters'] = $this->parameters;
 		$match['result']             = 'action';
-		$this->saveCache( $cacheKey, $match );
+		Cache::getInstance()->put( $cacheKey, $match, 300 );
 		$this->className = $className;
 		Debugger::addLine( "Selected controller $className from $controller" );
 	}
 
+	/**
+	 * Запускает исполнение логики контроллера (вызывается из события)
+	 */
 	public function run() {
 
 		$this->controller = new $this->className;
 		$this->controller->run();
 	}
 
-	private function saveCache( $key, $match ) {
-
-		Cache::getInstance()->put( $key, $match, 300 );
-	}
-
-	/*
-	public function dispatch( $plugin, $dispatcher ) {
-
-		$plugger = Plugger::getInstance();
-		if( is_null( $plugin = $plugger->getPlugin( $plugin ) ) ) {
-			throw new exception( "Called dispatcher '$dispatcher' from non-existent plugin '$plugin'" );
-		}
-		if( !is_file( $file = "{$plugger->getPath()}/{$plugin}/dispatchers/$dispatcher" ) ) {
-			throw new exception( "Dispatcher '$dispatcher' not found in plugin '$plugin'" );
-		}
-		include_once( $file );
-		return true;
-	}
-
-	public function addDispatcher( $instance ) {
-
-		$this->dispatchers[] = $instance;
-	}
-
-	public function runDispatchers( $controller ) {
-
-		if( empty( $this->dispatchers ) ) {
-			return false;
-		}
-		foreach( $this->dispatchers as $dispatcher ) {
-			$dispatcher->run( $controller );
-		}
-		return true;
-	}
-	*/
-
+	/**
+	 * Возвращает текущий URI
+	 */
 	public function getUri() {
 
+		static $uri = null;
+		if( !is_null( $uri ) ) {
+			return $uri;
+		}
 		if( !empty( $_SERVER['URI'] ) ) {
 			$this->uri = $_SERVER['URI'];
 		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
@@ -228,7 +207,8 @@ class Action {
 		if( false !== strpos( $uri, '?' ) ) {
 			$uri = substr( $uri, 0, strpos( $uri, '?' ) );
 		}
-		return trim( $uri, '/' );
+		$uri = trim( $uri, '/' );
+		return $uri;
 	}
 
 	public function render() {
@@ -236,8 +216,16 @@ class Action {
 		$this->controller->render();
 	}
 
+	/**
+	 * Собирает пути к папкам всех контроллеров
+	 * @return string[]
+	 */
 	public function getControllerPaths() {
 
+		static $controllerDirs = null;
+		if( !is_null( $controllerDirs ) ) {
+			return $controllerDirs;
+		}
 		$controllerDirs = Plugger::getInstance()->getPaths();
 		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
 		foreach( $controllerDirs as $k => $v ) {
