@@ -217,7 +217,14 @@ class Action {
 
 	public function getUri() {
 
-		$uri = $this->uri = $_SERVER['REQUEST_URI'];
+		if( !empty( $_SERVER['URI'] ) ) {
+			$this->uri = $_SERVER['URI'];
+		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
+			$this->uri = $_SERVER['REQUEST_URI'];
+		} else {
+			die( 'Can\'t get URI' );
+		}
+		$uri = $this->uri;
 		if( false !== strpos( $uri, '?' ) ) {
 			$uri = substr( $uri, 0, strpos( $uri, '?' ) );
 		}
