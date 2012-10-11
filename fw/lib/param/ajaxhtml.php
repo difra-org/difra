@@ -2,12 +2,12 @@
 
 namespace Difra\Param;
 
-class AjaxSafeHTML extends Common {
+class AjaxHTML extends Common {
 
 	const source   = 'ajax';
 	const type     = 'html';
 	const named    = true;
-	const filtered = true;
+	const filtered = false;
 
 	use \Difra\Param\Traits\HTML;
 
