@@ -1,10 +1,11 @@
 <?php
 
 namespace Difra\Resourcer\Abstracts;
+
 use Difra;
 
 abstract class Common {
-			
+
 	protected $resources = array();
 	const CACHE_TTL = 86400;
 
@@ -14,18 +15,18 @@ abstract class Common {
 		$name = get_called_class();
 		return isset( $_instances[$name] ) ? $_instances[$name] : $_instances[$name] = new $name();
 	}
-	
+
 	private function checkInstance( $instance ) {
-		
+
 		if( !preg_match( '/^[a-z0-9_-]+$/i', $instance ) ) {
 			throw new \Difra\Exception( "Bad Resourcer instance name: '$instance'" );
 		}
 		return true;
 	}
-	
+
 	// получение ресурса по URI
 	public function view( $instance ) {
-		
+
 		if( !$this->isPrintable() ) {
 			throw new \Difra\Exception( "Resource of type '{$this->type}' is not printable" );
 		}
@@ -39,7 +40,6 @@ abstract class Common {
 		if( !$instance or !$this->checkInstance( $instance ) ) {
 			return false;
 		}
-
 
 		// узнаем, поддерживает ли браузер gzip
 		$enc = false;
@@ -82,14 +82,14 @@ abstract class Common {
 
 	// определяет, возможно ли вывести ресурс в браузер
 	public function isPrintable() {
-	
+
 		return $this->printable;
 	}
 
 	public function compileGZ( $instance ) {
 
 		$cache = Difra\Cache::getInstance();
-		if( $cache->adapter == 'None' or Difra\Debugger::getInstance()->isEnabled() ) {
+		if( $cache->adapter == 'None' or !Difra\Debugger::getInstance()->isResourceCache() ) {
 			return false;
 		}
 
@@ -101,13 +101,14 @@ abstract class Common {
 		}
 
 		// ждём, пока удастся сделать lock, либо пока не появятся данные от другого процесса
-		$busyKey = "{$cacheKey}_gz_busy";
+		$busyKey   = "{$cacheKey}_gz_busy";
 		$busyValue = rand( 100000, 999999 );
 		while( true ) {
 			if( !$currentBusy = $cache->get( $busyKey ) ) {
 				// появились данные от другого процесса?
 				if( $cached = $cache->get( $cacheKey . '_gz' ) and
-				    $cache->get( $cacheKey . '_gz_build' ) == \Difra\Site::getInstance()->getBuild() ) {
+				    $cache->get( $cacheKey . '_gz_build' ) == \Difra\Site::getInstance()->getBuild()
+				) {
 					return $cached;
 				}
 				// попытаемся получить блокировку
@@ -129,7 +130,7 @@ abstract class Common {
 		$cache->remove( $busyKey );
 		return $data;
 	}
-	
+
 	// собирает всё в единый документ
 	public function compile( $instance, $withSources = false ) {
 
@@ -140,8 +141,8 @@ abstract class Common {
 		// get compiled from cache if available
 		$cache = Difra\Cache::getInstance();
 
-		if( $cache->adapter != 'None' and !Difra\Debugger::getInstance()->isEnabled() ) {
-		
+		if( $cache->adapter != 'None' and Difra\Debugger::getInstance()->isResourceCache() ) {
+
 			$cacheKey = "{$instance}_{$this->type}";
 			if( $cached = $cache->get( $cacheKey ) ) {
 				if( $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild() ) {
@@ -150,16 +151,17 @@ abstract class Common {
 			}
 
 			// ждём, пока удастся сделать lock, либо пока не появятся данные от другого процесса
-			$busyKey  = "{$cacheKey}_busy";
+			$busyKey   = "{$cacheKey}_busy";
 			$busyValue = rand( 100000, 999999 );
 			while( true ) {
 				if( !$currentBusy = $cache->get( $busyKey ) ) {
 					// is data arrived?
 					if( $cached = $cache->get( $cacheKey ) and
-					    $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild() ) {
+					    $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild()
+					) {
 						return $cached;
 					}
-					
+
 					// try to lock cache
 					$cache->put( $busyKey, $busyValue, 7 );
 					usleep( 5000 );
@@ -168,7 +170,7 @@ abstract class Common {
 					if( $currentBusy == $busyValue ) {
 						break;
 					}
-					
+
 					usleep( 50000 );
 				}
 			}
@@ -180,7 +182,7 @@ abstract class Common {
 			$cache->put( $cacheKey, $resource, self::CACHE_TTL );
 			$cache->put( $cacheKey . '_build', \Difra\Site::getInstance()->getBuild(), self::CACHE_TTL );
 			$cache->put( $cacheKey . '_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT', self::CACHE_TTL );
-			
+
 			// unlock cache
 			$cache->remove( $busyKey );
 
@@ -188,11 +190,10 @@ abstract class Common {
 		} else {
 			return $this->_subCompile( $instance, $withSources );
 		}
-		
 	}
-	
+
 	private function _subCompile( $instance, $withSources = false ) {
-	
+
 		$this->find( $instance );
 		$this->processDirs( $instance );
 		return $this->processData( $instance, $withSources );
@@ -200,14 +201,14 @@ abstract class Common {
 
 	// собирает папки ресурсов по папкам фреймворка, сайта и плагинов
 	private function find( $instance ) {
-		
+
 		$parents = array(
 			DIR_SITE . "{$this->type}/{$instance}",
 			DIR_SITE . "{$this->type}/all",
 			DIR_ROOT . "{$this->type}/{$instance}",
 			DIR_ROOT . "{$this->type}/all",
 		);
-		$paths = Difra\Plugger::getInstance()->getPaths();
+		$paths   = Difra\Plugger::getInstance()->getPaths();
 		if( !empty( $paths ) ) {
 			foreach( $paths as $dir ) {
 				$parents[] = "{$dir}/{$this->type}/{$instance}";
@@ -216,7 +217,7 @@ abstract class Common {
 		}
 		$parents[] = DIR_FW . "{$this->type}/{$instance}";
 		$parents[] = DIR_FW . "{$this->type}/all";
-		
+
 		if( empty( $parents ) ) {
 			return false;
 		} else {
@@ -253,7 +254,8 @@ abstract class Common {
 		foreach( $parents as $path ) {
 			if( !is_dir( $path ) ) {
 				continue;
-			};
+			}
+			;
 			$dir = opendir( $path );
 			while( false !== ( $subdir = readdir( $dir ) ) ) {
 				if( $subdir{0} != '.' and is_dir( $path . '/' . $subdir ) ) {
@@ -265,7 +267,7 @@ abstract class Common {
 	}
 
 	private function addDirs( $instance, $dirs ) {
-		
+
 		// handle arrays
 		if( is_array( $dirs ) ) {
 			foreach( $dirs as $res ) {
@@ -273,7 +275,7 @@ abstract class Common {
 			}
 			return;
 		}
-		
+
 		// add item
 		if( !isset( $this->resources[$instance] ) ) {
 			$this->resources[$instance] = array();
@@ -285,7 +287,7 @@ abstract class Common {
 	}
 
 	public function processDirs( $instance ) {
-		
+
 		if( empty( $this->resources[$instance]['dirs'] ) ) {
 			return;
 		}
@@ -300,15 +302,16 @@ abstract class Common {
 				}
 				$entry = "$dir/$dirEntry";
 				if( is_dir( $entry ) ) { // "special"
-					$exp = explode( '-', $dirEntry );
+					$exp     = explode( '-', $dirEntry );
 					$special = array(
-							 'name' => ( sizeof( $exp ) == 2 ? $exp[0] : $dirEntry ),
-							 'version' => ( sizeof( $exp ) == 2 ? $exp[1] : 0 ),
-							 'files' => array()
-							 );
+						'name'    => ( sizeof( $exp ) == 2 ? $exp[0] : $dirEntry ),
+						'version' => ( sizeof( $exp ) == 2 ? $exp[1] : 0 ),
+						'files'   => array()
+					);
 					if( isset( $this->resources[$instance]['specials'][$special['name']] ) ) {
 						if( $this->resources[$instance]['specials'][$special['name']]['version'] >
-						    $special['version'] ) {
+						    $special['version']
+						) {
 							continue;
 						} else {
 							unset( $this->resources[$instance]['specials'][$special['name']] );
@@ -345,7 +348,7 @@ abstract class Common {
 	}
 
 	public function getFiles( $instance ) {
-		
+
 		$files = array();
 		if( !empty( $this->resources[$instance]['specials'] ) ) {
 			foreach( $this->resources[$instance]['specials'] as $resource ) {

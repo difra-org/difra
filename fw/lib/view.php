@@ -141,21 +141,31 @@ class View {
 		if( !$htmlRoot = $html->documentElement ) {
 			return;
 		}
-		if( Debugger::getInstance()->isEnabled() and $instance != 'debug' and !Action::getInstance()->controller->ajax->isAjax ) {
-			$body = false;
+		// добавление дебаг-консоли
+		if( Debugger::getInstance()->isConsoleEnabled() and
+		    $instance != 'debug' and !Action::getInstance()->controller->ajax->isAjax
+		) {
 			if( $htmlRoot->nodeName == 'html' ) {
+				$headList = $htmlRoot->getElementsByTagName( 'head' );
+				if( $headList->length ) {
+					$build      = Site::getInstance()->getBuild();
+					$head       = $headList->item( 0 );
+					$consoleCSS = $head->appendChild( $html->createElement( 'link' ) );
+					$consoleCSS->setAttribute( 'type', 'text/css' );
+					$consoleCSS->setAttribute( 'rel', 'stylesheet' );
+					$consoleCSS->setAttribute( 'href', '/css/console.css?' . $build );
+					$consoleJS = $head->appendChild( $html->createElement( 'script' ) );
+					$consoleJS->setAttribute( 'type', 'text/javascript' );
+					$consoleJS->setAttribute( 'src', '/js/console.js?' . $build );
+				}
 				$bodyList = $htmlRoot->getElementsByTagName( 'body' );
 				if( $bodyList->length ) {
-					$body = $bodyList->item( 0 );
+					$body   = $bodyList->item( 0 );
+					$ins    = Debugger::getInstance()->debugHTML();
+					$debdom = new \DOMDocument();
+					$debdom->loadXML( $ins );
+					$body->appendChild( $html->importNode( $debdom->documentElement, true ) );
 				}
-			} else {
-				$body = $htmlRoot;
-			}
-			if( $body ) {
-				$ins    = Debugger::getInstance()->debugHTML();
-				$debdom = new \DOMDocument();
-				$debdom->loadXML( $ins );
-				$body->appendChild( $html->importNode( $debdom->documentElement, true ) );
 			}
 		}
 		if( $htmlRoot->nodeName != 'html' ) {

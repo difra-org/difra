@@ -5,6 +5,9 @@ namespace Difra;
 class Debugger {
 
 	private $enabled = false;
+	/** @var int        0 — консоль выключена, 1 — консоль включена, но не активна, 2 — консоль активна */
+	private $console = 0;
+	private $cacheResources = true;
 	static $output = array();
 	private $startTime;
 	private $hadError = false;
@@ -17,23 +20,60 @@ class Debugger {
 
 	public function __construct() {
 
-		if( ( !isset( $_GET['debug'] ) or ( $_GET['debug'] != '0' ) )
-		    and isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on'
-		) {
-			$this->enabled   = true;
+		if( isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
+
+			$this->cacheResources = false;
+
+			// дебаг отключен?
+			if( ( isset( $_GET['debug'] ) and !$_GET['debug'] ) or ( isset( $_COOKIE['debug'] ) and !$_COOKIE['debug'] ) ) {
+				$this->enabled = false;
+			} else {
+				$this->enabled = true;
+			}
+			// консоль отключена?
+			if( !$this->enabled or ( isset( $_COOKIE['debugConsole'] ) and !$_COOKIE['debugConsole'] ) ) {
+				$this->console = 1;
+			} else {
+				$this->console = 2;
+			}
+
 			$this->startTime = microtime( true );
+			if( $this->console == 2 ) {
+				// консоль активна — перехватываем ошибки
+				ini_set( 'display_errors', 'Off' );
+				ini_set( 'html_errors', 'Off' );
+				ini_set( 'error_reporting', E_ALL );
+				set_error_handler( array( '\Difra\Debugger', 'captureNormal' ) );
+				set_exception_handler( array( '\Difra\Debugger', 'captureException' ) );
+				register_shutdown_function( array( '\Difra\Debugger', 'captureShutdown' ) );
+				$this->console = 2;
+			} else {
+				// консоль не активна — выводим ошибки
+				ini_set( 'display_errors', 'On' );
+				ini_set( 'error_reporting', E_ALL );
+				ini_set( 'html_errors',
+					 ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+			}
+		} else {
 			ini_set( 'display_errors', 'Off' );
-			ini_set( 'error_reporting', E_ALL );
-			ini_set( 'html_errors', ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
-			set_error_handler( array( '\Difra\Debugger', 'captureNormal' ) );
-			set_exception_handler( array( '\Difra\Debugger', 'captureException' ) );
-			register_shutdown_function( array( '\Difra\Debugger', 'captureShutdown' ) );
 		}
+		//echo "=debug={$this->enabled}=<br/>";
+		//echo "=console={$this->console}=<br/>";
 	}
 
 	public function isEnabled() {
 
 		return $this->enabled;
+	}
+
+	public function isConsoleEnabled() {
+
+		return $this->console;
+	}
+
+	public function isResourceCache() {
+
+		return $this->cacheResources;
 	}
 
 	static function addLine( $line ) {
@@ -77,18 +117,21 @@ class Debugger {
 
 	public function debugHTML( $standalone = false ) {
 
-		if( !$this->enabled ) {
-			return '';
-		}
 		static $alreadyDidIt = false;
 		if( $alreadyDidIt ) {
 			return '';
 		}
-		$alreadyDidIt = true;
-		self::addLine( "Page data prepared in " . ( microtime( true ) - $this->startTime ) . " seconds" );
 		/** @var $root \DOMElement */
 		$xml  = new \DOMDocument();
 		$root = $xml->appendChild( $xml->createElement( 'root' ) );
+		$root->setAttribute( 'debug', $this->enabled ? '1' : '0' );
+		$root->setAttribute( 'debugConsole', $this->console );
+		if( !$this->console ) {
+			return '';
+		}
+		$alreadyDidIt = true;
+		self::addLine( "Page data prepared in " . ( microtime( true ) - $this->startTime ) . " seconds" );
+
 		/** @var $debugNode \DOMElement */
 		$debugNode = $root->appendChild( $xml->createElement( 'debug' ) );
 		\Difra\Libs\XML\DOM::array2domAttr( $debugNode, self::$output, true );
@@ -110,12 +153,12 @@ class Debugger {
 	public static function captureException( $exception ) {
 
 		$err = array(
-			'class'         => 'errors',
-			'stage'         => 'exception',
-			'message'       => $exception->getMessage(),
-			'file'          => $exception->getFile(),
-			'line'          => $exception->getLine(),
-			'traceback'     => $exception->getTrace()
+			'class'     => 'errors',
+			'stage'     => 'exception',
+			'message'   => $exception->getMessage(),
+			'file'      => $exception->getFile(),
+			'line'      => $exception->getLine(),
+			'traceback' => $exception->getTrace()
 		);
 		self::getInstance()->addLineAsArray( $err );
 		return false;
@@ -143,13 +186,13 @@ class Debugger {
 			return false;
 		}
 		$err              = array(
-			'class'     => 'errors',
-			'type'      => $type,
-			'error'     => \Difra\Libs\Debug\errorConstants::getInstance()->getVerbalError( $type ),
-			'message'   => $message,
-			'file'      => $file,
-			'line'      => $line,
-			'stage'     => 'normal'
+			'class'   => 'errors',
+			'type'    => $type,
+			'error'   => \Difra\Libs\Debug\errorConstants::getInstance()->getVerbalError( $type ),
+			'message' => $message,
+			'file'    => $file,
+			'line'    => $line,
+			'stage'   => 'normal'
 		);
 		$err['traceback'] = debug_backtrace();
 		@array_shift( $err['traceback'] );

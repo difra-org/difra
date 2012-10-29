@@ -16,64 +16,83 @@
 					<div id="debug_toggle" onclick="debug.toggle()"/>
 				</xsl:otherwise>
 			</xsl:choose>
-			<div id="debug_body">
-				<ul>
-					<li>
-						<xsl:if test="not(*[@class='errors'])">
-							<xsl:attribute name="class">selected</xsl:attribute>
+			<div id="debug_toggles">
+				<input type="checkbox" name="debug" onclick="debug.toggleDebugger()">
+					<xsl:if test="/root/@debug=1">
+						<xsl:attribute name="checked">checked</xsl:attribute>
+					</xsl:if>
+				</input>
+				<xsl:text> debug mode </xsl:text>
+				<xsl:if test="/root/@debug=1">
+					<input type="checkbox" name="debugConsole" onclick="debug.toggleConsole()">
+						<xsl:if test="/root/@debugConsole=2">
+							<xsl:attribute name="checked">checked</xsl:attribute>
 						</xsl:if>
-						<span class="tab-title">Все</span>
-						<div class="tab-content">
-							<table>
-								<xsl:apply-templates select="*" mode="debugLine"/>
-							</table>
-						</div>
-					</li>
-					<li>
-						<span class="tab-title">Сообщения</span>
-						<div class="tab-content">
-							<table>
-								<xsl:apply-templates select="*[@class='messages']" mode="debugLine"/>
-							</table>
-						</div>
-					</li>
-					<li>
-						<xsl:if test="*[@class='errors']">
-							<xsl:attribute name="class">selected</xsl:attribute>
-						</xsl:if>
-						<span class="tab-title">Ошибки</span>
-						<div class="tab-content">
-							<table>
-								<xsl:apply-templates select="*[@class='errors']"
-										     mode="debugLine"/>
-							</table>
-						</div>
-					</li>
-					<li>
-						<span class="tab-title">События</span>
-						<div class="tab-content">
-							<table>
-								<xsl:apply-templates select="*[@class='events']" mode="debugLine"/>
-							</table>
-						</div>
-					</li>
-					<li>
-						<span class="tab-title">База данных</span>
-						<div class="tab-content">
-							<table>
-								<xsl:apply-templates select="*[@class='db']"
-										     mode="debugLine"/>
-							</table>
-						</div>
-					</li>
-					<li>
-						<span class="tab-title">Запросы</span>
-						<div class="tab-content">
-							<table id="debug-requests"></table>
-						</div>
-					</li>
-				</ul>
+					</input>
+					<xsl:text> debug console </xsl:text>
+				</xsl:if>
 			</div>
+			<xsl:if test="/root/@debugConsole=2">
+				<div id="debug_body">
+					<ul>
+						<li>
+							<xsl:if test="not(*[@class='errors'])">
+								<xsl:attribute name="class">selected</xsl:attribute>
+							</xsl:if>
+							<span class="tab-title">Все</span>
+							<div class="tab-content">
+								<table>
+									<xsl:apply-templates select="*" mode="debugLine"/>
+								</table>
+							</div>
+						</li>
+						<li>
+							<span class="tab-title">Сообщения</span>
+							<div class="tab-content">
+								<table>
+									<xsl:apply-templates select="*[@class='messages']"
+											     mode="debugLine"/>
+								</table>
+							</div>
+						</li>
+						<li>
+							<xsl:if test="*[@class='errors']">
+								<xsl:attribute name="class">selected</xsl:attribute>
+							</xsl:if>
+							<span class="tab-title">Ошибки</span>
+							<div class="tab-content">
+								<table>
+									<xsl:apply-templates select="*[@class='errors']"
+											     mode="debugLine"/>
+								</table>
+							</div>
+						</li>
+						<li>
+							<span class="tab-title">События</span>
+							<div class="tab-content">
+								<table>
+									<xsl:apply-templates select="*[@class='events']" mode="debugLine"/>
+								</table>
+							</div>
+						</li>
+						<li>
+							<span class="tab-title">База данных</span>
+							<div class="tab-content">
+								<table>
+									<xsl:apply-templates select="*[@class='db']"
+											     mode="debugLine"/>
+								</table>
+							</div>
+						</li>
+						<li>
+							<span class="tab-title">Запросы</span>
+							<div class="tab-content">
+								<table id="debug-requests"></table>
+							</div>
+						</li>
+					</ul>
+				</div>
+			</xsl:if>
 		</div>
 	</xsl:template>
 
