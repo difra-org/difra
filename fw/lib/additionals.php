@@ -2,6 +2,10 @@
 
 namespace Difra;
 
+/**
+ * @deprecated
+ * TODO: переносим настройки дополнительных полей в настройки соответствующих плагинов
+ */
 class Additionals {
 
 	// проверка заполненности и валидности дополнительных полей из конфига сайта
@@ -86,7 +90,8 @@ class Additionals {
 		foreach( $conf['fields'] as $field => $flags ) {
 			if( !empty( $data[$field] ) ) {
 				$db->query(
-					"REPLACE INTO `{$module}_fields` (`id`,`name`,`value`) VALUES ('" . $db->escape( $id ) . "','" . $db->escape( $field )
+					"REPLACE INTO `{$module}_fields` (`id`,`name`,`value`) VALUES ('" . $db->escape( $id ) . "','"
+					. $db->escape( $field )
 					. "','" . $db->escape( $data[$field] ) . "')" );
 			}
 		}
@@ -98,7 +103,7 @@ class Additionals {
 		$db    = MySQL::getInstance();
 		$query = array();
 		$db->query( "DELETE FROM `{$module}_fields` WHERE `id`='" . intval( $id ) . "'" );
-		foreach( $data as $key=> $value ) {
+		foreach( $data as $key => $value ) {
 			$query[] = "REPLACE INTO `{$module}_fields` (`id`, `name`, `value`) VALUES ( '" . intval( $id ) . "',
 			 		'" . $db->escape( $key ) . "', '" . $db->escape( $value ) . "')";
 		}
@@ -157,7 +162,8 @@ class Additionals {
 		$db = MySQL::getInstance();
 		$id =
 			$db->fetchOne(
-				"SELECT `id` FROM `{$module}_fields` WHERE `name`='" . $db->escape( $name ) . "' AND `value`='" . $db->escape( $value ) . "'" );
+				"SELECT `id` FROM `{$module}_fields` WHERE `name`='" . $db->escape( $name ) . "' AND `value`='"
+				. $db->escape( $value ) . "'" );
 		return $id ? $id : null;
 	}
 
@@ -166,7 +172,8 @@ class Additionals {
 		$db = MySQL::getInstance();
 		$id =
 			$db->fetchOne(
-				"SELECT `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='" . $db->escape( $name ) . "'" );
+				"SELECT `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='"
+				. $db->escape( $name ) . "'" );
 		return $id ? $id : null;
 	}
 
@@ -189,7 +196,9 @@ class Additionals {
 		}
 		if( isset( $conf['fields'][$name] ) ) {
 			$db = MySQL::getInstance();
-			$db->query( "DELETE FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='" . $db->escape( $name ) . "'" );
+			$db->query(
+				"DELETE FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='" . $db->escape( $name )
+				. "'" );
 		}
 	}
 }
