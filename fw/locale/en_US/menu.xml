@@ -5,6 +5,7 @@
 			<menu_common_site>View site</menu_common_site>
 			<menu_common_settings>General information</menu_common_settings>
 			<menu_common_locales>Locales status</menu_common_locales>
+			<menu_common_config>Configuration</menu_common_config>
 		</adm>
 	</menu>
 </locale>

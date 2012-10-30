@@ -17,8 +17,9 @@
 						<meta name="description" content=""/>
 						<meta http-equiv="pragma" content="no-cache"/>
 						<meta http-equiv="proxy" content="no-cache"/>
-						<link href="/css/debug.css" rel="stylesheet" type="text/css"/>
-						<script type="text/javascript" src="/js/debug.js"/>
+						<link href="/css/console.css" rel="stylesheet" type="text/css"/>
+						<script type="text/javascript" src="/js/main.js"/>
+						<script type="text/javascript" src="/js/console.js"/>
 					</head>
 					<body>
 						<xsl:apply-templates select="/root/debug"/>

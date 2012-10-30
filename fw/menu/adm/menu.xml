@@ -3,5 +3,6 @@
 		<site href="/"/>
 		<settings href="/adm"/>
 		<locales href="/adm/locales" sup="1"/>
+		<config href="/adm/config" sup="1"/>
 	</common>
 </menu>
