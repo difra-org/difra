@@ -46,7 +46,7 @@ class Config {
 			$conf         = $db->fetchOne( 'SELECT `config` FROM `config` LIMIT 1' );
 			$dbconf       = @unserialize( $conf );
 			if( is_array( $dbconf ) ) {
-				$this->config = array_merge( $this->config, $dbconf );
+				$this->config = $this->merge( $this->config, $dbconf );
 			}
 			$cache->put( 'config', $this->config );
 		} catch( Exception $e ) {
@@ -54,6 +54,18 @@ class Config {
 		}
 	}
 
+	function merge( $a1, $a2 ) {
+
+		foreach( $a2 as $k => $v ) {
+			if( array_key_exists( $k, $a1 ) && is_array( $v ) )
+				$a1[$k] = $this->merge( $a1[$k], $a2[$k] );
+
+			else
+				$a1[$k] = $v;
+		}
+
+		return $a1;
+	}
 	/**
 	 * Получение конфига из config.php
 	 *
@@ -69,7 +81,7 @@ class Config {
 			}
 			if( is_file( DIR_SITE . '/config.php' ) ) {
 				$conf2         = include( DIR_SITE . '/config.php' );
-				$defaultConfig = array_merge( $defaultConfig, $conf2 );
+				$defaultConfig = $this->merge( $defaultConfig, $conf2 );
 			}
 		}
 		return $defaultConfig;
@@ -203,6 +215,29 @@ class Config {
 		return $this->diff();
 	}
 
+	public function getTxtDiff() {
+
+		$diff = $this->getDiff();
+		$txtDiff = array();
+		$this->txtDiff( $txtDiff, $diff );
+		$d2 = array();
+		foreach( $txtDiff as $k => $v ) {
+			$d2[] = "$k => $v";
+		}
+		return implode( "\n", $d2 );
+	}
+
+	private function txtDiff( &$t, &$d, $pref = '' ) {
+
+		if( !is_array( $d ) ) {
+			$t[$pref] = $d;
+		} else {
+			foreach( $d as $k => $v ) {
+				$this->txtDiff( $t, $v, $pref ? "$pref/$k" : $k );
+			}
+		}
+	}
+
 	/**
 	 * Сбросить конфиг к дефолтному
 	 */
@@ -210,6 +245,7 @@ class Config {
 
 		$this->load();
 		$this->config = array();
+		$this->modified = true;
 		$this->save();
 	}
 }

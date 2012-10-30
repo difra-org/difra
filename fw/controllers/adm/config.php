@@ -17,8 +17,7 @@ class AdmConfigController extends \Difra\Controller {
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'configuration' ) );
 		$conf       = $config->getConfig();
 		$configNode->setAttribute( 'current', var_export( $conf, true ) );
-		$diff = $config->getDiff();
-		$configNode->setAttribute( 'diff', var_export( $diff, true ) );
+		$configNode->setAttribute( 'diff', $config->getTxtDiff() );
 	}
 
 	public function resetAjaxAction() {
