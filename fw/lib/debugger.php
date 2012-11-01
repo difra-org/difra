@@ -12,12 +12,19 @@ class Debugger {
 	private $startTime;
 	private $hadError = false;
 
+	/**
+	 * Синглтон
+	 * @return Debugger
+	 */
 	static public function getInstance() {
 
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
 	}
 
+	/**
+	 * Конструктор
+	 */
 	public function __construct() {
 
 		if( isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
@@ -61,21 +68,41 @@ class Debugger {
 		//echo "=console={$this->console}=<br/>";
 	}
 
+	/**
+	 * Включен ли режим отладки
+	 * @return bool
+	 */
 	public function isEnabled() {
 
 		return $this->enabled;
 	}
 
+	/**
+	 * Включена ли отладочная консоль?
+	 * 0 — отладка полностью отключена
+	 * 1 — отключен отлов ошибок
+	 * 2 — консоль включена
+	 * @return int
+	 */
 	public function isConsoleEnabled() {
 
 		return $this->console;
 	}
 
+	/**
+	 * Нужно ли кэшировать ресурсы? (js, css, xslt и т.д.)
+	 *
+	 * @return bool
+	 */
 	public function isResourceCache() {
 
 		return $this->cacheResources;
 	}
 
+	/**
+	 * Добавляет сообщение в лог для консоли
+	 * @param string $line
+	 */
 	static function addLine( $line ) {
 
 		self::$output[] = array(
@@ -84,6 +111,10 @@ class Debugger {
 		);
 	}
 
+	/**
+	 * Добавляет событие в лог для консоли
+	 * @param string $line
+	 */
 	static function addEventLine( $line ) {
 
 		self::$output[] = array(
@@ -92,6 +123,11 @@ class Debugger {
 		);
 	}
 
+	/**
+	 * Добавляет запрос в БД в лог для консоли
+	 * @param string $type
+	 * @param string $line
+	 */
 	public function addDBLine( $type, $line ) {
 
 		if( !$this->enabled ) {
@@ -104,6 +140,10 @@ class Debugger {
 		);
 	}
 
+	/**
+	 * Добавить ошибку в лог для консоли
+	 * @param $array
+	 */
 	public function addLineAsArray( $array ) {
 
 		if( !$this->enabled ) {
@@ -115,6 +155,14 @@ class Debugger {
 		self::$output[] = $array;
 	}
 
+	/**
+	 * Рендер HTML отладочной консоли
+	 *
+	 * @param bool $standalone      Консоль выводится на отдельной странице (если произошла фатальная ошибка и запрошенная страница
+	 *                                 не может быть отрендерена)
+	 *
+	 * @return string
+	 */
 	public function debugHTML( $standalone = false ) {
 
 		static $alreadyDidIt = false;
@@ -231,6 +279,11 @@ class Debugger {
 		}
 	}
 
+	/**
+	 * Возвращает true, если в логе для консоли есть ошибки
+	 *
+	 * @return bool
+	 */
 	public function hadError() {
 
 		return $this->hadError;
