@@ -25,12 +25,19 @@ class Events {
 	);
 	private $events = null;
 
+	/**
+	 * Синглтон
+	 * @return Events
+	 */
 	public static function getInstance() {
 
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
 	}
 
+	/**
+	 * Конструктор
+	 */
 	public function __construct() {
 
 		foreach( $this->types as $type ) {
@@ -38,14 +45,31 @@ class Events {
 		}
 	}
 
+	/**
+	 * Деструктор
+	 */
 	public function __destruct() {
 	}
 
+	/**
+	 * Зарегистрировать обработчик события (статический вариант)
+	 * @param             $type          Имя события
+	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
+	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
+	 */
 	public static function register( $type, $class, $method = false ) {
 
 		self::getInstance()->add( $type, $class, $method );
 	}
 
+	/**
+	 * Зарегистрировать обработчик события (динамический вариант)
+	 * @param             $type          Имя события
+	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
+	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
+	 *
+	 * @throws Exception
+	 */
 	private function add( $type, $class, $method = false ) {
 
 		if( !in_array( $type, $this->types ) ) {
@@ -57,18 +81,29 @@ class Events {
 		);
 	}
 
+	/**
+	 * Вызывает все события в нужном порядке
+	 */
 	public function run() {
 
 		Site::getInstance(); // инициализация сайта
 		foreach( $this->events as $type => $foo ) {
-			$handlers = $this->events[$type];
 			Debugger::addEventLine( 'Event ' . $type . ' started' );
-			if( empty( $handlers ) ) {
-				continue;
-			}
+			$this->start( $type );
+		}
+	}
+
+	/**
+	 * Вызывает обрабочики указанного события
+	 * @param $event
+	 */
+	public function start( $event ) {
+
+		$handlers = $this->events[$event];
+		if( !empty( $handlers ) ) {
 			foreach( $handlers as $handler ) {
-				Debugger::addEventLine( 'Event ' . $type . ' > ' . $handler['class'] . '->' . ( $handler['method']
-					? $handler['method'] : 'getInstance' ) );
+				Debugger::addEventLine( 'Event ' . $event . ' handler ' . $handler['class'] . '->' . ( $handler['method']
+					? $handler['method'] : 'getInstance' ) . ' started' );
 				$inst = call_user_func( array( $handler['class'], 'getInstance' ) );
 				if( $handler['method'] ) {
 					$inst->{$handler['method']}();
