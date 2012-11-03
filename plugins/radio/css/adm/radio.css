@@ -1,0 +1,218 @@
+.radioPlayList {
+	float: left;
+	width: 49%;
+}
+
+.radioLibrary {
+	float: right;
+	width: 49%;
+}
+
+.radioTimer {
+	float: right;
+	position: relative;
+	top: -5px;
+	cursor: default;
+}
+
+.radioTitle {
+	display: block;
+	float: left;
+}
+
+/* ULs */
+
+.playListUL, .libratyUL, .historyUL, .radioSort {
+	list-style: none;
+	padding: 0px;
+	margin: 0 0 5px 0;
+}
+
+.playListUL li {
+	padding:       10px 15px 10px 10px;
+	border-radius: 4px;
+	background:    #dce1cc;
+	display:       block;
+	height:        21px;
+}
+
+.libratyUL li {
+	margin-bottom: 5px;
+	padding:       10px 15px 10px 10px;
+	border-radius: 4px;
+	background:    #e6edee;
+}
+
+.scrollLibrary {
+	overflow: auto;
+	height: 600px;
+}
+
+.countdownHolder {
+	font:           20px sans-serif;
+	text-align:     right;
+	letter-spacing: -3px;
+}
+
+.position {
+	display:  inline-block;
+	height:   1.6em;
+	overflow: hidden;
+	position: relative;
+	width:    1.05em;
+}
+
+.digit {
+	position:         absolute;
+	display:          block;
+	width:            1em;
+	background-color: #444;
+	border-radius:    4px;
+	text-align:       center;
+	color:            #fff;
+	letter-spacing:   -1px;
+}
+
+.digit.static {
+}
+
+.countDays, .countDiv0, .countHours, .countDiv1 {
+	display:none !important;
+}
+
+.countMinutes {}
+
+.countDiv2 {}
+
+.countSeconds {}
+
+.countDiv {
+	display:  inline-block;
+	width:    16px;
+	height:   1.8em;
+	position: relative;
+}
+
+.countDiv:before,
+.countDiv:after {
+	position:         absolute;
+	width:            5px;
+	height:           5px;
+	background-color: #444;
+	border-radius:    4px;
+	left:             50%;
+	margin-left:      -3px;
+	top:              0.5em;
+	content:          '';
+}
+
+.countDiv:after {
+	top: 0.9em;
+}
+
+.historyUL li {
+
+	margin-bottom: 5px;
+	padding: 5px 10px 5px 5px;
+	border-radius: 4px;
+	background: #eeeeee;
+}
+
+.radioEditIcons {
+	float: right;
+}
+
+.trackInfo {
+	display: none;
+}
+
+.radioSort {
+	padding: 10px;
+	background-color: #dcdcdc;
+	border-radius: 4px;
+}
+
+#activePlayList {
+	padding: 15px;
+	border: 2px dashed #cccccc;
+	border-radius: 4px;
+}
+#activePlayList:after {
+	color: #808080;
+}
+
+table.form tr td.min:last-child input[type="text"] {
+	width: 100px !important;
+	margin-right: 5px;
+}
+
+#historyLibrary {
+	display: none;
+}
+
+.radioTabs {
+	padding-left: 10px;
+	border-bottom: 2px solid #E8E8E8;
+	width:       100%;
+	text-indent: 5px;
+	padding:     6px 0;
+	margin:      20px 0 10px 0;
+	font-weight: normal;
+	font-size:   14px;
+	height: 16px;
+}
+.radioTabs ul {
+	padding: 0px;
+	margin: 0px;
+	list-style: none;
+	position: relative;
+}
+.radioTabs ul li {
+	display: inline-block;
+	float: left;
+	margin: 0px 2px;
+	padding: 0px 7px;
+	height: 17px;
+	border: 1px solid #cccccc;
+	border-radius:  4px;
+	cursor: pointer;
+	text-indent: 0;
+
+	color: #0B4388;
+	text-decoration: underline;
+}
+
+.selectedTab {
+	cursor: default !important;
+	color:           #000000 !important;
+	text-decoration: none !important;
+}
+
+.separator {
+	margin: 0px 2px 0px 0px;
+}
+.air {
+	color: #ffffff;
+	background: #87cefa;
+	padding: 0 5px 0 3px;
+	margin-left: 2px;
+	font-style: italic;
+	border-radius: 4px;
+
+}
+.siteView {
+	color:         #ffffff;
+	background:    #ffb6c1;
+	padding: 0 4px 0 3px;
+	margin-left: 2px;
+	font-style:    italic;
+	border-radius: 4px;
+}
+
+div .invalid-text {
+	color: red;
+}
+div .invalid-text:before {
+	font-size: 16px;
+	content: "⇩";
+}

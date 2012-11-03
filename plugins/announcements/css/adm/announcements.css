@@ -1,0 +1,30 @@
+#priorityValueView {
+    padding-left: 20px;
+    float: left;
+}
+#prioritySlider {
+    width: 94%;
+    float: left;
+}
+.announcementsTable {
+    width: 100%;
+}
+.announcementsTable tr:hover {
+    background-color: #fffbf4;
+}
+.announcementsTable td {
+    vertical-align: top;
+}
+.announcementsTable td:not( :nth-child( 2 ) ),
+.announcementsTable th:not( :nth-child( 2 ) ){
+    text-align: center;
+}
+.announcementsTable .inC {
+    text-align: center;
+}
+.eventDate {
+    padding-top: 7px;
+}
+.savePriorityButton {
+    display: none;
+}

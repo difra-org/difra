@@ -1,0 +1,18 @@
+<locale>
+	<rss>
+		<adm>
+			<settingsTitle>настройки</settingsTitle>
+			<onLine>RSS включен</onLine>
+			<title>Заголовок канала</title>
+			<link>Ссылка на сайт канала</link>
+			<desc>Краткое описание канала</desc>
+			<copyright>Авторские права на канал</copyright>
+			<ttl>TTL (время жизни rss в минутах)</ttl>
+			<size>Кол-во выводимых элементов</size>
+			<image>Логотип канала (файл /images/rssLogo.png)</image>
+			<save>Сохранить настройки</save>
+			<saved>Настройки rss сохранены</saved>
+			<cache>Кэшировать rss</cache>
+		</adm>
+	</rss>
+</locale>

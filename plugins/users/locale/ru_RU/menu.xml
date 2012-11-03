@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locale>
+	<menu>
+		<adm>
+			<menu_config>Настройки</menu_config>
+			<menu_config_users>Пользователи</menu_config_users>
+		</adm>
+	</menu>
+</locale>

@@ -1,0 +1,6 @@
+<menu>
+	<gallery href="">
+		<gallery href="/adm/gallery"/>
+		<gallery-settings href="/adm/gallery/config" sup="1"/>
+	</gallery>
+</menu>

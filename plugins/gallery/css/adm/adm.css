@@ -1,0 +1,8 @@
+.item-image {
+    padding: 5px;
+}
+.item-image .controls {
+    position: relative;
+    top: -28px;
+    left: 5px;
+}

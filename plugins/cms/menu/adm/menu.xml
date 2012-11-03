@@ -1,0 +1,7 @@
+<menu>
+	<content href="">
+		<cms href="/adm/cms"/>
+		<snippets href="/adm/cms/snippets"/>
+		<items href="/adm/cms/items"/>
+	</content>
+</menu>
