@@ -54,15 +54,14 @@ class MySQL {
 		}
 		try {
 			$this->db = @new \mysqli( 'p:' . ( isset( $this->config['hostname'] ) ?
-					      $this->config['hostname']
-					      : 'localhost' ),
+								     $this->config['hostname']
+								     : 'localhost' ),
 						  $this->config['username'], $this->config['password'], $this->config['database'] );
 			if( $this->db->connect_errno ) {
 				throw new Exception( 'Can\'t connect to MySQL: ' . $this->db->connect_error );
 			}
 		} catch( Exception $e ) {
-			header( "HTTP/1.1 500 Internal Server Error" );
-			die( '<center><h1 style="padding:350px 0 0 0">Database connection failed.</h1></center>' );
+			View::getInstance()->httpError( 500 );
 		}
 		$this->connected = true;
 		$this->db->set_charset( 'utf8' );
