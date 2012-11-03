@@ -1,0 +1,10 @@
+<locale>
+	<menu>
+		<adm>
+			<menu_content>Content management</menu_content>
+			<menu_content_cms>Pages</menu_content_cms>
+			<menu_content_snippets>Snippets</menu_content_snippets>
+			<menu_content_items>Menu</menu_content_items>
+		</adm>
+	</menu>
+</locale>

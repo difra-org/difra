@@ -1,0 +1,23 @@
+CREATE TABLE `announcements` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `user` int(11) NOT NULL,
+  `group` int(11) DEFAULT NULL,
+  `link` char(255) NOT NULL,
+  `title` text NOT NULL,
+  `description` text,
+  `shortDescription` text NOT NULL,
+  `eventDate` timestamp NULL DEFAULT NULL,
+  `beginDate` timestamp NULL DEFAULT NULL,
+  `endDate` timestamp NULL DEFAULT NULL,
+  `visible` tinyint(4) NOT NULL DEFAULT '1',
+  `priority` int(11) NOT NULL DEFAULT '50',
+  `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  PRIMARY KEY (`id`),
+  KEY `user_akey` (`user`),
+  KEY `group_key` (`group`),
+  KEY `priority_key` (`priority`),
+  KEY `link_key` (`link`),
+  KEY `visible_key` (`visible`) USING BTREE,
+  CONSTRAINT `group_afkey` FOREIGN KEY (`group`) REFERENCES `groups` (`id`) ON DELETE CASCADE,
+  CONSTRAINT `user_afkey` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

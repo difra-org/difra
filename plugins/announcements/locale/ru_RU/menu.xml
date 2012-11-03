@@ -1,0 +1,9 @@
+<locale>
+    <menu>
+        <adm>
+            <menu_announcements>Анонсы</menu_announcements>
+            <menu_announcements_announcements>Последние анонсы</menu_announcements_announcements>
+            <menu_announcements_settings>Настройки</menu_announcements_settings>
+        </adm>
+    </menu>
+</locale>

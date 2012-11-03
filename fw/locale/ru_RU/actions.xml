@@ -1,0 +1,18 @@
+<locale>
+	<adm>
+		<actions>
+			<title>Действия</title>
+			<view>Просмотр</view>
+			<edit>Редактировать</edit>
+			<delete>Удалить</delete>
+			<up>Вверх</up>
+			<down>Вниз</down>
+			<left>Влево</left>
+			<right>Вправо</right>
+			<add>Добавить</add>
+			<content>Содержимое</content>
+		</actions>
+		<save>Сохранить</save>
+		<cancel>Отмена</cancel>
+	</adm>
+</locale>

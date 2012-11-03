@@ -1,0 +1,42 @@
+<locale>
+	<cdn>
+		<adm>
+			<hostsTitle>хосты</hostsTitle>
+			<addTitle>добавление хоста</addTitle>
+			<settingsTitle>общие настройки</settingsTitle>
+			<host>Хост</host>
+			<lastChecked>Последняя проверка</lastChecked>
+			<lastError>Последняя ошибка</lastError>
+			<lastSelected>Последний выбор</lastSelected>
+			<actions>Действия</actions>
+			<checkThis>Проверить</checkThis>
+			<addHost>Добавить хост</addHost>
+			<saveHost>Сохранить изменения</saveHost>
+			<saveSettings>Сохранить настройки</saveSettings>
+			<cacheTime>Время кэширования имени выбранного хоста (в минутах)</cacheTime>
+			<hostTimeOut>Timeout проверки хоста (в секундах)</hostTimeOut>
+			<basicSettings>Основные настройки</basicSettings>
+			<filterSettings>Фильтрация хостов</filterSettings>
+			<failTime>Минимальное время failed хоста (в минутах)</failTime>
+			<selectTime>Кол-во часов в фильтре выбора хоста</selectTime>
+			<forms>
+				<host>Хост:</host>
+				<port>Порт:</port>
+			</forms>
+			<legend>
+				<ok>— прошел проверку</ok>
+				<fail>— хост не рабочий</fail>
+				<noTest>— хост еще не проверялся</noTest>
+				<busy>— хост сильно загружен</busy>
+			</legend>
+			<close>Закрыть</close>
+			<notify>
+				<noHost>Хоста нет в базе данных</noHost>
+				<added>Хост добавлен</added>
+				<duplicated>Такой хост уже есть в базе данных</duplicated>
+				<saved>Изменения сохранены</saved>
+				<settingSaved>Настройки сохранены</settingSaved>
+			</notify>
+		</adm>
+	</cdn>
+</locale>

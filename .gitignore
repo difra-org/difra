@@ -1,0 +1,7 @@
+/.AppleDouble
+bin/.AppleDouble
+plugins/.AppleDouble
+sites/.AppleDouble
+sites/default/data/*
+tests/htdocs/*
+tests/results/*

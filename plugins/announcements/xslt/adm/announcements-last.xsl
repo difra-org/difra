@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
+
+    <xsl:template match="announcementsLast">
+
+        <h2>
+            <a href="/adm/announcements/">
+                <xsl:value-of select="$locale/announcements/adm/announcements"/>
+            </a>
+            <xsl:text> → </xsl:text>
+            <xsl:value-of select="$locale/announcements/adm/last"/>
+        </h2>
+
+        <a href="/adm/announcements/add/" class="button"><xsl:value-of select="$locale/announcements/adm/addEvent"/></a>
+
+        <h3><xsl:value-of select="$locale/announcements/adm/nextEvents"/></h3>
+        <table class="announcementsTable">
+            <tr>
+                <th></th>
+                <th><xsl:value-of select="$locale/announcements/adm/event_desc"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/event_dates"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/users_groups"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/priority"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/actions"/></th>
+            </tr>
+            <xsl:for-each select="announcements/event[not(status='past')]">
+                <tr>
+                    <td><xsl:value-of select="position()"/></td>
+                    <td>
+
+                        <xsl:variable name="statusText" select="status"/>
+
+                        <strong>
+                            <xsl:value-of select="title"/>
+                        </strong>
+                        <div class="eventDate">
+                            <xsl:value-of select="$locale/announcements/adm/eventWillHappen"/>
+                            <xsl:choose>
+                                <xsl:when test="status='inFuture'">
+                                    <xsl:value-of select="$locale/announcements/adm/status/willBeIn"/>
+                                    <xsl:text>&#160;</xsl:text>
+                                    <xsl:call-template name="declension">
+                                        <xsl:with-param name="number" select="statusInDays"/>
+                                        <xsl:with-param name="dec_node_name" select="string('days')"/>
+                                    </xsl:call-template>
+                                    <xsl:text> (</xsl:text>
+                                    <xsl:value-of select="eventDate"/>
+                                    <xsl:text>)</xsl:text>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="$locale/announcements/adm/status/*[name()=$statusText]"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </div>
+                        <div class="small gray">
+                            <xsl:value-of select="shortDescription" disable-output-escaping="yes"/>
+                        </div>
+                    </td>
+                    <td>
+                        <xsl:value-of select="$locale/announcements/adm/from"/>
+                        <xsl:text>&#160;</xsl:text>
+                        <xsl:value-of select="beginDate"/>
+                        <xsl:text>&#160;</xsl:text>
+                        <xsl:value-of select="$locale/announcements/adm/to"/>
+                        <xsl:text>&#160;</xsl:text>
+                        <xsl:value-of select="endDate"/>
+                    </td>
+                    <td>
+                        <a href="/adm/users/edit/{user}/">
+                            <xsl:choose>
+                                <xsl:when test="not(userData/@nickname='')">
+                                    <xsl:value-of select="userData/@nickname"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="userData/@email"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </a>
+                        <xsl:if test="groupData">
+                            <xsl:text> / </xsl:text>
+                            <xsl:choose>
+                                <xsl:when test="not(group=1)">
+                                    <a href="http://{groupData/@domain}.{/root/@hostname}">
+                                        <xsl:value-of select="groupData/@name"/>
+                                    </a>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="groupData/@name"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:if>
+                    </td>
+                    <td>
+                        <div id="priorityValueView-{id}">
+                            <xsl:value-of select="priority"/>
+                        </div>
+                        <input type="hidden" id="priorityValue-{id}" value="{priority}"/>
+                        <div id="prioritySlider-{id}"></div>
+                        <div class="savePriorityButton" id="savePriorityButton-{id}">
+                            <input type="button" value="{$locale/adm/save}" onclick="announcementsUI.savePriority( {id} );"/>
+                        </div>
+
+                        <xsl:if test="visible=0">
+                            <div style="color: #e9967a;">
+                                <xsl:value-of select="$locale/announcements/adm/notVisible"/>
+                            </div>
+                        </xsl:if>
+                    </td>
+                    <td>
+                        <a href="/adm/announcements/edit/{id}/" class="action edit"></a>
+                        <a href="#" class="action down" onclick="announcementsUI.getPrioritySlider({id}, {priority});"></a>
+                        <a href="/adm/announcements/delete/{id}/" class="action delete"></a>
+                    </td>
+                </tr>
+            </xsl:for-each>
+        </table>
+
+        <!-- ==================================================================================================================== -->
+
+        <h3>
+            <xsl:value-of select="$locale/announcements/adm/pastEvents"/>
+        </h3>
+
+        <table class="announcementsTable">
+            <tr>
+                <th></th>
+                <th><xsl:value-of select="$locale/announcements/adm/event_desc"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/event_dates_past"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/users_groups"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/priority"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/actions"/></th>
+            </tr>
+            <xsl:for-each select="announcements/event[status='past']">
+                <tr>
+                    <td>
+                        <xsl:value-of select="position()"/>
+                    </td>
+                    <td>
+
+                        <xsl:variable name="statusText" select="status"/>
+
+                        <strong>
+                            <xsl:value-of select="title"/>
+                        </strong>
+                        <div class="eventDate">
+                            <xsl:value-of select="$locale/announcements/adm/eventInPastHappen"/>
+                            <xsl:text> (</xsl:text>
+                            <xsl:value-of select="eventDate"/>
+                            <xsl:text>)</xsl:text>
+                        </div>
+                        <div class="small gray">
+                            <xsl:value-of select="shortDescription" disable-output-escaping="yes"/>
+                        </div>
+                    </td>
+                    <td>
+                        <xsl:value-of select="$locale/announcements/adm/from"/>
+                        <xsl:text>&#160;</xsl:text>
+                        <xsl:value-of select="beginDate"/>
+                        <xsl:text>&#160;</xsl:text>
+                        <xsl:value-of select="$locale/announcements/adm/to"/>
+                        <xsl:text>&#160;</xsl:text>
+                        <xsl:value-of select="endDate"/>
+                    </td>
+                    <td>
+                        <a href="/adm/users/edit/{user}/">
+                            <xsl:choose>
+                                <xsl:when test="not(userData/@nickname='')">
+                                    <xsl:value-of select="userData/@nickname"/>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="userData/@email"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </a>
+                        <xsl:if test="groupData">
+                            <xsl:text> / </xsl:text>
+                            <xsl:choose>
+                                <xsl:when test="not(group=1)">
+                                    <a href="http://{groupData/@domain}.{/root/@hostname}">
+                                        <xsl:value-of select="groupData/@name"/>
+                                    </a>
+                                </xsl:when>
+                                <xsl:otherwise>
+                                    <xsl:value-of select="groupData/@name"/>
+                                </xsl:otherwise>
+                            </xsl:choose>
+                        </xsl:if>
+                    </td>
+                    <td>
+                        <div id="priorityValueView-{id}">
+                            <xsl:value-of select="priority"/>
+                        </div>
+                        <input type="hidden" id="priorityValue-{id}" value="{priority}"/>
+                        <div id="prioritySlider-{id}"></div>
+                        <div class="savePriorityButton" id="savePriorityButton-{id}">
+                            <input type="button" value="{$locale/adm/save}" onclick="announcementsUI.savePriority( {id} );"/>
+                        </div>
+                        <xsl:if test="visible=0">
+                            <div style="color: #e9967a;">
+                                <xsl:value-of select="$locale/announcements/adm/notVisible"/>
+                            </div>
+                        </xsl:if>
+                    </td>
+                    <td>
+                        <a href="/adm/announcements/edit/{id}/" class="action edit"></a>
+                        <a href="#" class="action down" onclick="announcementsUI.getPrioritySlider({id}, {priority});"></a>
+                        <a href="/adm/announcements/delete/{id}/" class="action delete"></a>
+                    </td>
+                </tr>
+            </xsl:for-each>
+        </table>
+
+    </xsl:template>
+</xsl:stylesheet>

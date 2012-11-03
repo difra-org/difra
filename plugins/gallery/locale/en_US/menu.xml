@@ -1,0 +1,9 @@
+<locale>
+	<menu>
+		<adm>
+			<menu_gallery>Photo galleries</menu_gallery>
+			<menu_gallery_gallery>Albums</menu_gallery_gallery>
+			<menu_gallery_gallery-settings>Settings</menu_gallery_gallery-settings>
+		</adm>
+	</menu>
+</locale>

@@ -1,0 +1,15 @@
+html,
+body {
+	padding: 0;
+	margin: 0;
+	width: auto;
+	height: auto;
+	min-width: 0;
+	max-width: none;
+	min-height: 0;
+	max-height: none;
+}
+
+body {
+	padding: 0 10px;
+}

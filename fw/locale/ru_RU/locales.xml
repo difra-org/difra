@@ -1,0 +1,13 @@
+<locale>
+	<adm>
+		<locales>
+			<title>Локалицация</title>
+			<locale>Язык</locale>
+			<module>Модуль</module>
+			<info>Информация</info>
+			<localized>Локализовано</localized>
+			<unused-lines>Лишних строк</unused-lines>
+			<missing-lines>Не хватает строк</missing-lines>
+		</locales>
+	</adm>
+</locale>
