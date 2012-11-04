@@ -1,0 +1,15 @@
+/**
+*
+*	Конфигурация сборки jquery UI
+*
+**/
+
+Core
+Widget
+Mouse
+Position
+
+Sortable
+
+Slider
+Datepicker

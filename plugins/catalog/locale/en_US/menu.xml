@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locale>
+	<menu>
+		<adm>
+			<menu_catalog>Catalog</menu_catalog>
+			<menu_catalog_items>Catalog contents</menu_catalog_items>
+			<menu_catalog_ext>Extended fields</menu_catalog_ext>
+			<menu_catalog_config>Settings</menu_catalog_config>
+		</adm>
+	</menu>
+</locale>

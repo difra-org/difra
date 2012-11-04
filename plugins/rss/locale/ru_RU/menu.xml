@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locale>
+	<menu>
+		<adm>
+			<menu_rss>RSS</menu_rss>
+			<menu_rss_settings>Настройки канала</menu_rss_settings>
+		</adm>
+	</menu>
+</locale>

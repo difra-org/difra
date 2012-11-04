@@ -1,0 +1,356 @@
+<?php
+
+namespace Difra\Plugins\CMS;
+
+class Page {
+
+	private $id = null;
+	private $title = '';
+	private $uri = '';
+	private $body = '';
+	private $hidden = 0;
+
+	private $modified = false;
+	private $loaded = true;
+
+	/**
+	 * деструктор
+	 */
+	public function __destruct() {
+
+		// сохранение изменений
+		if( $this->modified and $this->loaded ) {
+			$this->save();
+		}
+	}
+
+	/**
+	 * Создание новой страницы
+	 * @static
+	 * @return Page
+	 */
+	public static function create() {
+
+		return new self;
+	}
+
+	/**
+	 * Получение страницы по id
+	 *
+	 * @static
+	 *
+	 * @param int $id
+	 *
+	 * @return Page
+	 */
+	public static function get( $id ) {
+
+		$page         = new self;
+		$page->id     = $id;
+		$page->loaded = false;
+		return $page;
+	}
+
+	/**
+	 * Получение списка страниц
+	 * @static
+	 *
+	 * @param bool|null $visible        Фильтр по видимости
+	 *
+	 * @return self[]|bool
+	 */
+	public static function getList( $visible = null ) {
+
+		$where = array();
+		if( !is_null( $visible ) ) {
+			$where[] = '`hidden`=' . ( $visible ? '0' : '1' );
+		}
+		try {
+			$db   = \Difra\MySQL::getInstance();
+			$data =
+				$db->fetch( 'SELECT * FROM `cms`' . (
+				!empty( $where ) ? ' WHERE ' . implode( ' AND ', $where ) : '' )
+					    . ' ORDER BY `tag`' );
+			if( !is_array( $data ) or empty( $data ) ) {
+				return false;
+			}
+			$res   = array();
+			$cache = \Difra\Cache::getInstance();
+			foreach( $data as $pageData ) {
+				$cache->put( 'cms_page_' . $pageData['id'], $pageData );
+				$page         = new self;
+				$page->id     = $pageData['id'];
+				$page->title  = $pageData['title'];
+				$page->uri    = $pageData['tag'];
+				$page->body   = $pageData['body'];
+				$page->hidden = $pageData['hidden'];
+				$page->loaded = true;
+				$res[]        = $page;
+			}
+			return $res;
+		} catch( \Exception $e ) {
+			return false;
+		}
+	}
+
+	/**
+	 * Определяет, соответствует ли какая-либо страница текущему URL
+	 *
+	 * @static
+	 * @return int|bool
+	 */
+	public static function find() {
+
+		$uri   = '/' . \Difra\Action::getInstance()->getUri();
+		$cache = \Difra\Cache::getInstance();
+		if( !$data = $cache->get( 'cms_tags' ) ) {
+			$db    = \Difra\MySQL::getInstance();
+			$data1 = $db->fetch( 'SELECT `id`,`tag` FROM `cms` WHERE `hidden`=0' );
+			$data  = array();
+			if( !empty( $data1 ) ) {
+				foreach( $data1 as $v ) {
+					$data[$v['tag']] = $v['id'];
+				}
+			}
+			$cache->put( 'cms_tags', $data );
+		}
+		return isset( $data[$uri] ) ? $data[$uri] : false;
+	}
+
+	public static function cleanCache() {
+
+		\Difra\Cache::getInstance()->remove( 'cms_tags' );
+	}
+
+	/**
+	 * Загрузка данных
+	 * @return bool
+	 */
+	private function load() {
+
+		if( $this->loaded ) {
+			return true;
+		}
+		if( !$this->id ) {
+			return false;
+		}
+		$cache = \Difra\Cache::getInstance();
+		if( !$data = $cache->get( 'cms_page_' . $this->id ) ) {
+			$db   = \Difra\MySQL::getInstance();
+			$data = $db->fetchRow( "SELECT * FROM `cms` WHERE `id`='" . $db->escape( $this->id ) . "'" );
+			$cache->put( 'cms_page_' . $this->id, $data );
+		}
+		if( !$data ) {
+			return false;
+		}
+		$this->title  = $data['title'];
+		$this->uri    = $data['tag'];
+		$this->body   = $data['body'];
+		$this->hidden = $data['hidden'];
+		$this->loaded = true;
+		return true;
+	}
+
+	/**
+	 * Возвращает id страницы
+	 *
+	 * @return int
+	 */
+	public function getId() {
+
+		if( !$this->id ) {
+			$this->save();
+		}
+		return $this->id;
+	}
+
+	/**
+	 * Изменение заголовка страницы
+	 * @param string $title
+	 */
+	public function setTitle( $title ) {
+
+		$this->load();
+		if( $title == $this->title ) {
+			return;
+		}
+		$this->title    = $title;
+		$this->modified = true;
+	}
+
+	/**
+	 * Получение заголовка страницы
+	 * @return string
+	 */
+	public function getTitle() {
+
+		$this->load();
+		return $this->title;
+	}
+
+	/**
+	 * Изменение содержимого страницы
+	 * @param \Difra\Param\AjaxHTML|\Difra\Param\AjaxSafeHTML|string $body
+	 *
+	 * @throws \Difra\Exception
+	 */
+	public function setBody( $body ) {
+
+		$this->load();
+		if( $body instanceof \Difra\Param\AjaxHTML or $body instanceof \Difra\Param\AjaxSafeHTML ) {
+			if( !$this->id ) {
+				$this->save();
+			}
+			if( $body->val( true ) == $this->body ) {
+				return;
+			}
+			$body->saveImages( DIR_DATA . 'cms/img/' . $this->id, '/i/' . $this->id );
+			$this->body = $body->val();
+		} else {
+			if( $body == $this->body ) {
+				return;
+			}
+			$this->body = $body;
+		}
+		$this->modified = true;
+	}
+
+	/**
+	 * Получение содержимого страницы
+	 * @return string
+	 */
+	public function getBody() {
+
+		$this->load();
+		return $this->body;
+	}
+
+	/**
+	 * Устанавливает URI страницы
+	 *
+	 * @param string $uri
+	 */
+	public function setUri( $uri ) {
+
+		$this->load();
+		if( !strlen( $uri ) or $uri{0} != '/' ) {
+			$uri = '/' . $uri;
+		}
+		if( $uri == $this->uri ) {
+			return;
+		}
+		$this->uri      = $uri;
+		$this->modified = true;
+	}
+
+	/**
+	 * Возвращает URI страницы
+	 *
+	 * @return string
+	 */
+	public function getUri() {
+
+		$this->load();
+		return $this->uri;
+	}
+
+	/**
+	 * Сохранение данных
+	 */
+	private function save() {
+
+		$db = \Difra\MySQL::getInstance();
+		if( !$this->id ) {
+			$db->query( 'INSERT INTO `cms` SET '
+				    . "`title`='" . $db->escape( $this->title ) . "',"
+				    . "`tag`='" . $db->escape( $this->uri ) . "',"
+				    . "`body`='" . $db->escape( $this->body ) . "',"
+				    . "`hidden`='" . ( $this->hidden ? '1' : '0' ) . "'"
+			);
+			$this->id = $db->getLastId();
+		} else {
+			$db->query( 'UPDATE `cms` SET '
+				    . "`title`='" . $db->escape( $this->title ) . "',"
+				    . "`tag`='" . $db->escape( $this->uri ) . "',"
+				    . "`body`='" . $db->escape( $this->body ) . "',"
+				    . "`hidden`='" . ( $this->hidden ? '1' : '0' ) . "'"
+				    . " WHERE `id`='" . $db->escape( $this->id ) . "'"
+			);
+			\Difra\Cache::getInstance()->remove( 'cms_page_' . $this->id );
+		}
+		$this->modified = false;
+		self::cleanCache();
+	}
+
+	/**
+	 * Установка значения флага hidden
+	 *
+	 * @param bool|int $hidden
+	 */
+	public function setHidden( $hidden ) {
+
+		$this->load();
+		$hidden = $hidden ? '1' : '0';
+		if( $hidden == $this->hidden ) {
+			return;
+		}
+		$this->hidden   = $hidden;
+		$this->modified = true;
+	}
+
+	/**
+	 * Возвращает значение флага hidden
+	 *
+	 * @return int
+	 */
+	public function getHidden() {
+
+		$this->load();
+		return $this->hidden;
+	}
+
+	/**
+	 * Возвращает данные в XML
+	 *
+	 * @param \DOMElement|\DOMNode $node
+	 *
+	 * @return bool
+	 */
+	public function getXML( $node ) {
+
+		if( !$this->load() ) {
+			return false;
+		}
+		$node->setAttribute( 'id', $this->id );
+		$node->setAttribute( 'title', $this->title );
+		$node->setAttribute( 'uri', $this->uri );
+		$node->setAttribute( 'body', $this->body );
+		$node->setAttribute( 'hidden', $this->hidden );
+		return true;
+	}
+
+	/**
+	 * Удаление страницы
+	 */
+	public function delete() {
+
+		$this->loaded   = true;
+		$this->modified = false;
+		if( $this->id ) {
+			$path = DIR_DATA . 'cms/img/' . $this->id;
+			if( is_dir( $path ) ) {
+				$dir = opendir( $path );
+				while( false !== ( $file = readdir( $dir ) ) ) {
+					if( $file{0} == '.' ) {
+						continue;
+					}
+					@unlink( "$path/$file" );
+				}
+				rmdir( $path );
+			}
+		}
+		$db = \Difra\MySQL::getInstance();
+		$db->query( "DELETE FROM `cms` WHERE `id`='" . $db->escape( $this->id ) . "'" );
+		self::cleanCache();
+	}
+}

@@ -1,0 +1,7 @@
+<menu>
+	<catalog href="">
+		<items href="/adm/catalog/categories"/>
+		<ext href="/adm/catalog/ext"/>
+		<config href="/adm/catalog/config" sup="1"/>
+	</catalog>
+</menu>

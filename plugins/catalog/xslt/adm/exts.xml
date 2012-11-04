@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
+	<xsl:template match="CatalogExtList">
+		<h2>
+			<xsl:value-of select="$locale/catalog/adm/ext/title"/>
+		</h2>
+		<a href="/adm/catalog/ext/add" class="button">
+			<xsl:value-of select="$locale/catalog/adm/ext/new"/>
+		</a>
+		<h3>
+			<xsl:value-of select="$locale/catalog/adm/ext/title-list"/>
+		</h3>
+		<xsl:choose>
+			<xsl:when test="ext">
+				<table>
+					<thead>
+						<tr>
+							<th>
+								<xsl:value-of select="$locale/catalog/adm/ext/name"/>
+							</th>
+							<th>
+								<xsl:value-of select="$locale/catalog/adm/ext/flags"/>
+							</th>
+							<th>
+								<xsl:value-of select="$locale/catalog/adm/ext/actions"/>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<xsl:for-each select="ext">
+							<tr>
+								<xsl:attribute name="id">
+									<xsl:text>ext_</xsl:text>
+									<xsl:value-of select="position()"/>
+								</xsl:attribute>
+								<td>
+									<xsl:value-of select="@name"/>
+								</td>
+								<td>
+									<xsl:if test="@visible=0">
+										<xsl:value-of select="$locale/catalog/adm/ext/hidden"/>
+										<xsl:text> </xsl:text>
+									</xsl:if>
+									<xsl:choose>
+										<xsl:when test="@set=1">
+											<xsl:value-of select="$locale/catalog/adm/ext/set-1"/>
+										</xsl:when>
+										<xsl:when test="@set=2">
+											<xsl:value-of select="$locale/catalog/adm/ext/set-2"/>
+										</xsl:when>
+									</xsl:choose>
+								</td>
+								<td>
+									<a href="/adm/catalog/ext/edit/{@id}" class="action edit">
+										<xsl:value-of select="$locale/actions/edit"/>
+									</a>
+									<a>
+										<xsl:choose>
+											<xsl:when test="@set>0">
+												<xsl:attribute name="class">action</xsl:attribute>
+												<xsl:attribute name="href">
+													<xsl:text>/adm/catalog/ext/values/</xsl:text>
+													<xsl:value-of select="@id"/>
+												</xsl:attribute>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:attribute name="class">action disabled</xsl:attribute>
+												<xsl:attribute name="href">
+													<xsl:text>#</xsl:text>
+												</xsl:attribute>
+											</xsl:otherwise>
+										</xsl:choose>
+										<xsl:value-of select="$locale/adm/actions/content"/>
+									</a>
+									<a href="/adm/catalog/ext/up/{@id}">
+										<xsl:choose>
+											<xsl:when test="position()=1">
+												<xsl:attribute name="class">action up disabled ajaxer</xsl:attribute>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:attribute name="class">action up ajaxer</xsl:attribute>
+												<xsl:attribute name="onmouseover">
+													<xsl:text>$('#ext_</xsl:text>
+													<xsl:value-of select="position()-1"/>
+													<xsl:text>').addClass('moveUpHighlight')</xsl:text>
+												</xsl:attribute>
+												<xsl:attribute name="onmouseout">
+													<xsl:text>$('#ext_</xsl:text>
+													<xsl:value-of select="position()-1"/>
+													<xsl:text>').removeClass('moveUpHighlight')</xsl:text>
+												</xsl:attribute>
+											</xsl:otherwise>
+										</xsl:choose>
+										<xsl:value-of select="$locale/actions/up"/>
+									</a>
+									<a href="/adm/catalog/ext/down/{@id}">
+										<xsl:choose>
+											<xsl:when test="position()=last()">
+												<xsl:attribute name="class">action down disabled ajaxer</xsl:attribute>
+											</xsl:when>
+											<xsl:otherwise>
+												<xsl:attribute name="class">action down ajaxer</xsl:attribute>
+												<xsl:attribute name="onmouseover">
+													<xsl:text>$('#ext_</xsl:text>
+													<xsl:value-of select="position()+1"/>
+													<xsl:text>').addClass('moveDownHighlight')</xsl:text>
+												</xsl:attribute>
+												<xsl:attribute name="onmouseout">
+													<xsl:text>$('#ext_</xsl:text>
+													<xsl:value-of select="position()+1"/>
+													<xsl:text>').removeClass('moveDownHighlight')</xsl:text>
+												</xsl:attribute>
+											</xsl:otherwise>
+										</xsl:choose>
+										<xsl:value-of select="$locale/actions/down"/>
+									</a>
+									<a href="/adm/catalog/ext/delete/{@id}"
+									   class="action delete ajaxer">
+										<xsl:value-of select="$locale/actions/delete"/>
+									</a>
+								</td>
+							</tr>
+						</xsl:for-each>
+					</tbody>
+				</table>
+			</xsl:when>
+			<xsl:otherwise>
+				<span class="message">
+					<xsl:value-of select="$locale/catalog/adm/ext/no-list"/>
+				</span>
+			</xsl:otherwise>
+		</xsl:choose>
+	</xsl:template>
+</xsl:stylesheet>

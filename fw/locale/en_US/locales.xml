@@ -1,0 +1,13 @@
+<locale>
+	<adm>
+		<locales>
+			<title>Locales</title>
+			<locale>Locale</locale>
+			<module>Module</module>
+			<info>Info</info>
+			<localized>Localized</localized>
+			<unused-lines>Unused lines</unused-lines>
+			<missing-lines>Missing lines</missing-lines>
+		</locales>
+	</adm>
+</locale>

@@ -1,0 +1,106 @@
+<locale>
+	<catalog>
+		<adm>
+			<title-categories>Содержимое каталога</title-categories>
+			<title-categories-list>Список категорий</title-categories-list>
+			<options>Праметры</options>
+			<name>Название</name>
+			<actions>Действия</actions>
+			<no-categories>В каталоге ещё нет категорий.</no-categories>
+			<category-add>Добавить категорию</category-add>
+
+			<title-categories-add>Добавление категории</title-categories-add>
+			<title-categories-edit>Редактирование категории</title-categories-edit>
+			<parent-category>Родительская категория</parent-category>
+			<catalog-root>Корень каталога</catalog-root>
+			<save>Сохранить</save>
+
+			<category-delete-confirm-1>Вы действительно хотите удалить категорию «</category-delete-confirm-1>
+			<category-delete-confirm-2>»?</category-delete-confirm-2>
+			
+			<title-items>Элементы каталога</title-items>
+			<title-items-list>Список элементов каталога</title-items-list>
+			<title-filter-items>Фильтр по категориям</title-filter-items>
+			<title-item-add>Добавление элемента</title-item-add>
+			<title-item-edit>Редактирование элемента</title-item-edit>
+			<no-items>В этом разделе нет ни одного элемента.</no-items>
+			<new>Добавить элемент</new>
+			<category>Категория</category>
+			<item>
+				<options>Основные праметры</options>
+				<exts>Дополнительные поля</exts>
+				<name>Название</name>
+				<price>Цена</price>
+				<description>Описание</description>
+				<visible>Отображать в каталоге</visible>
+				<invisible>Скрытый</invisible>
+				<main-image>Главное изображение</main-image>
+				<more-images>Дополнительные изображения</more-images>
+				<add-image>Добавить изображение</add-image>
+				<flags>Флаги</flags>
+			</item>
+			<images>
+				<title>Изображения</title>
+				<main>Основное изображение</main>
+				<setmain>Сделать основным</setmain>
+				<delete>Удалить</delete>
+				<no-file>Нужно выбрать файл изображения.</no-file>
+			</images>
+			<ext>
+				<title>Дополнительные поля</title>
+				<title-list>Список</title-list>
+				<no-list>В этом проекте нет дополнительных полей.</no-list>
+				<options>Основные праметры</options>
+				<new>Добавить поле</new>
+
+				<title-add>Добавление нового поля</title-add>
+				<title-edit>Редактирование поля</title-edit>
+				<name>Название</name>
+				<type>Тип поля</type>
+				<flags>Флаги</flags>
+				<actions>Действия</actions>
+				<save>Сохранить</save>
+
+				<not-set>Произвольное значение</not-set>
+				<is-set>Фиксированный набор значений</is-set>
+				<set-with-images>Фиксированный набор с картинками</set-with-images>
+
+				<warning12>После сохранения изменений нужно будет добавить картинки ко всем значениям.</warning12>
+				<warning21>Картинки всех значений данного набора будут удалены.</warning21>
+				<warning20>Из этого набора будут удалены все значения и картинки.</warning20>
+				<warning10>Из этого набора будут удалены все значения.</warning10>
+
+				<hidden>Скрытый</hidden>
+				<set-1>Набор</set-1>
+				<set-2>Набор с иллюстрациями</set-2>
+
+				<delete-confirm-1>Действительно удалить дополнительное поле «</delete-confirm-1>
+				<delete-confirm-2>»?&lt;br/&gt;Оно будет также удалено из всех описаний элементов
+					каталога.</delete-confirm-2>
+
+				<title-values>Набор значений</title-values>
+				<title-values-list>Список значений</title-values-list>
+				<values-empty>В этом наборе значений ещё нет ни одного элемента.</values-empty>
+				<value-new>Добавить значение</value-new>
+				<value-new-title>Добавление значения</value-new-title>
+				<value-edit-title>Редактирование значения</value-edit-title>
+				<value-name>Значение</value-name>
+				<value-image>Иллюстрация</value-image>
+
+				<bad-image>Файл не является изображением или такой тип изображений не поддерживается.</bad-image>
+			</ext>
+			<config>
+				<title>Настройки</title>
+				<title-secondary>Основные параметры</title-secondary>
+				<maxdepth>Максимальная вложенность категорий каталога</maxdepth>
+				<perpage>Количество элементов на страницу</perpage>
+				<hide-empty-categories>Скрывать пустые категории</hide-empty-categories>
+				<image-settings>Параметры изображений</image-settings>
+				<image-sizes>Размеры изображений</image-sizes>
+				<image-sizes-info>По одному размеру на строку в формате «суффикс ширина высота», например: «s 200 150». Суффикс «f» зарезервирован.</image-sizes-info>
+
+				<saved>Настройки сохранены.</saved>
+			</config>
+		</adm>
+	</catalog>
+</locale>

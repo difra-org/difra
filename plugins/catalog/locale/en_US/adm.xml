@@ -1,0 +1,107 @@
+<locale>
+	<catalog>
+		<adm>
+			<title-categories>Catalog contents</title-categories>
+			<title-categories-list>Catalog categories</title-categories-list>
+			<options>Options</options>
+			<name>Name</name>
+			<actions>Actions</actions>
+			<no-categories>There are no categories in catalog now.</no-categories>
+			<category-add>Add category</category-add>
+
+			<title-categories-add>Add category</title-categories-add>
+			<title-categories-edit>Edit category</title-categories-edit>
+			<parent-category>Parent category</parent-category>
+			<catalog-root>Catalog root</catalog-root>
+			<save>Save</save>
+
+			<category-delete-confirm-1>Are you sure you want to delete category “</category-delete-confirm-1>
+			<category-delete-confirm-2>”?</category-delete-confirm-2>
+			
+			<title-items>Catalog items</title-items>
+			<title-items-list>Catalog items list</title-items-list>
+			<title-filter-items>Category selection</title-filter-items>
+			<title-item-add>Add item</title-item-add>
+			<title-item-edit>Edit item</title-item-edit>
+			<no-items>There are no items in this category now.</no-items>
+			<new>Add item</new>
+			<category>Category</category>
+			<item>
+				<options>Main fields</options>
+				<exts>Extended fields</exts>
+				<name>Name</name>
+				<price>Price</price>
+				<description>Description</description>
+				<visible>Show in catalog</visible>
+				<invisible>Hidden</invisible>
+				<main-image>Main image</main-image>
+				<more-images>More images</more-images>
+				<add-image>Add image</add-image>
+				<flags>Options</flags>
+			</item>
+			<images>
+				<title>Images</title>
+				<main>Main image</main>
+				<setmain>Set as main</setmain>
+				<delete>Delete</delete>
+				<no-file>Please select image file.</no-file>
+			</images>
+			<ext>
+				<title>Extended fields</title>
+				<title-list>List</title-list>
+				<no-list>There are no extended fields now.</no-list>
+				<options>Options</options>
+				<new>Add field</new>
+
+				<title-add>Add field</title-add>
+				<title-edit>Edit field</title-edit>
+
+				<name>Name</name>
+				<type>Type</type>
+				<flags>Options</flags>
+				<actions>Actions</actions>
+				<save>Save</save>
+
+				<not-set>Any value</not-set>
+				<is-set>Values list</is-set>
+				<set-with-images>Values list with images</set-with-images>
+
+				<warning12>You should add images to all values after this change.</warning12>
+				<warning21>All images will be deleted from values list.</warning21>
+				<warning20>Values list and images will be deleted.</warning20>
+				<warning10>Values list will be deleted.</warning10>
+
+				<hidden>Hidden</hidden>
+				<set-1>Values list</set-1>
+				<set-2>Values list (with images)</set-2>
+
+				<delete-confirm-1>Are you sure you want to delete extended field “</delete-confirm-1>
+				<delete-confirm-2>”?&lt;br/&gt;It will be deleted from all items in the catalog.</delete-confirm-2>
+
+				<title-values>Values list</title-values>
+				<title-values-list>List</title-values-list>
+				<values-empty>There are no values in this list.</values-empty>
+				<value-new>Add value</value-new>
+				<value-new-title>Add value</value-new-title>
+				<value-edit-title>Edit value</value-edit-title>
+				<value-name>Value</value-name>
+				<value-image>Image</value-image>
+
+				<bad-image>This file is not an image, or this image type is not supported.</bad-image>
+			</ext>
+			<config>
+				<title>Settings</title>
+				<title-secondary>General settings</title-secondary>
+				<maxdepth>Maximum catalog categories depth</maxdepth>
+				<perpage>Items per page to view</perpage>
+				<hide-empty-categories>Hide empty categories</hide-empty-categories>
+				<image-settings>Images settings</image-settings>
+				<image-sizes>Image sizes</image-sizes>
+				<image-sizes-info>One size per line. Syntaxis «suffix with height», e.g.: «s 200 150». Suffix «f»
+					is reserved.</image-sizes-info>
+
+				<saved>Settings saved.</saved>
+			</config>
+		</adm>
+	</catalog>
+</locale>

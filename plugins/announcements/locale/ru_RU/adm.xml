@@ -1,0 +1,74 @@
+<locale>
+    <announcements>
+        <adm>
+            <announcements>Анонсы</announcements>
+            <settings>настройки</settings>
+            <onoff>Плагин анонсов включен</onoff>
+            <maxPerUser>Максимальное кол-во анонсов для пользователя</maxPerUser>
+            <maxPerGroup>Максимальное кол-во анонсов для группы</maxPerGroup>
+            <imageSize>Максимальный размер картинки анонса</imageSize>
+            <width>Ширина:</width>
+            <height>Высота:</height>
+            <zeroValueHint>Значение равное '0' будет означать отсутствие ограничений.</zeroValueHint>
+            <settingsSaved>Настройки сохранены</settingsSaved>
+            <last>последние</last>
+            <addEvent>Добавить анонс события</addEvent>
+            <add>добавление нового события</add>
+            <edit>редактирование анонса</edit>
+            <nextEvents>Ближайшие события:</nextEvents>
+            <eventWillHappen>Событие произойдёт </eventWillHappen>
+            <from>с</from>
+            <to>по</to>
+            <notify>
+                <createError>Во время создания анонса события возникла ошибка.</createError>
+                <goodCreate>Анонс события создан. Это радость.</goodCreate>
+                <dataDirError>Директория для хранения картинок не существует или не доступна на запись.</dataDirError>
+                <prioritySet>Приоритет анонса события установлен.</prioritySet>
+                <deleted>Анонс события удалён.</deleted>
+                <updateError>Не могу обновить данные анонса.</updateError>
+                <goodUpdate>Параметры анонса событий сохранились вполне удачно.</goodUpdate>
+            </notify>
+            <status>
+                <past>уже прошло</past>
+                <today>сегодня</today>
+                <tomorrow>завтра</tomorrow>
+                <willBeIn>через</willBeIn>
+            </status>
+            <event_desc>Анонс события / краткое описание</event_desc>
+            <event_dates>Период демострации анонса</event_dates>
+            <users_groups>Пользователь / группа</users_groups>
+            <priority>Приоритет</priority>
+            <actions>Действия</actions>
+            <pastEvents>Архив событий</pastEvents>
+            <eventInPastHappen>Событие уже произошло.</eventInPastHappen>
+            <event_dates_past>Анонс демонстрировался в период</event_dates_past>
+            <notVisible>Не показывается</notVisible>
+            <forms>
+                <pic>Изображение</pic>
+                <imagePreview>Превью анонса</imagePreview>
+                <mainParameters>Основные параметры</mainParameters>
+                <group>Группа</group>
+                <title>Заголовок события</title>
+                <eventDate>Дата события</eventDate>
+                <beginDate>Дата начала демонстрации анонса события</beginDate>
+                <endDate>Дата завершения демонстрации анонса события</endDate>
+                <priority>Приоритет показа анонса</priority>
+                <visibility>Показывать событие?</visibility>
+                <eventDescription>Описания события</eventDescription>
+                <shortDescription>Краткое описание</shortDescription>
+                <description>Полное описание</description>
+                <addEvent>Добавить анонс событий</addEvent>
+                <saveEvent>Сохранить изменения</saveEvent>
+            </forms>
+        </adm>
+    </announcements>
+
+    <declension>
+        <days>
+            <nominative> дней</nominative>
+            <genitive_singular> дня</genitive_singular>
+            <genitive_plural> дней</genitive_plural>
+        </days>
+    </declension>
+
+</locale>

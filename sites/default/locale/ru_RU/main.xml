@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locale lang="ru_RU">
+	<!-- main text strings -->
+	<index>
+		<welcome>Congratulations! You've successfully created new project. Happy coding!</welcome>
+	</index>
+
+	<!-- seo strings -->
+	<seo>
+		<index>
+			<title>Welcome to new project with Difra Framework</title>
+			<keywords>difra framework, new project, php</keywords>
+			<description>Sample page</description>
+		</index>
+	</seo>
+</locale>

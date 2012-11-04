@@ -1,0 +1,9 @@
+<locale>
+	<menu>
+		<adm>
+			<menu_CDN>CDN</menu_CDN>
+			<menu_CDN_hosts>Хосты</menu_CDN_hosts>
+			<menu_CDN_settings>Общие настройки</menu_CDN_settings>
+		</adm>
+	</menu>
+</locale>

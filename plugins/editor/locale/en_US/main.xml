@@ -1,0 +1,6 @@
+<locale>
+	<editor>
+		<upload-error>There was an error during file upload.</upload-error>
+		<upload-notimage>This file cannot be read as an image.</upload-notimage>
+	</editor>
+</locale>

@@ -1,0 +1,9 @@
+<locale>
+	<notifications>
+		<close>Закрыть</close>
+	</notifications>
+	<ajaxer>
+		<confirm-yes>Да</confirm-yes>
+		<confirm-no>Нет</confirm-no>
+	</ajaxer>
+</locale>

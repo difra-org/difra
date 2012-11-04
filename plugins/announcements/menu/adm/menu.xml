@@ -1,0 +1,6 @@
+<menu>
+    <announcements href="">
+        <announcements href="/adm/announcements/"/>
+        <settings href="/adm/announcements/settings/" sup="1"/>
+    </announcements>
+</menu>
