@@ -61,14 +61,10 @@ abstract class Common {
 		}
 
 		header( 'Content-Type: ' . $this->contentType );
-		switch( $enc ) {
-		case 'gzip':
-			if( $data = $this->compileGZ( $instance ) ) {
-				header( 'Vary: Accept-Encoding' );
-				header( 'Content-Encoding: gzip' );
-				break;
-			}
-		default:
+		if( $enc == 'gzip' and $data = $this->compileGZ( $instance ) ) {
+			header( 'Vary: Accept-Encoding' );
+			header( 'Content-Encoding: gzip' );
+		} else {
 			$data = $this->compile( $instance );
 		}
 		if( !$modified = Difra\Cache::getInstance()->get( "{$instance}_{$this->type}_modified" ) ) {
@@ -199,31 +195,43 @@ abstract class Common {
 		return $this->processData( $instance, $withSources );
 	}
 
-	// собирает папки ресурсов по папкам фреймворка, сайта и плагинов
+	/**
+	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов
+	 * @param $instance
+	 *
+	 * @return bool
+	 * @throws \Difra\Exception
+	 */
 	private function find( $instance ) {
 
-		$parents = array(
-			DIR_SITE . "{$this->type}/{$instance}",
-			DIR_SITE . "{$this->type}/all",
-			DIR_ROOT . "{$this->type}/{$instance}",
-			DIR_ROOT . "{$this->type}/all",
-		);
+		$found   = false;
+		$parents = array();
 		$paths   = Difra\Plugger::getInstance()->getPaths();
+		$paths   = array_merge( array(
+					     DIR_SITE,
+					     DIR_ROOT
+					),
+					$paths,
+					array(
+					     DIR_FW
+					) );
 		if( !empty( $paths ) ) {
 			foreach( $paths as $dir ) {
-				$parents[] = "{$dir}/{$this->type}/{$instance}";
-				$parents[] = "{$dir}/{$this->type}/all";
+				if( is_dir( $d = "{$dir}/{$this->type}/{$instance}" ) ) {
+					$found     = true;
+					$parents[] = $d;
+				}
+				if( is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
+					$parents[] = $d;
+				}
 			}
 		}
-		$parents[] = DIR_FW . "{$this->type}/{$instance}";
-		$parents[] = DIR_FW . "{$this->type}/all";
 
-		if( empty( $parents ) ) {
-			return false;
-		} else {
-			$this->addDirs( $instance, $parents );
-			return true;
+		if( !$found ) {
+			throw new \Difra\Exception( "Instance '{$instance}' for type '{$this->type}' not found." );
 		}
+		$this->addDirs( $instance, $parents );
+		return true;
 	}
 
 	/**
@@ -269,11 +277,8 @@ abstract class Common {
 	private function addDirs( $instance, $dirs ) {
 
 		// handle arrays
-		if( is_array( $dirs ) ) {
-			foreach( $dirs as $res ) {
-				$this->addDirs( $instance, $res );
-			}
-			return;
+		if( !is_array( $dirs ) ) {
+			$dirs = array( $dirs );
 		}
 
 		// add item
@@ -283,7 +288,9 @@ abstract class Common {
 		if( !isset( $this->resources[$instance]['dirs'] ) ) {
 			$this->resources[$instance]['dirs'] = array();
 		}
-		$this->resources[$instance]['dirs'][] = $dirs;
+		foreach( $dirs as $dir ) {
+			$this->resources[$instance]['dirs'][] = $dir;
+		}
 	}
 
 	public function processDirs( $instance ) {
@@ -292,9 +299,6 @@ abstract class Common {
 			return;
 		}
 		foreach( $this->resources[$instance]['dirs'] as $dir ) {
-			if( !is_dir( $dir ) ) {
-				continue;
-			}
 			$dirHandler = opendir( $dir );
 			while( $dirEntry = readdir( $dirHandler ) ) {
 				if( $dirEntry{0} == '.' ) {

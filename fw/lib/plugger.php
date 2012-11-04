@@ -4,22 +4,19 @@ namespace Difra;
 
 class Plugger {
 
-	/** @var string */
-	private $path = '';
 	/** @var string[] */
 	private $pluginsNames = null;
 	/** @var \Difra\Plugin[] */
 	private $plugins = null;
 
+	/**
+	 * Синглтон
+	 * @return Plugger
+	 */
 	static public function getInstance() {
 
 		static $_self = null;
 		return $_self ? $_self : $_self = new self;
-	}
-
-	public function __construct() {
-
-		$this->path = DIR_PLUGINS;
 	}
 
 	public function init() {
@@ -36,10 +33,10 @@ class Plugger {
 		if( is_null( $this->pluginsNames ) ) {
 			$plugins = array();
 			if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
-				if( is_dir( $this->path ) and $dir = opendir( $this->path ) ) {
+				if( is_dir( DIR_PLUGINS ) and $dir = opendir( DIR_PLUGINS ) ) {
 					while( false !== ( $subdir = readdir( $dir ) ) ) {
-						if( $subdir != '.' and $subdir != '..' and is_dir( "{$this->path}/$subdir" ) ) {
-							if( is_readable( "{$this->path}/$subdir/plugin.php" ) ) {
+						if( $subdir != '.' and $subdir != '..' and is_dir( DIR_PLUGINS . '/' . $subdir ) ) {
+							if( is_readable( DIR_PLUGINS . "/$subdir/plugin.php" ) ) {
 								$plugins[] = $subdir;
 							}
 						}
@@ -63,7 +60,7 @@ class Plugger {
 			$dirs    = $this->getPluginsNames();
 			if( !empty( $dirs ) ) {
 				foreach( $dirs as $dir ) {
-					include( "{$this->path}/$dir/plugin.php" );
+					include( DIR_PLUGINS . '/' . $dir . '/plugin.php' );
 					$ucf           = ucfirst( $dir );
 					$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
 				}
@@ -87,6 +84,10 @@ class Plugger {
 		}
 	}
 
+	/**
+	 * Получает пути к папкам всех включенных плагинов
+	 * @return array
+	 */
 	public function getPaths() {
 
 		$paths   = array();
@@ -94,7 +95,7 @@ class Plugger {
 		if( empty( $plugins ) ) {
 			return array();
 		}
-		foreach( $plugins as $name=> $plugin ) {
+		foreach( $plugins as $name => $plugin ) {
 			if( $plugin->isEnabled() ) {
 				$paths[$name] = $plugin->getPath();
 			}
@@ -125,16 +126,5 @@ class Plugger {
 
 		trigger_error( 'Please use Plugger->isEnabled() instead of Plugger->isPlugin()', E_USER_DEPRECATED );
 		return $this->isEnabled( $name );
-	}
-
-	// Deprecated function. Added DEPRECATED MESSAGE on 04-sep-12.
-	public function runDispatchers( &$controller ) {
-
-		foreach( $this->plugins as $plugin ) {
-			if( method_exists( $plugin, 'dispatch' ) ) {
-				trigger_error( 'Plugin ' . $plugin . ' uses old-style dispatcher. Please use events.', E_USER_DEPRECATED );
-				$plugin->dispatch( $controller );
-			}
-		}
 	}
 }

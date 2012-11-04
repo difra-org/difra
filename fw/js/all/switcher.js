@@ -81,6 +81,7 @@ switcher.ajaxConfig = {
 };
 
 switcher.fallback = function() {
+
 	$( document ).triggerHandler( 'destruct' );
 	$( '#loading' ).css( 'display', 'none' );
 	document.location = switcher.url;
@@ -99,7 +100,7 @@ switcher.page = function( url, noPush, data ) {
 	}
 	switcher.noPush = noPush ? true : false;
 	switcher.url = url;
-	if( data ) {
+	if( typeof data != 'undefined' ) {
 		var conf = switcher.ajaxConfig;
 		conf.type = 'POST';
 		conf.data = data;

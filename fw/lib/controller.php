@@ -5,21 +5,20 @@ namespace Difra;
 abstract class Controller {
 
 	/** @var \Difra\View */
-	public $view = null;
+	public $view;
 	/** @var \Difra\Action */
-	protected $action = null;
+	protected $action;
 	/** @var \Difra\Locales */
-	public $locale = null;
+	public $locale;
 	/** @var \Difra\Ajax */
-	public $ajax = null;
+	public $ajax;
+	/** @var \Difra\Auth */
+	protected $auth;
+
 	/** @var bool */
 	public $isAjaxAction = false;
-	/** @var \Difra\Auth */
-	protected $auth = null;
-
 	/** @var string */
 	protected $method = null;
-
 	/** @var string */
 	protected $output = null;
 
@@ -27,81 +26,110 @@ abstract class Controller {
 	public $xml;
 	/** @var \DOMElement */
 	public $root;
+	/** @var \DOMElement */
+	public $realRoot;
 
-	/*
-	public static function getInstance( $action ) {
+	/**
+	 * Конструктор
+	 */
+	final public function __construct() {
 
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self( $action );
-	}
-	*/
-
-	public function __construct() {
-
-		// load essentials
+		// загрузка основных классов
 		$this->view   = View::getInstance();
 		$this->locale = Locales::getInstance();
 		$this->action = Action::getInstance();
 		$this->auth   = Auth::getInstance();
 		$this->ajax   = Ajax::getInstance();
 
-		$this->_initXML();
-		$realRoot = $this->root;
+		// создание xml с данными
+		$this->xml      = new \DOMDocument;
+		$this->realRoot = $this->root = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
 
-		// run dispatchers
-		if( method_exists( $this, 'dispatch' ) ) {
-			$this->dispatch();
-		}
-		Plugger::getInstance()->runDispatchers( $this );
-
-		// add XML data
-		$this->auth->getAuthXML( $realRoot );
-		$this->locale->getLocaleXML( $realRoot );
-
-		// load menu from Resources
-		$menuXML = new \DOMDocument();
-		$menuXML->loadXML( Resourcer::getInstance( 'menu' )->compile( $this->view->instance ) );
-		$realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
+		// запуск диспатчера
+		$this->dispatch();
 	}
 
-	public function run() {
+	/**
+	 * Выбирает подходящий вариант action'а и запускает его
+	 */
+	final public function run() {
 
-		if( $this->method = $this->_chooseMehod() ) {
-			Debugger::addLine( "Selected method {$this->action->method}" );
-			$this->_callMethod( $this->method );
+		$this->chooseAction();
+		if( !$this->method ) {
+			throw new Exception( 'Controller failed to choose action method' );
+		}
+		Debugger::addLine( "Selected method {$this->action->method}" );
+		$this->callAction();
+	}
+
+	/**
+	 * Выводит ответ в зависимости от типа запроса
+	 */
+	final public function render() {
+
+		if( !empty( $this->action->parameters ) ) {
+			$this->view->httpError( 404 );
+		} elseif( !is_null( $this->output ) ) {
+			echo $this->output;
+			$this->view->rendered = true;
+		} elseif( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
+			if( $_GET['xml'] == '2' ) {
+				$this->fillXML();
+			}
+			header( 'Content-Type: text/xml; charset="utf-8"' );
+			$this->xml->formatOutput = true;
+			$this->xml->encoding     = 'utf-8';
+			echo rawurldecode( $this->xml->saveXML() );
+			$this->view->rendered = true;
+		} elseif( !$this->view->rendered and $this->ajax->isAjax ) {
+			header( 'Content-type: text/plain' ); // тут нужен application/json, но тупая опера предлагает сохранить файл
+			echo( $this->ajax->getResponse() );
+			$this->view->rendered = true;
+		} elseif( !$this->view->rendered ) {
+			$this->fillXML();
+			$this->view->render( $this->xml );
 		}
 	}
 
 	/**
-	 * Выбор самого подходящего метода
-	 * @return null|string
+	 * Пустой dispatch
 	 */
-	private function _chooseMehod() {
+	public function dispatch() {
+	}
 
-		$finalMethod = null;
+	/**
+	 * Выбор самого подходящего метода
+	 */
+	private function chooseAction() {
+
+		$method = null;
 		if( $this->ajax->isAjax and $this->action->methodAjaxAuth and $this->auth->logged ) {
 			$this->isAjaxAction = true;
-			$finalMethod        = 'methodAjaxAuth';
+			$method             = 'methodAjaxAuth';
 		} elseif( $this->ajax->isAjax and $this->action->methodAjax ) {
 			$this->isAjaxAction = true;
-			$finalMethod        = 'methodAjax';
+			$method             = 'methodAjax';
 		} elseif( $this->action->methodAuth and $this->auth->logged ) {
-			$finalMethod = 'methodAuth';
+			$method = 'methodAuth';
 		} elseif( $this->action->method ) {
-			$finalMethod = 'method';
+			$method = 'method';
 		} elseif( $this->action->methodAuth or $this->action->methodAjaxAuth ) {
 			$this->action->parameters = array();
 			$this->view->httpError( 401 );
-			return null;
+			return;
 		} else {
 			$this->view->httpError( 404 );
-			return null;
+			return;
 		}
-		return $finalMethod;
+		$this->method = $method;
 	}
 
-	private function _callMethod( $method ) {
+	/**
+	 * Проверка параметров и запуск экшена
+	 */
+	private function callAction() {
 
+		$method           = $this->method;
 		$actionMethod     = $this->action->$method;
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
@@ -184,68 +212,58 @@ abstract class Controller {
 		}
 	}
 
-	final public function render() {
+	private function fillXML() {
 
-		if( !empty( $this->action->parameters ) ) {
-			$this->view->httpError( 404 );
-			return;
-		}
-		if( !is_null( $this->output ) ) {
-			echo $this->output;
-			$this->view->rendered = true;
-			return;
-		}
-		$debuggerEnabled = Debugger::getInstance()->isEnabled();
-		if( $debuggerEnabled and isset( $_GET['xml'] ) and $_GET['xml'] ) {
-			header( 'Content-Type: text/plain; charset="utf-8"' );
-			$this->xml->formatOutput = true;
-			$this->xml->encoding     = 'utf-8';
-			echo rawurldecode( $this->xml->saveXML() );
-			$this->view->rendered = true;
-		} elseif( !$this->view->rendered and $this->ajax->isAjax ) {
-			header( 'Content-type: text/plain' ); // application/json не катит в опере
-			echo( $this->ajax->getResponse() );
-			$this->view->rendered = true;
-		} elseif( !$this->view->rendered ) {
-			$this->view->render( $this->xml );
-		}
-	}
-
-	private function _initXML() {
-
-		$this->xml  = new \DOMDocument;
-		$this->root = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
-		$this->root->setAttribute( 'lang', $this->locale->locale );
-		$this->root->setAttribute( 'controller', $this->action->className );
-		$this->root->setAttribute( 'action', $this->action->method );
-		$this->root->setAttribute( 'host', Site::getInstance()->getHost() );
-		$this->root->setAttribute( 'hostname', Site::getInstance()->getHostname() );
-		$this->root->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
+		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
+		$this->realRoot->setAttribute( 'controller', $this->action->className );
+		$this->realRoot->setAttribute( 'action', $this->action->method );
+		$this->realRoot->setAttribute( 'host', Site::getInstance()->getHost() );
+		$this->realRoot->setAttribute( 'hostname', Site::getInstance()->getHostname() );
+		$this->realRoot->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
 		if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
-			$this->root->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
+			$this->realRoot->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
 		}
 		// get user agent
-		Site::getInstance()->getUserAgent( $this->root );
+		Site::getInstance()->getUserAgentXML( $this->root );
 		// ajax flag
-		$this->root->setAttribute( 'ajax', ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-									      $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? 1
-			: 0 );
+		$this->realRoot->setAttribute( 'ajax',
+					       ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+									  $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? 1
+						       : 0 );
 		// build number
-		$this->root->setAttribute( 'build', Site::getInstance()->getBuild() );
+		$this->realRoot->setAttribute( 'build', Site::getInstance()->getBuild() );
 		// date
-		$dateNode   = $this->root->appendChild( $this->xml->createElement( 'date' ) );
+		/** @var $dateNode \DOMElement */
+		$dateNode   = $this->realRoot->appendChild( $this->xml->createElement( 'date' ) );
 		$dateFields = 'deAamBbYycxHMS';
 		$t          = time();
 		for( $i = 0; $i < strlen( $dateFields ); $i++ ) {
 			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
 		}
 		// debug flag
-		$this->root->setAttribute( 'debug', Debugger::getInstance()->isEnabled() ? '1' : '0' );
+		$this->realRoot->setAttribute( 'debug', Debugger::getInstance()->isEnabled() ? '1' : '0' );
 		// config values (for js variable)
-		$configNode = $this->root->appendChild( $this->xml->createElement( 'config' ) );
+		$configNode = $this->realRoot->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );
+		// menu
+		try {
+			$menuResource = Resourcer::getInstance( 'menu' )->compile( $this->view->instance );
+			$menuXML      = new \DOMDocument();
+			$menuXML->loadXML( $menuResource );
+			$this->realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
+		} catch( Exception $ex ) {
+		}
+		// auth
+		$this->auth->getAuthXML( $this->realRoot );
+		// locale
+		$this->locale->getLocaleXML( $this->realRoot );
 	}
 
+	/**
+	 * Функция для проверки, что URL был вызван не с «левого» хоста
+	 *
+	 * @throws Exception
+	 */
 	public function checkReferer() {
 
 		if( empty( $_SERVER['HTTP_REFERER'] ) ) {
