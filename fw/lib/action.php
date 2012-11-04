@@ -211,6 +211,9 @@ class Action {
 		return $uri;
 	}
 
+	/**
+	 * Вызов render() из контроллера
+	 */
 	public function render() {
 
 		$this->controller->render();

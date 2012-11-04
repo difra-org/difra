@@ -15,7 +15,6 @@ class Site {
 
 	private $phpVersion = null;
 
-	private $userAgent = null;
 	static $siteInit = false;
 
 	/**
@@ -272,24 +271,13 @@ class Site {
 			return $_array;
 		}
 
-		$svnVer = array();
+		$svnVer = array( self::VERSION );
 		// fw version and build
 		$fwVer = $this->getSVNRev( DIR_FW );
 		if( $fwVer !== false ) {
-			$svnVer[] = self::VERSION . '.' . $fwVer;
+			$svnVer[] = $fwVer;
 		} elseif( preg_match( '/\d+/', self::BUILD, $match ) ) {
-			$svnVer[] = self::VERSION . '.' . $match[0];
-		} else {
-			$svnVer[] = self::VERSION;
-		}
-		// plugins build summ
-		$pluginPaths = Plugger::getInstance()->getPaths();
-		$plugVer     = 0;
-		foreach( $pluginPaths as $path ) {
-			$plugVer += $this->getSVNRev( $path );
-		}
-		if( $plugVer ) {
-			$svnVer[] = $plugVer;
+			$svnVer[] = $match[0];
 		}
 		// site revision
 		$siteVer = $this->getSVNRev( DIR_ROOT );
@@ -309,14 +297,27 @@ class Site {
 	/**
 	 * Возвращает текущие настройки в XML
 	 *
-	 * @param \DOMElement $node
+	 * @param \DOMElement|\DOMNode $node
 	 */
 	public function getConfigXML( $node ) {
 
-		$node->setAttribute( 'locale', $this->locale );
-		$node->setAttribute( 'host', $this->getHost() );
-		$node->setAttribute( 'hostname', $this->getHostname() );
-		$node->setAttribute( 'mainhost', $this->getMainhost() );
+		$config = $this->getConfig();
+		foreach( $config as $k => $v ) {
+			$node->setAttribute( $k, $v );
+		}
+	}
+
+	/**
+	 * Возвращает массив текущих настроек
+	 */
+	public function getConfig() {
+
+		return array(
+			'locale'   => $this->locale,
+			'host'     => $this->getHost(),
+			'hostname' => $this->getHostname(),
+			'mainhost' => $this->getMainhost()
+		);
 	}
 
 	/**
@@ -364,125 +365,154 @@ class Site {
 	 *
 	 * @param \DOMElement $node
 	 */
-	public function getUserAgent( $node ) {
+	public function getUserAgentXML( $node ) {
 
-		if( is_null( $this->userAgent ) and ( !isset( $_SERVER['HTTP_USER_AGENT'] ) or !$_SERVER['HTTP_USER_AGENT'] ) ) {
-			$this->userAgent = false;
-		} else {
-			// разбиваем строку User-Agent на ассоциативный массив
-			$ua  = $_SERVER['HTTP_USER_AGENT'];
-			$ua1 = explode( ' ', $ua );
-			$k   = '';
-			$v   = $ua2 = array();
-			foreach( $ua1 as $p ) {
-				if( strpos( $p, '/' ) !== false ) {
-					if( $k ) {
-						$ua2[$k] = implode( ' ', $v );
-						$v       = array();
-					}
-					$p2  = explode( '/', $p, 2 );
-					$k   = $p2[0];
-					$v[] = $p2[1];
-				} else {
-					$v[] = $p;
-				}
+		$ua = $this->getUserAgent();
+		if( $ua ) {
+			foreach( $ua as $k => $v ) {
+				$node->setAttribute( $k, $v );
 			}
-			if( $k ) {
-				$ua2[$k] = implode( ' ', $v );
-			}
-			$a = array(
-				'agent'   => '',
-				'version' => '',
-				'os'      => '',
-				'engine'  => ''
-			);
-			// пытаемся определить название браузера
-			if( isset( $ua2['Chrome'] ) ) {
-				$a['agent'] = 'Chrome';
-			} elseif( isset( $ua2['Safari'] ) ) {
-				$a['agent'] = 'Safari';
-			} elseif( isset( $ua2['Firefox'] ) ) {
-				$a['agent'] = 'Firefox';
-			} elseif( isset( $ua2['Opera'] ) ) {
-				$a['agent'] = 'Opera';
-			} elseif( isset( $ua2['Mozilla'] ) and strpos( $ua2['Mozilla'], 'MSIE' ) ) {
-				$a['agent'] = 'IE';
-			}
-			// пытаемся определить движок
-			if( isset( $ua2['AppleWebKit'] ) ) {
-				$a['engine'] = 'WebKit';
-			} elseif( isset( $ua2['Gecko'] ) ) {
-				$a['engine'] = 'Gecko';
-			} elseif( isset( $ua2['Presto'] ) ) {
-				$a['engine'] = 'Presto';
-			} elseif( isset( $ua2['Trident'] ) ) {
-				$a['engine'] = 'Trident';
-			}
-			// пытаемся определить версию
-			if( isset( $ua2['Version'] ) ) {
-				$a['version'] = $ua2['Version'];
-			} elseif( isset( $ua2[$a['agent']] ) ) {
-				$a['version'] = $ua2[$a['agent']];
-				if( $a['agent'] == 'Opera' ) {
-					$a['version'] = explode( ' ', $a['version'] )[0];
-				}
-			} elseif( $a['agent'] == 'IE' and isset( $ua2['Mozilla'] ) and strpos( $ua2['Mozilla'], 'MSIE' ) ) {
-				$a['version'] = substr( $ua2['Mozilla'], strpos( $ua2['Mozilla'], 'MSIE' ) + 4 );
-				if( $p = strpos( $a['version'], ';' ) ) {
-					$a['version'] = substr( $a['version'], 0, $p );
-				}
-				$a['version'] = trim( $a['version'] );
-			}
-			// пытаемся определить ось стандартными методами
-			$os1 = array( 'Mozilla' );
-			if( $a['agent'] ) {
-				$os1[] = $a['agent'];
-			}
-			$os2 = array( 'Windows', 'Macintosh', 'Linux' );
-			foreach( $os1 as $v1 ) {
-				if( !isset( $ua2[$v1] ) ) {
-					continue;
-				}
-				foreach( $os2 as $v2 ) {
-					if( strpos( $ua2[$v1], $v2 ) ) {
-						$a['os'] = $v2;
-						break 2;
-					}
-				}
-			}
-			if( !$a['os'] ) {
-				if( $a['agent'] == 'Opera' and isset( $ua2['Tablet'] ) ) {
-					$a['os'] = 'Tablet';
-				} elseif( $a['agent'] == 'Opera' and isset( $ua2['Mobi'] ) ) {
-					$a['os'] = 'Mobile';
-				}
-			}
-			$this->userAgent = $a;
 		}
-		if( $this->userAgent == false ) {
-			return;
+		$uac = $this->getUserAgentClass();
+		if( $uac ) {
+			$node->setAttribute( 'uaClass', $uac );
 		}
-		// fill XML data
-		foreach( $this->userAgent as $k => $v ) {
-			$node->setAttribute( $k, $v );
+	}
+
+	/**
+	 * Возвращает массив с данными о браузере пользователя
+	 * @return array|bool
+	 */
+	public function getUserAgent() {
+
+		static $userAgent = null;
+		if( !is_null( $userAgent ) ) {
+			return $userAgent;
 		}
-		$a = $this->userAgent;
-		if( !empty( $a ) ) {
-			$uac = array();
-			if( $a['agent'] ) {
-				$uac[] = $a['agent'];
-			}
-			if( $a['version'] ) {
-				$uac[] = 'v' . intval( $a['version'] );
-				$uac[] = 'vv' . str_replace( array( '.', ' ' ), '_', $a['version'] );
-			}
-			if( $a['os'] ) {
-				$uac[] = $a['os'];
-			}
-			if( $a['engine'] ) {
-				$uac[] = $a['engine'];
-			}
-			$node->setAttribute( 'uaClass', implode( ' ', $uac ) );
+		if( !isset( $_SERVER['HTTP_USER_AGENT'] ) or !$_SERVER['HTTP_USER_AGENT'] ) {
+			$userAgent = false;
+			return $userAgent;
 		}
+		// разбиваем строку User-Agent на ассоциативный массив
+		$ua  = $_SERVER['HTTP_USER_AGENT'];
+		$ua1 = explode( ' ', $ua );
+		$k   = '';
+		$v   = $ua2 = array();
+		foreach( $ua1 as $p ) {
+			if( strpos( $p, '/' ) !== false ) {
+				if( $k ) {
+					$ua2[$k] = implode( ' ', $v );
+					$v       = array();
+				}
+				$p2  = explode( '/', $p, 2 );
+				$k   = $p2[0];
+				$v[] = $p2[1];
+			} else {
+				$v[] = $p;
+			}
+		}
+		if( $k ) {
+			$ua2[$k] = implode( ' ', $v );
+		}
+		$a = array(
+			'agent'   => '',
+			'version' => '',
+			'os'      => '',
+			'engine'  => ''
+		);
+		// пытаемся определить название браузера
+		if( isset( $ua2['Chrome'] ) ) {
+			$a['agent'] = 'Chrome';
+		} elseif( isset( $ua2['Safari'] ) ) {
+			$a['agent'] = 'Safari';
+		} elseif( isset( $ua2['Firefox'] ) ) {
+			$a['agent'] = 'Firefox';
+		} elseif( isset( $ua2['Opera'] ) ) {
+			$a['agent'] = 'Opera';
+		} elseif( isset( $ua2['Mozilla'] ) and strpos( $ua2['Mozilla'], 'MSIE' ) ) {
+			$a['agent'] = 'IE';
+		}
+		// пытаемся определить движок
+		if( isset( $ua2['AppleWebKit'] ) ) {
+			$a['engine'] = 'WebKit';
+		} elseif( isset( $ua2['Gecko'] ) ) {
+			$a['engine'] = 'Gecko';
+		} elseif( isset( $ua2['Presto'] ) ) {
+			$a['engine'] = 'Presto';
+		} elseif( isset( $ua2['Trident'] ) ) {
+			$a['engine'] = 'Trident';
+		}
+		// пытаемся определить версию
+		if( isset( $ua2['Version'] ) ) {
+			$a['version'] = $ua2['Version'];
+		} elseif( isset( $ua2[$a['agent']] ) ) {
+			$a['version'] = $ua2[$a['agent']];
+			if( $a['agent'] == 'Opera' ) {
+				$a['version'] = explode( ' ', $a['version'] )[0];
+			}
+		} elseif( $a['agent'] == 'IE' and isset( $ua2['Mozilla'] ) and strpos( $ua2['Mozilla'], 'MSIE' ) ) {
+			$a['version'] = substr( $ua2['Mozilla'], strpos( $ua2['Mozilla'], 'MSIE' ) + 4 );
+			if( $p = strpos( $a['version'], ';' ) ) {
+				$a['version'] = substr( $a['version'], 0, $p );
+			}
+			$a['version'] = trim( $a['version'] );
+		}
+		// пытаемся определить ось стандартными методами
+		$os1 = array( 'Mozilla' );
+		if( $a['agent'] ) {
+			$os1[] = $a['agent'];
+		}
+		$os2 = array( 'Windows', 'Macintosh', 'Linux' );
+		foreach( $os1 as $v1 ) {
+			if( !isset( $ua2[$v1] ) ) {
+				continue;
+			}
+			foreach( $os2 as $v2 ) {
+				if( strpos( $ua2[$v1], $v2 ) ) {
+					$a['os'] = $v2;
+					break 2;
+				}
+			}
+		}
+		if( !$a['os'] ) {
+			if( $a['agent'] == 'Opera' and isset( $ua2['Tablet'] ) ) {
+				$a['os'] = 'Tablet';
+			} elseif( $a['agent'] == 'Opera' and isset( $ua2['Mobi'] ) ) {
+				$a['os'] = 'Mobile';
+			}
+		}
+		return $userAgent = $a;
+	}
+
+	/**
+	 * Возвращает строку для CSS-классов, основанных на версии браузера
+	 *
+	 * @return string
+	 */
+	public function getUserAgentClass() {
+
+		static $uaClass = null;
+		if( !is_null( $uaClass ) ) {
+			return $uaClass;
+		}
+		$a = $this->getUserAgent();
+		if( empty( $a ) ) {
+			return $uaClass = '';
+		}
+		$uac = array();
+		if( $a['agent'] ) {
+			$uac[] = $a['agent'];
+		}
+		if( $a['version'] ) {
+			$uac[] = 'v' . intval( $a['version'] );
+			$uac[] = 'vv' . str_replace( array( '.', ' ' ), '_', $a['version'] );
+		}
+		if( $a['os'] ) {
+			$uac[] = $a['os'];
+		}
+		if( $a['engine'] ) {
+			$uac[] = $a['engine'];
+		}
+		return $uaClass = trim( implode( ' ', $uac ) );
 	}
 }
