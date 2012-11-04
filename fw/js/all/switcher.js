@@ -15,14 +15,14 @@ switcher.noPush = false;
 switcher.url = false;
 switcher.basePath = '/';
 switcher.ajaxConfig = {
-	async:true,
-	cache:false,
-	headers:{ 'X-Requested-With':'SwitchPage' },
-	type:'GET',
-	beforeSend:function() {
+	async: true,
+	cache: false,
+	headers: { 'X-Requested-With': 'SwitchPage' },
+	type: 'GET',
+	beforeSend: function() {
 		$( '#loading' ).css( 'display', 'block' );
 	},
-	success:function( data, status, xhr ) {
+	success: function( data, status, xhr ) {
 		try {
 			var newdata = $( data );
 		} catch( e ) {
@@ -49,7 +49,7 @@ switcher.ajaxConfig = {
 		$( document ).triggerHandler( 'destruct' );
 		if( !switcher.noPush ) {
 			if( typeof history.pushState == 'function' ) {
-				history.pushState( { url:switcher.url }, null, switcher.url );
+				history.pushState( { url: switcher.url }, null, switcher.url );
 			} else { // нет pushState — используем хеши
 				switcher.hashChanged = true;
 				window.location = switcher.basePath + '#!' + switcher.url;
@@ -75,7 +75,7 @@ switcher.ajaxConfig = {
 		$( document ).triggerHandler( 'construct' );
 		$( '#loading' ).css( 'display', 'none' );
 	},
-	error:function( xhr ) {
+	error: function( xhr ) {
 		switcher.fallback();
 	}
 };
@@ -94,7 +94,7 @@ switcher.page = function( url, noPush, data ) {
 		switcher.page( url.substring( host.length - 1 ) );
 		return;
 	}
-	if( debug ) {
+	if( typeof debug != 'undefined' ) {
 		debug.addReq( 'Switching page: ' + url );
 	}
 	switcher.noPush = noPush ? true : false;
@@ -145,7 +145,7 @@ $( document ).ready( function() {
 		switcher.page( document.location.hash.substring( 2 ), true );
 		if( typeof history.replaceState == 'function' ) {
 			switcher.hashChanged = true;
-			history.replaceState( { url:switcher.url }, null, switcher.url );
+			history.replaceState( { url: switcher.url }, null, switcher.url );
 		}
 	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' ) {
 		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки

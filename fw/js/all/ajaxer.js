@@ -5,10 +5,10 @@
  * form-submit                — срабатывает перед отправкой данных формы
  */
 $.ajaxSetup( {
-		     async:false,
-		     cache:false,
-		     headers:{
-			     'X-Requested-With':'XMLHttpRequest'
+		     async: false,
+		     cache: false,
+		     headers: {
+			     'X-Requested-With': 'XMLHttpRequest'
 		     }
 	     } );
 
@@ -33,7 +33,7 @@ ajaxer.httpRequest = function( url, params, headers ) {
 ajaxer.sendForm = function( form, event ) {
 
 	var data = {
-		form:$( form ).serializeArray()
+		form: $( form ).serializeArray()
 	};
 	//var data = $( event.target ).serialize();
 	$( form ).find( '.required' ).fadeOut( 'fast' );
@@ -44,7 +44,7 @@ ajaxer.sendForm = function( form, event ) {
 
 ajaxer.query = function( url, data ) {
 
-	if( debug ) {
+	if( typeof debug != 'undefined' ) {
 		debug.addReq( 'Ajaxer request: ' + url );
 	}
 	ajaxer.process( this.httpRequest( url, data ) );
@@ -62,7 +62,7 @@ ajaxer.process = function( data, form ) {
 		}
 		for( var key in data1.actions ) {
 			var action = data1.actions[key];
-			if( debug ) {
+			if( typeof debug != 'undefined' ) {
 				debug.addReq( 'Processing ajaxer method: ' + action.action );
 			}
 			switch( action.action ) {
@@ -104,14 +104,14 @@ ajaxer.process = function( data, form ) {
 			}
 		}
 	} catch( err ) {
-		this.notify( {close:'OK'}, 'Unknown error.' );
+		this.notify( {close: 'OK'}, 'Unknown error.' );
 		console.warn( 'Error: ', err.message );
 		console.warn( 'Server returned:', data );
-		if( debug ) {
+		if( debug !== undefined ) {
 			debug.addReq( 'Server returned data ajaxer could not parse: ' + data );
 		}
 	}
-	if( debug ) {
+	if( typeof debug != 'undefined' ) {
 		debug.addReq();
 	}
 	ajaxer.statusUpdate( form );
@@ -219,7 +219,7 @@ ajaxer.statusInit = function() {
 // эта функция устанавливает статус
 ajaxer.status = function( form, name, message, classname ) {
 
-	ajaxer.statuses[name] = { message:message, classname:classname, used:0 };
+	ajaxer.statuses[name] = { message: message, classname: classname, used: 0 };
 	/*
 	 // старый код функции ajaxer.status()
 	 var status = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.status' );
@@ -255,7 +255,7 @@ ajaxer.statusUpdate = function( form ) {
 		}
 		if( name in ajaxer.statuses ) {
 			// вероятно, новый статус или стиль
-			obj.animate( { opacity:0 }, 'fast', function() {
+			obj.animate( { opacity: 0 }, 'fast', function() {
 				if( obj.attr( 'status-class' ) ) {
 					if( obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
 						obj.removeClass( obj.attr( 'status-class' ) );
@@ -268,16 +268,16 @@ ajaxer.statusUpdate = function( form ) {
 					obj.addClass( ajaxer.statuses[name].classname );
 				}
 				obj.html( ajaxer.statuses[name].message );
-				obj.animate( { opacity:1 }, 'fast' );
+				obj.animate( { opacity: 1 }, 'fast' );
 			} );
 			ajaxer.statuses[name].used = 1;
 		} else if( obj.attr( 'status-class' ) ) {
 			// статус был изменен, но теперь нет
-			obj.animate( { opacity:0 }, 'fast', function() {
+			obj.animate( { opacity: 0 }, 'fast', function() {
 				obj.removeClass( obj.attr( 'status-class' ) );
 				obj.removeAttr( 'status-class' );
 				obj.html( obj.attr( 'original-text' ) );
-				obj.animate( { opacity:1 }, 'fast' );
+				obj.animate( { opacity: 1 }, 'fast' );
 			} );
 		}
 	} );
@@ -449,7 +449,7 @@ ajaxer.initIframe = function( form, event ) {
 
 ajaxer.fetchProgress = function( uuid ) {
 
-	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID':uuid } );
+	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID': uuid } );
 	res = $.parseJSON( res );
 	if( res.state == 'uploading' ) {
 		var progressbar = $( '#upprog' );
@@ -496,7 +496,7 @@ ajaxer.watcher = function() {
 	if( mc ) {
 		mc = $.parseJSON( mc );
 		ajaxer.query( mc.url );
-		$.cookie( 'query', null, { path:"/", domain:config.mainhost ? '.' + config.mainhost : false } );
+		$.cookie( 'query', null, { path: "/", domain: config.mainhost ? '.' + config.mainhost : false } );
 	}
 	mc = $.cookie( 'notify' );
 	if( mc ) {
@@ -507,9 +507,9 @@ ajaxer.watcher = function() {
 			ajaxer.notify( mc.lang, mc.message );
 		}
 		if( config.mainhost ) {
-			$.cookie( 'notify', null, { path:"/", domain:'.' + config.mainhost } );
+			$.cookie( 'notify', null, { path: "/", domain: '.' + config.mainhost } );
 		} else {
-			$.cookie( 'notify', null, { path:"/", domain:'.' + window.location.host } );
+			$.cookie( 'notify', null, { path: "/", domain: '.' + window.location.host } );
 		}
 	}
 };
