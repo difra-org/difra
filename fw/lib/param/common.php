@@ -64,7 +64,7 @@ abstract class Common {
 		case 'string':
 			return true;
 		case 'int':
-			return filter_var( $value, FILTER_VALIDATE_INT );
+			return filter_var( $value, FILTER_VALIDATE_INT ) or $value === '0';
 		case 'file':
 			if( $value['error'] ) {
 				return false;
