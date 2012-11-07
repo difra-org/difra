@@ -247,12 +247,10 @@ abstract class Controller {
 		$configNode = $this->realRoot->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );
 		// menu
-		try {
-			$menuResource = Resourcer::getInstance( 'menu' )->compile( $this->view->instance );
-			$menuXML      = new \DOMDocument();
+		if( $menuResource = Resourcer::getInstance( 'menu' )->compile( $this->view->instance ) ) {
+			$menuXML = new \DOMDocument();
 			$menuXML->loadXML( $menuResource );
 			$this->realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
-		} catch( Exception $ex ) {
 		}
 		// auth
 		$this->auth->getAuthXML( $this->realRoot );
