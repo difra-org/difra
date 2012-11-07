@@ -214,6 +214,7 @@ abstract class Controller {
 
 	private function fillXML() {
 
+		Debugger::addLine( 'Filling XML data for render' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
 		$this->realRoot->setAttribute( 'controller', $this->action->className );
 		$this->realRoot->setAttribute( 'action', $this->action->method );

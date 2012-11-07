@@ -82,6 +82,7 @@ ErrorPage
 	 */
 	public function render( $xml, $instance = false, $dontEcho = false ) {
 
+		Debugger::addLine( 'Render start' );
 		if( $this->error or $this->redirect ) {
 			return false;
 		}
