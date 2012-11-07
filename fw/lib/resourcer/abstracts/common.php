@@ -190,9 +190,12 @@ abstract class Common {
 
 	private function _subCompile( $instance, $withSources = false ) {
 
+		\Difra\Debugger::addLine( "Resource {$this->type}/{$instance} compile started" );
 		$this->find( $instance );
 		$this->processDirs( $instance );
-		return $this->processData( $instance, $withSources );
+		$res = $this->processData( $instance, $withSources );
+		\Difra\Debugger::addLine( "Resource {$this->type}/{$instance} compile finished" );
+		return $res;
 	}
 
 	/**
