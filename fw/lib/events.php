@@ -86,11 +86,16 @@ class Events {
 	 */
 	public function run() {
 
+		Debugger::$startTime = microtime( true );
+
 		Site::getInstance(); // инициализация сайта
 		foreach( $this->events as $type => $foo ) {
 			Debugger::addEventLine( 'Event ' . $type . ' started' );
 			$this->start( $type );
 		}
+
+		Debugger::addLine( 'Done running events' );
+		Debugger::checkSlow();
 	}
 
 	/**

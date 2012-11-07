@@ -33,8 +33,6 @@ class Site {
 	 */
 	public function __construct() {
 
-		Debugger::$startTime = microtime( true );
-
 		Events::register( 'core-init', 'Difra\\Site', 'init' );
 		Events::register( 'core-init', 'Difra\\Debugger' );
 		Events::register( 'plugins-load', 'Difra\Plugger', 'init' );

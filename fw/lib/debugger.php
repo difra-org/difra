@@ -299,9 +299,9 @@ class Debugger {
 		return microtime( true ) - self::$startTime;
 	}
 
-	public function __destruct() {
+	public static function checkSlow() {
 
-		if( $this->console ) {
+		if( Debugger::getInstance()->console ) {
 			return;
 		}
 		$time = self::getTimer();

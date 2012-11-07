@@ -130,7 +130,7 @@
 }
 
 #debug.panel #debug_body ul li.selected .tab-content {
-	height:   350px;
+	height:   330px;
 	overflow: scroll;
 }
 
