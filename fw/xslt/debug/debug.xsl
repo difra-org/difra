@@ -102,6 +102,11 @@
 				<xsl:value-of select="position()"/>
 			</td>
 			<td>
+				<xsl:value-of select="@timer"/>
+				<xsl:text> </xsl:text>
+
+			</td>
+			<td>
 				<xsl:value-of select="concat(
 					translate(substring(@class,1,1),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),
 					substring(@class,2))"/>
