@@ -98,7 +98,9 @@ ErrorPage
 		$xslDom                     = new \DomDocument;
 		$xslDom->resolveExternals   = true;
 		$xslDom->substituteEntities = true;
-		$resource                   = Resourcer::getInstance( 'xslt' )->compile( $instance );
+		if( !$resource = Resourcer::getInstance( 'xslt' )->compile( $instance ) ) {
+			throw new exception( "XSLT resource not found" );
+		}
 		if( !$xslDom->loadXML( $resource ) ) {
 			throw new exception( "XSLT load problem for instance '$instance'." );
 		}

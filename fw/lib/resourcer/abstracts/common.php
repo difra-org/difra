@@ -140,7 +140,7 @@ abstract class Common {
 		if( $cache->adapter != 'None' and Difra\Debugger::getInstance()->isResourceCache() ) {
 
 			$cacheKey = "{$instance}_{$this->type}";
-			if( $cached = $cache->get( $cacheKey ) ) {
+			if( !is_null( $cached = $cache->get( $cacheKey ) ) ) {
 				if( $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild() ) {
 					return $cached;
 				}
@@ -152,7 +152,7 @@ abstract class Common {
 			while( true ) {
 				if( !$currentBusy = $cache->get( $busyKey ) ) {
 					// is data arrived?
-					if( $cached = $cache->get( $cacheKey ) and
+					if( !is_null( $cached = $cache->get( $cacheKey ) ) and
 					    $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild()
 					) {
 						return $cached;
@@ -191,9 +191,11 @@ abstract class Common {
 	private function _subCompile( $instance, $withSources = false ) {
 
 		\Difra\Debugger::addLine( "Resource {$this->type}/{$instance} compile started" );
-		$this->find( $instance );
-		$this->processDirs( $instance );
-		$res = $this->processData( $instance, $withSources );
+		$res = false;
+		if( $this->find( $instance ) ) {
+			$this->processDirs( $instance );
+			$res = $this->processData( $instance, $withSources );
+		}
 		\Difra\Debugger::addLine( "Resource {$this->type}/{$instance} compile finished" );
 		return $res;
 	}
@@ -231,7 +233,7 @@ abstract class Common {
 		}
 
 		if( !$found ) {
-			throw new \Difra\Exception( "Instance '{$instance}' for type '{$this->type}' not found." );
+			return false;
 		}
 		$this->addDirs( $instance, $parents );
 		return true;
