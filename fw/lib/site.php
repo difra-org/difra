@@ -241,10 +241,13 @@ class Site {
 
 		// try to get svn 1.7 revision
 		if( class_exists( '\SQLite3' ) and is_readable( $dir . '.svn/wc.db' ) ) {
-			$sqlite = new \SQLite3( $dir . '.svn/wc.db' );
-			$res    = $sqlite->query( 'SELECT MAX(revision) FROM `NODES`' );
-			$res    = $res->fetchArray();
-			return $res[0];
+			try {
+				$sqlite = new \SQLite3( $dir . '.svn/wc.db' );
+				$res    = $sqlite->query( 'SELECT MAX(revision) FROM `NODES`' );
+				$res    = $res->fetchArray();
+				return $res[0];
+			} catch( Exception $ex ) {
+			}
 		} else { // try to get old svn revision
 			if( is_file( $dir . '.svn/entries' ) ) {
 				$svn = file( $dir . '.svn/entries' );
@@ -282,7 +285,7 @@ class Site {
 			$svnVer[] = $match[0];
 		}
 		// site revision
-		$siteVer = $this->getSVNRev( DIR_ROOT );
+		$siteVer = $this->getSVNRev( defined( DIR_PHAR ) ? DIR_PHAR : DIR_ROOT );
 		if( $siteVer !== false ) {
 			$svnVer[] = $siteVer;
 		}
