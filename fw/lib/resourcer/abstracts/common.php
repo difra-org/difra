@@ -9,6 +9,10 @@ abstract class Common {
 	protected $resources = array();
 	const CACHE_TTL = 86400;
 
+	/**
+	 * Синглтон
+	 * @return self
+	 */
 	static public function getInstance() {
 
 		static $_instances = array();
@@ -16,6 +20,13 @@ abstract class Common {
 		return isset( $_instances[$name] ) ? $_instances[$name] : $_instances[$name] = new $name();
 	}
 
+	/**
+	 * Проверка допустимости имени инстанса
+	 * @param $instance
+	 *
+	 * @return bool
+	 * @throws \Difra\Exception
+	 */
 	private function checkInstance( $instance ) {
 
 		if( !preg_match( '/^[a-z0-9_-]+$/i', $instance ) ) {
@@ -24,7 +35,13 @@ abstract class Common {
 		return true;
 	}
 
-	// получение ресурса по URI
+	/**
+	 * Вывод ресурса
+	 * @param $instance
+	 *
+	 * @return bool
+	 * @throws \Difra\Exception
+	 */
 	public function view( $instance ) {
 
 		if( !$this->isPrintable() ) {
@@ -76,12 +93,22 @@ abstract class Common {
 		return true;
 	}
 
-	// определяет, возможно ли вывести ресурс в браузер
+	/**
+	 * Определяет, возможно ли вывести ресурс в браузер
+	 * @return bool
+	 */
 	public function isPrintable() {
 
 		return $this->printable;
 	}
 
+	/**
+	 * Создаёт gz-версию ресурса.
+	 *
+	 * @param $instance
+	 *
+	 * @return string
+	 */
 	public function compileGZ( $instance ) {
 
 		$cache = Difra\Cache::getInstance();
@@ -127,7 +154,13 @@ abstract class Common {
 		return $data;
 	}
 
-	// собирает всё в единый документ
+	/**
+	 * Возвращает собранный ресурс.
+	 * @param      $instance
+	 * @param bool $withSources
+	 *
+	 * @return bool|null
+	 */
 	public function compile( $instance, $withSources = false ) {
 
 		if( !$this->checkInstance( $instance ) ) {
@@ -172,7 +205,7 @@ abstract class Common {
 			}
 
 			// compile resource
-			$resource = $this->_subCompile( $instance, $withSources );
+			$resource = $this->realCompile( $instance, $withSources );
 
 			// cache data
 			$cache->put( $cacheKey, $resource, self::CACHE_TTL );
@@ -184,11 +217,18 @@ abstract class Common {
 
 			return $resource;
 		} else {
-			return $this->_subCompile( $instance, $withSources );
+			return $this->realCompile( $instance, $withSources );
 		}
 	}
 
-	private function _subCompile( $instance, $withSources = false ) {
+	/**
+	 * Собирает ресурс.
+	 * @param string $instance
+	 * @param bool   $withSources
+	 *
+	 * @return string
+	 */
+	private function realCompile( $instance, $withSources = false ) {
 
 		\Difra\Debugger::addLine( "Resource {$this->type}/{$instance} compile started" );
 		$res = false;
@@ -201,7 +241,7 @@ abstract class Common {
 	}
 
 	/**
-	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов
+	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов.
 	 * @param $instance
 	 *
 	 * @return bool
@@ -240,7 +280,8 @@ abstract class Common {
 	}
 
 	/**
-	 * Находит названия всех возможных инстансов для данного ресурса
+	 * Находит названия всех возможных инстансов для данного ресурса.
+	 * Внимание: это медленно и не кэшируется, НЕ должно быть использовано в пользовательской части!
 	 * @return array|bool
 	 */
 	public function findInstances() {
@@ -268,7 +309,6 @@ abstract class Common {
 			if( !is_dir( $path ) ) {
 				continue;
 			}
-			;
 			$dir = opendir( $path );
 			while( false !== ( $subdir = readdir( $dir ) ) ) {
 				if( $subdir{0} != '.' and is_dir( $path . '/' . $subdir ) ) {
@@ -279,25 +319,30 @@ abstract class Common {
 		return array_keys( $instances );
 	}
 
+	/**
+	 * Добавляет папки в список папок ресурсов
+	 * @param string       $instance
+	 * @param string|array $dirs
+	 */
 	private function addDirs( $instance, $dirs ) {
 
-		// handle arrays
 		if( !is_array( $dirs ) ) {
 			$dirs = array( $dirs );
 		}
 
-		// add item
 		if( !isset( $this->resources[$instance] ) ) {
 			$this->resources[$instance] = array();
 		}
 		if( !isset( $this->resources[$instance]['dirs'] ) ) {
 			$this->resources[$instance]['dirs'] = array();
 		}
-		foreach( $dirs as $dir ) {
-			$this->resources[$instance]['dirs'][] = $dir;
-		}
+		$this->resources[$instance]['dirs'] = array_merge( $this->resources[$instance]['dirs'], $dirs );
 	}
 
+	/**
+	 * Ищет ресурсы по подпапкам
+	 * @param $instance
+	 */
 	public function processDirs( $instance ) {
 
 		if( empty( $this->resources[$instance]['dirs'] ) ) {

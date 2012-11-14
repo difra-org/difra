@@ -184,20 +184,21 @@ class Item {
 	 * @static
 	 *
 	 * @param int|null|array     $category
-	 * @param bool               $withExt
+	 * @param bool               $withExt		-1 — без изображений, false — без расширенных полей, true — с расширенными полями
 	 * @param int                $page
 	 * @param int|null           $perPage
 	 * @param null|bool          $visible
 	 * @param bool               $withSubcategories
 	 * @param bool|array         $ids
 	 *
-	 * @return array|bool
+	 * @return Item[]|bool
 	 */
 	public static function getList( $category = null, $withExt = false, $page = 1, $perPage = null, $visible = null, $withSubcategories = false,
 					$ids = null ) {
 
 		if( $withSubcategories and !is_null( $category ) ) {
-			return self::getList( Category::getSubtree( $category ), $withExt, $page, $perPage, $visible, false, $ids );
+			return self::getList( Category::getSubtree( $category ), $withExt === true, $page, $perPage, $visible, false,
+					      $ids );
 		}
 		$db = \Difra\MySQL::getInstance();
 		$query = 'SELECT SQL_CALC_FOUND_ROWS * FROM `catalog_items`';
@@ -271,6 +272,9 @@ class Item {
 		}
 		$keys = array_flip( $ids );
 		// изображения
+		if( $withExt == -1 ) {
+			return $res;
+		}
 		$imgData =
 			$db->fetch( "SELECT `id`,`item`,`main` FROM `catalog_images` WHERE `item` IN ('" . implode( "','", $ids ) . "')" );
 		foreach( $imgData as $i ) {

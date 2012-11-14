@@ -70,17 +70,81 @@ class Plugger {
 		return $this->plugins;
 	}
 
+	/**
+	 * Включает плагины
+	 * @return array
+	 */
 	private function smartPluginsEnable() {
 
-		$plugins = $this->getAllPlugins();
+		static $pluginsState = null;
+		if( !is_null( $pluginsState ) ) {
+			return $pluginsState;
+		}
+		$pluginsState = array();
+		$plugins      = $this->getAllPlugins();
 		if( empty( $plugins ) ) {
-			return;
+			return $pluginsState;
 		}
 		$enabledPlugins = Config::getInstance()->get( 'plugins' );
-		foreach( $plugins as $name => $obj ) {
-			if( empty( $enabledPlugins ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ) ) {
-				$obj->enable();
+		// составление списка плагинов с данными о зависимостях
+		foreach( $plugins as $name => $plugin ) {
+			$requirements        = $plugin->getRequirements();
+			$pluginsState[$name] = array(
+				'enabled'    => empty( $enabledPlugins ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ),
+				'require'    => $requirements ? $requirements : array(),
+				'required'   => array(),
+				'missingReq' => false,
+				'disabled'   => false
+			);
+		}
+		// для каждого плагина составляем список плагинов, которые от него зависят
+		$hasMisses = false;
+		foreach( $pluginsState as $name => $data ) {
+			if( !empty( $data['require'] ) ) {
+				foreach( $data['require'] as $req ) {
+					if( isset( $pluginsState[$req] ) ) {
+						$pluginsState[$req]['required'][] = $name;
+					} else {
+						$hasMisses                         = true;
+						$pluginsState[$name]['missingReq'] = true;
+					}
+				}
 			}
+		}
+		// есть не удовлетворенные зависимости — отключаем такие плагины и все, которые от них зависят
+		if( $hasMisses ) {
+			foreach( $pluginsState as $name => $data ) {
+				if( $data['missingReq'] ) {
+					$this->smartPluginDisable( $pluginsState, $name );
+				}
+			}
+		}
+		// включаем все плагины с удовлетворенными зависимостями
+		foreach( $pluginsState as $name => $data ) {
+			if( $data['enabled'] and !$data['disabled'] ) {
+				$plugins[$name]->enable();
+			}
+		}
+		return $pluginsState;
+	}
+
+	/**
+	 * Отключает плагин в массиве для smartPluginsEnable()
+	 *
+	 * @param array  $state
+	 * @param string $name
+	 */
+	private function smartPluginDisable( &$state, $name ) {
+
+		if( $state[$name]['disabled'] ) {
+			return;
+		}
+		$state[$name]['disabled'] = true;
+		if( empty( $state[$name]['required'] ) ) {
+			return;
+		}
+		foreach( $state[$name]['required'] as $req ) {
+			$this->smartPluginDisable( $state, $req );
 		}
 	}
 

@@ -23,7 +23,13 @@ class Ajax {
 				return;
 			}
 			foreach( $parameters as $k => $v ) {
-				$this->parseParam( $this->parameters, $k, $v );
+				if( $k == 'form' ) {
+					foreach( $v as $elem ) {
+						$this->parseParam( $this->parameters, $elem['name'], $elem['value'] );
+					}
+				} else {
+					$this->parseParam( $this->parameters, $k, $v );
+				}
 			}
 		} elseif( isset( $_POST['_method'] ) and $_POST['_method'] == 'iframe' ) {
 			$this->isAjax     = true;
@@ -66,6 +72,14 @@ class Ajax {
 		}
 	}
 
+	/**
+	 * Парсит параметр и складывает его в $arr.
+	 * Поддерживает добавление параметров с ключем вида name[abc][]
+	 *
+	 * @param array  $arr
+	 * @param string $k
+	 * @param mixed  $v
+	 */
 	private function parseParam( &$arr, $k, $v ) {
 
 		$keys = explode( '[', $k );
@@ -81,6 +95,12 @@ class Ajax {
 		$this->putParam( $arr, $keys, $v );
 	}
 
+	/**
+	 * Рекурсивная функция для складывания элементов в массив.
+	 * @param array $arr
+	 * @param array $keys
+	 * @param mixed $v
+	 */
 	private function putParam( &$arr, $keys, $v ) {
 
 		if( empty( $keys ) ) {
@@ -92,13 +112,12 @@ class Ajax {
 			if( !isset( $arr[$k] ) ) {
 				$arr[$k] = array();
 			}
-			$arr2 = &$arr[$k];
+			$this->putParam( $arr[$k], $keys, $v );
 		} else {
 			$arr[] = array();
 			end( $arr );
-			$arr2 = &$arr[key( $arr )];
+			$this->putParam( $arr[key( $arr )], $keys, $v );
 		}
-		$this->putParam( $arr2, $keys, $v );
 	}
 
 	/**
@@ -122,12 +141,6 @@ class Ajax {
 		$res = array();
 		if( !empty( $_POST['json'] ) ) {
 			$res = json_decode( $_POST['json'], true );
-			if( !empty( $res['form'] ) ) {
-				foreach( $res['form'] as $item ) {
-					$res[$item['name']] = trim( $item['value'] );
-				}
-				unset( $res['form'] );
-			}
 		}
 		return $res;
 	}
@@ -212,6 +225,11 @@ class Ajax {
 		$this->problem  = false;
 	}
 
+	/**
+	 * Очистка данных ajax-ответа
+	 *
+	 * @param bool $problem
+	 */
 	public function clean( $problem = false ) {
 
 		$this->actions  = array();
@@ -367,6 +385,9 @@ class Ajax {
 				  ) );
 	}
 
+	/**
+	 * Закрывает аякс-попап
+	 */
 	public function close() {
 
 		$this->addAction( array(
@@ -374,6 +395,9 @@ class Ajax {
 				  ) );
 	}
 
+	/**
+	 * Очистка формы
+	 */
 	public function reset() {
 
 		$this->addAction( array(
@@ -381,6 +405,11 @@ class Ajax {
 				  ) );
 	}
 
+	/**
+	 * Вывод окошка «вы уверены? да/нет»
+	 *
+	 * @param $text
+	 */
 	public function confirm( $text ) {
 
 		$action = Action::getInstance();

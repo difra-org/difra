@@ -104,8 +104,8 @@ class Localemanage {
 				}
 				$arr[$module][$xpath] = array(
 					'source' => basename( $source ),
-					'text' => $item->nodeValue,
-					'usage' => ( $usage = $this->findUsages( $xpath ) )
+					'text'   => $item->nodeValue,
+					'usage'  => ( $usage = $this->findUsages( $xpath ) )
 				);
 				if( $usage ) {
 					if( !isset( $allxpaths[$module] ) ) {
@@ -145,7 +145,7 @@ class Localemanage {
 		static $templates = null;
 		if( is_null( $templates ) ) {
 			$resourcer = \Difra\Resourcer::getInstance( 'xslt' );
-			$types = $resourcer->findInstances();
+			$types     = $resourcer->findInstances();
 			foreach( $types as $type ) {
 				$templates[$type] = $resourcer->compile( $type );
 			}
@@ -169,7 +169,7 @@ class Localemanage {
 		static $controllers = null;
 		if( is_null( $controllers ) ) {
 			$controllers = array();
-			$dirs = \Difra\Action::getInstance()->getControllerPaths();
+			$dirs        = \Difra\Action::getInstance()->getControllerPaths();
 			foreach( $dirs as $dir ) {
 				$this->getAllFiles( $controllers, $dir );
 				$this->getAllFiles( $controllers, $dir . '../lib' );
@@ -196,7 +196,7 @@ class Localemanage {
 			if( is_dir( $df ) ) {
 				$this->getAllFiles( $collection, $df );
 			} else {
-				$collection[trim(realpath($df),'/')] = file_get_contents( $df );
+				$collection[trim( $df, '/' )] = file_get_contents( $df );
 			}
 		}
 	}

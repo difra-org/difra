@@ -46,6 +46,13 @@ class Category {
 		return $category;
 	}
 
+	/**
+	 * Возвращает список категорий
+	 *
+	 * @param bool|null $visible	null — все категории, true — видимые категории, false — скрытые категории
+	 *
+	 * @return Category[]
+	 */
 	public static function getList( $visible = null ) {
 
 		static $_list = array();

@@ -21,6 +21,8 @@ abstract class Controller {
 	protected $method = null;
 	/** @var string */
 	protected $output = null;
+	/** @var string */
+	protected $outputType = 'text/plain';
 
 	/** @var \DOMDocument */
 	public $xml;
@@ -70,6 +72,7 @@ abstract class Controller {
 		if( !empty( $this->action->parameters ) ) {
 			$this->view->httpError( 404 );
 		} elseif( !is_null( $this->output ) ) {
+			header( 'Content-Type: ' . $this->outputType . '; charset="utf-8"' );
 			echo $this->output;
 			$this->view->rendered = true;
 		} elseif( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {

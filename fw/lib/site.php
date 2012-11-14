@@ -4,7 +4,7 @@ namespace Difra;
 
 class Site {
 
-	const VERSION   = '2.2';
+	const VERSION   = '3.0';
 	const BUILD     = '$Rev$';
 	const PATH_PART = '/../../sites/';
 
@@ -122,11 +122,13 @@ class Site {
 
 	public function configurePaths() {
 
-		$_SERVER['DOCUMENT_ROOT'] = realpath( dirname( __FILE__ ) . self::PATH_PART . '..' ) . '/';
-		define( 'DIR_ROOT', $_SERVER['DOCUMENT_ROOT'] );
-		define( 'DIR_FW', $_SERVER['DOCUMENT_ROOT'] . 'fw/' );
-		define( 'DIR_SITE', $_SERVER['DOCUMENT_ROOT'] . 'sites/' . $this->siteDir . '/' );
-		define( 'DIR_PLUGINS', $_SERVER['DOCUMENT_ROOT'] . 'plugins/' );
+		if( !defined( 'DIR_ROOT' ) ) {
+			define( 'DIR_ROOT', dirname( __FILE__ ) . self::PATH_PART . '../' );
+		}
+		$_SERVER['DOCUMENT_ROOT'] = DIR_ROOT;
+		define( 'DIR_FW', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'fw/' );
+		define( 'DIR_SITE', DIR_ROOT . 'sites/' . $this->siteDir . '/' );
+		define( 'DIR_PLUGINS', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'plugins/' );
 		define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
 		define( 'DIR_DATA', !empty( $_SERVER['VHOST_DATA'] ) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/' );
 	}

@@ -1,28 +1,57 @@
 <?php
 
 namespace Difra\Cache;
+
 use Difra;
 
 abstract class Common {
 
 	// is class available?
-	//	abstracts static public function isAvailable();
-	// return cache record or null if record is not found
+	// abstracts static public function isAvailable();
+
+	/**
+	 * Получить данные из бэкэнда
+	 * @param string $id
+	 * @param bool   $doNotTestCacheValidity
+	 *
+	 * @return mixed|null
+	 */
 	abstract public function realGet( $id, $doNotTestCacheValidity = false );
 
-	// test if cache record exists
-	abstract public function test( $id );
-
-	// create or update cache record
+	/**
+	 * Добавить запись в бэкэнд
+	 * @param string $id
+	 * @param mixed  $data
+	 * @param bool   $specificLifetime
+	 */
 	abstract public function realPut( $id, $data, $specificLifetime = false );
 
-	// delete cache record
+	/**
+	 * Удаление записи из бэкэнда
+	 * @param string $id
+	 */
 	abstract public function realRemove( $id );
 
-	// is the automatic cleaning available for the backend?
+	/**
+	 * Проверить наличие записи в кэше
+	 * @deprecated
+	 *
+	 * @param string $id
+	 *
+	 * @return bool
+	 */
+	abstract public function test( $id );
+
+	/**
+	 * Возвращает true, если бэкэнд поддерживает автоматическое удаление старых данных
+	 *
+	 * @return bool
+	 */
 	abstract public function isAutomaticCleaningAvailable();
 
-	// constructor
+	/**
+	 * Конструктор
+	 */
 	public function __construct() {
 
 		if( !method_exists( $this, 'isAvailable' ) or !$this::isAvailable() ) {
@@ -30,6 +59,12 @@ abstract class Common {
 		}
 	}
 
+	/**
+	 * Получить запись из кэша
+	 * @param $key
+	 *
+	 * @return string|null
+	 */
 	public function get( $key ) {
 
 		$data = $this->realGet( Difra\Site::getInstance()->getHost() . '_' . $key );
@@ -39,6 +74,12 @@ abstract class Common {
 		return $data['data'];
 	}
 
+	/**
+	 * Добавить запись в кэш
+	 * @param string $key
+	 * @param string $data
+	 * @param int    $ttl
+	 */
 	public function put( $key, $data, $ttl = 300 ) {
 
 		$data = array(
@@ -48,21 +89,44 @@ abstract class Common {
 		$this->realPut( Difra\Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
 	}
 
+	/**
+	 * Удалить запись из кэша
+	 * @param string $key
+	 */
 	public function remove( $key ) {
 
 		$this->realRemove( Difra\Site::getInstance()->getHost() . '_' . $key );
 	}
 
+	/**
+	 * @deprecated
+	 *
+	 * @param $key
+	 *
+	 * @return null
+	 */
 	public function smartGet( $key ) {
 
 		return $this->get( $key );
 	}
 
+	/**
+	 * @deprecated
+	 *
+	 * @param     $key
+	 * @param     $data
+	 * @param int $ttl
+	 */
 	public function smartPut( $key, $data, $ttl = 300 ) {
 
 		$this->put( $key, $data, $ttl );
 	}
 
+	/**
+	 * @deprecated
+	 *
+	 * @param $key
+	 */
 	public function smartRemove( $key ) {
 
 		$this->remove( $key );
