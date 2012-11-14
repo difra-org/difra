@@ -212,7 +212,13 @@ abstract class Controller {
 		}
 	}
 
-	private function fillXML() {
+	public function fillXML() {
+
+		static $filledXML = false;
+		if( $filledXML ) {
+			return;
+		}
+		$filledXML = true;
 
 		Debugger::addLine( 'Filling XML data for render' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );

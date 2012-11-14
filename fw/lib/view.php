@@ -80,7 +80,7 @@ ErrorPage
 	 * @throws exception
 	 * @return bool|string
 	 */
-	public function render( $xml, $instance = false, $dontEcho = false ) {
+	public function render( &$xml, $instance = false, $dontEcho = false ) {
 
 		Debugger::addLine( 'Render start' );
 		if( $this->error or $this->redirect ) {
@@ -108,6 +108,8 @@ ErrorPage
 		$xslProc->resolveExternals   = true;
 		$xslProc->substituteEntities = true;
 		$xslProc->importStyleSheet( $xslDom );
+
+		Action::getInstance()->controller->fillXML();
 
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
