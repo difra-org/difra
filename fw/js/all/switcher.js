@@ -105,7 +105,7 @@ switcher.page = function( url, noPush, data ) {
 		conf.type = 'POST';
 		conf.data = data;
 		$.ajax( url, conf );
-	} else if( !$( '#content' ).length ) {
+	} else if( !$( '#content,.switcher' ).length ) {
 		$( document ).triggerHandler( 'destruct' );
 		$( '#loading' ).css( 'display', 'none' );
 		window.location = switcher.url;

@@ -40,7 +40,7 @@ class Site {
 		Events::register( 'action-find', 'Difra\\Action', 'find' );
 		Events::register( 'action-run', 'Difra\\Action', 'run' );
 		Events::register( 'render-run', 'Difra\\Action', 'render' );
-		if( file_exists( $initPHP = ( dirname( __FILE__ ) . '/../../lib/init.php' ) ) ) {
+		if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
 			include_once( $initPHP );
 		}
 	}
@@ -91,7 +91,7 @@ class Site {
 	 */
 	private function detectHost() {
 
-		$sitesDir = dirname( __FILE__ ) . self::PATH_PART;
+		$sitesDir = __DIR__ . self::PATH_PART;
 
 		// хост передаётся от веб-сервера
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
@@ -123,7 +123,7 @@ class Site {
 	public function configurePaths() {
 
 		if( !defined( 'DIR_ROOT' ) ) {
-			define( 'DIR_ROOT', dirname( __FILE__ ) . self::PATH_PART . '../' );
+			define( 'DIR_ROOT', __DIR__ . self::PATH_PART . '../' );
 		}
 		$_SERVER['DOCUMENT_ROOT'] = DIR_ROOT;
 		define( 'DIR_FW', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'fw/' );
@@ -246,7 +246,7 @@ class Site {
 				$res    = $sqlite->query( 'SELECT MAX(revision) FROM `NODES`' );
 				$res    = $res->fetchArray();
 				return $res[0];
-			} catch( Exception $ex ) {
+			} catch( \Exception $ex ) {
 			}
 		} else { // try to get old svn revision
 			if( is_file( $dir . '.svn/entries' ) ) {
@@ -285,7 +285,7 @@ class Site {
 			$svnVer[] = $match[0];
 		}
 		// site revision
-		$siteVer = $this->getSVNRev( defined( DIR_PHAR ) ? DIR_PHAR : DIR_ROOT );
+		$siteVer = $this->getSVNRev( DIR_ROOT );
 		if( $siteVer !== false ) {
 			$svnVer[] = $siteVer;
 		}

@@ -40,7 +40,7 @@ class Autoloader {
 				$path  = DIR_PLUGINS . "$name/lib/";
 			}
 		} else {
-			$path = defined( 'DIR_FW' ) ? DIR_FW . 'lib/' : dirname( __FILE__ ) . '/';
+			$path = defined( 'DIR_FW' ) ? DIR_FW . 'lib/' : __DIR__ . '/';
 			array_shift( $parts );
 		}
 		$filename = $path . strtolower( implode( '/', $parts ) ) . '.php';

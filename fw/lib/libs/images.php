@@ -150,12 +150,14 @@ final class Images {
 			$watermarkImage = new \Imagick();
 
 			$draw = new \ImagickDraw();
-			$draw->setFont( dirname( __FILE__ ) . '/capcha/DejaVuSans.ttf' );
+			$draw->setFont( __DIR__ . '/capcha/DejaVuSans.ttf' );
 			$draw->setFontSize( 10 );
 			$draw->setGravity( \imagick::GRAVITY_CENTER );
 
 			$textDArray = $watermarkImage->queryfontmetrics( $draw, $text );
-			$watermarkImage->newImage( $textDArray['textWidth'] + 7, $textDArray['textHeight'] + 1, new \ImagickPixel( 'none' ) );
+			$watermarkImage->newImage( $textDArray['textWidth'] + 7,
+						   $textDArray['textHeight'] + 1,
+						   new \ImagickPixel( 'none' ) );
 			$watermarkImage->setImageFormat( 'png' );
 		}
 
@@ -183,7 +185,9 @@ final class Images {
 		$textColor  = 'black';
 
 		foreach( $positions as $position ) {
-			$colors = $originalImage->getImageRegion( $watermark_width, $watermark_height, $position[0], $position[1] )->getImageColors();
+			$colors =
+				$originalImage->getImageRegion( $watermark_width, $watermark_height, $position[0], $position[1] )
+					->getImageColors();
 
 			if( $min === null || $colors <= $min_colors ) {
 				$min        = $position;

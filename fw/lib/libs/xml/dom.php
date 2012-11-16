@@ -74,22 +74,29 @@ class DOM {
 
 		if( is_array( $array ) and !empty( $array ) ) {
 			foreach( $array as $k => $v ) {
-				if( is_numeric( $k ) ) {
-					$k = "_$k";
-				}
-				if( is_array( $v ) ) {
+				if( is_numeric( $k ) and !is_array( $v ) ) {
+					$node->appendChild( $node->ownerDocument->createElement( $v ) );
+				} elseif( is_array( $v ) ) {
+					if( is_numeric( $k ) ) {
+						$k = "_$k";
+					}
 					$newNode = $node->appendChild( $node->ownerDocument->createElement( $k ) );
 					self::array2domAttr( $newNode, $v, $verbal );
 				} elseif( is_object( $v ) ) {
 				} else {
-					if( is_null( $v ) ) {
-						$v = 'null';
-					} elseif( $v === false ) {
-						$v = 'false';
-					} elseif( $v === true ) {
-						$v = 'true';
-					} elseif( $v === 0 ) {
-						$v = '0';
+					if( $verbal ) {
+						if( is_null( $v ) ) {
+							$v = 'null';
+						} elseif( $v === false ) {
+							$v = 'false';
+						} elseif( $v === true ) {
+							$v = 'true';
+						} elseif( $v === 0 ) {
+							$v = '0';
+						}
+					}
+					if( is_numeric( $k ) ) {
+						$k = "_$k";
 					}
 					$node->setAttribute( $k, $v );
 				}
