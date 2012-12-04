@@ -15,21 +15,6 @@
             <table class="form">
                 <tr>
                     <th>
-                        <xsl:value-of select="$locale/announcements/adm/onoff"/>
-                    </th>
-                    <td>
-                        <input name="on" type="checkbox" value="1">
-                            <xsl:if test="@on=1">
-                                <xsl:attribute name="checked">
-                                    <xsl:text>checked</xsl:text>
-                                </xsl:attribute>
-                            </xsl:if>
-                        </input>
-                    </td>
-                </tr>
-
-                <tr>
-                    <th>
                         <xsl:value-of select="$locale/announcements/adm/maxPerUser"/>
                     </th>
                     <td>

@@ -67,6 +67,28 @@ announcementsUI.savePriority = function( aId ) {
     ajaxer.query( '/adm/announcements/savepriority/' + aId + '/' + value + '/' );
 };
 
+announcementsUI.editCategory = function( cId ) {
+
+    if( $( '#ann-category-' + cId + '-edit' ).css( 'display' ) == 'none' ) {
+        $( '#ann-category-' + cId ).slideUp( 'fast' );
+        $( '#ann-category-' + cId + '-edit' ).slideDown( 'fast' );
+    } else {
+        $( '#ann-category-' + cId + '-edit' ).slideUp( 'fast' );
+        $( '#ann-category-' + cId ).slideDown( 'fast' );
+    }
+};
+
+announcementsUI.editAdditionals = function ( cId ) {
+
+    if( $( '#addField-' + cId + '-edit' ).css( 'display' ) == 'none' ) {
+        $( '#addField-' + cId ).slideUp( 'fast' );
+        $( '#addField-' + cId + '-edit' ).slideDown( 'fast' );
+    } else {
+        $( '#addField-' + cId + '-edit' ).slideUp( 'fast' );
+        $( '#addField-' + cId ).slideDown( 'fast' );
+    }
+};
+
 // стартуем
 $( document ).ready( function () {
 

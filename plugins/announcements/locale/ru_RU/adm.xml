@@ -60,6 +60,30 @@
                 <addEvent>Добавить анонс событий</addEvent>
                 <saveEvent>Сохранить изменения</saveEvent>
             </forms>
+            <category>
+                <title>Категории</title>
+                <addCategory>Добавление категории</addCategory>
+                <name>Название категории</name>
+                <list>Доступные категории</list>
+                <added>Категория добавлена.</added>
+                <duplicateName>Категория с таким названием уже существует</duplicateName>
+                <num>№</num>
+                <updated>Категория обновлена.</updated>
+                <techAlias>Техническая метка</techAlias>
+                <catNameExample>Например: Кино</catNameExample>
+                <techAliasExample>Например: cinema</techAliasExample>
+            </category>
+            <additionals>
+                <title>Дополнительные поля</title>
+                <addNewField>Добавление нового дополнительного поля</addNewField>
+                <fieldName>Название поля</fieldName>
+                <added>Дополнительное поле добавлено.</added>
+                <nameExample>Наример: Стоимость билетов</nameExample>
+                <techAliasExample>Наример: ticket-price</techAliasExample>
+                <duplicateName>Такое дополнительное поле уже существует.</duplicateName>
+                <list>Текущие дополнительные поля</list>
+                <updated>Дополнительное поле обновлено.</updated>
+            </additionals>
         </adm>
     </announcements>
 

@@ -6,12 +6,12 @@
 .action.left,
 .action.right,
 .action.view {
-	background:  url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAA8CAMAAADrAndoAAAAh1BMVEUAAABgX1//AABgX19gX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX19gX1//AABgX1//AABgX19gX19ZXWNgX19gX19gX1//AABgX19gX19ZXWNZXWNgX19gX1//AABgX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX1//AAA0Tf3AAAAAKnRSTlMAEBARICAiMDAzM0BARERQUGBgZnB3d4CPj5mfqru7v7/Pz93f3+7u7++PiWBvAAAB+UlEQVR42u3WYW/aMBSF4ePWDLq0S0MDoXMz1zR0wM3//31zPPGljQ1Y3aiq80hYkZAQenVjG55eWbvSiFCNQr7KlvhKKhHnRCqMK6RBRB1ClDWiKqO2n6yWrq2tNfKUIiWgnZTnxlK+cGitEq2cWIz7/oALqP+ORo0s3Va2U0B13ZmxQqdq+KRaxb/+9YKYpQQ/EfO0wDGLJ4ww4nRRaCcGGaZSFduhViVTvKXqpjFim6ZWsVrZrX6ILBFx/SKDb4hp96+LdKrXfYv3VmKgRJwy0uB8hRSY+lrh4a1GDiI/bURMXiv4Hr+vEfEg3hKJWHufK5VqPxarEHv401aKrMlCqDU6WUVR1GL8mpqsZKvMHCFlOpbPdYcxdz7VeCwrGsY6EQvtP+frOhVqffCepTsTWmW+aOElPRKrvcG4m3Yfn6xGvCZvslCK08P6wadhXaqtVLlbeNj+E9pDqkSuFu81YpQVscrI6hPds5wruwr50heL9pAqkauNnYZaZZ6G/+wGL67WuKz0PYtOv8ETEREREREREREREf0Hk8fn58cJ6ATzvl+v+34OOuq+7++BydqvdMxm1+9mwNVmAzpi1s9vd0OteT8Dpd32t5j5WuGBjk4WQi1O1gk2m6tQi3vWSafhejKsPA15z+INnoiIiIiIiIiIiIgu5A+5B0HjI45yCAAAAABJRU5ErkJggg==);
-	background:  url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAA8CAMAAADrAndoAAAAh1BMVEUAAABgX1//AABgX19gX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX19gX1//AABgX1//AABgX19gX19ZXWNgX19gX19gX1//AABgX19gX19ZXWNZXWNgX19gX1//AABgX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX1//AAA0Tf3AAAAAKnRSTlMAEBARICAiMDAzM0BARERQUGBgZnB3d4CPj5mfqru7v7/Pz93f3+7u7++PiWBvAAAB+UlEQVR42u3WYW/aMBSF4ePWDLq0S0MDoXMz1zR0wM3//31zPPGljQ1Y3aiq80hYkZAQenVjG55eWbvSiFCNQr7KlvhKKhHnRCqMK6RBRB1ClDWiKqO2n6yWrq2tNfKUIiWgnZTnxlK+cGitEq2cWIz7/oALqP+ORo0s3Va2U0B13ZmxQqdq+KRaxb/+9YKYpQQ/EfO0wDGLJ4ww4nRRaCcGGaZSFduhViVTvKXqpjFim6ZWsVrZrX6ILBFx/SKDb4hp96+LdKrXfYv3VmKgRJwy0uB8hRSY+lrh4a1GDiI/bURMXiv4Hr+vEfEg3hKJWHufK5VqPxarEHv401aKrMlCqDU6WUVR1GL8mpqsZKvMHCFlOpbPdYcxdz7VeCwrGsY6EQvtP+frOhVqffCepTsTWmW+aOElPRKrvcG4m3Yfn6xGvCZvslCK08P6wadhXaqtVLlbeNj+E9pDqkSuFu81YpQVscrI6hPds5wruwr50heL9pAqkauNnYZaZZ6G/+wGL67WuKz0PYtOv8ETEREREREREREREf0Hk8fn58cJ6ATzvl+v+34OOuq+7++BydqvdMxm1+9mwNVmAzpi1s9vd0OteT8Dpd32t5j5WuGBjk4WQi1O1gk2m6tQi3vWSafhejKsPA15z+INnoiIiIiIiIiIiIgu5A+5B0HjI45yCAAAAABJRU5ErkJggg==), linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
-	background:  url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAA8CAMAAADrAndoAAAAh1BMVEUAAABgX1//AABgX19gX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX19gX1//AABgX1//AABgX19gX19ZXWNgX19gX19gX1//AABgX19gX19ZXWNZXWNgX19gX1//AABgX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX1//AAA0Tf3AAAAAKnRSTlMAEBARICAiMDAzM0BARERQUGBgZnB3d4CPj5mfqru7v7/Pz93f3+7u7++PiWBvAAAB+UlEQVR42u3WYW/aMBSF4ePWDLq0S0MDoXMz1zR0wM3//31zPPGljQ1Y3aiq80hYkZAQenVjG55eWbvSiFCNQr7KlvhKKhHnRCqMK6RBRB1ClDWiKqO2n6yWrq2tNfKUIiWgnZTnxlK+cGitEq2cWIz7/oALqP+ORo0s3Va2U0B13ZmxQqdq+KRaxb/+9YKYpQQ/EfO0wDGLJ4ww4nRRaCcGGaZSFduhViVTvKXqpjFim6ZWsVrZrX6ILBFx/SKDb4hp96+LdKrXfYv3VmKgRJwy0uB8hRSY+lrh4a1GDiI/bURMXiv4Hr+vEfEg3hKJWHufK5VqPxarEHv401aKrMlCqDU6WUVR1GL8mpqsZKvMHCFlOpbPdYcxdz7VeCwrGsY6EQvtP+frOhVqffCepTsTWmW+aOElPRKrvcG4m3Yfn6xGvCZvslCK08P6wadhXaqtVLlbeNj+E9pDqkSuFu81YpQVscrI6hPds5wruwr50heL9pAqkauNnYZaZZ6G/+wGL67WuKz0PYtOv8ETEREREREREREREf0Hk8fn58cJ6ATzvl+v+34OOuq+7++BydqvdMxm1+9mwNVmAzpi1s9vd0OteT8Dpd32t5j5WuGBjk4WQi1O1gk2m6tQi3vWSafhejKsPA15z+INnoiIiIiIiIiIiIgu5A+5B0HjI45yCAAAAABJRU5ErkJggg==), -webkit-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
-	background:  url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAA8CAMAAADrAndoAAAAh1BMVEUAAABgX1//AABgX19gX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX19gX1//AABgX1//AABgX19gX19ZXWNgX19gX19gX1//AABgX19gX19ZXWNZXWNgX19gX1//AABgX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX1//AAA0Tf3AAAAAKnRSTlMAEBARICAiMDAzM0BARERQUGBgZnB3d4CPj5mfqru7v7/Pz93f3+7u7++PiWBvAAAB+UlEQVR42u3WYW/aMBSF4ePWDLq0S0MDoXMz1zR0wM3//31zPPGljQ1Y3aiq80hYkZAQenVjG55eWbvSiFCNQr7KlvhKKhHnRCqMK6RBRB1ClDWiKqO2n6yWrq2tNfKUIiWgnZTnxlK+cGitEq2cWIz7/oALqP+ORo0s3Va2U0B13ZmxQqdq+KRaxb/+9YKYpQQ/EfO0wDGLJ4ww4nRRaCcGGaZSFduhViVTvKXqpjFim6ZWsVrZrX6ILBFx/SKDb4hp96+LdKrXfYv3VmKgRJwy0uB8hRSY+lrh4a1GDiI/bURMXiv4Hr+vEfEg3hKJWHufK5VqPxarEHv401aKrMlCqDU6WUVR1GL8mpqsZKvMHCFlOpbPdYcxdz7VeCwrGsY6EQvtP+frOhVqffCepTsTWmW+aOElPRKrvcG4m3Yfn6xGvCZvslCK08P6wadhXaqtVLlbeNj+E9pDqkSuFu81YpQVscrI6hPds5wruwr50heL9pAqkauNnYZaZZ6G/+wGL67WuKz0PYtOv8ETEREREREREREREf0Hk8fn58cJ6ATzvl+v+34OOuq+7++BydqvdMxm1+9mwNVmAzpi1s9vd0OteT8Dpd32t5j5WuGBjk4WQi1O1gk2m6tQi3vWSafhejKsPA15z+INnoiIiIiIiIiIiIgu5A+5B0HjI45yCAAAAABJRU5ErkJggg==), -moz-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
-	background:  url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAA8CAMAAADrAndoAAAAh1BMVEUAAABgX1//AABgX19gX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX19gX1//AABgX1//AABgX19gX19ZXWNgX19gX19gX1//AABgX19gX19ZXWNZXWNgX19gX1//AABgX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX1//AAA0Tf3AAAAAKnRSTlMAEBARICAiMDAzM0BARERQUGBgZnB3d4CPj5mfqru7v7/Pz93f3+7u7++PiWBvAAAB+UlEQVR42u3WYW/aMBSF4ePWDLq0S0MDoXMz1zR0wM3//31zPPGljQ1Y3aiq80hYkZAQenVjG55eWbvSiFCNQr7KlvhKKhHnRCqMK6RBRB1ClDWiKqO2n6yWrq2tNfKUIiWgnZTnxlK+cGitEq2cWIz7/oALqP+ORo0s3Va2U0B13ZmxQqdq+KRaxb/+9YKYpQQ/EfO0wDGLJ4ww4nRRaCcGGaZSFduhViVTvKXqpjFim6ZWsVrZrX6ILBFx/SKDb4hp96+LdKrXfYv3VmKgRJwy0uB8hRSY+lrh4a1GDiI/bURMXiv4Hr+vEfEg3hKJWHufK5VqPxarEHv401aKrMlCqDU6WUVR1GL8mpqsZKvMHCFlOpbPdYcxdz7VeCwrGsY6EQvtP+frOhVqffCepTsTWmW+aOElPRKrvcG4m3Yfn6xGvCZvslCK08P6wadhXaqtVLlbeNj+E9pDqkSuFu81YpQVscrI6hPds5wruwr50heL9pAqkauNnYZaZZ6G/+wGL67WuKz0PYtOv8ETEREREREREREREf0Hk8fn58cJ6ATzvl+v+34OOuq+7++BydqvdMxm1+9mwNVmAzpi1s9vd0OteT8Dpd32t5j5WuGBjk4WQi1O1gk2m6tQi3vWSafhejKsPA15z+INnoiIiIiIiIiIiIgu5A+5B0HjI45yCAAAAABJRU5ErkJggg==), -o-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
-	background:  url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAASwAAAA8CAMAAADrAndoAAAAh1BMVEUAAABgX1//AABgX19gX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX19gX1//AABgX1//AABgX19gX19ZXWNgX19gX19gX1//AABgX19gX19ZXWNZXWNgX19gX1//AABgX1//AABgX19gX1//AABZXWNgX19gX1//AABZXWNgX1//AAA0Tf3AAAAAKnRSTlMAEBARICAiMDAzM0BARERQUGBgZnB3d4CPj5mfqru7v7/Pz93f3+7u7++PiWBvAAAB+UlEQVR42u3WYW/aMBSF4ePWDLq0S0MDoXMz1zR0wM3//31zPPGljQ1Y3aiq80hYkZAQenVjG55eWbvSiFCNQr7KlvhKKhHnRCqMK6RBRB1ClDWiKqO2n6yWrq2tNfKUIiWgnZTnxlK+cGitEq2cWIz7/oALqP+ORo0s3Va2U0B13ZmxQqdq+KRaxb/+9YKYpQQ/EfO0wDGLJ4ww4nRRaCcGGaZSFduhViVTvKXqpjFim6ZWsVrZrX6ILBFx/SKDb4hp96+LdKrXfYv3VmKgRJwy0uB8hRSY+lrh4a1GDiI/bURMXiv4Hr+vEfEg3hKJWHufK5VqPxarEHv401aKrMlCqDU6WUVR1GL8mpqsZKvMHCFlOpbPdYcxdz7VeCwrGsY6EQvtP+frOhVqffCepTsTWmW+aOElPRKrvcG4m3Yfn6xGvCZvslCK08P6wadhXaqtVLlbeNj+E9pDqkSuFu81YpQVscrI6hPds5wruwr50heL9pAqkauNnYZaZZ6G/+wGL67WuKz0PYtOv8ETEREREREREREREf0Hk8fn58cJ6ATzvl+v+34OOuq+7++BydqvdMxm1+9mwNVmAzpi1s9vd0OteT8Dpd32t5j5WuGBjk4WQi1O1gk2m6tQi3vWSafhejKsPA15z+INnoiIiIiIiIiIiIgu5A+5B0HjI45yCAAAAABJRU5ErkJggg==), -ms-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background:  url('/images/adm-actions.png');
+	background:  url('/images/adm-actions.png'), linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background:  url('/images/adm-actions.png'), -webkit-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background:  url('/images/adm-actions.png'), -moz-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background:  url('/images/adm-actions.png'), -o-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
+	background:  url('/images/adm-actions.png'), -ms-linear-gradient(bottom, #d6d6d6 0%, #f9f9f9 100%);
 	width:       13px;
 	overflow:    hidden;
 	text-indent: 20px;
@@ -20,6 +20,7 @@
 .action.add {
 	background-position: -23px 3px, 0 0;
 }
+
 .IE .action.add {
 	background-position: -23px 3px;
 }
@@ -27,6 +28,7 @@
 .action.edit {
 	background-position: -81px 3px, 0 0;
 }
+
 .IE .action.edit {
 	background-position: -81px 3px;
 }
@@ -34,6 +36,7 @@
 .action.delete {
 	background-position: -52px 3px, 0 0;
 }
+
 .IE .action.delete {
 	background-position: -52px 3px;
 }
@@ -41,6 +44,7 @@
 .action.up {
 	background-position: -111px 3px, 0 0;
 }
+
 .IE .action.up {
 	background-position: -111px 3px;
 }
@@ -48,6 +52,7 @@
 .action.down {
 	background-position: -141px 3px, 0 0;
 }
+
 .IE .action.down {
 	background-position: -141px 3px;
 }
@@ -55,6 +60,7 @@
 .action.left {
 	background-position: -204px 3px, 0 0;
 }
+
 .IE .action.left {
 	background-position: -204px 3px;
 }
@@ -62,6 +68,7 @@
 .action.right {
 	background-position: -174px 3px, 0 0;
 }
+
 .IE .action.right {
 	background-position: -174px 3px;
 }
@@ -69,11 +76,12 @@
 .action.view {
 	background-position: -232px 2px, 0 0;
 }
+
 .IE .action.view {
 	background-position: -232px 2px;
 }
 
 .action.disabled {
 	opacity: 0.5;
-	cursor: default;
+	cursor:  default;
 }

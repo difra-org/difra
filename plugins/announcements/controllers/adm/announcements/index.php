@@ -2,7 +2,7 @@
 
 use Difra\Plugins, Difra\Plugins\Announcements, Difra\Param;
 
-class AdmAnnouncementsController extends Difra\Controller {
+class AdmAnnouncementsIndexController extends Difra\Controller {
 
     public function dispatch() {
 
@@ -17,10 +17,12 @@ class AdmAnnouncementsController extends Difra\Controller {
 
     }
 
-
     public function addAction() {
 
         $addNode = $this->root->appendChild( $this->xml->createElement( 'announcementsAdd' ) );
+
+        $additionalsFieldsNode = $addNode->appendChild( $this->xml->createElement( 'additionalsFields' ) );
+        \Difra\Plugins\Announcements\Additionals::getListXML( $additionalsFieldsNode );
 
         if( \Difra\Plugger::getInstance()->isEnabled( 'blogs' ) ) {
             \Difra\Plugins\Blogs\Group::getNewGroupsXml( $addNode, 0, false );
@@ -33,11 +35,11 @@ class AdmAnnouncementsController extends Difra\Controller {
         \Difra\Plugins\Announcements::getInstance()->getSettingsXml( $settingsNode );
     }
 
-    public function savesettingsAjaxAction( \Difra\Param\AjaxCheckbox $on, \Difra\Param\AjaxInt $maxPerUser,
+    public function savesettingsAjaxAction( \Difra\Param\AjaxInt $maxPerUser,
                                             \Difra\Param\AjaxInt $maxPerGroup, \Difra\Param\AjaxInt $width,
                                             \Difra\Param\AjaxInt $height ) {
 
-        $settingsArray = array( 'on' => $on->val(), 'maxPerUser' => $maxPerUser->val(), 'maxPerGroup' => $maxPerGroup->val(),
+        $settingsArray = array( 'maxPerUser' => $maxPerUser->val(), 'maxPerGroup' => $maxPerGroup->val(),
                                 'width' => $width->val(), 'height' => $height->val() );
 
         \Difra\Plugins\Announcements::getInstance()->saveSettings( $settingsArray );
@@ -74,21 +76,21 @@ class AdmAnnouncementsController extends Difra\Controller {
 
         $Announcements->saveImage( $eventId, $eventImage->val() );
 
-        \Difra\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodCreate' ) );
+        \Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodCreate' ) );
         $this->ajax->redirect( '/adm/announcements/' );
     }
 
     public function savepriorityAjaxAction( \Difra\Param\AnyInt $id, \Difra\Param\AnyInt $priority ) {
 
         \Difra\Plugins\Announcements::setPriority( $id->val(), $priority->val() );
-        \Difra\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/prioritySet' ) );
+        \Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/prioritySet' ) );
         $this->ajax->refresh();
     }
 
     public function deleteAction( \Difra\Param\AnyInt $id ) {
 
         \Difra\Plugins\Announcements::getInstance()->delete( $id->val() );
-        \Difra\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/deleted' ) );
+        \Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/deleted' ) );
         $this->view->redirect( '/adm/announcements/' );
     }
 
@@ -134,8 +136,7 @@ class AdmAnnouncementsController extends Difra\Controller {
             $Announcements->saveImage( $eventId, $eventImage->val() );
         }
 
-        \Difra\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodUpdate' ) );
+        \Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodUpdate' ) );
         $this->ajax->redirect( '/adm/announcements/' );
     }
-
 }

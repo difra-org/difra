@@ -133,10 +133,12 @@
 							<xsl:for-each select="traceback/*">
 								<tr>
 									<td>
-										<xsl:value-of select="@file"/>
-										<xsl:text>:</xsl:text>
-										<xsl:value-of select="@line"/>
-										<xsl:text> </xsl:text>
+										<xsl:if test="@file or @line">
+											<xsl:value-of select="@file"/>
+											<xsl:text>:</xsl:text>
+											<xsl:value-of select="@line"/>
+											<xsl:text> </xsl:text>
+										</xsl:if>
 										<xsl:value-of select="@class"/>
 										<xsl:value-of select="@type"/>
 										<xsl:value-of select="@function"/>

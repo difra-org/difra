@@ -61,7 +61,7 @@ class Announcements {
 
         @mkdir( $this->imagePath, 0755, true );
 
-        $Images = \Difra\Images::getInstance();
+        $Images = \Difra\Libs\Images::getInstance();
 
         try {
             $rawImg = $Images->data2image( $fileData );
@@ -277,6 +277,33 @@ class Announcements {
                 $obj->getXml( $node );
             }
         }
+    }
+
+    /**
+     * Добавляет категорию или обновляет категорию
+     * @param string $name
+     * @param int $id
+     */
+    public function saveCategory( $techAlias, $categoryName, $id = null ) {
+        $Category = \Difra\Plugins\Announcements\Category::create( $id );
+        $Category->setTextName( $categoryName );
+        $Category->setCategory( $techAlias );
+    }
+
+    /**
+     * Проверяет есть ли уже такая категория
+     * @param $name
+     */
+    public function checkCategoryName( $name ) {
+
+        return \Difra\Plugins\Announcements\Category::checkName( $name );
+    }
+
+    public function saveAdditionalField( $name, $alias, $id = null ) {
+
+        $A = \Difra\Plugins\Announcements\Additionals::create( $id );
+        $A->setName( $name );
+        $A->setAlias( $alias );
     }
 
 }

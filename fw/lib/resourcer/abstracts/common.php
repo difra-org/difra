@@ -58,6 +58,9 @@ abstract class Common {
 			return false;
 		}
 
+		/*
+		 * отключено, пока nginx не поддерживает заголовок Vary в fastcgi_cache
+		 *
 		// узнаем, поддерживает ли браузер gzip
 		$enc = false;
 		if( !empty( $_SERVER['HTTP_ACCEPT_ENCODING'] ) ) {
@@ -76,10 +79,12 @@ abstract class Common {
 				}
 			}
 		}
+		*/
+		$enc = 'gzip';
 
 		header( 'Content-Type: ' . $this->contentType );
 		if( $enc == 'gzip' and $data = $this->compileGZ( $instance ) ) {
-			header( 'Vary: Accept-Encoding' );
+			//			header( 'Vary: Accept-Encoding' );
 			header( 'Content-Encoding: gzip' );
 		} else {
 			$data = $this->compile( $instance );
@@ -87,8 +92,9 @@ abstract class Common {
 		if( !$modified = Difra\Cache::getInstance()->get( "{$instance}_{$this->type}_modified" ) ) {
 			$modified = gmdate( 'D, d M Y H:i:s' ) . ' GMT';
 		}
+		\Difra\View::addExpires( \Difra\Controller::DEFAULT_CACHE );
 		header( 'Last-Modified: ' . $modified );
-		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + 604800 ) . ' GMT' );
+		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', time() + self::CACHE_TTL ) . ' GMT' );
 		echo $data;
 		return true;
 	}

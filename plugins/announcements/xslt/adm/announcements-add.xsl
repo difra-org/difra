@@ -105,6 +105,25 @@
                 </tr>
             </table>
 
+            <xsl:if test="additionalsFields/item">
+                <h3>
+                    <xsl:value-of select="$locale/announcements/adm/additionals/title"/>
+                </h3>
+
+                <table class="form">
+                    <xsl:for-each select="additionalsFields/item">
+                        <tr>
+                            <th>
+                                <xsl:value-of select="@name"/>
+                            </th>
+                            <td>
+                                <input type="text" name="additionalField[{@id}]"/>
+                            </td>
+                        </tr>
+                    </xsl:for-each>
+                </table>
+            </xsl:if>
+
             <h3>
                 <xsl:value-of select="$locale/announcements/adm/forms/eventDescription"/>
             </h3>
@@ -115,7 +134,7 @@
                         <xsl:value-of select="$locale/announcements/adm/forms/shortDescription"/>
                     </th>
                     <td>
-                        <textarea name="shortDescription" editor="Full">
+                        <textarea name="shortDescription" cols="" rows="10">
 
                         </textarea>
                     </td>
@@ -125,7 +144,7 @@
                         <xsl:value-of select="$locale/announcements/adm/forms/description"/>
                     </th>
                     <td>
-                        <textarea name="description" editor="Full">
+                        <textarea name="description" editor="Full" cols="" rows="">
 
                         </textarea>
                     </td>

@@ -267,7 +267,7 @@ class Debugger {
 			@array_shift( $error['traceback'] );
 			self::getInstance()->addLineAsArray( $error );
 		}
-		// если по каким-то причинам рендер не случился, отрендерим свою страничку с блэкджеком и шлюхами
+		// если по каким-то причинам рендер не случился, отрендерим свою страничку
 		if( !View::getInstance()->rendered ) {
 			$controller = Action::getInstance()->controller;
 			$ajax       = $controller->ajax;

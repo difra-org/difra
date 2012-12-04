@@ -57,6 +57,8 @@ class Site {
 		$this->configureLocale();
 		$this->configurePHP();
 		$this->sessionLoad();
+		header( 'X-Powered-By: Difra' );
+		View::addExpires( 0 );
 		$initDone = true;
 	}
 

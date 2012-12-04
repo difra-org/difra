@@ -28,3 +28,27 @@
 .savePriorityButton {
     display: none;
 }
+#announcements-categoryList td {
+    vertical-align: top;
+}
+.addCategoryForm span {
+    display: block;
+}
+.addCategoryForm td {
+    vertical-align: top;
+}
+.addCategoryForm .invalid-text {
+    color: red;
+}
+.no-display {
+    display: none;
+}
+#announcements-categoryList .invalid-text {
+    color: red;
+    font-size: 10px;
+    margin: 0;
+}
+
+.addCategoryForm input[type='submit'], #announcements-categoryList input[type='submit'] {
+    margin: 0 !important;
+}
