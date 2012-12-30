@@ -148,7 +148,7 @@ $( document ).ready( function() {
 			switcher.hashChanged = true;
 			history.replaceState( { url: switcher.url }, null, switcher.url );
 		}
-	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' ) {
+	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' && content.length ) {
 		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
 	} else {
 		if( !switcher.url ) {
