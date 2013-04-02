@@ -1,5 +1,6 @@
 
 var announcementsUI = {};
+announcementsUI.nFields = 0;
 
 announcementsUI.prioritySlider = function() {
 
@@ -16,6 +17,19 @@ announcementsUI.prioritySlider = function() {
         }
     } );
 
+};
+
+announcementsUI.initFromEventDate = function() {
+    $( "#fromEventDate" ).datepicker( {
+        changeMonth:true,
+        changeYear:true,
+        minDate: 0,
+        onClose: function( dateText ) {
+            if( dateText!='' ) {
+                $( '#eventDate' ).datepicker( 'option', 'minDate', dateText );
+            }
+        }
+    } );
 };
 
 announcementsUI.initEventDate = function() {
@@ -39,7 +53,7 @@ announcementsUI.initEventDate = function() {
 
 announcementsUI.initBeginDate = function() {
 
-    $( "#beginDate, #endDate" ).datepicker( {
+    $( "#beginDate, #endDate, #fromEventDate" ).datepicker( {
         changeMonth: true,
         changeYear: true,
         minDate: 0
@@ -78,7 +92,7 @@ announcementsUI.editCategory = function( cId ) {
     }
 };
 
-announcementsUI.editAdditionals = function ( cId ) {
+announcementsUI.editAdditionals = function( cId ) {
 
     if( $( '#addField-' + cId + '-edit' ).css( 'display' ) == 'none' ) {
         $( '#addField-' + cId ).slideUp( 'fast' );
@@ -89,14 +103,31 @@ announcementsUI.editAdditionals = function ( cId ) {
     }
 };
 
+announcementsUI.addSchedule = function( ) {
+
+    var $cloned = $( '#schedulesFieldAdd' ).clone( ).removeClass( 'no-display' ).removeAttr( 'id' );
+
+    $cloned.find( 'input.sn' ).attr( 'name', 'scheduleField[' + announcementsUI.nFields + ']' );
+    $cloned.find( 'input.sv' ).attr( 'name', 'scheduleValue[' + announcementsUI.nFields + ']' );
+    $cloned.appendTo( '#schedulesFields' );
+    announcementsUI.nFields++;
+};
+announcementsUI.deleteSchedule = function( elem ) {
+    $( elem ).parent( 'div' ).remove();
+};
+announcementsUI.setScheduleCount = function( count ) {
+    announcementsUI.nFields = count;
+};
+
 // стартуем
 $( document ).ready( function () {
-
+    announcementsUI.initFromEventDate();
     announcementsUI.initEventDate();
     announcementsUI.initBeginDate();
     announcementsUI.prioritySlider();
 } );
 
+$( document ).bind( 'construct', announcementsUI.initFromEventDate );
 $( document ).bind( 'construct', announcementsUI.initEventDate );
 $( document ).bind( 'construct', announcementsUI.initBeginDate );
 $( document ).bind( 'construct', announcementsUI.prioritySlider );

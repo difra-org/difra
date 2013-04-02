@@ -15,7 +15,8 @@ class AdmAnnouncementsCategoryController extends Difra\Controller {
         \Difra\Plugins\Announcements\Category::getList( $categoryNode );
     }
 
-    public function saveAjaxAction( \Difra\Param\AjaxString $categoryName, \Difra\Param\AjaxString $categoryAlias, \Difra\Param\AjaxInt $catId = null, \Difra\Param\AjaxString $originalAlias = null ) {
+    public function saveAjaxAction( \Difra\Param\AjaxString $categoryName, \Difra\Param\AjaxString $categoryAlias,
+                                    \Difra\Param\AjaxInt $catId = null, \Difra\Param\AjaxString $originalAlias = null ) {
 
         $catId = ! is_null( $catId ) ? $catId->val() : null;
 

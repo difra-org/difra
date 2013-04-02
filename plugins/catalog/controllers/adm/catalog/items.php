@@ -35,15 +35,22 @@ class AdmCatalogItemsController extends \Difra\Controller {
 					\Difra\Param\AjaxFile $mainImage = null,
 					\Difra\Param\AjaxFiles $images = null ) {
 
+		$ext = $ext ? $ext->val() : null;
 		if( $id ) {
-			\Difra\Plugins\Catalog::getInstance()->updateItem( $id, $name, $category, $visible, $price, $description, $ext->val() );
+			\Difra\Plugins\Catalog::getInstance()->updateItem( $id, $name, $category, $visible, $price, $description, $ext );
 		} else {
 			if( !$mainImage ) {
 				$this->ajax->required( 'mainImage' );
 				return;
 			}
-			\Difra\Plugins\Catalog::getInstance()->addItem( $name, $category, $visible, $price, $description, $ext,
-									$mainImage, $images );
+			\Difra\Plugins\Catalog::getInstance()->addItem( $name,
+				$category,
+				$visible,
+				$price,
+				$description,
+				$ext,
+				$mainImage,
+				$images );
 		}
 		$this->ajax->redirect( '/adm/catalog/items/category/' . $category );
 	}

@@ -30,23 +30,23 @@ class Plugger {
 	 */
 	private function getPluginsNames() {
 
-		if( is_null( $this->pluginsNames ) ) {
-			$plugins = array();
-			if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
-				if( is_dir( DIR_PLUGINS ) and $dir = opendir( DIR_PLUGINS ) ) {
-					while( false !== ( $subdir = readdir( $dir ) ) ) {
-						if( $subdir != '.' and $subdir != '..' and is_dir( DIR_PLUGINS . '/' . $subdir ) ) {
-							if( is_readable( DIR_PLUGINS . "/$subdir/plugin.php" ) ) {
-								$plugins[] = $subdir;
-							}
+		if( !is_null( $this->pluginsNames ) ) {
+			return $this->pluginsNames;
+		}
+		$plugins = array();
+		if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
+			if( is_dir( DIR_PLUGINS ) and $dir = opendir( DIR_PLUGINS ) ) {
+				while( false !== ( $subdir = readdir( $dir ) ) ) {
+					if( $subdir != '.' and $subdir != '..' and is_dir( DIR_PLUGINS . '/' . $subdir ) ) {
+						if( is_readable( DIR_PLUGINS . "/$subdir/plugin.php" ) ) {
+							$plugins[] = $subdir;
 						}
 					}
 				}
-				Cache::getInstance()->put( 'plugger_plugins', $plugins, 300 );
 			}
-			$this->pluginsNames = $plugins;
+			Cache::getInstance()->put( 'plugger_plugins', $plugins, 300 );
 		}
-		return $this->pluginsNames;
+		return $this->pluginsNames = $plugins;
 	}
 
 	/**
@@ -55,26 +55,26 @@ class Plugger {
 	 */
 	public function getAllPlugins() {
 
-		if( is_null( $this->plugins ) ) {
-			$plugins = array();
-			$dirs    = $this->getPluginsNames();
-			if( !empty( $dirs ) ) {
-				foreach( $dirs as $dir ) {
-					include( DIR_PLUGINS . '/' . $dir . '/plugin.php' );
-					$ucf           = ucfirst( $dir );
-					$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
-				}
-			}
-			$this->plugins = $plugins;
+		if( !is_null( $this->plugins ) ) {
+			return $this->plugins;
 		}
-		return $this->plugins;
+		$plugins = array();
+		$dirs    = $this->getPluginsNames();
+		if( !empty( $dirs ) ) {
+			foreach( $dirs as $dir ) {
+				include( DIR_PLUGINS . '/' . $dir . '/plugin.php' );
+				$ucf           = ucfirst( $dir );
+				$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
+			}
+		}
+		return $this->plugins = $plugins;
 	}
 
 	/**
 	 * Включает плагины
 	 * @return array
 	 */
-	private function smartPluginsEnable() {
+	public function smartPluginsEnable() {
 
 		static $pluginsState = null;
 		if( !is_null( $pluginsState ) ) {
@@ -181,11 +181,13 @@ class Plugger {
 		return $this->plugins[$pluginName]->isEnabled();
 	}
 
-	/**************************** Дальше идёт старый код, который в итоге будет выпилен! ****************************/
-
-	// XXX: from pnd: пролазил везде где только можно, но не нашел ничего готового для определения наличия плагина.
-	// переименовано в isEnabled()
-	// Добавлено сообщение DEPRECATED 04-sep-12.
+	/**
+	 * @deprecated
+	 *
+	 * @param string $name
+	 *
+	 * @return bool
+	 */
 	public function isPlugin( $name ) {
 
 		trigger_error( 'Please use Plugger->isEnabled() instead of Plugger->isPlugin()', E_USER_DEPRECATED );

@@ -1,98 +1,172 @@
 <locale>
-    <announcements>
-        <adm>
-            <announcements>Анонсы</announcements>
-            <settings>настройки</settings>
-            <onoff>Плагин анонсов включен</onoff>
-            <maxPerUser>Максимальное кол-во анонсов для пользователя</maxPerUser>
-            <maxPerGroup>Максимальное кол-во анонсов для группы</maxPerGroup>
-            <imageSize>Максимальный размер картинки анонса</imageSize>
-            <width>Ширина:</width>
-            <height>Высота:</height>
-            <zeroValueHint>Значение равное '0' будет означать отсутствие ограничений.</zeroValueHint>
-            <settingsSaved>Настройки сохранены</settingsSaved>
-            <last>последние</last>
-            <addEvent>Добавить анонс события</addEvent>
-            <add>добавление нового события</add>
-            <edit>редактирование анонса</edit>
-            <nextEvents>Ближайшие события:</nextEvents>
-            <eventWillHappen>Событие произойдёт </eventWillHappen>
-            <from>с</from>
-            <to>по</to>
-            <notify>
-                <createError>Во время создания анонса события возникла ошибка.</createError>
-                <goodCreate>Анонс события создан. Это радость.</goodCreate>
-                <dataDirError>Директория для хранения картинок не существует или не доступна на запись.</dataDirError>
-                <prioritySet>Приоритет анонса события установлен.</prioritySet>
-                <deleted>Анонс события удалён.</deleted>
-                <updateError>Не могу обновить данные анонса.</updateError>
-                <goodUpdate>Параметры анонса событий сохранились вполне удачно.</goodUpdate>
-            </notify>
-            <status>
-                <past>уже прошло</past>
-                <today>сегодня</today>
-                <tomorrow>завтра</tomorrow>
-                <willBeIn>через</willBeIn>
-            </status>
-            <event_desc>Анонс события / краткое описание</event_desc>
-            <event_dates>Период демострации анонса</event_dates>
-            <users_groups>Пользователь / группа</users_groups>
-            <priority>Приоритет</priority>
-            <actions>Действия</actions>
-            <pastEvents>Архив событий</pastEvents>
-            <eventInPastHappen>Событие уже произошло.</eventInPastHappen>
-            <event_dates_past>Анонс демонстрировался в период</event_dates_past>
-            <notVisible>Не показывается</notVisible>
-            <forms>
-                <pic>Изображение</pic>
-                <imagePreview>Превью анонса</imagePreview>
-                <mainParameters>Основные параметры</mainParameters>
-                <group>Группа</group>
-                <title>Заголовок события</title>
-                <eventDate>Дата события</eventDate>
-                <beginDate>Дата начала демонстрации анонса события</beginDate>
-                <endDate>Дата завершения демонстрации анонса события</endDate>
-                <priority>Приоритет показа анонса</priority>
-                <visibility>Показывать событие?</visibility>
-                <eventDescription>Описания события</eventDescription>
-                <shortDescription>Краткое описание</shortDescription>
-                <description>Полное описание</description>
-                <addEvent>Добавить анонс событий</addEvent>
-                <saveEvent>Сохранить изменения</saveEvent>
-            </forms>
-            <category>
-                <title>Категории</title>
-                <addCategory>Добавление категории</addCategory>
-                <name>Название категории</name>
-                <list>Доступные категории</list>
-                <added>Категория добавлена.</added>
-                <duplicateName>Категория с таким названием уже существует</duplicateName>
-                <num>№</num>
-                <updated>Категория обновлена.</updated>
-                <techAlias>Техническая метка</techAlias>
-                <catNameExample>Например: Кино</catNameExample>
-                <techAliasExample>Например: cinema</techAliasExample>
-            </category>
-            <additionals>
-                <title>Дополнительные поля</title>
-                <addNewField>Добавление нового дополнительного поля</addNewField>
-                <fieldName>Название поля</fieldName>
-                <added>Дополнительное поле добавлено.</added>
-                <nameExample>Наример: Стоимость билетов</nameExample>
-                <techAliasExample>Наример: ticket-price</techAliasExample>
-                <duplicateName>Такое дополнительное поле уже существует.</duplicateName>
-                <list>Текущие дополнительные поля</list>
-                <updated>Дополнительное поле обновлено.</updated>
-            </additionals>
-        </adm>
-    </announcements>
+	<announcements>
 
-    <declension>
-        <days>
-            <nominative> дней</nominative>
-            <genitive_singular> дня</genitive_singular>
-            <genitive_plural> дней</genitive_plural>
-        </days>
-    </declension>
+		<dates>
+			<weekdays>
+				<day_0>Пн</day_0>
+				<day_1>Вт</day_1>
+				<day_2>Ср</day_2>
+				<day_3>Чт</day_3>
+				<day_4>Пт</day_4>
+				<day_5>Сб</day_5>
+				<day_6>Вс</day_6>
+				<fullDay_0>Понедельник</fullDay_0>
+				<fullDay_1>Вторник</fullDay_1>
+				<fullDay_2>Среда</fullDay_2>
+				<fullDay_3>Четверг</fullDay_3>
+				<fullDay_4>Пятница</fullDay_4>
+				<fullDay_5>Суббота</fullDay_5>
+				<fullDay_6>Воскресенье</fullDay_6>
+			</weekdays>
+			<months>
+				<month_01>января</month_01>
+				<month_02>февраля</month_02>
+				<month_03>марта</month_03>
+				<month_04>апреля</month_04>
+				<month_05>мая</month_05>
+				<month_06>июня</month_06>
+				<month_07>июля</month_07>
+				<month_08>августа</month_08>
+				<month_09>сентября</month_09>
+				<month_10>октября</month_10>
+				<month_11>ноября</month_11>
+				<month_12>декабря</month_12>
+			</months>
+		</dates>
+		<in>в</in>
+		<price>Стоимость билетов:</price>
+		<address>Адрес:</address>
+		<phone>Справки по телефону:</phone>
+		<fromTo>—</fromTo>
+		<archiveLink>Архив событий</archiveLink>
+		<archive>Архив</archive>
+
+		<adm>
+			<announcements>Анонсы</announcements>
+			<settings>настройки</settings>
+			<onoff>Плагин анонсов включен</onoff>
+			<maxPerUser>Максимальное кол-во анонсов для пользователя</maxPerUser>
+			<maxPerGroup>Максимальное кол-во анонсов для группы</maxPerGroup>
+			<imageSize>Максимальный размер превью картинки анонса</imageSize>
+			<imageBigSize>Максимальный размер основной картинки анонса</imageBigSize>
+			<width>Ширина:</width>
+			<height>Высота:</height>
+			<zeroValueHint>Значение равное '0' будет означать отсутствие ограничений.</zeroValueHint>
+			<settingsSaved>Настройки сохранены</settingsSaved>
+			<last>последние</last>
+			<addEvent>Добавить анонс события</addEvent>
+			<add>добавление нового события</add>
+			<edit>редактирование анонса</edit>
+			<nextEvents>Ближайшие события:</nextEvents>
+			<eventWillHappen>Событие произойдёт</eventWillHappen>
+			<eventHasPeriod>Событие будет проходить в период</eventHasPeriod>
+			<startIn>Начало через</startIn>
+			<from>с</from>
+			<to>по</to>
+			<perPage>Кол-во элементов на страницу</perPage>
+			<notify>
+				<createError>Во время создания анонса события возникла ошибка.</createError>
+				<goodCreate>Анонс события создан. Это радость.</goodCreate>
+				<dataDirError>Директория для хранения картинок не существует или не доступна на запись.</dataDirError>
+				<prioritySet>Приоритет анонса события установлен.</prioritySet>
+				<deleted>Анонс события удалён.</deleted>
+				<updateError>Не могу обновить данные анонса.</updateError>
+				<goodUpdate>Параметры анонса событий сохранились вполне удачно.</goodUpdate>
+			</notify>
+			<status>
+				<past>уже прошло</past>
+				<today>сегодня</today>
+				<tomorrow>завтра</tomorrow>
+				<willBeIn>через</willBeIn>
+			</status>
+			<event_desc>Анонс события / краткое описание</event_desc>
+			<event_dates>Период демострации анонса</event_dates>
+			<users_groups>Пользователь / группа</users_groups>
+			<priority>Приоритет</priority>
+			<actions>Действия</actions>
+			<pastEvents>Архив событий</pastEvents>
+			<eventInPastHappen>Событие уже произошло.</eventInPastHappen>
+			<event_dates_past>Анонс демонстрировался в период</event_dates_past>
+			<notVisible>Не показывается</notVisible>
+			<forms>
+				<pic>Изображение</pic>
+				<imagePreview>Превью анонса</imagePreview>
+				<mainParameters>Основные параметры</mainParameters>
+				<group>Группа</group>
+				<title>Заголовок события</title>
+				<eventDate>Дата события</eventDate>
+				<beginDate>Дата начала демонстрации анонса события</beginDate>
+				<endDate>Дата завершения демонстрации анонса события</endDate>
+				<priority>Приоритет показа анонса</priority>
+				<visibility>Показывать событие?</visibility>
+				<eventDescription>Описания события</eventDescription>
+				<shortDescription>Краткое описание</shortDescription>
+				<description>Полное описание</description>
+				<addEvent>Добавить анонс событий</addEvent>
+				<saveEvent>Сохранить изменения</saveEvent>
+				<category>Категория анонса</category>
+				<noSelect>Не выбрано</noSelect>
+				<dates>Даты события</dates>
+				<from>Дата начала события</from>
+				<to>Дата завершения события / дата события</to>
+				<location>Место проведения мероприятия</location>
+				<chooseLocation>Выбрать место</chooseLocation>
+			</forms>
+			<category>
+				<title>Категории</title>
+				<category>Категория</category>
+				<addCategory>Добавление категории</addCategory>
+				<name>Название категории</name>
+				<list>Доступные категории</list>
+				<added>Категория добавлена.</added>
+				<duplicateName>Категория с таким названием уже существует</duplicateName>
+				<num>№</num>
+				<updated>Категория обновлена.</updated>
+				<techAlias>Техническая метка</techAlias>
+				<catNameExample>Например: Кино</catNameExample>
+				<techAliasExample>Например: cinema</techAliasExample>
+				<noCategory>Не выбрана</noCategory>
+			</category>
+			<additionals>
+				<title>Дополнительные поля</title>
+				<addNewField>Добавление нового дополнительного поля</addNewField>
+				<fieldName>Название поля</fieldName>
+				<added>Дополнительное поле добавлено.</added>
+				<nameExample>Наример: Стоимость билетов</nameExample>
+				<techAliasExample>Наример: ticket-price</techAliasExample>
+				<duplicateName>Такое дополнительное поле уже существует.</duplicateName>
+				<list>Текущие дополнительные поля</list>
+				<updated>Дополнительное поле обновлено.</updated>
+			</additionals>
+			<schedules>
+				<title>Расписания</title>
+				<scheduleName>Название расписания:</scheduleName>
+				<add>Добавить поле</add>
+				<sessionLabel>Время сеанса:</sessionLabel>
+				<sessionDop>Доп. информация (например: цена билета на сеанс):</sessionDop>
+			</schedules>
+			<locations>
+				<title>Локации</title>
+				<addNewTitle>Добавление новой локации</addNewTitle>
+				<name>Название локации</name>
+				<www>Сайт локации</www>
+				<address>Адрес</address>
+				<phone>Телефон для справок</phone>
+				<info>Дополнительная информация</info>
+				<added>Локация добавлена</added>
+				<location>Локация</location>
+				<deleted>Локация удалена</deleted>
+				<updated>Локация обновлена</updated>
+			</locations>
+		</adm>
+	</announcements>
+
+	<declension>
+		<days>
+			<nominative>дней</nominative>
+			<genitive_singular>дня</genitive_singular>
+			<genitive_plural>дней</genitive_plural>
+		</days>
+	</declension>
 
 </locale>

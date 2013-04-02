@@ -6,6 +6,7 @@
 			<menu_common_settings>Общая информация</menu_common_settings>
 			<menu_common_locales>Состояние локализации</menu_common_locales>
 			<menu_common_config>Конфигурация</menu_common_config>
+			<menu_common_typograph>Типограф</menu_common_typograph>
 		</adm>
 	</menu>
 </locale>

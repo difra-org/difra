@@ -140,4 +140,56 @@ Class Additionals {
         }
     }
 
+    /**
+     * Сохраняет данные дополнительных полей
+     * @static
+     * @param int $announceId
+     * @param array $dataArray
+     */
+    public static function saveData( $announceId, $dataArray ) {
+
+        if( !empty( $dataArray ) ) {
+            $db = \Difra\MySQL::getInstance();
+            $addArray = false;
+            foreach( $dataArray as $addId => $value ) {
+                if( $value!='' ) {
+                    $addArray[] = "( '" . intval( $announceId ) . "', '" . intval( $addId ) . "', '" . $db->escape( $value ) . "' )";
+                }
+            }
+            if( $addArray ) {
+                $query[] = "DELETE FROM `announcements_additionals_data` WHERE `announce_id`='" . intval( $announceId ) . "'";
+                $query[] = "INSERT INTO `announcements_additionals_data` (`announce_id`, `additional_id`, `value`) VALUES "
+                                . implode( ",", $addArray );
+                $db->query( $query );
+            }
+        }
+    }
+
+    /**
+     * Возвращает список дополнительных полей и их значений по id анонсам
+     * @static
+     * @param array $array
+     */
+    public static function getByIdArray( $array ) {
+
+        if( empty( $array ) ) {
+            return false;
+        }
+        $array = array_map( 'intval', $array );
+
+        $db = \Difra\MySQL::getInstance();
+        $query = "SELECT adata.*, aa.`alias`
+                    FROM `announcements_additionals_data` adata
+                    LEFT JOIN `announcements_additionals` AS `aa` ON adata.`additional_id` = aa.`id`
+                    WHERE adata.`announce_id` IN (" . implode( ', ', $array ) . ")";
+        $res = $db->fetch( $query );
+        $returnArray = null;
+        if( !empty( $res ) ) {
+            foreach( $res as $k=>$data ) {
+                $returnArray[$data['announce_id']] = $data;
+            }
+            return $returnArray;
+        }
+    }
+
 }

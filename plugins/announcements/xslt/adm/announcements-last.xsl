@@ -20,6 +20,7 @@
                 <th><xsl:value-of select="$locale/announcements/adm/event_desc"/></th>
                 <th><xsl:value-of select="$locale/announcements/adm/event_dates"/></th>
                 <th><xsl:value-of select="$locale/announcements/adm/users_groups"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/category/category"/></th>
                 <th><xsl:value-of select="$locale/announcements/adm/priority"/></th>
                 <th><xsl:value-of select="$locale/announcements/adm/actions"/></th>
             </tr>
@@ -34,25 +35,55 @@
                             <xsl:value-of select="title"/>
                         </strong>
                         <div class="eventDate">
-                            <xsl:value-of select="$locale/announcements/adm/eventWillHappen"/>
                             <xsl:choose>
                                 <xsl:when test="status='inFuture'">
-                                    <xsl:value-of select="$locale/announcements/adm/status/willBeIn"/>
-                                    <xsl:text>&#160;</xsl:text>
-                                    <xsl:call-template name="declension">
-                                        <xsl:with-param name="number" select="statusInDays"/>
-                                        <xsl:with-param name="dec_node_name" select="string('days')"/>
-                                    </xsl:call-template>
-                                    <xsl:text> (</xsl:text>
-                                    <xsl:value-of select="eventDate"/>
-                                    <xsl:text>)</xsl:text>
+                                    
+                                    <xsl:choose>
+                                        <xsl:when test="fromEventDate and not(fromEventDate=eventDate)">
+                                            <xsl:value-of select="$locale/announcements/adm/eventHasPeriod"/>
+                                            <xsl:value-of select="$locale/announcements/adm/from"/>
+                                            <xsl:text>&#160;</xsl:text>
+                                            <xsl:value-of select="fromEventDate"/>
+                                            <xsl:text>&#160;</xsl:text>
+                                            <xsl:value-of select="$locale/announcements/adm/to"/>
+                                            <xsl:text>&#160;</xsl:text>
+                                            <xsl:value-of select="eventDate"/>
+                                            <xsl:text> (</xsl:text>
+                                            <xsl:call-template name="declension">
+                                                <xsl:with-param name="number" select="fromToEventDiff"/>
+                                                <xsl:with-param name="dec_node_name" select="string('days')"/>
+                                            </xsl:call-template>
+                                            <xsl:text> )</xsl:text>
+                                            <br/>
+                                            <xsl:value-of select="$locale/announcements/adm/startIn"/>
+                                            <xsl:call-template name="declension">
+                                                <xsl:with-param name="number" select="statusInDays"/>
+                                                <xsl:with-param name="dec_node_name" select="string('days')"/>
+                                            </xsl:call-template>
+                                        </xsl:when>
+                                        <xsl:otherwise>
+                                            <xsl:value-of select="$locale/announcements/adm/eventWillHappen"/>
+
+                                            <xsl:value-of select="$locale/announcements/adm/status/willBeIn"/>
+                                            <xsl:text>&#160;</xsl:text>
+                                            <xsl:call-template name="declension">
+                                                <xsl:with-param name="number" select="statusInDays"/>
+                                                <xsl:with-param name="dec_node_name" select="string('days')"/>
+                                            </xsl:call-template>
+                                            <xsl:text> (</xsl:text>
+                                            <xsl:value-of select="eventDate"/>
+                                            <xsl:text>)</xsl:text>
+                                        </xsl:otherwise>
+                                    </xsl:choose>
                                 </xsl:when>
                                 <xsl:otherwise>
+                                    <xsl:value-of select="$locale/announcements/adm/eventWillHappen"/>
                                     <xsl:value-of select="$locale/announcements/adm/status/*[name()=$statusText]"/>
                                 </xsl:otherwise>
                             </xsl:choose>
                         </div>
                         <div class="small gray">
+                            <br/>
                             <xsl:value-of select="shortDescription" disable-output-escaping="yes"/>
                         </div>
                     </td>
@@ -91,6 +122,17 @@
                         </xsl:if>
                     </td>
                     <td>
+                        <xsl:variable name="catId" select="category"/>
+                        <xsl:choose>
+                            <xsl:when test="$catId=0">
+                                <xsl:value-of select="$locale/announcements/adm/category/noCategory"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="/root/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
+                    </td>
+                    <td>
                         <div id="priorityValueView-{id}">
                             <xsl:value-of select="priority"/>
                         </div>
@@ -109,7 +151,7 @@
                     <td>
                         <a href="/adm/announcements/edit/{id}/" class="action edit"></a>
                         <a href="#" class="action down" onclick="announcementsUI.getPrioritySlider({id}, {priority});"></a>
-                        <a href="/adm/announcements/delete/{id}/" class="action delete"></a>
+                        <a href="/adm/announcements/delete/{id}/" class="action delete ajaxer"></a>
                     </td>
                 </tr>
             </xsl:for-each>
@@ -127,6 +169,7 @@
                 <th><xsl:value-of select="$locale/announcements/adm/event_desc"/></th>
                 <th><xsl:value-of select="$locale/announcements/adm/event_dates_past"/></th>
                 <th><xsl:value-of select="$locale/announcements/adm/users_groups"/></th>
+                <th><xsl:value-of select="$locale/announcements/adm/category/category"/></th>
                 <th><xsl:value-of select="$locale/announcements/adm/priority"/></th>
                 <th><xsl:value-of select="$locale/announcements/adm/actions"/></th>
             </tr>
@@ -185,6 +228,17 @@
                                 </xsl:otherwise>
                             </xsl:choose>
                         </xsl:if>
+                    </td>
+                    <td>
+                        <xsl:variable name="catId" select="category"/>
+                        <xsl:choose>
+                            <xsl:when test="$catId=0">
+                                <xsl:value-of select="$locale/announcements/adm/category/noCategory"/>
+                            </xsl:when>
+                            <xsl:otherwise>
+                                <xsl:value-of select="/root/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
+                            </xsl:otherwise>
+                        </xsl:choose>
                     </td>
                     <td>
                         <div id="priorityValueView-{id}">

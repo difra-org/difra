@@ -6,25 +6,25 @@ class HTML {
 
 	/** @var array Список разрешенных тэгов, параметр — массив аттрибутов и обрабочиков */
 	private $allowedTags = array(
-		'a'      => array( 'href' => 'cleanLink' ),
-		'img'    => array( 'src' => 'cleanLink' ),
-		'br'     => array(),
-		'table'  => array(),
-		'tr'     => array(),
-		'td'     => array( 'colspan' => 'cleanUnsignedInt', 'rowspan' => 'cleanUnsignedInt' ),
-		'div'    => array(),
-		'em'     => array(),
-		'li'     => array(),
-		'ol'     => array(),
-		'p'      => array(),
-		'span'   => array(),
+		'a' => array( 'href' => 'cleanLink' ),
+		'img' => array( 'src' => 'cleanLink' ),
+		'br' => array(),
+		'table' => array(),
+		'tr' => array(),
+		'td' => array( 'colspan' => 'cleanUnsignedInt', 'rowspan' => 'cleanUnsignedInt' ),
+		'div' => array(),
+		'em' => array(),
+		'li' => array(),
+		'ol' => array(),
+		'p' => array(),
+		'span' => array(),
 		'strike' => array(),
-		'u'      => array(),
-		'ul'     => array(),
+		'u' => array(),
+		'ul' => array(),
 		'strong' => array(),
-		'sub'    => array(),
-		'sup'    => array(),
-		'hr'     => array()
+		'sub' => array(),
+		'sup' => array(),
+		'hr' => array()
 	);
 
 	/** @var array Стили, разрешенные для всех тэгов и соответствующие обработчики */
@@ -35,11 +35,11 @@ class HTML {
 
 	/** @var array Список разрешенных стилей, значение — массив значений или true, если разрешено любое значение */
 	private $allowedStyles = array(
-		'font-weight'     => array( 'bold', 'bolder', 'lighter', 'normal', '100', '200', '300', '400', '500', '600', '700', '800', '900' ),
-		'text-align'      => array( 'left', 'center', 'right', 'start', 'end' ),
-		'color'           => true,
+		'font-weight' => array( 'bold', 'bolder', 'lighter', 'normal', '100', '200', '300', '400', '500', '600', '700', '800', '900' ),
+		'text-align' => array( 'left', 'center', 'right', 'start', 'end' ),
+		'color' => true,
 		'text-decoration' => array( 'line-through', 'overline', 'underline', 'none' ),
-		'font-style'      => array( 'normal', 'italic', 'oblique' )
+		'font-style' => array( 'normal', 'italic', 'oblique' )
 	);
 
 	static public function getInstance() {
@@ -62,11 +62,11 @@ class HTML {
 		}
 
 		// url decode
-		//$source = html_entity_decode( $source, ENT_QUOTES, "UTF-8" );
-		// convert decimal
-		//		$source = preg_replace( '/&#(\d+);/me', "chr(\\1)", $source ); // decimal notation
-		// convert hex
-		//		$source = preg_replace( '/&#x([a-f0-9]+);/mei', "chr(0x\\1)", $source ); // hex notation
+		try {
+			$source = \Difra\Libs\ESAPI::encoder()->canonicalize( $source );
+		} catch( \Exception $ex ) {
+			return false;
+		}
 
 		// преобразование HTML в DOM
 		$html = new \DOMDocument( '1.0' );
@@ -79,11 +79,11 @@ class HTML {
 		if( $clean ) {
 			$bodyList = $html->documentElement->getElementsByTagName( 'body' );
 			if( $bodyList->length and $bodyList->item( 0 )->childNodes->length ) {
-				$body         = $bodyList->item( 0 );
+				$body = $bodyList->item( 0 );
 				$replaceNodes = array();
 				foreach( $body->childNodes as $node ) {
 					$newReplaceNodes = $this->clean( $node );
-					$replaceNodes    = array_merge( $replaceNodes, $newReplaceNodes );
+					$replaceNodes = array_merge( $replaceNodes, $newReplaceNodes );
 				}
 				if( !empty( $replaceNodes ) ) {
 					foreach( $replaceNodes as $replaceNode ) {
@@ -142,7 +142,7 @@ class HTML {
 		}
 		if( $node->hasChildNodes() ) {
 			foreach( $node->childNodes as $child ) {
-				$newReplace   = $this->clean( $child );
+				$newReplace = $this->clean( $child );
 				$replaceNodes = array_merge( $newReplace, $replaceNodes );
 			}
 		}
@@ -197,11 +197,16 @@ class HTML {
 	 */
 	private function cleanLink( $link ) {
 
-		if( filter_var( $link, FILTER_VALIDATE_URL ) ) {
-			return $link;
-		} else {
-			return '#';
+		if( \Difra\Libs\ESAPI::validateURL( $link ) ) {
+			return \Difra\Libs\ESAPI::encoder()->encodeForHTMLAttribute( $link );
 		}
+		if( mb_substr( $link, 0, 1 ) == '/' ) {
+			$newLink = 'http://' . \Difra\Site::getInstance()->getHostname() . $link;
+			if( \Difra\Libs\ESAPI::validateURL( $newLink ) ) {
+				return \Difra\Libs\ESAPI::encoder()->encodeForHTMLAttribute( $newLink );
+			}
+		}
+		return '#';
 	}
 
 	/**
@@ -213,7 +218,7 @@ class HTML {
 	private function cleanStyles( $attr ) {
 
 		$returnStyle = array();
-		$stylesSet   = explode( ';', $attr );
+		$stylesSet = explode( ';', $attr );
 		foreach( $stylesSet as $value ) {
 			$styleElements = explode( ':', $value, 2 );
 			if( sizeof( $styleElements ) != 2 ) {
@@ -227,9 +232,10 @@ class HTML {
 			if( array_key_exists( $styleElements[0], $this->allowedStyles ) ) {
 
 				// проверяем значение
-				if( ( is_array( $this->allowedStyles[$styleElements[0]] )
-				      and in_array( $styleElements[1], $this->allowedStyles[$styleElements[0]] ) )
-				    or ( $this->allowedStyles[$styleElements[0]] === true )
+				if( $this->allowedStyles[$styleElements[0]] === true ) {
+					$returnStyle[] = $styleElements[0] . ': ' . \Difra\Libs\ESAPI::encoder() . encodeForCSS( $styleElements[1] );
+				} elseif( is_array( $this->allowedStyles[$styleElements[0]] )
+					and in_array( $styleElements[1], $this->allowedStyles[$styleElements[0]] )
 				) {
 					$returnStyle[] = $styleElements[0] . ':' . $styleElements[1];
 				}
@@ -247,7 +253,7 @@ class HTML {
 	private function cleanClasses( $classes ) {
 
 		$newClasses = array();
-		$cls        = explode( ' ', $classes );
+		$cls = explode( ' ', $classes );
 		foreach( $cls as $cl ) {
 			// стили st-* используются для предзаданных стилей в редакторе
 			if( ( mb_substr( $cl, 0, 3 ) == 'st-' ) and ( ctype_alnum( mb_substr( $cl, 3 ) ) ) ) {

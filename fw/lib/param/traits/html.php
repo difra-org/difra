@@ -23,7 +23,7 @@ trait HTML {
 	 * @param string $path
 	 * @param string $urlPrefix
 	 */
-	function saveImages( $path, $urlPrefix ) {
+	public function saveImages( $path, $urlPrefix ) {
 
 		\Difra\Libs\Vault::saveImages( $this->value, $path, $urlPrefix );
 		$this->savedImages = true;
@@ -36,7 +36,7 @@ trait HTML {
 	 *
 	 * @return string
 	 */
-	function val( $quiet = false ) {
+	public function val( $quiet = false ) {
 
 		if( !$quiet and !$this->savedImages ) {
 			trigger_error(
@@ -49,7 +49,6 @@ trait HTML {
 
 	/**
 	 * Получение html в оригинальном виде
-	 *
 	 * @return string
 	 */
 	function raw() {

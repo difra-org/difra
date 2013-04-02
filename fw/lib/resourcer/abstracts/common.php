@@ -248,12 +248,12 @@ abstract class Common {
 
 	/**
 	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов.
-	 * @param $instance
+	 * @param string $instance
+	 * @param bool   $withAll
 	 *
 	 * @return bool
-	 * @throws \Difra\Exception
 	 */
-	private function find( $instance ) {
+	private function find( $instance, $withAll = true ) {
 
 		$found   = false;
 		$parents = array();
@@ -272,7 +272,7 @@ abstract class Common {
 					$found     = true;
 					$parents[] = $d;
 				}
-				if( is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
+				if( $withAll and is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
 					$parents[] = $d;
 				}
 			}

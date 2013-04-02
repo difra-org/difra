@@ -1,0 +1,18 @@
+.newsList td, .newsList th {
+    padding: 5px 15px 5px 15px;
+}
+.newsList td:nth-child(1), .newsList td:nth-child(2) {
+    font-size: 16px;
+}
+.newsList span {
+    display: block;
+}
+.newsList tr.noVisible {
+    background-color: #f5f5f5;
+}
+.changeVisible {
+    width: 45px;
+}
+.changeImportant {
+    width: 115px;
+}

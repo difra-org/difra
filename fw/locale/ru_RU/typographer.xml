@@ -1,0 +1,48 @@
+<locale>
+	<typographer>
+		<quot11>&#171;</quot11>
+		<quot12>&#187;</quot12>
+		<quot21>&#8222;</quot21>
+		<quot22>&#8220;</quot22>
+		<space>&#160;</space>
+		<tire>&#8212;</tire>
+		<tireinterval>&#8212;</tireinterval>
+		<number>&#8470;</number>
+		<hellip>&#8230;</hellip>
+		<sect>&#167;</sect>
+		<sup2>&#178;</sup2>
+		<sup3>&#179;</sup3>
+		<deg>&#176;</deg>
+		<euro>&#8364;</euro>
+		<cent>&#162;</cent>
+		<pound>&#163;</pound>
+		<Prime>&#8243;</Prime>
+		<times>&#215;</times>
+		<plusmn>&#177;</plusmn>
+		<darr>&#8595;</darr>
+		<uarr>&#8593;</uarr>
+		<larr>&#8592;</larr>
+		<rarr>&#8594;</rarr>
+		<crarr>&#8629;</crarr>
+	</typographer>
+	<adm>
+		<typograph>
+			<settings>Настройки типографа</settings>
+			<mainSettings>Основные настройки</mainSettings>
+			<behavior>Поведение типографа</behavior>
+			<saved>Настройки сохранены.</saved>
+			<spaceAfterShortWord>Неразрывный пробел после коротких слов</spaceAfterShortWord>
+			<lengthShortWord>Длина короткого слова</lengthShortWord>
+			<spaceBeforeLastWord>Неразрывный пробел перед последним словом предложения</spaceBeforeLastWord>
+			<lengthLastWord>Длина последнего слова</lengthLastWord>
+			<spaceAfterNum>Пробел после знака «№»</spaceAfterNum>
+			<spaceBeforeParticles>Неразрывный пробел перед частицами &#8212; ли, же, бы</spaceBeforeParticles>
+			<delRepeatSpace>Удалять повторяющиеся пробелы</delRepeatSpace>
+			<delSpaceBeforePunctuation>Удалять пробел перед знаками препинания</delSpaceBeforePunctuation>
+			<delSpaceBeforeProcent>Удалять пробел перед знаком процента</delSpaceBeforeProcent>
+			<doReplaceBefore>Делать замену символов перед типографированием. (символы: ®, ©, ™, ±)</doReplaceBefore>
+			<doReplaceAfter>Делать замену символов после типографирования</doReplaceAfter>
+			<doMacros>Использователь макросы при типографировании (ГРАД(), ЕВРО(), СТРЛ() и др.)</doMacros>
+		</typograph>
+	</adm>
+</locale>

@@ -4,8 +4,8 @@ namespace Difra;
 
 class Site {
 
-	const VERSION   = '3.0';
-	const BUILD     = '$Rev$';
+	const VERSION = '3.0';
+	const BUILD = '$Rev$';
 	const PATH_PART = '/../../sites/';
 
 	private $locale = 'ru_RU';
@@ -19,7 +19,6 @@ class Site {
 
 	/**
 	 * Singleton
-	 *
 	 * @return Site
 	 */
 	static public function getInstance() {
@@ -57,7 +56,7 @@ class Site {
 		$this->configureLocale();
 		$this->configurePHP();
 		$this->sessionLoad();
-		header( 'X-Powered-By: Difra' );
+		//header( 'X-Powered-By: Difra' );
 		View::addExpires( 0 );
 		$initDone = true;
 	}
@@ -69,7 +68,6 @@ class Site {
 
 	/**
 	 * Возвращает true, если в данный момент происходит инициализация сайта
-	 *
 	 * @return bool
 	 */
 	public static function isInit() {
@@ -88,7 +86,6 @@ class Site {
 	 * 2. Имя хоста в по алгоритму sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
 	 *    www.subdomain.domain.com domain.com www.domain.com.
 	 * 3. "default".
-	 *
 	 * @return bool
 	 */
 	private function detectHost() {
@@ -165,7 +162,6 @@ class Site {
 
 	/**
 	 * Убирает слеши из $_GET, $_POST, $_COOKIE, $_REQUEST, если включены magic quotes
-	 *
 	 * @return void
 	 */
 	private function _stripSlashes() {
@@ -177,9 +173,9 @@ class Site {
 
 			return is_array( $value ) ? array_map( $strip_slashes_deep, $value ) : stripslashes( $value );
 		};
-		$_GET               = array_map( $strip_slashes_deep, $_GET );
-		$_POST              = array_map( $strip_slashes_deep, $_POST );
-		$_COOKIE            = array_map( $strip_slashes_deep, $_COOKIE );
+		$_GET = array_map( $strip_slashes_deep, $_GET );
+		$_POST = array_map( $strip_slashes_deep, $_POST );
+		$_COOKIE = array_map( $strip_slashes_deep, $_COOKIE );
 	}
 
 	/**
@@ -200,7 +196,6 @@ class Site {
 
 	/**
 	 * Определяет имя хоста из URL
-	 *
 	 * @return string|null
 	 */
 	public function getHostname() {
@@ -214,7 +209,6 @@ class Site {
 
 	/**
 	 * Возвращает имя главного хоста, если он установлен в переменной веб-сервера VHOST_MAIN, либо имя текущего хоста
-	 *
 	 * @return string
 	 */
 	public function getMainhost() {
@@ -224,7 +218,6 @@ class Site {
 
 	/**
 	 * Возвращает имя сайта, которое определено в $this->detectHost()
-	 *
 	 * @return null
 	 */
 	public function getHost() {
@@ -245,8 +238,8 @@ class Site {
 		if( class_exists( '\SQLite3' ) and is_readable( $dir . '.svn/wc.db' ) ) {
 			try {
 				$sqlite = new \SQLite3( $dir . '.svn/wc.db' );
-				$res    = $sqlite->query( 'SELECT MAX(revision) FROM `NODES`' );
-				$res    = $res->fetchArray();
+				$res = $sqlite->query( 'SELECT MAX(revision) FROM `NODES`' );
+				$res = $res->fetchArray();
 				return $res[0];
 			} catch( \Exception $ex ) {
 			}
@@ -320,8 +313,8 @@ class Site {
 	public function getConfig() {
 
 		return array(
-			'locale'   => $this->locale,
-			'host'     => $this->getHost(),
+			'locale' => $this->locale,
+			'host' => $this->getHost(),
 			'hostname' => $this->getHostname(),
 			'mainhost' => $this->getMainhost()
 		);
@@ -355,7 +348,7 @@ class Site {
 		$this->sessionLoad();
 		if( !isset( $_SESSION ) ) {
 			session_start();
-			$_SESSION          = array();
+			$_SESSION = array();
 			$_SESSION['dhost'] = $this->getMainhost();
 		}
 	}
@@ -401,18 +394,18 @@ class Site {
 			return $userAgent;
 		}
 		// разбиваем строку User-Agent на ассоциативный массив
-		$ua  = $_SERVER['HTTP_USER_AGENT'];
+		$ua = $_SERVER['HTTP_USER_AGENT'];
 		$ua1 = explode( ' ', $ua );
-		$k   = '';
-		$v   = $ua2 = array();
+		$k = '';
+		$v = $ua2 = array();
 		foreach( $ua1 as $p ) {
 			if( strpos( $p, '/' ) !== false ) {
 				if( $k ) {
 					$ua2[$k] = implode( ' ', $v );
-					$v       = array();
+					$v = array();
 				}
-				$p2  = explode( '/', $p, 2 );
-				$k   = $p2[0];
+				$p2 = explode( '/', $p, 2 );
+				$k = $p2[0];
 				$v[] = $p2[1];
 			} else {
 				$v[] = $p;
@@ -422,10 +415,10 @@ class Site {
 			$ua2[$k] = implode( ' ', $v );
 		}
 		$a = array(
-			'agent'   => '',
+			'agent' => '',
 			'version' => '',
-			'os'      => '',
-			'engine'  => ''
+			'os' => '',
+			'engine' => ''
 		);
 		// пытаемся определить название браузера
 		if( isset( $ua2['Chrome'] ) ) {
@@ -493,7 +486,6 @@ class Site {
 
 	/**
 	 * Возвращает строку для CSS-классов, основанных на версии браузера
-	 *
 	 * @return string
 	 */
 	public function getUserAgentClass() {

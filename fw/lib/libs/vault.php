@@ -70,6 +70,18 @@ class Vault {
 	 */
 	static function saveImages( &$html, $path, $urlPrefix ) {
 
+		// when using AjaxSafeHTML, characters inside src= are encoded using ESAPI
+		$html =
+			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . \Difra\Site::getInstance()->getHostname() . '&#x2f;up&#x2f;tmp&#x2f;',
+				'src="/up/tmp/',
+				$html );
+		$html = str_replace( 'src="&#x2f;up&#x2f;tmp&#x2f;', 'src="/up/tmp/', $html );
+		$html =
+			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . \Difra\Site::getInstance()->getHostname() . str_replace( '/', '&#x2f;', "$urlPrefix/" ),
+				'src="' . $urlPrefix . '/',
+				$html );
+		$html = str_replace( 'src="' . str_replace( '/', '&#x2f;', $urlPrefix . '/' ), 'src="' . $urlPrefix . '/', $html );
+
 		preg_match_all( '/src=\"\/up\/tmp\/([0-9]+)\"/', $html, $newImages );
 		preg_match_all( '/src=\"' . preg_quote( $urlPrefix, '/' ) . '\/([0-9]+)\.png\"/', $html, $oldImages );
 		if( !empty( $oldImages[1] ) ) {

@@ -4,7 +4,7 @@ namespace Difra\Libs\XML;
 
 class Sitemap {
 
-	const NS      = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+	const NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
 	const PERPAGE = 150;
 
 	/**
@@ -65,7 +65,7 @@ class Sitemap {
 			}
 		}
 		// Разбираем данные, обновляем кэш
-		$res      = false;
+		$res = false;
 		$pagesNum = floor( ( sizeof( $sitemap ) - 1 ) / self::PERPAGE ) + 1;
 		$cache->put( 'sitemap_pages', $pagesNum );
 		// Получается одна страница
@@ -85,7 +85,7 @@ class Sitemap {
 		}
 		for( $pageN = 1; $pageN <= $pagesNum; $pageN++ ) {
 			$urls = array_slice( $sitemap, ( $pageN - 1 ) * self::PERPAGE, self::PERPAGE );
-			$xml  = self::makeSitemapXML( $urls );
+			$xml = self::makeSitemapXML( $urls );
 			$cache->put( 'sitemap_' . $pageN, $xml );
 			if( $page == $pageN ) {
 				$res = $xml;
@@ -104,8 +104,8 @@ class Sitemap {
 	private static function makeIndexXML( $pages ) {
 
 		$indexXML = new \DOMDocument;
-		$smiNode  = $indexXML->appendChild( $indexXML->createElementNS( self::NS, 'sitemapindex' ) );
-		$urlPref  = 'http://' . \Difra\Site::getInstance()->getHostname();
+		$smiNode = $indexXML->appendChild( $indexXML->createElementNS( self::NS, 'sitemapindex' ) );
+		$urlPref = 'http://' . \Difra\Site::getInstance()->getHostname();
 		for( $i = 1; $i <= $pages; $i++ ) {
 			$smNode = $smiNode->appendChild( $indexXML->createElement( 'sitemap' ) );
 			$smNode->appendChild( $indexXML->createElement( 'loc', "$urlPref/sitemap-" . $i . '.xml' ) );
@@ -123,11 +123,16 @@ class Sitemap {
 	private static function makeSitemapXML( &$urls ) {
 
 		$indexXML = new \DOMDocument;
-		$smiNode  = $indexXML->appendChild( $indexXML->createElementNS( self::NS, 'urlset' ) );
+		$smiNode = $indexXML->appendChild( $indexXML->createElementNS( self::NS, 'urlset' ) );
 		if( !empty( $urls ) ) {
 			foreach( $urls as $url ) {
 				$urlNode = $smiNode->appendChild( $indexXML->createElement( 'url' ) );
 				foreach( $url as $k => $v ) {
+					$v = explode( '/', $v );
+					$p = $v[0];
+					$v = array_map( 'urlencode', $v );
+					$v[0] = $p;
+					$v = implode( '/', $v );
 					$urlNode->appendChild( $indexXML->createElement( $k, $v ) );
 				}
 			}
