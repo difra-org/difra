@@ -9,6 +9,10 @@ abstract class Plugin {
 	private $enabled = false;
 	private $path = '';
 
+	/**
+	 * Синглтон
+	 * @return self
+	 */
 	static public function getInstance() {
 
 		static $_self = array();
@@ -16,11 +20,18 @@ abstract class Plugin {
 		return !empty( $_self[$class] ) ? $_self[$class] : $_self[$class] = new $class;
 	}
 
+	/**
+	 * Конструктор
+	 */
 	final function __construct() {
 
 		$this->class = get_class( $this );
 	}
 
+	/**
+	 * Возвращает список зависимостей
+	 * @return array|null
+	 */
 	public function getRequirements() {
 
 		return property_exists( $this, 'require' ) ? $this->require : null;
@@ -28,15 +39,24 @@ abstract class Plugin {
 
 	abstract public function init();
 
+	/**
+	 * Возвращает true, если плагин включен
+	 *
+	 * @return bool
+	 */
 	public function isEnabled() {
 
 		return $this->enabled;
 	}
 
+	/**
+	 * Включает плагин
+	 * @return bool
+	 */
 	public function enable() {
 
 		if( $this->enabled ) {
-			return;
+			return false;
 		}
 		$this->enabled = true;
 		if( $requirements = $this->getRequirements() ) {
@@ -44,14 +64,19 @@ abstract class Plugin {
 			$plugins = $plugger->getAllPlugins();
 			foreach( $requirements as $req ) {
 				if( !isset( $plugins[$req] ) ) {
-					throw new Exception( "Plugin $req is required by $this->class, but it is not available!" );
+					return false;
 				}
 				$plugins[$req]->enable();
 			}
 		}
 		$this->init();
+		return true;
 	}
 
+	/**
+	 * Возвращает путь к папке плагина
+	 * @return string
+	 */
 	public function getPath() {
 
 		if( !$this->path ) {
@@ -61,6 +86,10 @@ abstract class Plugin {
 		return $this->path;
 	}
 
+	/**
+	 * Возвращает название плагина
+	 * @return string
+	 */
 	public function getName() {
 
 		if( !$this->name ) {
@@ -68,18 +97,22 @@ abstract class Plugin {
 		}
 		return $this->name;
 	}
-	/*
-	public function dispatch() {
 
-		$class = substr( get_class( $this ), 1 );
-		$method = 'dispatch';
-		if( class_exists( $class ) ) {
-			if( method_exists( $class, $method ) ) {
-				$instance = call_user_func( array( $class, 'getInstance' ) );
-				$instance->dispatch();
-			}
-		}
+	/**
+	 * Возвращает Sitemap в виде массива следующих элементов:
+	 * array(
+	 *         'loc' => 'http://example.com/page',
+	 *         'lastmod' => '2005-01-01',
+	 *         'changefreq' => 'monthly',
+	 *         'priority' => 0.8
+	 * )
+	 * Обязательным является только поле loc
+	 *
+	 * @return array|bool
+	 */
+	public function getSitemap() {
+
+		return false;
 	}
-	*/
 }
 

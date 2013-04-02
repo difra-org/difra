@@ -1,0 +1,82 @@
+.formGenerator {
+    width: 100%;
+}
+.formGenerator td {
+    width: 50%;
+    vertical-align: top;
+}
+.formGenerator td:first-child {
+    border-right: 2px double #dbf8ff;
+}
+.formGenerator h3 {
+    padding: 0px 0px 10px 0px;
+    margin: 0;
+    border: 0;
+    color: #cbcbcb;
+    font-size: 18px;
+}
+#fieldType {
+    width: 93%;
+    height: 22px;
+}
+#addField {
+    padding-top: 15px;
+}
+#fieldType.invalid {
+    border: 1px solid red;
+}
+.fieldLabel {
+    display: block;
+}
+.division {
+    border-top: 1px solid #c6c6c6;
+    padding: 4px;
+    margin-top: 7px;
+}
+.formField {
+    padding: 10px;
+    margin: 5px;
+    border: 1px dotted #c0d1f8;
+    background-color: #f7fcff;
+    border-radius: 8px;
+}
+.formField:hover, #previewTable tr:hover, .formField.fieldHover {
+    background-color: #edf3f6;
+}
+.basicField {
+    width: 98%;
+}
+.fieldTypeTitle {
+    float: left;
+    padding-bottom: 5px;
+    font-weight: bold;
+}
+.controlls {
+    float: right;
+}
+.noDisplay {
+    display: none;
+}
+.turner {
+    float: right;
+}
+#formPreview {
+    font-size: 12px;
+}
+#formPreview table {
+    width: 100%;
+}
+#formPreview table td {
+    vertical-align: top;
+    width: 50%;
+}
+#formPreview label {
+    display: block;
+}
+#formPreview input[type='text'], #formPreview textarea {
+    width: 95%;
+}
+.container .invalid {
+    padding-left: 15px;
+    color: red;
+}

@@ -24,9 +24,10 @@ class View {
 	 * Завершение выполнения с выводом http-ошибки
 	 * Пробует отрендерить шаблон error_xxx, где xxx — номер ошибки, после чего выводит простенькую страничку с ошибкой.
 	 *
-	 * @param $err
+	 * @param int      $err
+	 * @param bool|int $ttl
 	 */
-	public function httpError( $err ) {
+	public function httpError( $err, $ttl = false ) {
 
 		if( $this->redirect or $this->error ) {
 			return;
@@ -39,6 +40,9 @@ class View {
 			$error = 'Unknown';
 		}
 		header( "HTTP/1.1 $err $error" );
+		if( $ttl and is_numeric( $ttl ) and $ttl >= 0 ) {
+			self::addExpires( $ttl );
+		}
 		$this->rendered = true;
 		try {
 			$xml = new \DOMDocument();
@@ -73,19 +77,22 @@ ErrorPage
 	}
 
 	/**
-	 * @param \DOMDocument $xml
-	 * @param bool|string  $instance
-	 * @param bool         $dontEcho
+	 * @param \DOMDocument  $xml
+	 * @param bool|instance $specificInstance
+	 * @param bool          $dontEcho
 	 *
 	 * @throws exception
+	 * @internal param bool|string $instance
 	 * @return bool|string
 	 */
-	public function render( $xml, $instance = false, $dontEcho = false ) {
+	public function render( &$xml, $specificInstance = false, $dontEcho = false ) {
 
+		Debugger::addLine( 'Render start' );
 		if( $this->error or $this->redirect ) {
 			return false;
 		}
-		if( $instance ) {
+		if( $specificInstance ) {
+			$instance = $specificInstance;
 		} elseif( $this->template ) {
 			$instance = $this->template;
 		} elseif( $this->instance ) {
@@ -94,17 +101,23 @@ ErrorPage
 			$instance = 'main';
 		}
 
+		if( !$resource = Resourcer::getInstance( 'xslt' )->compile( $instance ) ) {
+			throw new exception( "XSLT resource not found" );
+		}
+
 		$xslDom                     = new \DomDocument;
 		$xslDom->resolveExternals   = true;
 		$xslDom->substituteEntities = true;
-		$resource                   = Resourcer::getInstance( 'xslt' )->compile( $instance );
 		if( !$xslDom->loadXML( $resource ) ) {
 			throw new exception( "XSLT load problem for instance '$instance'." );
 		}
+
 		$xslProc                     = new \XsltProcessor();
 		$xslProc->resolveExternals   = true;
 		$xslProc->substituteEntities = true;
 		$xslProc->importStyleSheet( $xslDom );
+
+		Action::getInstance()->controller->fillXML();
 
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
@@ -116,9 +129,7 @@ ErrorPage
 			// эта строка ломает CKEditor, поэтому она накакзана
 			//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
 			echo( $html->saveXML() );
-			if( !$dontEcho ) {
-				$this->rendered = true;
-			}
+			$this->rendered = true;
 			if( function_exists( 'fastcgi_finish_request' ) ) {
 				fastcgi_finish_request();
 			}
@@ -203,6 +214,21 @@ ErrorPage
 			$scriptNode = $body->insertBefore( $html->createElement( 'script' ), $body->firstChild );
 			$scriptNode->setAttribute( 'type', 'text/javascript' );
 			$scriptNode->appendChild( $html->createTextNode( "var config={};" . $confJS ) );
+		}
+	}
+
+	/**
+	 * Добавляет заголовки Expires и X-Accel-Expires
+	 *
+	 * @param $ttl
+	 */
+	public static function addExpires( $ttl ) {
+
+		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', $ttl ? ( time() + $ttl ) : 0 ) );
+		if( isset( $SERVER['SERVER_SOFTWARE'] ) and substr( $_SERVER['SERVER_SOFTWARE'], 0, 6 ) ) {
+			// Установка X-Accel-Expires полезна, так как позволяет более точно контролировать кэш,
+			// если время на веб-сервере и время на сервере, выполняющем скрипт, отличаются
+			header( 'X-Accel-Expires: ' . ( $ttl ? $ttl : 'off' ) );
 		}
 	}
 }

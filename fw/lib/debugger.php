@@ -8,8 +8,8 @@ class Debugger {
 	/** @var int        0 — консоль выключена, 1 — консоль включена, но не активна, 2 — консоль активна */
 	private $console = 0;
 	private $cacheResources = true;
-	static $output = array();
-	private $startTime;
+	private static $output = array();
+	public static $startTime = 0;
 	private $hadError = false;
 
 	/**
@@ -44,7 +44,6 @@ class Debugger {
 				$this->console = 2;
 			}
 
-			$this->startTime = microtime( true );
 			if( $this->console == 2 ) {
 				// консоль активна — перехватываем ошибки
 				ini_set( 'display_errors', 'Off' );
@@ -64,8 +63,6 @@ class Debugger {
 		} else {
 			ini_set( 'display_errors', 'Off' );
 		}
-		//echo "=debug={$this->enabled}=<br/>";
-		//echo "=console={$this->console}=<br/>";
 	}
 
 	/**
@@ -107,7 +104,8 @@ class Debugger {
 
 		self::$output[] = array(
 			'class'   => 'messages',
-			'message' => $line
+			'message' => $line,
+			'timer'   => self::getTimer()
 		);
 	}
 
@@ -119,7 +117,8 @@ class Debugger {
 
 		self::$output[] = array(
 			'class'   => 'events',
-			'message' => $line
+			'message' => $line,
+			'timer'   => self::getTimer()
 		);
 	}
 
@@ -136,7 +135,8 @@ class Debugger {
 		self::$output[] = array(
 			'class'   => 'db',
 			'type'    => $type,
-			'message' => $line
+			'message' => $line,
+			'timer'   => self::getTimer()
 		);
 	}
 
@@ -152,6 +152,7 @@ class Debugger {
 		if( $array['class'] == 'errors' ) {
 			$this->hadError = true;
 		}
+		$array['timer'] = self::getTimer();
 		self::$output[] = $array;
 	}
 
@@ -178,7 +179,7 @@ class Debugger {
 			return '';
 		}
 		$alreadyDidIt = true;
-		self::addLine( "Page data prepared in " . ( microtime( true ) - $this->startTime ) . " seconds" );
+		self::addLine( "Page data prepared in " . self::getTimer() . " seconds" );
 
 		/** @var $debugNode \DOMElement */
 		$debugNode = $root->appendChild( $xml->createElement( 'debug' ) );
@@ -266,7 +267,7 @@ class Debugger {
 			@array_shift( $error['traceback'] );
 			self::getInstance()->addLineAsArray( $error );
 		}
-		// если по каким-то причинам рендер не случился, отрендерим свою страничку с блэкджеком и шлюхами
+		// если по каким-то причинам рендер не случился, отрендерим свою страничку
 		if( !View::getInstance()->rendered ) {
 			$controller = Action::getInstance()->controller;
 			$ajax       = $controller->ajax;
@@ -287,5 +288,54 @@ class Debugger {
 	public function hadError() {
 
 		return $this->hadError;
+	}
+
+	/**
+	 * Возвращает время выполнения
+	 * @return float
+	 */
+	private static function getTimer() {
+
+		return microtime( true ) - self::$startTime;
+	}
+
+	public static function checkSlow() {
+
+		if( Debugger::getInstance()->console ) {
+			return;
+		}
+		$time = self::getTimer();
+		if( $time > 1 ) {
+			$output = '<pre>';
+			foreach( self::$output as $line ) {
+				$output .= "{$line['timer']}\t{$line['class']}\t{$line['type']}\t{$line['message']}\n";
+			}
+			$date   = date( 'r' );
+			$server = print_r( $_SERVER, true );
+			$post   = print_r( $_POST, true );
+			$cookie = print_r( $_COOKIE, true );
+			$host   = Site::getInstance()->getHostname();
+			$uri    = Action::getInstance()->getUri();
+			$user   = Auth::getInstance()->data['email'];
+
+			$output .= <<<MSG
+
+Time:	$date
+Host:	$host
+Uri:	/$uri
+User:	$user
+
+\$_SERVER:
+$server
+
+\$_POST:
+$post
+
+\$_COOKIE:
+$cookie
+MSG;
+			$output .= '</pre>';
+			Mailer::getInstance()->sendMail( 'errors@a-jam.ru', 'Slow script', print_r( $output, true ) );
+		}
 	}
 }

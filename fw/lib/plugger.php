@@ -30,23 +30,23 @@ class Plugger {
 	 */
 	private function getPluginsNames() {
 
-		if( is_null( $this->pluginsNames ) ) {
-			$plugins = array();
-			if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
-				if( is_dir( DIR_PLUGINS ) and $dir = opendir( DIR_PLUGINS ) ) {
-					while( false !== ( $subdir = readdir( $dir ) ) ) {
-						if( $subdir != '.' and $subdir != '..' and is_dir( DIR_PLUGINS . '/' . $subdir ) ) {
-							if( is_readable( DIR_PLUGINS . "/$subdir/plugin.php" ) ) {
-								$plugins[] = $subdir;
-							}
+		if( !is_null( $this->pluginsNames ) ) {
+			return $this->pluginsNames;
+		}
+		$plugins = array();
+		if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
+			if( is_dir( DIR_PLUGINS ) and $dir = opendir( DIR_PLUGINS ) ) {
+				while( false !== ( $subdir = readdir( $dir ) ) ) {
+					if( $subdir != '.' and $subdir != '..' and is_dir( DIR_PLUGINS . '/' . $subdir ) ) {
+						if( is_readable( DIR_PLUGINS . "/$subdir/plugin.php" ) ) {
+							$plugins[] = $subdir;
 						}
 					}
 				}
-				Cache::getInstance()->put( 'plugger_plugins', $plugins, 300 );
 			}
-			$this->pluginsNames = $plugins;
+			Cache::getInstance()->put( 'plugger_plugins', $plugins, 300 );
 		}
-		return $this->pluginsNames;
+		return $this->pluginsNames = $plugins;
 	}
 
 	/**
@@ -55,32 +55,96 @@ class Plugger {
 	 */
 	public function getAllPlugins() {
 
-		if( is_null( $this->plugins ) ) {
-			$plugins = array();
-			$dirs    = $this->getPluginsNames();
-			if( !empty( $dirs ) ) {
-				foreach( $dirs as $dir ) {
-					include( DIR_PLUGINS . '/' . $dir . '/plugin.php' );
-					$ucf           = ucfirst( $dir );
-					$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
-				}
-			}
-			$this->plugins = $plugins;
+		if( !is_null( $this->plugins ) ) {
+			return $this->plugins;
 		}
-		return $this->plugins;
+		$plugins = array();
+		$dirs    = $this->getPluginsNames();
+		if( !empty( $dirs ) ) {
+			foreach( $dirs as $dir ) {
+				include( DIR_PLUGINS . '/' . $dir . '/plugin.php' );
+				$ucf           = ucfirst( $dir );
+				$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
+			}
+		}
+		return $this->plugins = $plugins;
 	}
 
-	private function smartPluginsEnable() {
+	/**
+	 * Включает плагины
+	 * @return array
+	 */
+	public function smartPluginsEnable() {
 
-		$plugins = $this->getAllPlugins();
+		static $pluginsState = null;
+		if( !is_null( $pluginsState ) ) {
+			return $pluginsState;
+		}
+		$pluginsState = array();
+		$plugins      = $this->getAllPlugins();
 		if( empty( $plugins ) ) {
-			return;
+			return $pluginsState;
 		}
 		$enabledPlugins = Config::getInstance()->get( 'plugins' );
-		foreach( $plugins as $name => $obj ) {
-			if( empty( $enabledPlugins ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ) ) {
-				$obj->enable();
+		// составление списка плагинов с данными о зависимостях
+		foreach( $plugins as $name => $plugin ) {
+			$requirements        = $plugin->getRequirements();
+			$pluginsState[$name] = array(
+				'enabled'    => empty( $enabledPlugins ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ),
+				'require'    => $requirements ? $requirements : array(),
+				'required'   => array(),
+				'missingReq' => false,
+				'disabled'   => false
+			);
+		}
+		// для каждого плагина составляем список плагинов, которые от него зависят
+		$hasMisses = false;
+		foreach( $pluginsState as $name => $data ) {
+			if( !empty( $data['require'] ) ) {
+				foreach( $data['require'] as $req ) {
+					if( isset( $pluginsState[$req] ) ) {
+						$pluginsState[$req]['required'][] = $name;
+					} else {
+						$hasMisses                         = true;
+						$pluginsState[$name]['missingReq'] = true;
+					}
+				}
 			}
+		}
+		// есть не удовлетворенные зависимости — отключаем такие плагины и все, которые от них зависят
+		if( $hasMisses ) {
+			foreach( $pluginsState as $name => $data ) {
+				if( $data['missingReq'] ) {
+					$this->smartPluginDisable( $pluginsState, $name );
+				}
+			}
+		}
+		// включаем все плагины с удовлетворенными зависимостями
+		foreach( $pluginsState as $name => $data ) {
+			if( $data['enabled'] and !$data['disabled'] ) {
+				$plugins[$name]->enable();
+			}
+		}
+		return $pluginsState;
+	}
+
+	/**
+	 * Отключает плагин в массиве для smartPluginsEnable()
+	 *
+	 * @param array  $state
+	 * @param string $name
+	 */
+	private function smartPluginDisable( &$state, $name ) {
+
+		if( $state[$name]['disabled'] ) {
+			return;
+		}
+		$state[$name]['disabled'] = true;
+		if( empty( $state[$name]['required'] ) ) {
+			return;
+		}
+		foreach( $state[$name]['required'] as $req ) {
+			$this->smartPluginDisable( $state, $req );
 		}
 	}
 
@@ -117,11 +181,13 @@ class Plugger {
 		return $this->plugins[$pluginName]->isEnabled();
 	}
 
-	/**************************** Дальше идёт старый код, который в итоге будет выпилен! ****************************/
-
-	// XXX: from pnd: пролазил везде где только можно, но не нашел ничего готового для определения наличия плагина.
-	// переименовано в isEnabled()
-	// Добавлено сообщение DEPRECATED 04-sep-12.
+	/**
+	 * @deprecated
+	 *
+	 * @param string $name
+	 *
+	 * @return bool
+	 */
 	public function isPlugin( $name ) {
 
 		trigger_error( 'Please use Plugger->isEnabled() instead of Plugger->isPlugin()', E_USER_DEPRECATED );

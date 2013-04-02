@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<locale>
+    <formProcessor>
+        <adm>
+            <title>Процессор форм</title>
+            <manage>
+                <title>Управление формами</title>
+                <forms>Формы</forms>
+                <uri>URI</uri>
+                <name>Название формы</name>
+                <fieldCount>Кол-во полей в форме</fieldCount>
+                <actions>Действия</actions>
+                <disableForm>Выключить/включить форму</disableForm>
+                <status>Статус</status>
+                <formOn>Включена</formOn>
+                <formOff>Выключена</formOff>
+            </manage>
+            <edit>
+                <title>Редактирование формы</title>
+                <save>Сохранить изменения</save>
+                <formUpdated>Данные формы обновлены</formUpdated>
+                <idError>Ошибка при обновлении формы. Не найден ID</idError>
+            </edit>
+
+            <create>
+                <addForm>Создать форму</addForm>
+                <title>Создание формы</title>
+                <mainData>Общие данные формы</mainData>
+                <name>Название формы:</name>
+                <uri>URI (например: /feedback)</uri>
+                <description>Описание формы для пользователя:</description>
+                <generator>Генератор формы</generator>
+                <preview>Превью</preview>
+                <fields>Поля формы</fields>
+                <refresh>Обновить превью</refresh>
+                <fieldType>Тип поля</fieldType>
+                <notify>Ответ пользователю после отправки формы:</notify>
+                <buttonNotify>Текст на кнопке отправки формы:</buttonNotify>
+                <noFieldsNotify>Для сохранения формы необходимо добавить хотя бы одно поле.</noFieldsNotify>
+
+                <mandatory>Это поле будет обязательным</mandatory>
+                <fieldName>Название поля:</fieldName>
+                <fieldDescription>Описание поля для пользователя:</fieldDescription>
+                <variants>Варинты:</variants>
+                <variantsInputDesc>Варианты для выбора вписываются в поле через знак - точка с запятой.</variantsInputDesc>
+
+                <duplicateUri>Форма с таким uri уже существует. Придумайте другой.</duplicateUri>
+                <formAdded>Форма добавлена и готова к работе.</formAdded>
+
+            </create>
+
+            <formtypes>
+                <text>Текстовое поле</text>
+                <textarea>Текстовая область</textarea>
+                <numeric>Numeric поле</numeric>
+                <radio>Radio</radio>
+                <checkbox>Чекбокс</checkbox>
+                <select>Select Box</select>
+            </formtypes>
+        </adm>
+    </formProcessor>
+</locale>

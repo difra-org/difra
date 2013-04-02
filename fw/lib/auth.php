@@ -9,6 +9,7 @@ class Auth {
 	public $data = null;
 	public $moderator = false;
 	public $additionals = null;
+	public $type = 'user';
 
 	static public function getInstance() {
 
@@ -32,6 +33,7 @@ class Auth {
 			$subNode->setAttribute( 'id', $this->id );
 			$subNode->setAttribute( 'userid', $this->getId() );
 			$subNode->setAttribute( 'moderator', $this->moderator );
+			$subNode->setAttribute( 'type', $this->type );
 			if( !empty( $this->additionals ) ) {
 				foreach( $this->additionals as $k => $v ) {
 					$subNode->setAttribute( $k, $v );
@@ -87,6 +89,7 @@ class Auth {
 		$this->data = $_SESSION['auth']['data'];
 		$this->additionals = $_SESSION['auth']['additionals'];
 		$this->moderator = ( $_SESSION['auth']['data']['moderator'] == 1 ) ? true : false;
+		$this->type = isset( $_SESSION['auth']['data']['type'] ) ? $_SESSION['auth']['data']['type'] : 'user';
 		return $this->logged = true;
 	}
 
@@ -98,7 +101,16 @@ class Auth {
 		
 		return isset( $this->data['id'] ) ? $this->data['id'] : null;
 	}
-	
+
+	/**
+	 * Возвращает тип пользователя
+	 * @return string|null
+	 */
+	public function getType() {
+
+		return $this->type;
+	}
+
 	public function isLogged() {
 		
 		return $this->logged;

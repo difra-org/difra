@@ -4,6 +4,9 @@
             <menu_announcements>Анонсы</menu_announcements>
             <menu_announcements_announcements>Последние анонсы</menu_announcements_announcements>
             <menu_announcements_settings>Настройки</menu_announcements_settings>
+            <menu_announcements_category>Категории</menu_announcements_category>
+            <menu_announcements_locations>Локации</menu_announcements_locations>
+            <menu_announcements_additionalFields>Дополнительные поля</menu_announcements_additionalFields>
         </adm>
     </menu>
 </locale>

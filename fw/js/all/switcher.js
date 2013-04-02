@@ -105,7 +105,7 @@ switcher.page = function( url, noPush, data ) {
 		conf.type = 'POST';
 		conf.data = data;
 		$.ajax( url, conf );
-	} else if( !$( '#content' ).length ) {
+	} else if( !$( '#content,.switcher' ).length ) {
 		$( document ).triggerHandler( 'destruct' );
 		$( '#loading' ).css( 'display', 'none' );
 		window.location = switcher.url;
@@ -148,7 +148,7 @@ $( document ).ready( function() {
 			switcher.hashChanged = true;
 			history.replaceState( { url: switcher.url }, null, switcher.url );
 		}
-	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' ) {
+	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' && content.length ) {
 		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
 	} else {
 		if( !switcher.url ) {

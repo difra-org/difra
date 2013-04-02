@@ -102,6 +102,11 @@
 				<xsl:value-of select="position()"/>
 			</td>
 			<td>
+				<xsl:value-of select="@timer"/>
+				<xsl:text> </xsl:text>
+
+			</td>
+			<td>
 				<xsl:value-of select="concat(
 					translate(substring(@class,1,1),'abcdefghijklmnopqrstuvwxyz','ABCDEFGHIJKLMNOPQRSTUVWXYZ'),
 					substring(@class,2))"/>
@@ -128,10 +133,12 @@
 							<xsl:for-each select="traceback/*">
 								<tr>
 									<td>
-										<xsl:value-of select="@file"/>
-										<xsl:text>:</xsl:text>
-										<xsl:value-of select="@line"/>
-										<xsl:text> </xsl:text>
+										<xsl:if test="@file or @line">
+											<xsl:value-of select="@file"/>
+											<xsl:text>:</xsl:text>
+											<xsl:value-of select="@line"/>
+											<xsl:text> </xsl:text>
+										</xsl:if>
 										<xsl:value-of select="@class"/>
 										<xsl:value-of select="@type"/>
 										<xsl:value-of select="@function"/>

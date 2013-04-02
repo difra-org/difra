@@ -197,4 +197,22 @@ class CMS {
 		$item = \Difra\Plugins\CMS\Menuitem::get( $id );
 		$this->getAvailablePagesXML( $node, $item->getMenuId() );
 	}
+
+	/**
+	 * @return array
+	 */
+	public static function getSitemap() {
+
+		$db   = \Difra\MySQL::getInstance();
+		$data = $db->fetch( 'SELECT `tag` FROM `cms`' );
+		$res  = array();
+		if( empty( $data ) ) {
+			return false;
+		}
+		$host = 'http://' . \Difra\Site::getInstance()->getHostname();
+		foreach( $data as $t ) {
+			$res[] = array( 'loc' => $host . $t['tag'] );
+		}
+		return $res;
+	}
 }

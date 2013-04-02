@@ -78,7 +78,9 @@ class Item {
 	/**
 	 * Получение элемента по id
 	 * @static
+	 *
 	 * @param int $id
+	 *
 	 * @return Item
 	 */
 	public static function get( $id ) {
@@ -106,19 +108,19 @@ class Item {
 		if( empty( $data ) ) {
 			return false;
 		}
-		$this->name        = $data['name'];
-		$this->category    = $data['category'];
-		$this->visible     = $data['visible'] ? true : false;
-		$this->price       = $data['price'] ? $data['price'] : null;
-		$this->sale        = $data['sale'] ? $data['sale'] : null;
-		$this->shortdesc   = $data['shortdesc'];
+		$this->name = $data['name'];
+		$this->category = $data['category'];
+		$this->visible = $data['visible'] ? true : false;
+		$this->price = $data['price'] ? $data['price'] : null;
+		$this->sale = $data['sale'] ? $data['sale'] : null;
+		$this->shortdesc = $data['shortdesc'];
 		$this->description = $data['description'];
-		$this->link	   = $data['link'];
-		$this->created     = $data['created'];
-		$this->humanDate   = \Difra\Locales::getInstance()->getDateFromMysql( $data['created'] );
-		$this->loaded      = true;
+		$this->link = $data['link'];
+		$this->created = $data['created'];
+		$this->humanDate = \Difra\Locales::getInstance()->getDateFromMysql( $data['created'] );
+		$this->loaded = true;
 
-		$db      = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$imgData = $db->fetch( 'SELECT `id`,`main` FROM `catalog_images` WHERE `item`=\'' . $db->escape( $this->id ) . "'" );
 		if( !empty( $imgData ) ) {
 			foreach( $imgData as $img ) {
@@ -140,18 +142,18 @@ class Item {
 		if( $this->loadedExt ) {
 			return;
 		}
-		$db      = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$extData = $db->fetch(
 			"SELECT `item`,`catalog_items_ext`.`ext` AS `ext_id`,`catalog_ext`.`name` AS `ext_name`," .
-			"`catalog_ext`.`set` AS `ext_type`,`catalog_ext_sets`.`id` AS `set_id`,`catalog_ext_sets`.`name` AS `set_value`," .
-			"`catalog_items_ext`.`value` AS `ext_value`," .
-			"`catalog_ext`.`position` AS `ext_position`,`catalog_ext_sets`.`position` AS `set_position` " .
-			"FROM `catalog_items_ext` LEFT JOIN `catalog_ext` ON `catalog_items_ext`.`ext`=`catalog_ext`.`id` " .
-			"LEFT JOIN `catalog_ext_sets` ON `catalog_items_ext`.`setvalue`=`catalog_ext_sets`.`id` " .
-			"WHERE `item`='" . $db->escape( $this->getId() ) . "' " .
-			"ORDER BY `item`,`catalog_ext`.`position`,`catalog_ext_sets`.`position`"
+				"`catalog_ext`.`set` AS `ext_type`,`catalog_ext_sets`.`id` AS `set_id`,`catalog_ext_sets`.`name` AS `set_value`," .
+				"`catalog_items_ext`.`value` AS `ext_value`," .
+				"`catalog_ext`.`position` AS `ext_position`,`catalog_ext_sets`.`position` AS `set_position` " .
+				"FROM `catalog_items_ext` LEFT JOIN `catalog_ext` ON `catalog_items_ext`.`ext`=`catalog_ext`.`id` " .
+				"LEFT JOIN `catalog_ext_sets` ON `catalog_items_ext`.`setvalue`=`catalog_ext_sets`.`id` " .
+				"WHERE `item`='" . $db->escape( $this->getId() ) . "' " .
+				"ORDER BY `item`,`catalog_ext`.`position`,`catalog_ext_sets`.`position`"
 		);
-		if( ! empty( $extData ) ) {
+		if( !empty( $extData ) ) {
 			foreach( $extData as $ext ) {
 				if( $ext['ext_value'] ) {
 					$this->ext[$ext['ext_id']] = $ext;
@@ -184,20 +186,31 @@ class Item {
 	 * @static
 	 *
 	 * @param int|null|array     $category
-	 * @param bool               $withExt
+	 * @param bool               $withExt                -1 — без изображений, false — без расширенных полей, true — с расширенными полями
 	 * @param int                $page
 	 * @param int|null           $perPage
 	 * @param null|bool          $visible
 	 * @param bool               $withSubcategories
 	 * @param bool|array         $ids
 	 *
-	 * @return array|bool
+	 * @return Item[]|bool
 	 */
-	public static function getList( $category = null, $withExt = false, $page = 1, $perPage = null, $visible = null, $withSubcategories = false,
+	public static function getList( $category = null,
+					$withExt = false,
+					$page = 1,
+					$perPage = null,
+					$visible = null,
+					$withSubcategories = false,
 					$ids = null ) {
 
 		if( $withSubcategories and !is_null( $category ) ) {
-			return self::getList( Category::getSubtree( $category ), $withExt, $page, $perPage, $visible, false, $ids );
+			return self::getList( Category::getSubtree( $category ),
+				$withExt === true,
+				$page,
+				$perPage,
+				$visible,
+				false,
+				$ids );
 		}
 		$db = \Difra\MySQL::getInstance();
 		$query = 'SELECT SQL_CALC_FOUND_ROWS * FROM `catalog_items`';
@@ -271,6 +284,9 @@ class Item {
 		}
 		$keys = array_flip( $ids );
 		// изображения
+		if( $withExt == -1 ) {
+			return $res;
+		}
 		$imgData =
 			$db->fetch( "SELECT `id`,`item`,`main` FROM `catalog_images` WHERE `item` IN ('" . implode( "','", $ids ) . "')" );
 		foreach( $imgData as $i ) {
@@ -285,13 +301,13 @@ class Item {
 		}
 		$extData = $db->fetch(
 			"SELECT `item`,`catalog_items_ext`.`ext` AS `ext_id`,`catalog_ext`.`name` AS `ext_name`," .
-			"`catalog_ext`.`set` AS `ext_type`,`catalog_ext_sets`.`id` AS `set_id`,`catalog_ext_sets`.`name` AS `set_value`," .
-			"`catalog_items_ext`.`value` AS `ext_value`," .
-			"`catalog_ext`.`position` AS `ext_position`,`catalog_ext_sets`.`position` AS `set_position`" .
-			"FROM `catalog_items_ext` LEFT JOIN `catalog_ext` ON `catalog_items_ext`.`ext`=`catalog_ext`.`id` " .
-			"LEFT JOIN `catalog_ext_sets` ON `catalog_items_ext`.`setvalue`=`catalog_ext_sets`.`id` " .
-			"WHERE `item` IN ('" . implode( "','", $ids ) . "') " .
-			"ORDER BY `item`"
+				"`catalog_ext`.`set` AS `ext_type`,`catalog_ext_sets`.`id` AS `set_id`,`catalog_ext_sets`.`name` AS `set_value`," .
+				"`catalog_items_ext`.`value` AS `ext_value`," .
+				"`catalog_ext`.`position` AS `ext_position`,`catalog_ext_sets`.`position` AS `set_position`" .
+				"FROM `catalog_items_ext` LEFT JOIN `catalog_ext` ON `catalog_items_ext`.`ext`=`catalog_ext`.`id` " .
+				"LEFT JOIN `catalog_ext_sets` ON `catalog_items_ext`.`setvalue`=`catalog_ext_sets`.`id` " .
+				"WHERE `item` IN ('" . implode( "','", $ids ) . "') " .
+				"ORDER BY `item`"
 		);
 		if( !empty( $extData ) ) {
 			foreach( $extData as $ext ) {
@@ -325,6 +341,7 @@ class Item {
 	/**
 	 * Установить тип сортировки
 	 * @static
+	 *
 	 * @param $sort
 	 */
 	static public function setSort( $sort ) {
@@ -354,27 +371,27 @@ class Item {
 		$db = \Difra\MySQL::getInstance();
 		if( $this->id ) {
 			$db->query( 'UPDATE `catalog_items` SET '
-				    . "`name`='" . $db->escape( $this->name ) . "',"
-				    . "`category`='" . $db->escape( $this->category ) . "',"
-				    . "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
-				    . "`price`=" . ( $this->price ? "'" . $db->escape( $this->price ) . "'" : 'NULL' ) . ','
-				    . "`sale`=" . ( $this->sale ? "'" . $db->escape( $this->sale ) . "'" : 'NULL' ) . ','
-				    . "`link`='" . $db->escape( $this->link ) . "',"
-				    . "`shortdesc`='" . $db->escape( $this->shortdesc ) . "',"
-				    . "`description`='" . $db->escape( $this->description ) . "', "
-				    . "`modified`=NOW() "
-				    . "WHERE `id`='" . $db->escape( $this->id ) . "'"
+					. "`name`='" . $db->escape( $this->name ) . "',"
+					. "`category`='" . $db->escape( $this->category ) . "',"
+					. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
+					. "`price`=" . ( $this->price ? "'" . $db->escape( $this->price ) . "'" : 'NULL' ) . ','
+					. "`sale`=" . ( $this->sale ? "'" . $db->escape( $this->sale ) . "'" : 'NULL' ) . ','
+					. "`link`='" . $db->escape( $this->link ) . "',"
+					. "`shortdesc`='" . $db->escape( $this->shortdesc ) . "',"
+					. "`description`='" . $db->escape( $this->description ) . "', "
+					. "`modified`=NOW() "
+					. "WHERE `id`='" . $db->escape( $this->id ) . "'"
 			);
 		} else {
 			$db->query( 'INSERT INTO `catalog_items` SET '
-				    . "`name`='" . $db->escape( $this->name ) . "',"
-				    . "`category`='" . $db->escape( $this->category ) . "',"
-				    . "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
-				    . "`price`=" . ( $this->price ? "'" . $db->escape( $this->price ) . "'" : 'NULL' ) . ','
-				    . "`sale`=" . ( $this->sale ? "'" . $db->escape( $this->sale ) . "'" : 'NULL' ) . ','
-				    . "`link`='" . $db->escape( $this->link ) . "',"
-				    . "`shortdesc`='" . $db->escape( $this->shortdesc ) . "',"
-				    . "`description`='" . $db->escape( $this->description ) . "'"
+					. "`name`='" . $db->escape( $this->name ) . "',"
+					. "`category`='" . $db->escape( $this->category ) . "',"
+					. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
+					. "`price`=" . ( $this->price ? "'" . $db->escape( $this->price ) . "'" : 'NULL' ) . ','
+					. "`sale`=" . ( $this->sale ? "'" . $db->escape( $this->sale ) . "'" : 'NULL' ) . ','
+					. "`link`='" . $db->escape( $this->link ) . "',"
+					. "`shortdesc`='" . $db->escape( $this->shortdesc ) . "',"
+					. "`description`='" . $db->escape( $this->description ) . "'"
 			);
 			$this->id = $db->getLastId();
 		}
@@ -403,17 +420,17 @@ class Item {
 				foreach( $ext as $k => $v ) {
 					$queries[] =
 						'INSERT INTO `catalog_items_ext` SET ' .
-						"`item`='$itemId'," .
-						"`ext`='$id'," .
-						"`setvalue`='" . $db->escape( $k ) . "'";
+							"`item`='$itemId'," .
+							"`ext`='$id'," .
+							"`setvalue`='" . $db->escape( $k ) . "'";
 				}
 			} else {
 				// value
 				$queries[] =
 					'INSERT INTO `catalog_items_ext` SET ' .
-					"`item`='$itemId'," .
-					"`ext`='$id'," .
-					"`value`='" . $db->escape( $ext ) . "'";
+						"`item`='$itemId'," .
+						"`ext`='$id'," .
+						"`value`='" . $db->escape( $ext ) . "'";
 			}
 		}
 		$db->query( $queries );
@@ -533,10 +550,19 @@ class Item {
 	public function setDescription( $description ) {
 
 		$this->load();
-		if( $this->description == $description ) {
-			return;
+		if( method_exists( $description, 'saveImages' ) ) {
+			if( $this->description == $description->val( true ) ) {
+				return;
+			}
+			$this->id ? : $this->save();
+			$description->saveImages( DIR_DATA . 'catalog/desc/' . $this->id, '/catalog/desc/' . $this->id );
+			$this->description = $description->val();
+		} else {
+			$descTxt = method_exists( $description, 'val' ) ? $description->val() : $description;
+			if( $this->description == $descTxt ) {
+				return;
+			}
 		}
-		$this->description = $description;
 		$this->modified = true;
 	}
 
@@ -577,7 +603,7 @@ class Item {
 
 	/**
 	 * Заменяет все изображения
-	 * @param string|\Difra\Param\AjaxFile $main
+	 * @param string|\Difra\Param\AjaxFile                        $main
 	 * @param string|\Difra\Param\AjaxFile|\Difra\param\AjaxFiles $more
 	 */
 	public function setImages( $main, $more = null ) {
@@ -616,7 +642,7 @@ class Item {
 			foreach( $this->imgSizes as $k => $v ) {
 				@unlink( DIR_DATA . 'catalog/items/' . $imgId['id'] . $k . '.png' );
 			}
-			$db->query( 'DELETE FROM `catalog_images` WHERE `id`=\'' . $db->escape( $imgId['id'] ) ."'" );
+			$db->query( 'DELETE FROM `catalog_images` WHERE `id`=\'' . $db->escape( $imgId['id'] ) . "'" );
 		}
 		$this->images = array();
 	}
@@ -659,8 +685,8 @@ class Item {
 		}
 		$db = \Difra\MySQL::getInstance();
 		$db->query( 'INSERT INTO `catalog_images` SET '
-			    . "`item`='" . $db->escape( $this->id ) . "',"
-			    . "`main`=" . ( $main ? '1' : '0' )
+				. "`item`='" . $db->escape( $this->id ) . "',"
+				. "`main`=" . ( $main ? '1' : '0' )
 		);
 		$imgId = $db->getLastId();
 		foreach( $this->imgSizes as $k => $size ) {
@@ -684,12 +710,12 @@ class Item {
 		$db = \Difra\MySQL::getInstance();
 		$db->query( 'UPDATE `catalog_images` SET `main`=0 WHERE `item`=\'' . $db->escape( $this->id ) . "'" );
 		$db->query( 'UPDATE `catalog_images` SET `main`=1 WHERE `item`=\'' . $db->escape( $this->id ) . "' AND `id`='"
-			    . $db->escape( $id ) . "'" );
+			. $db->escape( $id ) . "'" );
 	}
 
 	/**
 	 * Удаляет изображение
-	 * @param int $id
+	 * @param int  $id
 	 * @param bool $force
 	 */
 	public function deleteImage( $id, $force = false ) {
@@ -713,6 +739,7 @@ class Item {
 
 	/**
 	 * Возвращает данные о товаре в XML
+	 *
 	 * @param \DOMElement $node
 	 */
 	public function getXML( $node ) {
@@ -815,6 +842,18 @@ class Item {
 		$db = \Difra\MySQL::getInstance();
 		$this->cleanImages();
 		if( $this->id ) {
+			@rmdir( DIR_DATA . 'catalog/items/' . $this->id );
+			$path = DIR_DATA . 'catalog/desc/' . $this->id;
+			if( is_dir( $path ) ) {
+				$dir = opendir( $path );
+				while( false !== ( $file = readdir( $dir ) ) ) {
+					if( $file{0} == '.' ) {
+						continue;
+					}
+					@unlink( "$path/$file" );
+				}
+				@rmdir( $path );
+			}
 			$db->query( "DELETE FROM `catalog_items` WHERE `id`='" . $db->escape( $this->id ) . "'" );
 		}
 		$this->modified = $this->modifiedExt = false;

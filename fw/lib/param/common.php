@@ -4,25 +4,19 @@ namespace Difra\Param;
 
 abstract class Common {
 
-	const type   = null;
+	const type = null;
 	const source = null;
-	const named  = null;
-	const auto   = false;
+	const named = null;
+	const auto = false;
 
 	protected $value = null;
 
 	public function __construct( $value = '' ) {
 
 		switch( static::type ) {
-		case 'string':
-			$this->value = (string) $value;
-			break;
-		case 'int':
-			$this->value = filter_var( $value, FILTER_SANITIZE_NUMBER_INT );
-			break;
 		case 'file':
 			$this->value = $value;
-			break;
+			return;
 		case 'files':
 			$files = array();
 			foreach( $value as $file ) {
@@ -31,18 +25,29 @@ abstract class Common {
 				}
 			}
 			$this->value = $files;
+			return;
+		}
+		$this->value = self::canonicalize( $value );
+		switch( static::type ) {
+		case 'string':
+			$this->value = (string)$value;
+			break;
+		case 'int':
+			$this->value = filter_var( $value, FILTER_SANITIZE_NUMBER_INT );
 			break;
 		case 'float':
-			$value       = str_replace( ',', '.', $value );
+			$value = str_replace( ',', '.', $value );
 			$this->value = filter_var( $value, FILTER_SANITIZE_NUMBER_FLOAT );
 			break;
 		case 'data':
 			$this->value = $value;
 			break;
 		case 'url':
+			// TODO: заменить этот фильтр на ESAPI
 			$this->value = filter_var( $value, FILTER_SANITIZE_URL );
 			break;
 		case 'email':
+			// TODO: заменить этот фильтр на ESAPI
 			$this->value = filter_var( $value, FILTER_SANITIZE_EMAIL );
 			break;
 		case 'ip':
@@ -55,16 +60,12 @@ abstract class Common {
 
 	public function __toString() {
 
-		return (string) $this->val();
+		return (string)$this->val();
 	}
 
 	public static function verify( $value ) {
 
 		switch( static::type ) {
-		case 'string':
-			return true;
-		case 'int':
-			return filter_var( $value, FILTER_VALIDATE_INT ) or $value === '0';
 		case 'file':
 			if( $value['error'] ) {
 				return false;
@@ -80,19 +81,42 @@ abstract class Common {
 				}
 			}
 			return false;
+		}
+		$value = self::canonicalize( $value );
+		switch( static::type ) {
+		case 'string':
+			return true;
+		case 'int':
+			return filter_var( $value, FILTER_VALIDATE_INT ) or $value === '0';
 		case 'float':
 			$value = str_replace( ',', '.', $value );
 			return filter_var( $value, FILTER_VALIDATE_FLOAT );
 		case 'data':
 			return true;
 		case 'url':
+			// TODO: заменить этот фильтр на ESAPI
 			return filter_var( $value, FILTER_VALIDATE_URL );
 		case 'email':
+			// TODO: заменить этот фильтр на ESAPI
 			return filter_var( $value, FILTER_VALIDATE_EMAIL );
 		case 'ip':
 			return filter_var( $value, FILTER_VALIDATE_IP );
 		default:
 			throw new \Difra\Exception( 'Can\'t check param of type: ' . static::type );
+		}
+	}
+
+	/**
+	 * @param $str
+	 *
+	 * @return string|null
+	 */
+	static function canonicalize( $str ) {
+
+		try {
+			return @\Difra\Libs\ESAPI::encoder()->canonicalize( $str );
+		} catch( \Exception $ex ) {
+			return null;
 		}
 	}
 

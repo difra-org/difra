@@ -21,6 +21,13 @@ abstract class Controller {
 	protected $method = null;
 	/** @var string */
 	protected $output = null;
+	/** @var string */
+	protected $outputType = 'text/plain';
+
+	/** @var bool|int Кэширование страницы на стороне веб-сервера (в секундах) */
+	public $cache = false;
+	// Значение по умолчанию
+	const DEFAULT_CACHE = 60;
 
 	/** @var \DOMDocument */
 	public $xml;
@@ -68,8 +75,11 @@ abstract class Controller {
 	final public function render() {
 
 		if( !empty( $this->action->parameters ) ) {
+			$this->putExpires( true );
 			$this->view->httpError( 404 );
 		} elseif( !is_null( $this->output ) ) {
+			$this->putExpires();
+			header( 'Content-Type: ' . $this->outputType . '; charset="utf-8"' );
 			echo $this->output;
 			$this->view->rendered = true;
 		} elseif( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
@@ -82,10 +92,12 @@ abstract class Controller {
 			echo rawurldecode( $this->xml->saveXML() );
 			$this->view->rendered = true;
 		} elseif( !$this->view->rendered and $this->ajax->isAjax ) {
+			$this->putExpires();
 			header( 'Content-type: text/plain' ); // тут нужен application/json, но тупая опера предлагает сохранить файл
 			echo( $this->ajax->getResponse() );
 			$this->view->rendered = true;
 		} elseif( !$this->view->rendered ) {
+			$this->putExpires();
 			$this->fillXML();
 			$this->view->render( $this->xml );
 		}
@@ -212,8 +224,15 @@ abstract class Controller {
 		}
 	}
 
-	private function fillXML() {
+	public function fillXML() {
 
+		static $filledXML = false;
+		if( $filledXML ) {
+			return;
+		}
+		$filledXML = true;
+
+		Debugger::addLine( 'Filling XML data for render' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
 		$this->realRoot->setAttribute( 'controller', $this->action->className );
 		$this->realRoot->setAttribute( 'action', $this->action->method );
@@ -228,8 +247,11 @@ abstract class Controller {
 		// ajax flag
 		$this->realRoot->setAttribute( 'ajax',
 					       ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-									  $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? 1
-						       : 0 );
+									  $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
+						       : '0' );
+		$this->realRoot->setAttribute( 'switcher',
+					       ( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+								   $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
 		// build number
 		$this->realRoot->setAttribute( 'build', Site::getInstance()->getBuild() );
 		// date
@@ -246,12 +268,10 @@ abstract class Controller {
 		$configNode = $this->realRoot->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );
 		// menu
-		try {
-			$menuResource = Resourcer::getInstance( 'menu' )->compile( $this->view->instance );
-			$menuXML      = new \DOMDocument();
+		if( $menuResource = Resourcer::getInstance( 'menu' )->compile( $this->view->instance ) ) {
+			$menuXML = new \DOMDocument();
 			$menuXML->loadXML( $menuResource );
 			$this->realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
-		} catch( Exception $ex ) {
 		}
 		// auth
 		$this->auth->getAuthXML( $this->realRoot );
@@ -280,6 +300,25 @@ abstract class Controller {
 		if( false === strpos( $domain, Site::getInstance()->getMainhost() ) ) {
 			throw new Exception( 'Bad referer' );
 		}
+	}
+
+	/**
+	 * Устанавливает заголовок X-Accel-Expires для кэширования страниц целиком на стороне веб-сервера
+	 *
+	 * @param bool|int $ttl
+	 */
+	public function putExpires( $ttl = null ) {
+
+		if( is_null( $ttl ) ) {
+			$ttl = $this->cache;
+		}
+		if( $ttl === true ) {
+			$ttl = self::DEFAULT_CACHE;
+		}
+		if( !$ttl or !is_numeric( $ttl ) or $ttl < 0 ) {
+			return;
+		}
+		View::addExpires( $ttl );
 	}
 }
 

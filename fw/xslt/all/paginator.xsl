@@ -1,23 +1,36 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
+	<xsl:template match="paginator">
+		<xsl:call-template name="paginator">
+			<xsl:with-param name="current" select="@page"/>
+			<xsl:with-param name="pages" select="@pages"/>
+			<xsl:with-param name="link" select="@link"/>
+			<xsl:with-param name="get" select="@get"/>
+		</xsl:call-template>
+	</xsl:template>
+
 	<xsl:template name="paginator">
 		<xsl:param name="i" select="1"/>
 		<xsl:param name="pages"/>
 		<xsl:param name="link"/>
 		<xsl:param name="current"/>
+		<xsl:param name="get"/>
 		<div class="paginator">
 			<xsl:call-template name="paginatorSub">
 				<xsl:with-param name="i" select="$i"/>
 				<xsl:with-param name="pages" select="$pages"/>
 				<xsl:with-param name="link" select="$link"/>
 				<xsl:with-param name="current" select="$current"/>
+				<xsl:with-param name="get" select="$get"/>
 			</xsl:call-template>
 		</div>
 	</xsl:template>
+
 	<xsl:template name="paginatorSub">
 		<xsl:param name="i" select="1"/>
 		<xsl:param name="pages"/>
 		<xsl:param name="link"/>
 		<xsl:param name="current"/>
+		<xsl:param name="get"/>
 
 		<xsl:if test="$pages &gt; 1 or $current != 1">
 			<!-- кнопка назад -->
@@ -29,7 +42,12 @@
 							<a href="{$link}">←</a>
 						</xsl:when>
 						<xsl:otherwise>
-							<a href="{$link}/page/{$prev}">←</a>
+							<xsl:call-template name="paginatorLink">
+								<xsl:with-param name="get" select="$get"/>
+								<xsl:with-param name="link" select="$link"/>
+								<xsl:with-param name="page" select="$prev"/>
+								<xsl:with-param name="text">←</xsl:with-param>
+							</xsl:call-template>
 						</xsl:otherwise>
 					</xsl:choose>
 				</div>
@@ -47,9 +65,12 @@
 						</a>
 					</xsl:when>
 					<xsl:otherwise>
-						<a href="{$link}/page/{$i}">
-							<xsl:value-of select="$i"/>
-						</a>
+						<xsl:call-template name="paginatorLink">
+							<xsl:with-param name="get" select="$get"/>
+							<xsl:with-param name="link" select="$link"/>
+							<xsl:with-param name="page" select="$i"/>
+							<xsl:with-param name="text" select="$i"/>
+						</xsl:call-template>
 					</xsl:otherwise>
 				</xsl:choose>
 			</div>
@@ -63,6 +84,7 @@
 						<xsl:with-param name="current" select="$current"/>
 						<xsl:with-param name="link" select="$link"/>
 						<xsl:with-param name="i" select="$current - 4"/>
+						<xsl:with-param name="get" select="$get"/>
 					</xsl:call-template>
 				</xsl:when>
 				<!-- скипаем от средних до последних -->
@@ -73,6 +95,7 @@
 						<xsl:with-param name="current" select="$current"/>
 						<xsl:with-param name="link" select="$link"/>
 						<xsl:with-param name="i" select="$pages"/>
+						<xsl:with-param name="get" select="$get"/>
 					</xsl:call-template>
 				</xsl:when>
 				<!-- показываемые страницы -->
@@ -82,18 +105,47 @@
 						<xsl:with-param name="current" select="$current"/>
 						<xsl:with-param name="link" select="$link"/>
 						<xsl:with-param name="i" select="$i + 1"/>
+						<xsl:with-param name="get" select="$get"/>
 					</xsl:call-template>
 				</xsl:when>
 				<!-- кнопка вперёд -->
 				<xsl:otherwise>
 					<xsl:if test="$current &lt; $pages">
 						<div class="pagerItem pagerNext">
-							<xsl:variable name="next" select="$current + 1"/>
-							<a href="{$link}/page/{$next}">→</a>
+							<xsl:call-template name="paginatorLink">
+								<xsl:with-param name="get" select="$get"/>
+								<xsl:with-param name="link" select="$link"/>
+								<xsl:with-param name="page" select="$current + 1"/>
+								<xsl:with-param name="text">→</xsl:with-param>
+							</xsl:call-template>
 						</div>
 					</xsl:if>
 				</xsl:otherwise>
 			</xsl:choose>
 		</xsl:if>
+	</xsl:template>
+
+	<xsl:template name="paginatorLink">
+		<xsl:param name="link"/>
+		<xsl:param name="page"/>
+		<xsl:param name="get"/>
+		<xsl:param name="text"/>
+
+		<a>
+			<xsl:attribute name="href">
+				<xsl:value-of select="$link"/>
+				<xsl:choose>
+					<xsl:when test="not($get) or ($get='')">
+						<xsl:text>/page/</xsl:text>
+					</xsl:when>
+					<xsl:otherwise>
+						<xsl:value-of select="$get"/>
+						<xsl:text>page=</xsl:text>
+					</xsl:otherwise>
+				</xsl:choose>
+				<xsl:value-of select="$page"/>
+			</xsl:attribute>
+			<xsl:value-of select="$text"/>
+		</a>
 	</xsl:template>
 </xsl:stylesheet>

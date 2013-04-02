@@ -4,6 +4,9 @@ use Difra\Param, Difra\Plugins\Announcements;
 
 class EventsIndexController extends \Difra\Controller {
 
+    /**
+     * @var \DOMNode null
+     */
     private $eventRoot = null;
 
     public function indexAction( \Difra\Param\AnyString $link = null ) {
@@ -11,8 +14,10 @@ class EventsIndexController extends \Difra\Controller {
         if( !is_null( $link ) ) {
             // страница анонса события
 
-            $this->eventRoot = $this->root->appendChild( $this->xml->createElement( 'event' ) );
+            $this->eventRoot = $this->root->appendChild( $this->xml->createElement( 'announcements-event-view' ) );
+            $this->eventRoot->setAttribute( 'view', true );
             $this->_showEvent( rawurldecode( $link->val() ) );
+
         } else {
 
             $Group = \Difra\Plugins\Blogs\Group::current();
@@ -38,8 +43,10 @@ class EventsIndexController extends \Difra\Controller {
         $Announcements = \Difra\Plugins\Announcements::getInstance();
         if( !$Announcements->getByLinkXML( $link, $this->eventRoot ) ) {
 
-            $this->view->httpError( 404 );
+            return $this->view->httpError( 404 );
         }
+        $additionalsFieldsNode = $this->eventRoot->appendChild( $this->eventRoot->ownerDocument->createElement( 'additionalsFields' ) );
+        \Difra\Plugins\Announcements\Additionals::getListXML( $additionalsFieldsNode );
     }
 
     private function _showByPriority( $priority = 100 ) {
