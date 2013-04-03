@@ -4,9 +4,9 @@ namespace Difra;
 
 class Site {
 
-	const VERSION = '3.0';
+	const VERSION = '4.0';
 	const BUILD = '$Rev$';
-	const PATH_PART = '/../../sites/';
+	const PATH_PART = '/../../';
 
 	private $locale = 'ru_RU';
 
@@ -122,13 +122,13 @@ class Site {
 	public function configurePaths() {
 
 		if( !defined( 'DIR_ROOT' ) ) {
-			define( 'DIR_ROOT', __DIR__ . self::PATH_PART . '../' );
+			define( 'DIR_ROOT', __DIR__ . self::PATH_PART );
 		}
 		$_SERVER['DOCUMENT_ROOT'] = DIR_ROOT;
 		define( 'DIR_FW', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'fw/' );
 		define( 'DIR_SITE', DIR_ROOT . 'sites/' . $this->siteDir . '/' );
 		define( 'DIR_PLUGINS', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'plugins/' );
-		define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
+		//define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
 		define( 'DIR_DATA', !empty( $_SERVER['VHOST_DATA'] ) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/' );
 	}
 

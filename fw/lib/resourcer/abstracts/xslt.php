@@ -17,8 +17,8 @@ abstract class XSLT extends Common {
 					%symbol;
 					%special;
 				]>
-				<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-				<xsl:output method="xml" indent="yes" encoding="utf-8" omit-xml-declaration="yes" doctype-system="about:legacy-compat"/>
+				<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
+					<xsl:output method="html" encoding="utf-8" omit-xml-declaration="yes" indent="yes"/>
 				</xsl:stylesheet>';
 		$dom = new \DOMDocument();
 		$dom->loadXML( $template );

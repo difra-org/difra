@@ -1,18 +1,35 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 	<xsl:template name="html-head">
 		<head>
 			<title>
 				<xsl:call-template name="html-head-title"/>
 			</title>
-			<link rel="SHORTCUT ICON" href="/favicon.ico"/>
-			<link rel="ICON" href="/favicon.ico" type="image/x-icon"/>
-			<meta name="keywords" content="{$locale/seo/index/keywords}"/>
-			<meta name="description" content="{$locale/seo/index/description}"/>
-			<meta http-equiv="cache-control" content="no-cache"/>
-			<link type="text/css"
-			      href="{/root/@urlprefix}/css/main.css?{/root/@build}"
-			      rel="stylesheet"/>
+
+			<!-- favicon -->
+			<xsl:text disable-output-escaping="yes">&lt;link rel="SHORTCUT ICON" href="/favicon.ico"/&gt;</xsl:text>
+			<xsl:text disable-output-escaping="yes">&lt;link rel="ICON" href="/favicon.ico" type="image/x-icon"/&gt;</xsl:text>
+
+			<!-- meta name="keywords" -->
+			<xsl:text disable-output-escaping="yes">&lt;meta name="keywords" content="</xsl:text>
+			<xsl:value-of select="$locale/seo/index/keywords"/>
+			<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
+			<!-- meta name="description" -->
+			<xsl:text disable-output-escaping="yes">&lt;meta name="description" content="</xsl:text>
+			<xsl:value-of select="$locale/seo/index/description"/>
+			<xsl:text disable-output-escaping="yes">"&gt;</xsl:text>
+
+			<!-- link type="text/css" href="/css/main.css" -->
+			<xsl:text disable-output-escaping="yes">&lt;link type="text/css" href="</xsl:text>
+			<xsl:value-of select="/root/@urlprefix"/>
+			<xsl:text>/css/main.css?</xsl:text>
+			<xsl:value-of select="/root/@build"/>
+			<xsl:text disable-output-escaping="yes">" rel="stylesheet"&gt;</xsl:text>
+
+			<!-- script type="text/javascript" src="/js/main.js" -->
 			<script type="text/javascript" src="{/root/@urlprefix}/js/main.js?{/root/@build}"/>
+
 			<xsl:call-template name="html-head-additional"/>
 		</head>
 	</xsl:template>

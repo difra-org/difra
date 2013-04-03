@@ -232,7 +232,7 @@ class Action {
 		$controllerDirs = Plugger::getInstance()->getPaths();
 		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
 		foreach( $controllerDirs as $k => $v ) {
-			$controllerDirs[$k] = $v . '/controllers/';
+			$controllerDirs[$k] = $v . 'controllers/';
 		}
 		return $controllerDirs;
 	}

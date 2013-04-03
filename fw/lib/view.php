@@ -112,23 +112,17 @@ ErrorPage
 			throw new exception( "XSLT load problem for instance '$instance'." );
 		}
 
-		$xslProc                     = new \XsltProcessor();
-		$xslProc->resolveExternals   = true;
-		$xslProc->substituteEntities = true;
+		$xslProc = new \XsltProcessor();
 		$xslProc->importStyleSheet( $xslDom );
 
 		Action::getInstance()->controller->fillXML();
 
 		// transform template
-		if( $html = $xslProc->transformToDoc( $xml ) ) {
-			$this->postProcess( $html, $xml, $instance );
-			$html->formatOutput = Debugger::getInstance()->isEnabled();
+		if( $html = $xslProc->transformToXml( $xml ) ) {
 			if( $dontEcho ) {
-				return $html->saveXML();
+				return $html;
 			}
-			// эта строка ломает CKEditor, поэтому она накакзана
-			//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
-			echo( $html->saveXML() );
+			echo $html;
 			$this->rendered = true;
 			if( function_exists( 'fastcgi_finish_request' ) ) {
 				fastcgi_finish_request();
