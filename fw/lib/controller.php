@@ -50,7 +50,8 @@ abstract class Controller {
 
 		// создание xml с данными
 		$this->xml      = new \DOMDocument;
-		$this->realRoot = $this->root = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
+		$this->realRoot = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
+		$this->root = $this->realRoot->appendChild( $this->xml->createElement( 'content' ) );
 
 		// запуск диспатчера
 		$this->dispatch();
@@ -243,7 +244,7 @@ abstract class Controller {
 			$this->realRoot->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
 		}
 		// get user agent
-		Site::getInstance()->getUserAgentXML( $this->root );
+		Site::getInstance()->getUserAgentXML( $this->realRoot );
 		// ajax flag
 		$this->realRoot->setAttribute( 'ajax',
 					       ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
@@ -277,6 +278,13 @@ abstract class Controller {
 		$this->auth->getAuthXML( $this->realRoot );
 		// locale
 		$this->locale->getLocaleXML( $this->realRoot );
+		// Добавление объекта config для js
+		$config = Site::getInstance()->getConfig();
+		$confJS = '';
+		foreach( $config as $k => $v ) {
+			$confJS .= "config.{$k}='" . addslashes( $v ) . "';";
+		}
+		$this->realRoot->setAttribute( 'jsConfig', $confJS );
 	}
 
 	/**

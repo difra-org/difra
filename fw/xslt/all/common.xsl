@@ -1,11 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
-	<xsl:variable name="localePath" select="/root/locale"/>
-	<xsl:param name="locale" select="$localePath"/>
-
-	<xsl:template match="/root/locale"/>
-
 	<xsl:template name="repeat">
 		<xsl:param name="times"/>
 		<xsl:param name="text"/>

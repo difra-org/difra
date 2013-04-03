@@ -30,6 +30,11 @@
 			<!-- script type="text/javascript" src="/js/main.js" -->
 			<script type="text/javascript" src="{/root/@urlprefix}/js/main.js?{/root/@build}"/>
 
+			<script type="text/javascript">
+				<xsl:text>var config={};</xsl:text>
+				<xsl:value-of select="/root/@jsConfig"/>
+			</script>
+
 			<xsl:call-template name="html-head-additional"/>
 		</head>
 	</xsl:template>

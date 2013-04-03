@@ -18,6 +18,9 @@
 
 	<xsl:template name="html">
 		<html>
+			<xsl:attribute name="class">
+				<xsl:value-of select="/root/@uaClass"/>
+			</xsl:attribute>
 			<xsl:call-template name="html-head"/>
 			<xsl:call-template name="html-body"/>
 		</html>
@@ -36,6 +39,6 @@
 	</xsl:template>
 
 	<xsl:template name="content">
-		<xsl:apply-templates select="*"/>
+		<xsl:apply-templates select="content/*"/>
 	</xsl:template>
 </xsl:stylesheet>

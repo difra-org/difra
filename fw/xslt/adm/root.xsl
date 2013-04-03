@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 	<!-- common html part -->
-	<xsl:template match="/root">
+	<xsl:template match="/">
 		<html>
 			<head>
 				<title>
@@ -18,11 +18,11 @@
 				<script type="text/javascript" src="/js/adm.js"/>
 			</head>
 			<body>
-				<xsl:apply-templates select="menu">
+				<xsl:apply-templates select="root/menu">
 					<xsl:with-param name="auto" select="0"/>
 				</xsl:apply-templates>
 				<div id="content" basepath="/adm">
-					<xsl:apply-templates select="*"/>
+					<xsl:apply-templates select="content/*"/>
 				</div>
 			</body>
 		</html>
