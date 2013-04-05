@@ -36,6 +36,7 @@
 		<div id="content">
 			<xsl:call-template name="content"/>
 		</div>
+		<xsl:apply-templates select="/root/debug"/>
 	</xsl:template>
 
 	<xsl:template name="content">

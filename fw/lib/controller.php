@@ -265,6 +265,7 @@ abstract class Controller {
 		}
 		// debug flag
 		$this->realRoot->setAttribute( 'debug', Debugger::getInstance()->isEnabled() ? '1' : '0' );
+		Debugger::getInstance()->debugXML( $this->realRoot );
 		// config values (for js variable)
 		$configNode = $this->realRoot->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );

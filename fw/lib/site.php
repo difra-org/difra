@@ -90,7 +90,7 @@ class Site {
 	 */
 	private function detectHost() {
 
-		$sitesDir = __DIR__ . self::PATH_PART;
+		$sitesDir = __DIR__ . self::PATH_PART . 'sites';
 
 		// хост передаётся от веб-сервера
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {

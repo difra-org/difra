@@ -84,7 +84,7 @@ abstract class Common {
 
 		header( 'Content-Type: ' . $this->contentType );
 		if( $enc == 'gzip' and $data = $this->compileGZ( $instance ) ) {
-			//			header( 'Vary: Accept-Encoding' );
+			// header( 'Vary: Accept-Encoding' );
 			header( 'Content-Encoding: gzip' );
 		} else {
 			$data = $this->compile( $instance );
@@ -255,6 +255,7 @@ abstract class Common {
 	 */
 	private function find( $instance, $withAll = true ) {
 
+		// TODO: cache this
 		$found   = false;
 		$parents = array();
 		$paths   = Difra\Plugger::getInstance()->getPaths();

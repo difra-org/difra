@@ -30,6 +30,20 @@
 			<!-- script type="text/javascript" src="/js/main.js" -->
 			<script type="text/javascript" src="{/root/@urlprefix}/js/main.js?{/root/@build}"/>
 
+			<xsl:if test="/root/@debugConsole>0">
+
+				<!-- link type="text/css" href="/css/console.css" -->
+				<xsl:text disable-output-escaping="yes">&lt;link type="text/css" href="</xsl:text>
+				<xsl:value-of select="/root/@urlprefix"/>
+				<xsl:text>/css/console.css?</xsl:text>
+				<xsl:value-of select="/root/@build"/>
+				<xsl:text disable-output-escaping="yes">" rel="stylesheet"&gt;</xsl:text>
+
+				<!-- script type="text/javascript" src="/js/console.js" -->
+				<script type="text/javascript" src="{/root/@urlprefix}/js/console.js?{/root/@build}"/>
+			</xsl:if>
+
+
 			<script type="text/javascript">
 				<xsl:text>var config={};</xsl:text>
 				<xsl:value-of select="/root/@jsConfig"/>
