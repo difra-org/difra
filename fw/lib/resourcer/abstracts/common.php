@@ -82,13 +82,16 @@ abstract class Common {
 		*/
 		$enc = 'gzip';
 
-		header( 'Content-Type: ' . $this->contentType );
 		if( $enc == 'gzip' and $data = $this->compileGZ( $instance ) ) {
 			// header( 'Vary: Accept-Encoding' );
 			header( 'Content-Encoding: gzip' );
 		} else {
 			$data = $this->compile( $instance );
 		}
+		if( !$data ) {
+			return false;
+		}
+		header( 'Content-Type: ' . $this->contentType );
 		if( !$modified = Difra\Cache::getInstance()->get( "{$instance}_{$this->type}_modified" ) ) {
 			$modified = gmdate( 'D, d M Y H:i:s' ) . ' GMT';
 		}
@@ -232,6 +235,7 @@ abstract class Common {
 	 * @param string $instance
 	 * @param bool   $withSources
 	 *
+	 * @throws \Difra\Exception
 	 * @return string
 	 */
 	private function realCompile( $instance, $withSources = false ) {

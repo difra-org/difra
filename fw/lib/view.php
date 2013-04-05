@@ -115,7 +115,9 @@ ErrorPage
 		$xslProc = new \XsltProcessor();
 		$xslProc->importStyleSheet( $xslDom );
 
-		Action::getInstance()->controller->fillXML();
+		if( $controller = Action::getInstance()->controller ) {
+			$controller->fillXML();
+		}
 
 		// transform template
 		if( $html = $xslProc->transformToXml( $xml ) ) {

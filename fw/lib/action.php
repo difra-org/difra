@@ -74,7 +74,9 @@ class Action {
 			$resourcer = Resourcer::getInstance( $parts[0], true );
 			if( $resourcer and $resourcer->isPrintable() ) {
 				try {
-					$resourcer->view( $parts[1] );
+					if( !$resourcer->view( $parts[1] ) ) {
+						View::getInstance()->httpError( 404 );
+					}
 					View::getInstance()->rendered = true;
 					die();
 				} catch( Exception $ex ) {
