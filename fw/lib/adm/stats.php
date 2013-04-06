@@ -2,6 +2,8 @@
 
 namespace Difra\Adm;
 
+use Difra\Exception;
+
 class Stats {
 
 	/**
@@ -49,7 +51,11 @@ class Stats {
 
 		// stats/mysql
 		$mysqlNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'mysql' ) );
-		\Difra\MySQL\Parser::getStatusXML( $mysqlNode );
+		try {
+			\Difra\MySQL\Parser::getStatusXML( $mysqlNode );
+		} catch( Exception $ex ) {
+			$mysqlNode->setAttribute( 'error', $ex->getMessage() );
+		}
 
 		// stats/system
 		$systemNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'system' ) );

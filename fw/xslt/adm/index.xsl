@@ -138,6 +138,11 @@
 			<xsl:value-of select="$locale/adm/stats/database/title"/>
 		</h3>
 		<xsl:choose>
+			<xsl:when test="stats/mysql/@error">
+				<div class="error">
+					<xsl:value-of select="stats/mysql/@error"/>
+				</div>
+			</xsl:when>
 			<xsl:when test="count(stats/mysql/table/diff[@sign='-'])=0 and count(stats/mysql/table/diff[@sign='+'])=0">
 				<div class="message">
 					<xsl:value-of select="$locale/adm/stats/database/status-ok"/>
