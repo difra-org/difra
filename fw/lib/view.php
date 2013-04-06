@@ -24,10 +24,11 @@ class View {
 	 * Завершение выполнения с выводом http-ошибки
 	 * Пробует отрендерить шаблон error_xxx, где xxx — номер ошибки, после чего выводит простенькую страничку с ошибкой.
 	 *
-	 * @param int      $err
-	 * @param bool|int $ttl
+	 * @param int         $err
+	 * @param bool|int    $ttl
+	 * @param null|string $message
 	 */
-	public function httpError( $err, $ttl = false ) {
+	public function httpError( $err, $ttl = false, $message = null ) {
 
 		if( $this->redirect or $this->error ) {
 			return;
@@ -39,6 +40,7 @@ class View {
 		} else {
 			$error = 'Unknown';
 		}
+
 		header( "HTTP/1.1 $err $error" );
 		if( $ttl and is_numeric( $ttl ) and $ttl >= 0 ) {
 			self::addExpires( $ttl );
@@ -68,6 +70,7 @@ class View {
 			</head>
 			<body>
 			<center><h1 style="padding:350px 0px 0px 0px">Error $err: $error</h1></center>
+			$message
 			</body>
 			</html>
 ErrorPage
@@ -109,7 +112,7 @@ ErrorPage
 		$xslDom->resolveExternals   = true;
 		$xslDom->substituteEntities = true;
 		if( !$xslDom->loadXML( $resource ) ) {
-			throw new exception( "XSLT load problem for instance '$instance'." );
+			throw new exception( "XSLT load problem for instance '$instance'" );
 		}
 
 		$xslProc = new \XsltProcessor();
@@ -133,7 +136,8 @@ ErrorPage
 				fastcgi_finish_request();
 			}
 		} else {
-			throw new exception( "Can't render templates" );
+			$errormsg = error_get_last();
+			throw new exception( $errormsg ? $errormsg['message'] : "Can't render templates" );
 		}
 		return true;
 	}

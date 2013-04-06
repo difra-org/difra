@@ -2,7 +2,7 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 
 	<!-- common html part -->
-	<xsl:template match="/">
+	<xsl:template match="/disable">
 		<html>
 			<head>
 				<title>
@@ -24,6 +24,7 @@
 				<div id="content" basepath="/adm">
 					<xsl:apply-templates select="root/content/*"/>
 				</div>
+				<xsl:apply-templates select="root/debug"/>
 			</body>
 		</html>
 	</xsl:template>

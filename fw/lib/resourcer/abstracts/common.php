@@ -253,11 +253,10 @@ abstract class Common {
 	/**
 	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов.
 	 * @param string $instance
-	 * @param bool   $withAll
 	 *
 	 * @return bool
 	 */
-	private function find( $instance, $withAll = true ) {
+	private function find( $instance ) {
 
 		// TODO: cache this
 		$found   = false;
@@ -277,7 +276,7 @@ abstract class Common {
 					$found     = true;
 					$parents[] = $d;
 				}
-				if( $withAll and is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
+				if( $this->withAll( $instance ) and is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
 					$parents[] = $d;
 				}
 			}
@@ -426,5 +425,15 @@ abstract class Common {
 			$files = array_merge( $files, $this->resources[$instance]['files'] );
 		}
 		return $files;
+	}
+
+	// TODO: это заглушка, надо переделать по-уму
+	private function withAll( $instance ) {
+
+		if( $instance == 'main' or $instance == 'adm' ) {
+			return true;
+		} else {
+			return false;
+		}
 	}
 }

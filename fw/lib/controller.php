@@ -99,8 +99,16 @@ abstract class Controller {
 			$this->view->rendered = true;
 		} elseif( !$this->view->rendered ) {
 			$this->putExpires();
-			$this->fillXML();
-			$this->view->render( $this->xml );
+			try {
+				$this->view->render( $this->xml );
+			} catch( Exception $ex ) {
+				if( !Debugger::getInstance()->isConsoleEnabled() ) {
+					$this->view->httpError( 500 );
+				} else {
+					echo Debugger::getInstance()->debugHTML( true );
+					die();
+				}
+			}
 		}
 	}
 
@@ -226,12 +234,6 @@ abstract class Controller {
 	}
 
 	public function fillXML( $instance = null ) {
-
-		static $filledXML = false;
-		if( $filledXML ) {
-			return;
-		}
-		$filledXML = true;
 
 		Debugger::addLine( 'Filling XML data for render: Started' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );

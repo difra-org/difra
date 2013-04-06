@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-	<xsl:template match="/root">
+	<xsl:template match="/">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;&#x0A;</xsl:text>
 		<xsl:choose>
 			<xsl:when test="/root/@ajax=1">
@@ -40,6 +40,6 @@
 	</xsl:template>
 
 	<xsl:template name="content">
-		<xsl:apply-templates select="content/*"/>
+		<xsl:apply-templates select="/root/content/*"/>
 	</xsl:template>
 </xsl:stylesheet>
