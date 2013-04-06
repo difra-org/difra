@@ -50,15 +50,6 @@ class Stats {
 		// stats/mysql
 		$mysqlNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'mysql' ) );
 		\Difra\MySQL\Parser::getStatusXML( $mysqlNode );
-		/*
-		$sqlState  = \Difra\MySQL\Updater::getInstance()->check();
-		$mysqlNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'mysql', $sqlState ) );
-		if( $sqlState ) {
-			$mysqlNode->setAttribute( 'ok', '0' );
-		} else {
-			$mysqlNode->setAttribute( 'ok', '1' );
-		}
-		 */
 
 		// stats/system
 		$systemNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'system' ) );

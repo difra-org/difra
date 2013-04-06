@@ -22,7 +22,7 @@
 					<xsl:with-param name="auto" select="0"/>
 				</xsl:apply-templates>
 				<div id="content" basepath="/adm">
-					<xsl:apply-templates select="content/*"/>
+					<xsl:apply-templates select="root/content/*"/>
 				</div>
 			</body>
 		</html>

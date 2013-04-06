@@ -20,7 +20,14 @@
 					<xsl:value-of select="$locale/adm/stats/summary/loaded-plugins"/>
 				</th>
 				<td>
-					<xsl:value-of select="stats/plugins/@loaded"/>
+					<xsl:choose>
+						<xsl:when test="stats/plugins/@loaded and not(stats/plugins/@loaded='')">
+							<xsl:value-of select="stats/plugins/@loaded"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text>—</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
 				</td>
 			</tr>
 			<xsl:if test="not(stats/plugins/@disabled='')">

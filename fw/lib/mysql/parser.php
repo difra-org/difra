@@ -2,6 +2,8 @@
 
 namespace Difra\MySQL;
 
+use Difra\Exception;
+
 class Parser {
 
 	/**
@@ -14,7 +16,9 @@ class Parser {
 	public static function getStatusXML( $node ) {
 
 		$classList     = array();
-		$currentChunks = self::chop( self::getCurrentSQL() );
+		try {
+			$currentChunks = self::chop( self::getCurrentSQL() );
+		} catch( Exception $ex ) {}
 		if( !empty( $currentChunks ) ) {
 			foreach( $currentChunks as $chunks ) {
 				if( $class = self::getChunksClass( $chunks ) ) {
