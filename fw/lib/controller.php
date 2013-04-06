@@ -225,7 +225,7 @@ abstract class Controller {
 		}
 	}
 
-	public function fillXML() {
+	public function fillXML( $instance = null ) {
 
 		static $filledXML = false;
 		if( $filledXML ) {
@@ -233,13 +233,14 @@ abstract class Controller {
 		}
 		$filledXML = true;
 
-		Debugger::addLine( 'Filling XML data for render' );
+		Debugger::addLine( 'Filling XML data for render: Started' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
 		$this->realRoot->setAttribute( 'controller', $this->action->className );
 		$this->realRoot->setAttribute( 'action', $this->action->method );
 		$this->realRoot->setAttribute( 'host', Site::getInstance()->getHost() );
 		$this->realRoot->setAttribute( 'hostname', Site::getInstance()->getHostname() );
 		$this->realRoot->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
+		$this->realRoot->setAttribute( 'instance', $instance ? $instance : $this->view->instance );
 		if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
 			$this->realRoot->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
 		}
@@ -265,7 +266,6 @@ abstract class Controller {
 		}
 		// debug flag
 		$this->realRoot->setAttribute( 'debug', Debugger::getInstance()->isEnabled() ? '1' : '0' );
-		Debugger::getInstance()->debugXML( $this->realRoot );
 		// config values (for js variable)
 		$configNode = $this->realRoot->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );
@@ -286,6 +286,8 @@ abstract class Controller {
 			$confJS .= "config.{$k}='" . addslashes( $v ) . "';";
 		}
 		$this->realRoot->setAttribute( 'jsConfig', $confJS );
+		Debugger::addLine( 'Filling XML data for render: Done' );
+		Debugger::getInstance()->debugXML( $this->realRoot );
 	}
 
 	/**

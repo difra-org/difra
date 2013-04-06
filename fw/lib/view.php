@@ -116,7 +116,7 @@ ErrorPage
 		$xslProc->importStyleSheet( $xslDom );
 
 		if( $controller = Action::getInstance()->controller ) {
-			$controller->fillXML();
+			$controller->fillXML( $instance );
 		}
 
 		// transform template
@@ -126,6 +126,9 @@ ErrorPage
 			}
 			echo $html;
 			$this->rendered = true;
+			if( Debugger::getInstance()->isEnabled() ) {
+				echo '<!-- Page rendered in ' . ( microtime( true ) - Debugger::$startTime ) . ' seconds -->';
+			}
 			if( function_exists( 'fastcgi_finish_request' ) ) {
 				fastcgi_finish_request();
 			}
