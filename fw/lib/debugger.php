@@ -29,9 +29,16 @@ class Debugger {
 
 		if( isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
 
-			$this->cacheResources = false;
-
 			// дебаг отключен?
+			if( isset( $_GET['debug'] ) and $_GET['debug'] == -1 ) {
+				ini_set( 'display_errors', 'On' );
+				ini_set( 'error_reporting', E_ALL );
+				ini_set( 'html_errors',
+					( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+				$this->enabled = 0;
+				$this->console = 0;
+				return;
+			}
 			if( ( isset( $_GET['debug'] ) and !$_GET['debug'] ) or ( isset( $_COOKIE['debug'] ) and !$_COOKIE['debug'] ) ) {
 				$this->enabled = false;
 			} else {
@@ -43,6 +50,8 @@ class Debugger {
 			} else {
 				$this->console = 2;
 			}
+
+			$this->cacheResources = false;
 
 			if( $this->console == 2 ) {
 				// консоль активна — перехватываем ошибки
