@@ -246,6 +246,7 @@ abstract class Common {
 			$this->processDirs( $instance );
 			$res = $this->processData( $instance, $withSources );
 		}
+		$res = $this->processText( $res );
 		\Difra\Debugger::addLine( "Resource {$this->type}/{$instance} compile finished" );
 		return $res;
 	}
@@ -432,5 +433,15 @@ abstract class Common {
 
 		$instances = Difra\Config::getInstance()->get( 'instances' );
 		return isset( $instances[$instance] ) and isset( $instances[$instance]['withAll'] ) and $instances[$instance]['withAll'];
+	}
+
+	/**
+	 * Постпроцессинг ресурса
+	 * @param string $text
+	 * @return string
+	 */
+	public function processText( $text ) {
+
+		return $text;
 	}
 }
