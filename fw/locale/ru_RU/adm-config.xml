@@ -1,0 +1,10 @@
+<locale>
+	<adm>
+		<config>
+			<title>Конфигурация</title>
+			<current>Текущая конфигурация</current>
+			<diff>Изменения конфигурации</diff>
+			<reset>Сбросить изменения</reset>
+		</config>
+	</adm>
+</locale>
