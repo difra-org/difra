@@ -430,10 +430,7 @@ abstract class Common {
 	// TODO: это заглушка, надо переделать по-уму
 	private function withAll( $instance ) {
 
-		if( $instance == 'main' or $instance == 'adm' ) {
-			return true;
-		} else {
-			return false;
-		}
+		$instances = Difra\Config::getInstance()->get( 'instances' );
+		return isset( $instances[$instance] ) and isset( $instances[$instance]['withAll'] ) and $instances[$instance]['withAll'];
 	}
 }

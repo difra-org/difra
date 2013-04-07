@@ -8,6 +8,17 @@ class Config {
 	private $config = null;
 	private $modified = false;
 
+	private $defaultConfig = array(
+		'instances' => array(
+			'main' => array(
+				'withAll' => true
+			),
+			'adm' => array(
+				'withAll' => true
+			)
+		)
+	);
+
 	/**
 	 * Синглтон
 	 * @static
@@ -41,7 +52,7 @@ class Config {
 				$this->config = $c;
 				return;
 			}
-			$this->config = $this->getDefaultConfig();
+			$this->config = $this->loadFileConfigs();
 			$db           = MySQL::getInstance();
 			$conf         = $db->fetchOne( 'SELECT `config` FROM `config` LIMIT 1' );
 			$dbconf       = @unserialize( $conf );
@@ -71,20 +82,21 @@ class Config {
 	 *
 	 * @return array
 	 */
-	private function getDefaultConfig() {
+	private function loadFileConfigs() {
 
-		static $defaultConfig = null;
-		if( is_null( $defaultConfig ) ) {
-			$defaultConfig = array();
+		static $newConfig = null;
+		if( is_null( $newConfig ) ) {
+			$newConfig = $this->defaultConfig;
 			if( is_file( DIR_ROOT . '/config.php' ) ) {
-				$defaultConfig = include( DIR_ROOT . '/config.php' );
+				$conf2 = include( DIR_ROOT . '/config.php' );
+				$newConfig = $this->merge( $newConfig, $conf2 );
 			}
 			if( is_file( DIR_SITE . '/config.php' ) ) {
 				$conf2         = include( DIR_SITE . '/config.php' );
-				$defaultConfig = $this->merge( $defaultConfig, $conf2 );
+				$newConfig = $this->merge( $newConfig, $conf2 );
 			}
 		}
-		return $defaultConfig;
+		return $newConfig;
 	}
 
 	/**
@@ -93,7 +105,7 @@ class Config {
 	 */
 	private function diff() {
 
-		$defaultConfig = $this->getDefaultConfig();
+		$defaultConfig = $this->loadFileConfigs();
 		return $this->subDiff( $defaultConfig, $this->config );
 	}
 
