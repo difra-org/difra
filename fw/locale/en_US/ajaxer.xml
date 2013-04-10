@@ -2,4 +2,8 @@
 	<notifications>
 		<close>Close</close>
 	</notifications>
+	<ajaxer>
+		<confirm-yes>Yes</confirm-yes>
+		<confirm-no>No</confirm-no>
+	</ajaxer>
 </locale>

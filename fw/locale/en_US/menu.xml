@@ -1,12 +1,15 @@
 <locale>
 	<menu>
 		<adm>
-			<menu_common></menu_common>
-			<menu_common_site>View site</menu_common_site>
-			<menu_common_settings>General information</menu_common_settings>
-			<menu_common_plugins>Plugins</menu_common_plugins>
-			<menu_common_locales>Locales status</menu_common_locales>
-			<menu_common_config>Configuration</menu_common_config>
+			<menu_content>Content</menu_content>
+			<menu_catalog>Catalog</menu_catalog>
+			<menu_media>Media</menu_media>
+			<menu_talks>Talks</menu_talks>
+			<menu_users>Users</menu_users>
+			<menu_settings>Settings</menu_settings>
+			<menu_development>Development</menu_development>
+			<menu_development_config>Configuration status</menu_development_config>
+			<menu_development_locales>Localization</menu_development_locales>
 		</adm>
 	</menu>
 </locale>
