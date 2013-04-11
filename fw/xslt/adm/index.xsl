@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
 	<xsl:template match="index">
-		<h2>
+		<h1>
 			<xsl:value-of select="$locale/adm/stats/h2"/>
-		</h2>
+		</h1>
 
-		<h3>Difra</h3>
+		<h2>Difra</h2>
 		<table class="summary">
 			<tr>
 				<th>
@@ -49,9 +49,9 @@
 				</td>
 			</tr>
 		</table>
-		<h3>
+		<h2>
 			<xsl:value-of select="$locale/adm/stats/server/title"/>
-		</h3>
+		</h2>
 		<table class="summary">
 			<tr>
 				<th>
@@ -89,9 +89,9 @@
 				</td>
 			</tr>
 		</table>
-		<h3>
+		<h2>
 			<xsl:value-of select="$locale/adm/stats/extensions/title"/>
-		</h3>
+		</h2>
 		<table class="summary">
 			<tr>
 				<th>
@@ -134,9 +134,9 @@
 				</td>
 			</tr>
 		</table>
-		<h3>
+		<h2>
 			<xsl:value-of select="$locale/adm/stats/database/title"/>
-		</h3>
+		</h2>
 		<xsl:choose>
 			<xsl:when test="stats/mysql/@error">
 				<div class="error">

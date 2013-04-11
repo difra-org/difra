@@ -1,0 +1,10 @@
+<locale>
+	<adm>
+		<plugins>
+			<no-plugins>Плагины не найдены.</no-plugins>
+			<name>Название</name>
+			<requires>Зависимости</requires>
+			<required>Требуется для</required>
+		</plugins>
+	</adm>
+</locale>

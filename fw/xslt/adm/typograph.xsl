@@ -9,7 +9,7 @@
 			<xsl:value-of select="$locale/adm/typograph/mainSettings"/>
 		</h3>
 
-		<form class="ajaxer" action="/adm/typograph/save/" method="post">
+		<form class="ajaxer" action="/adm/development/typograph/save/" method="post">
 			<table class="form">
 				<tr>
 					<th>

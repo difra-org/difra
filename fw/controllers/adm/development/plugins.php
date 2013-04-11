@@ -1,6 +1,6 @@
 <?php
 
-class AdmPluginsController extends \Difra\Controller {
+class AdmDevelopmentPluginsController extends \Difra\Controller {
 
 	public function dispatch() {
 

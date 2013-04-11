@@ -18,7 +18,7 @@
 			<xsl:value-of select="@diff"/>
 		</textarea>
 		<br/>
-		<a href="/adm/config/reset" class="ajaxer">
+		<a href="/adm/development/config/reset" class="ajaxer button">
 			<xsl:value-of select="$locale/adm/config/reset"/>
 		</a>
 	</xsl:template>

@@ -20,7 +20,7 @@ switcher.ajaxConfig = {
 	headers: { 'X-Requested-With': 'SwitchPage' },
 	type: 'GET',
 	beforeSend: function() {
-		$( '#loading' ).css( 'display', 'block' );
+		loading.show();
 	},
 	success: function( data, status, xhr ) {
 		try {
@@ -73,7 +73,7 @@ switcher.ajaxConfig = {
 			document.title = title;
 		}
 		$( document ).triggerHandler( 'construct' );
-		$( '#loading' ).css( 'display', 'none' );
+		loading.hide();
 	},
 	error: function( xhr ) {
 		switcher.fallback();
@@ -83,7 +83,7 @@ switcher.ajaxConfig = {
 switcher.fallback = function() {
 
 	$( document ).triggerHandler( 'destruct' );
-	$( '#loading' ).css( 'display', 'none' );
+	loading.hide();
 	document.location = switcher.url;
 };
 
@@ -107,7 +107,7 @@ switcher.page = function( url, noPush, data ) {
 		$.ajax( url, conf );
 	} else if( !$( '#content,.switcher' ).length ) {
 		$( document ).triggerHandler( 'destruct' );
-		$( '#loading' ).css( 'display', 'none' );
+		loading.hide();
 		window.location = switcher.url;
 	} else {
 		$.ajax( url, switcher.ajaxConfig );

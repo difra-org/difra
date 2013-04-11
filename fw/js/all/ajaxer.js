@@ -425,12 +425,7 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 				ajaxer.initIframe( form, event )
 			} );
 			$( 'body' ).append( frame );
-			// добавляем слой loading
-			var loading = $( '#loading' );
-			if( !loading.length ) {
-				$( 'body' ).append( loading = $( '<div id="loading"></div>' ) );
-			}
-			loading.fadeIn();
+			switcher.showLoading();
 		}
 	}
 } );
@@ -470,13 +465,10 @@ ajaxer.initIframe = function( form, event ) {
 		form.find( 'input[name=_method]' ).remove();
 		$( 'iframe#ajaxerFrame' ).remove();
 		var upprog = $( '#upprog' );
-		var loading = $( '#loading' );
 		if( upprog.length ) {
 			loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
 		}
-		loading.fadeOut( 'slow', function() {
-			loading.find( '#upprog' ).remove();
-		} );
+		switcher.hideLoading();
 		ajaxer.process( val, form );
 	} );
 	// сабмиттим форму
@@ -501,6 +493,13 @@ ajaxer.fetchProgress = function( uuid ) {
 	if( res.state == 'uploading' ) {
 		var progressbar = $( '#upprog' );
 		if( !progressbar.length ) {
+			switcher.hideLoading();
+			var loading = $( '#loading' );
+			if( !loading.length ) {
+				$( 'body' ).append( loading = $( '<div id="loading"></div>' ) );
+			}
+			loading.fadeIn();
+
 			$( '#loading' )
 				.css( 'background-image', 'none' )
 				.append( '<div id="upprog" class="auto-center"><div class="td1"></div></div>' );

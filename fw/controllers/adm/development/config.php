@@ -1,6 +1,6 @@
 <?php
 
-class AdmConfigController extends \Difra\Controller {
+class AdmDevelopmentConfigController extends \Difra\Controller {
 
 	public function dispatch() {
 

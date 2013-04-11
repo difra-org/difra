@@ -4,7 +4,13 @@
 	<xsl:template match="menu">
 		<xsl:param name="auto" select="1"/>
 		<xsl:if test="$auto=0">
-			<div id="menu">
+			<div class="menu switcher">
+				<xsl:if test="@instance">
+					<xsl:attribute name="id">
+						<xsl:text>menu_</xsl:text>
+						<xsl:value-of select="@instance"/>
+					</xsl:attribute>
+				</xsl:if>
 				<xsl:call-template name="common_menu"/>
 			</div>
 		</xsl:if>
@@ -14,13 +20,29 @@
 		<xsl:if test="*">
 			<xsl:variable name="instance" select="/root/menu/@instance"/>
 			<ul>
-				<xsl:for-each select="*">
+				<xsl:for-each select="*[not(@href='') or ./*]">
 					<xsl:sort select="@priority" order="descending"/>
 					<xsl:if test="not(@hidden=1)">
+						<xsl:if test="not(@href='') or */*">
+
+						</xsl:if>
 						<li id="{@id}">
-							<xsl:if test="@sup=1">
-								<xsl:attribute name="class">sup</xsl:attribute>
-							</xsl:if>
+							<xsl:attribute name="class">
+								<xsl:if test="@sup=1">
+									<xsl:text>sup</xsl:text>
+									<xsl:if test="@selected>0">
+										<xsl:text> </xsl:text>
+									</xsl:if>
+								</xsl:if>
+								<xsl:choose>
+									<xsl:when test="@selected=1">
+										<xsl:text>selected</xsl:text>
+									</xsl:when>
+									<xsl:when test="@selected=2">
+										<xsl:text>selected match</xsl:text>
+									</xsl:when>
+								</xsl:choose>
+							</xsl:attribute>
 							<!-- получаем название пункта меню -->
 							<xsl:variable name="title">
 								<xsl:choose>

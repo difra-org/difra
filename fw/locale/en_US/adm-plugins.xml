@@ -1,0 +1,9 @@
+<locale>
+	<adm>
+		<plugins>
+			<no-plugins>No plugins found.</no-plugins>
+			<requires>Requires</requires>
+			<required-by>Required by</required-by>
+		</plugins>
+	</adm>
+</locale>

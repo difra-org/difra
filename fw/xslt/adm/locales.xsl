@@ -40,7 +40,7 @@
 									<div>
 										<a href="#"
 										   onclick="$('#u_{../@name}_{position()}').toggle('fast')"
-										   class="dotted">
+										   class="dashed">
 											<xsl:value-of select="$locale/adm/locales/unused-lines"/>
 											<xsl:text>: </xsl:text>
 											<xsl:value-of select="count(item[@usage=0])"/>
@@ -59,7 +59,7 @@
 							<xsl:choose>
 								<xsl:when test="count(item[@missing=1])>1">
 									<div>
-										<a href="#" onclick="$('#m_{../@name}_{position()}').toggle()" class="dotted">
+										<a href="#" onclick="$('#m_{../@name}_{position()}').toggle()" class="dashed">
 											<xsl:value-of select="$locale/adm/locales/missing-lines"/>
 											<xsl:text>: </xsl:text>
 											<xsl:value-of select="count(item[@missing=1])"/>
