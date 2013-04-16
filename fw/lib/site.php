@@ -475,7 +475,9 @@ class Site {
 			}
 		}
 		if( !$a['os'] ) {
-			if( $a['agent'] == 'Opera' and isset( $ua2['Tablet'] ) ) {
+			if( $a['agent'] == 'Safari' and isset( $ua2['Mobile'] ) ) {
+				$a['os'] = 'iOS';
+			} if( $a['agent'] == 'Opera' and isset( $ua2['Tablet'] ) ) {
 				$a['os'] = 'Tablet';
 			} elseif( $a['agent'] == 'Opera' and isset( $ua2['Mobi'] ) ) {
 				$a['os'] = 'Mobile';
