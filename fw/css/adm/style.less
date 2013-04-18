@@ -118,12 +118,49 @@ input[type='submit'],
 	}
 }
 
+a {
+	color: @color-links;
+	&:hover {
+		color: @color-links-hover;
+	}
+	&:active {
+		color: @color-links-active;
+	}
+	&:visited {
+		color: @color-links-visited;
+	}
+	&.dashed {
+		text-decoration: none;
+		border-bottom: 1px dashed @color-links;
+		&:hover {
+			border-color: @color-links-hover;
+		}
+		&:active {
+			border-color: @color-links-active;
+		}
+		&:visited {
+			border-color: @color-links-visited;
+		}
+	}
+}
+
+// левый столбец
+
+#left {
+	position: fixed;
+	left: 0;
+	top: 0;
+	bottom: 0;
+	width: @leftcolumn-width;
+	overflow: auto;
+}
+
 // меню
 
 #menu_adm {
 	position: absolute;
 	top: 12px;
-	left: -@leftcolumn-width;
+	left: 0;
 	width: @leftcolumn-width;
 	color: @color-darkwhite;
 	background: @color-darkgrey;
@@ -243,7 +280,7 @@ input[type='submit'],
 #signature {
 	position: absolute;
 	bottom: 0;
-	left: -@leftcolumn-width;
+	left: 0;
 	width: @leftcolumn-width;
 	padding: 0 0 6px 10px;
 	font-size: @font-medium;
@@ -294,35 +331,16 @@ input[type='submit'],
 
 // дополнительные стили
 
-.error {
-	color: @color-red;
-}
 .small {
 	font-size: @font-small;
 }
 
-a {
-	color: @color-links;
-	&:hover {
-		color: @color-links-hover;
-	}
-	&:active {
-		color: @color-links-active;
-	}
-	&:visited {
-		color: @color-links-visited;
-	}
-	&.dashed {
-		text-decoration: none;
-		border-bottom: 1px dashed @color-links;
-		&:hover {
-			border-color: @color-links-hover;
-		}
-		&:active {
-			border-color: @color-links-active;
-		}
-		&:visited {
-			border-color: @color-links-visited;
+.error {
+	&, &:hover, &:active, &:visited {
+		color: @color-red;
+		&.dashed {
+			border-color: @color-red;
 		}
 	}
 }
+
