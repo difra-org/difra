@@ -2,9 +2,10 @@
 	<adm>
 		<plugins>
 			<no-plugins>Плагины не найдены.</no-plugins>
-			<name>Название</name>
+			<name>Плагин</name>
+			<description>Описание</description>
+			<version>Версия</version>
 			<requires>Зависимости</requires>
-			<required>Требуется для</required>
 		</plugins>
 	</adm>
 </locale>

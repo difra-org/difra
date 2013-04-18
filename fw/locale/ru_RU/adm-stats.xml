@@ -5,7 +5,6 @@
 			<summary>
 				<platform-version>Версия платформы</platform-version>
 				<loaded-plugins>Загруженные плагины</loaded-plugins>
-				<disabled-plugins>Отключенные плагины</disabled-plugins>
 				<cache-type>Тип кэширования</cache-type>
 			</summary>
 			<server>

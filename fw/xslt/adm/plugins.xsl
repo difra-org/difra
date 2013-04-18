@@ -3,15 +3,16 @@
 	<xsl:template match="plugins">
 		<h2>Plugins</h2>
 		<xsl:choose>
-			<xsl:when test="*">
+			<xsl:when test="plugins/*">
 				<table>
 					<tr>
 						<th/>
 						<th><xsl:value-of select="$locale/adm/plugins/name"/></th>
+						<th><xsl:value-of select="$locale/adm/plugins/description"/></th>
+						<th><xsl:value-of select="$locale/adm/plugins/version"/></th>
 						<th><xsl:value-of select="$locale/adm/plugins/requires"/></th>
-						<th><xsl:value-of select="$locale/adm/plugins/required-by"/></th>
 					</tr>
-					<xsl:for-each select="*">
+					<xsl:for-each select="plugins/*">
 						<xsl:sort select="name()"/>
 						<xsl:variable name="name" select="name()"/>
 						<tr>
@@ -35,19 +36,47 @@
 								<xsl:value-of select="$name"/>
 							</td>
 							<td>
-								<xsl:for-each select="require/*">
-									<xsl:if test="position()>1">
-										<xsl:text>, </xsl:text>
-									</xsl:if>
-									<xsl:value-of select="name()"/>
-								</xsl:for-each>
+								<xsl:value-of select="@description"/>
 							</td>
 							<td>
-								<xsl:for-each select="required/*">
+								<xsl:choose>
+									<xsl:when test="@old">
+										<span class="error">
+											<xsl:value-of select="@version"/>
+										</span>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="@version"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</td>
+							<td>
+								<xsl:for-each select="require/*">
+									<xsl:sort select="name()"/>
+									<xsl:variable name="reqName" select="name()"/>
 									<xsl:if test="position()>1">
 										<xsl:text>, </xsl:text>
 									</xsl:if>
-									<xsl:value-of select="name()"/>
+									<xsl:choose>
+										<xsl:when test="../../missingReq/*[name()=$reqName]">
+											<xsl:variable name="url" select="../../../../provisions/*[name()=$reqName]/@url"/>
+											<xsl:choose>
+												<xsl:when test="$url">
+													<a href="{$url}" class="dashed error">
+														<xsl:value-of select="name()"/>
+													</a>
+												</xsl:when>
+												<xsl:otherwise>
+													<span class="error">
+														<xsl:value-of select="name()"/>
+													</span>
+												</xsl:otherwise>
+											</xsl:choose>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="name()"/>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:for-each>
 							</td>
 						</tr>

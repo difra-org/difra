@@ -30,16 +30,6 @@
 					</xsl:choose>
 				</td>
 			</tr>
-			<xsl:if test="not(stats/plugins/@disabled='')">
-				<tr>
-					<th>
-						<xsl:value-of select="$locale/adm/stats/summary/disabled-plugins"/>
-					</th>
-					<td style="color:red">
-						<xsl:value-of select="stats/plugins/@disabled"/>
-					</td>
-				</tr>
-			</xsl:if>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/adm/stats/summary/cache-type"/>
