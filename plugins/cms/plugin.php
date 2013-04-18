@@ -4,6 +4,10 @@ namespace Difra\Plugins\CMS;
 
 class Plugin extends \Difra\Plugin {
 
+	protected $version = 3.1;
+	protected $description = 'Content management system';
+	protected $require = 'mysql';
+
 	public function init() {
 
 		\Difra\Events::register( 'pre-action', '\Difra\Plugins\CMS', 'run' );
