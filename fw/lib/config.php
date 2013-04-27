@@ -140,18 +140,23 @@ class Config {
 
 	/**
 	 * Сохранение настроек
+	 * @return bool
 	 */
-	private function save() {
+	public function save() {
 
 		if( !$this->modified ) {
-			return;
+			return true;
 		}
 		$db = MySQL::getInstance();
+		if( !$db->isConnected() ) {
+			return false;
+		}
 		$db->query( 'DELETE FROM `config`' );
 		$diff = $this->diff();
 		$db->query( "INSERT INTO `config` SET `config`='" . $db->escape( serialize( $diff ) ) . "'" );
 		Cache::getInstance()->remove( 'config' );
 		$this->modified = false;
+		return true;
 	}
 
 	/**

@@ -17,7 +17,7 @@
 						<xsl:variable name="name" select="name()"/>
 						<tr>
 							<td>
-								<input type="checkbox" name="plugins[{$name}][enable]">
+								<input type="checkbox" name="{$name}" class="plugins-toggle">
 									<xsl:choose>
 										<xsl:when test="@missingReq=1 or @disabled=1">
 											<xsl:attribute name="disabled">

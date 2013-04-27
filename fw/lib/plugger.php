@@ -21,6 +21,9 @@ class Plugger {
 		return $_self ? $_self : $_self = new self;
 	}
 
+	/**
+	 * Инициализация
+	 */
 	public function init() {
 
 		$this->provisions = array();
@@ -76,7 +79,7 @@ class Plugger {
 	}
 
 	/**
-	 * Загружает включенные плагины
+	 * Загружает включенные плагины без недостающих зависимостей
 	 */
 	public function smartPluginsEnable() {
 
@@ -145,6 +148,9 @@ class Plugger {
 		} while( $changed );
 	}
 
+	/**
+	 * Заполняет информацию о недостающих плагинах и недостающей версии (missingReq, disabled, old)
+	 */
 	public function fillMissingReq() {
 
 		static $didit = false;
@@ -167,6 +173,10 @@ class Plugger {
 		}
 	}
 
+	/**
+	 * Возвращает информацию о плагинах в XML
+	 * @param \DOMElement|\DOMNode $node
+	 */
 	public function getPluginsXML( $node ) {
 
 		$this->smartPluginsEnable();
@@ -221,5 +231,43 @@ class Plugger {
 
 		trigger_error( 'Please use Plugger->isEnabled() instead of Plugger->isPlugin()', E_USER_DEPRECATED );
 		return $this->isEnabled( $name );
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @return bool
+	 */
+	public function turnOn( $name ) {
+
+		$config = Config::getInstance();
+		$conf = $config->get( 'plugins' );
+		if( !isset( $this->plugins[$name] ) ) {
+			return false;
+		}
+		if( !$conf ) {
+			$conf = array();
+		}
+		if( !in_array( $name, $conf ) ) {
+			$conf[] = $name;
+			$config->set( 'plugins', $conf );
+		}
+		return $config->save();
+	}
+
+	/**
+	 * @param string $name
+	 *
+	 * @return bool
+	 */
+	public function turnOff( $name ) {
+
+		$config = Config::getInstance();
+		$conf = $config->get( 'plugins' );
+		if( ( $k = array_search( $name, $conf ) ) !== false ) {
+			unset( $conf[$k] );
+			$config->set( 'plugins', $conf );
+		}
+		return $config->save();
 	}
 }
