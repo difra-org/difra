@@ -1,6 +1,6 @@
 <?php
 
-class AdmPluginsController extends \Difra\Controller {
+class AdmDevelopmentPluginsController extends \Difra\Controller {
 
 	public function dispatch() {
 
@@ -10,7 +10,6 @@ class AdmPluginsController extends \Difra\Controller {
 	public function indexAction() {
 
 		$pluginsNode = $this->root->appendChild( $this->xml->createElement( 'plugins' ) );
-		$plugins     = \Difra\Plugger::getInstance()->smartPluginsEnable();
-		\Difra\Libs\XML\DOM::array2domAttr( $pluginsNode, $plugins );
+		\Difra\Plugger::getInstance()->getPluginsXML( $pluginsNode );
 	}
 }

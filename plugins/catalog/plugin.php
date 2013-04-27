@@ -3,6 +3,10 @@
 namespace Difra\Plugins\Catalog;
 class Plugin extends \Difra\Plugin {
 
+	protected $version = 3.1;
+	protected $description = 'Catalog';
+	protected $require = 'mysql';
+
 	public function init() {
 
 		\Difra\Events::register( 'dispatch', '\Difra\Plugins\Catalog', 'addCategoryXML' );

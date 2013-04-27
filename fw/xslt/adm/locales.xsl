@@ -1,5 +1,6 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="/root/locales">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+	<xsl:template match="locales">
 		<h2>
 			<xsl:value-of select="$locale/adm/locales/title"/>
 		</h2>
@@ -39,7 +40,7 @@
 									<div>
 										<a href="#"
 										   onclick="$('#u_{../@name}_{position()}').toggle('fast')"
-										   class="dotted">
+										   class="dashed">
 											<xsl:value-of select="$locale/adm/locales/unused-lines"/>
 											<xsl:text>: </xsl:text>
 											<xsl:value-of select="count(item[@usage=0])"/>
@@ -58,7 +59,7 @@
 							<xsl:choose>
 								<xsl:when test="count(item[@missing=1])>1">
 									<div>
-										<a href="#" onclick="$('#m_{../@name}_{position()}').toggle()" class="dotted">
+										<a href="#" onclick="$('#m_{../@name}_{position()}').toggle()" class="dashed">
 											<xsl:value-of select="$locale/adm/locales/missing-lines"/>
 											<xsl:text>: </xsl:text>
 											<xsl:value-of select="count(item[@missing=1])"/>

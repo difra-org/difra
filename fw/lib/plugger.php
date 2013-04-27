@@ -4,10 +4,12 @@ namespace Difra;
 
 class Plugger {
 
-	/** @var string[] */
-	private $pluginsNames = null;
 	/** @var \Difra\Plugin[] */
 	private $plugins = null;
+	/** @var array */
+	private $pluginsData = null;
+	/** @var array[] */
+	private $provisions = array();
 
 	/**
 	 * Синглтон
@@ -21,6 +23,8 @@ class Plugger {
 
 	public function init() {
 
+		$this->provisions = array();
+		$this->provisions['mysql'] = array( 'available' => MySQL::getInstance()->isConnected(), 'url' => '/test', 'source' => 'core' );
 		$this->smartPluginsEnable();
 	}
 
@@ -30,8 +34,9 @@ class Plugger {
 	 */
 	private function getPluginsNames() {
 
-		if( !is_null( $this->pluginsNames ) ) {
-			return $this->pluginsNames;
+		static $plugins = null;
+		if( !is_null( $plugins ) ) {
+			return $plugins;
 		}
 		$plugins = array();
 		if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
@@ -46,7 +51,7 @@ class Plugger {
 			}
 			Cache::getInstance()->put( 'plugger_plugins', $plugins, 300 );
 		}
-		return $this->pluginsNames = $plugins;
+		return $plugins;
 	}
 
 	/**
@@ -71,81 +76,105 @@ class Plugger {
 	}
 
 	/**
-	 * Включает плагины
-	 * @return array
+	 * Загружает включенные плагины
 	 */
 	public function smartPluginsEnable() {
 
-		static $pluginsState = null;
-		if( !is_null( $pluginsState ) ) {
-			return $pluginsState;
+		// TODO: cache me!
+		if( !is_null( $this->pluginsData ) ) {
+			return;
 		}
-		$pluginsState = array();
+		$this->pluginsData = array();
 		$plugins      = $this->getAllPlugins();
 		if( empty( $plugins ) ) {
-			return $pluginsState;
+			return;
 		}
 		$enabledPlugins = Config::getInstance()->get( 'plugins' );
 		// составление списка плагинов с данными о зависимостях
 		foreach( $plugins as $name => $plugin ) {
-			$requirements        = $plugin->getRequirements();
-			$pluginsState[$name] = array(
-				'enabled'    => empty( $enabledPlugins ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ),
-				'require'    => $requirements ? $requirements : array(),
-				'required'   => array(),
-				'missingReq' => false,
-				'disabled'   => false
+			$info = $plugin->getInfo();
+			$this->pluginsData[$name] = array(
+				'enabled'    => isset( $enabledPlugins[$name] ) and $enabledPlugins[$name],
+				'loaded'     => false,
+				'require'    => $info['requires'],
+				'provides'   => $info['provides'],
+				'version'    => $info['version'],
+				'description'=> $info['description']
 			);
-		}
-		// для каждого плагина составляем список плагинов, которые от него зависят
-		$hasMisses = false;
-		foreach( $pluginsState as $name => $data ) {
-			if( !empty( $data['require'] ) ) {
-				foreach( $data['require'] as $req ) {
-					if( isset( $pluginsState[$req] ) ) {
-						$pluginsState[$req]['required'][] = $name;
+			$provs = array_merge( array( $name ), $info['provides'] );
+			foreach( $provs as $prov ) {
+				if( isset( $this->provisions[$prov] ) ) {
+					if( is_array( $this->provisions[$prov]['source'] ) ) {
+						$this->provisions[$prov]['source'][] = $name;
 					} else {
-						$hasMisses                         = true;
-						$pluginsState[$name]['missingReq'] = true;
+						$this->provisions[$prov]['source'] = array( $this->provisions[$prov]['source'], $name );
+					}
+				} else {
+					$this->provisions[$prov] = array(
+						'available' => false,
+						'source' => $name
+					);
+				}
+			}
+		}
+		// load plugins
+		do {
+			$changed = false;
+			foreach( $this->pluginsData as $name => $data ) {
+				if( !$data['enabled'] or $data['loaded'] ) {
+					// plugin is disabled or already loaded
+					continue;
+				}
+				// check if all provisions are available
+				if( !empty( $data['require'] ) ) {
+					foreach( $data['require'] as $req ) {
+						if( !$this->provisions[$req]['available'] ) {
+							continue 2;
+						}
+					}
+				}
+				// enable plugin
+				$this->plugins[$name]->enable();
+				$this->pluginsData['loaded'] = true;
+				$changed = true;
+				// set plugin's provisions as available
+				foreach( $data['provides'] as $prov ) {
+					$this->provisions[$prov]['available'] = true;
+				}
+			}
+		} while( $changed );
+	}
+
+	public function fillMissingReq() {
+
+		static $didit = false;
+		if( $didit ) {
+			return;
+		}
+		$didit = true;
+		foreach( $this->pluginsData as $name => $data ) {
+			if( !$data['loaded'] and !empty( $data['require'] ) ) {
+				foreach( $data['require'] as $req ) {
+					if( !$this->provisions[$req]['available'] ) {
+						$this->pluginsData[$name]['missingReq'][] = $req;
+						$this->pluginsData[$name]['disabled'] = true;
 					}
 				}
 			}
-		}
-		// есть не удовлетворенные зависимости — отключаем такие плагины и все, которые от них зависят
-		if( $hasMisses ) {
-			foreach( $pluginsState as $name => $data ) {
-				if( $data['missingReq'] ) {
-					$this->smartPluginDisable( $pluginsState, $name );
-				}
+			if( $data['version'] < (float) Site::VERSION ) {
+				$this->pluginsData[$name]['old'] = true;
 			}
 		}
-		// включаем все плагины с удовлетворенными зависимостями
-		foreach( $pluginsState as $name => $data ) {
-			if( $data['enabled'] and !$data['disabled'] ) {
-				$plugins[$name]->enable();
-			}
-		}
-		return $pluginsState;
 	}
 
-	/**
-	 * Отключает плагин в массиве для smartPluginsEnable()
-	 *
-	 * @param array  $state
-	 * @param string $name
-	 */
-	private function smartPluginDisable( &$state, $name ) {
+	public function getPluginsXML( $node ) {
 
-		if( $state[$name]['disabled'] ) {
-			return;
-		}
-		$state[$name]['disabled'] = true;
-		if( empty( $state[$name]['required'] ) ) {
-			return;
-		}
-		foreach( $state[$name]['required'] as $req ) {
-			$this->smartPluginDisable( $state, $req );
-		}
+		$this->smartPluginsEnable();
+		$this->fillMissingReq();
+		$pluginsNode = $node->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
+		\Difra\Libs\XML\DOM::array2domAttr( $pluginsNode, $this->pluginsData );
+		$provisionsNode = $node->appendChild( $node->ownerDocument->createElement( 'provisions' ) );
+		\Difra\Libs\XML\DOM::array2domAttr( $provisionsNode, $this->provisions );
 	}
 
 	/**

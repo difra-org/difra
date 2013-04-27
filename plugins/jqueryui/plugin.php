@@ -3,7 +3,10 @@
 namespace Difra\Plugins\jqueryui;
 class Plugin extends \Difra\Plugin {
 
-    public function init() {
+	protected $version = 3.1;
+	protected $description = 'jQuery UI library';
+
+	public function init() {
     }
 }
 

@@ -82,13 +82,16 @@ abstract class Common {
 		*/
 		$enc = 'gzip';
 
-		header( 'Content-Type: ' . $this->contentType );
 		if( $enc == 'gzip' and $data = $this->compileGZ( $instance ) ) {
-			//			header( 'Vary: Accept-Encoding' );
+			// header( 'Vary: Accept-Encoding' );
 			header( 'Content-Encoding: gzip' );
 		} else {
 			$data = $this->compile( $instance );
 		}
+		if( !$data ) {
+			return false;
+		}
+		header( 'Content-Type: ' . $this->contentType );
 		if( !$modified = Difra\Cache::getInstance()->get( "{$instance}_{$this->type}_modified" ) ) {
 			$modified = gmdate( 'D, d M Y H:i:s' ) . ' GMT';
 		}
@@ -232,6 +235,7 @@ abstract class Common {
 	 * @param string $instance
 	 * @param bool   $withSources
 	 *
+	 * @throws \Difra\Exception
 	 * @return string
 	 */
 	private function realCompile( $instance, $withSources = false ) {
@@ -242,6 +246,7 @@ abstract class Common {
 			$this->processDirs( $instance );
 			$res = $this->processData( $instance, $withSources );
 		}
+		$res = $this->processText( $res );
 		\Difra\Debugger::addLine( "Resource {$this->type}/{$instance} compile finished" );
 		return $res;
 	}
@@ -249,12 +254,12 @@ abstract class Common {
 	/**
 	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов.
 	 * @param string $instance
-	 * @param bool   $withAll
 	 *
 	 * @return bool
 	 */
-	private function find( $instance, $withAll = true ) {
+	private function find( $instance ) {
 
+		// TODO: cache this
 		$found   = false;
 		$parents = array();
 		$paths   = Difra\Plugger::getInstance()->getPaths();
@@ -272,7 +277,7 @@ abstract class Common {
 					$found     = true;
 					$parents[] = $d;
 				}
-				if( $withAll and is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
+				if( $this->withAll( $instance ) and is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
 					$parents[] = $d;
 				}
 			}
@@ -421,5 +426,22 @@ abstract class Common {
 			$files = array_merge( $files, $this->resources[$instance]['files'] );
 		}
 		return $files;
+	}
+
+	// TODO: это заглушка, надо переделать по-уму
+	private function withAll( $instance ) {
+
+		$instances = Difra\Config::getInstance()->get( 'instances' );
+		return isset( $instances[$instance] ) and isset( $instances[$instance]['withAll'] ) and $instances[$instance]['withAll'];
+	}
+
+	/**
+	 * Постпроцессинг ресурса
+	 * @param string $text
+	 * @return string
+	 */
+	public function processText( $text ) {
+
+		return $text;
 	}
 }

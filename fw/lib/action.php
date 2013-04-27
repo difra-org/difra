@@ -74,7 +74,9 @@ class Action {
 			$resourcer = Resourcer::getInstance( $parts[0], true );
 			if( $resourcer and $resourcer->isPrintable() ) {
 				try {
-					$resourcer->view( $parts[1] );
+					if( !$resourcer->view( $parts[1] ) ) {
+						View::getInstance()->httpError( 404 );
+					}
 					View::getInstance()->rendered = true;
 					die();
 				} catch( Exception $ex ) {
@@ -232,7 +234,7 @@ class Action {
 		$controllerDirs = Plugger::getInstance()->getPaths();
 		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
 		foreach( $controllerDirs as $k => $v ) {
-			$controllerDirs[$k] = $v . '/controllers/';
+			$controllerDirs[$k] = $v . 'controllers/';
 		}
 		return $controllerDirs;
 	}

@@ -29,9 +29,16 @@ class Debugger {
 
 		if( isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
 
-			$this->cacheResources = false;
-
 			// дебаг отключен?
+			if( isset( $_GET['debug'] ) and $_GET['debug'] == -1 ) {
+				ini_set( 'display_errors', 'On' );
+				ini_set( 'error_reporting', E_ALL );
+				ini_set( 'html_errors',
+					( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+				$this->enabled = 0;
+				$this->console = 0;
+				return;
+			}
 			if( ( isset( $_GET['debug'] ) and !$_GET['debug'] ) or ( isset( $_COOKIE['debug'] ) and !$_COOKIE['debug'] ) ) {
 				$this->enabled = false;
 			} else {
@@ -43,6 +50,8 @@ class Debugger {
 			} else {
 				$this->console = 2;
 			}
+
+			$this->cacheResources = false;
 
 			if( $this->console == 2 ) {
 				// консоль активна — перехватываем ошибки
@@ -173,21 +182,27 @@ class Debugger {
 		/** @var $root \DOMElement */
 		$xml  = new \DOMDocument();
 		$root = $xml->appendChild( $xml->createElement( 'root' ) );
-		$root->setAttribute( 'debug', $this->enabled ? '1' : '0' );
-		$root->setAttribute( 'debugConsole', $this->console );
-		if( !$this->console ) {
-			return '';
-		}
+		$this->debugXML( $root, $standalone );
+
 		$alreadyDidIt = true;
 		self::addLine( "Page data prepared in " . self::getTimer() . " seconds" );
 
-		/** @var $debugNode \DOMElement */
-		$debugNode = $root->appendChild( $xml->createElement( 'debug' ) );
-		\Difra\Libs\XML\DOM::array2domAttr( $debugNode, self::$output, true );
-		if( $standalone ) {
-			$root->setAttribute( 'standalone', 1 );
+		return View::getInstance()->render( $xml, 'debug', true ); // TODO: поправить в связи с переносом шаблона в main
+	}
+
+	public function debugXML( $node, $standalone = false ) {
+
+		$node->setAttribute( 'debug', $this->enabled ? '1' : '0' );
+		$node->setAttribute( 'debugConsole', $this->console );
+		if( !$this->console ) {
+			return '';
 		}
-		return View::getInstance()->render( $xml, 'debug', true );
+		/** @var $debugNode \DOMElement */
+		$debugNode = $node->appendChild( $node->ownerDocument->createElement( 'debug' ) );
+		Libs\XML\DOM::array2domAttr( $debugNode, self::$output, true );
+		if( $standalone ) {
+			$node->setAttribute( 'standalone', 1 );
+		}
 	}
 
 	/**
@@ -261,7 +276,7 @@ class Debugger {
 		}
 		// сохраняем информацию об ошибке
 		if( self::$handledByNormal != $error['message'] ) {
-			$error['error']     = \Difra\Libs\Debug\errorConstants::getInstance()->getVerbalError( $error['type'] );
+			$error['error']     = Libs\Debug\errorConstants::getInstance()->getVerbalError( $error['type'] );
 			$error['class']     = 'errors';
 			$error['traceback'] = debug_backtrace();
 			@array_shift( $error['traceback'] );

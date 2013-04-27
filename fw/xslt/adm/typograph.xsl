@@ -1,5 +1,6 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="/root/typograph">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+	<xsl:template match="typograph">
 		<h2>
 			<xsl:value-of select="$locale/adm/typograph/settings"/>
 		</h2>
@@ -8,7 +9,7 @@
 			<xsl:value-of select="$locale/adm/typograph/mainSettings"/>
 		</h3>
 
-		<form class="ajaxer" action="/adm/typograph/save/" method="post">
+		<form class="ajaxer" action="/adm/development/typograph/save/" method="post">
 			<table class="form">
 				<tr>
 					<th>

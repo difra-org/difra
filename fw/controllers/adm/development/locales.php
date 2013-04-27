@@ -1,6 +1,6 @@
 <?php
 
-class AdmLocalesController extends \Difra\Controller {
+class AdmDevelopmentLocalesController extends \Difra\Controller {
 
 	public function dispatch() {
 

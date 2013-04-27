@@ -1,5 +1,6 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="/root/configuration">
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+	<xsl:template match="configuration">
 		<h2>
 			<xsl:value-of select="$locale/adm/config/title"/>
 		</h2>
@@ -17,7 +18,7 @@
 			<xsl:value-of select="@diff"/>
 		</textarea>
 		<br/>
-		<a href="/adm/config/reset" class="ajaxer">
+		<a href="/adm/development/config/reset" class="ajaxer button">
 			<xsl:value-of select="$locale/adm/config/reset"/>
 		</a>
 	</xsl:template>

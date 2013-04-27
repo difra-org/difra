@@ -1,9 +1,16 @@
 <menu>
-	<common href="" priority="1000">
-		<site href="/"/>
-		<settings href="/adm"/>
-		<locales href="/adm/locales" sup="1"/>
-		<typograph href="/adm/typograph" sup="1"/>
-		<config href="/adm/config" sup="1"/>
-	</common>
+	<content href="" priority="70"/>
+	<catalog href="" priority="60"/>
+	<media href="" priority="50"/>
+	<talks href="" priority="40"/>
+	<users href="" priority="30"/>
+	<settings href="" priority="20">
+		<test/>
+	</settings>
+	<development href="" priority="10" sup="1">
+		<config/>
+		<plugins/>
+		<locales/>
+		<typograph/>
+	</development>
 </menu>

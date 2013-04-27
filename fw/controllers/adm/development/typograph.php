@@ -1,6 +1,6 @@
 <?php
 
-class AdmTypographController extends \Difra\Controller {
+class AdmDevelopmentTypographController extends \Difra\Controller {
 
 	public function dispatch() {
 

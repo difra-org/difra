@@ -24,10 +24,11 @@ class View {
 	 * Завершение выполнения с выводом http-ошибки
 	 * Пробует отрендерить шаблон error_xxx, где xxx — номер ошибки, после чего выводит простенькую страничку с ошибкой.
 	 *
-	 * @param int      $err
-	 * @param bool|int $ttl
+	 * @param int         $err
+	 * @param bool|int    $ttl
+	 * @param null|string $message
 	 */
-	public function httpError( $err, $ttl = false ) {
+	public function httpError( $err, $ttl = false, $message = null ) {
 
 		if( $this->redirect or $this->error ) {
 			return;
@@ -39,6 +40,7 @@ class View {
 		} else {
 			$error = 'Unknown';
 		}
+
 		header( "HTTP/1.1 $err $error" );
 		if( $ttl and is_numeric( $ttl ) and $ttl >= 0 ) {
 			self::addExpires( $ttl );
@@ -68,6 +70,7 @@ class View {
 			</head>
 			<body>
 			<center><h1 style="padding:350px 0px 0px 0px">Error $err: $error</h1></center>
+			$message
 			</body>
 			</html>
 ErrorPage
@@ -109,32 +112,32 @@ ErrorPage
 		$xslDom->resolveExternals   = true;
 		$xslDom->substituteEntities = true;
 		if( !$xslDom->loadXML( $resource ) ) {
-			throw new exception( "XSLT load problem for instance '$instance'." );
+			throw new exception( "XSLT load problem for instance '$instance'" );
 		}
 
-		$xslProc                     = new \XsltProcessor();
-		$xslProc->resolveExternals   = true;
-		$xslProc->substituteEntities = true;
+		$xslProc = new \XsltProcessor();
 		$xslProc->importStyleSheet( $xslDom );
 
-		Action::getInstance()->controller->fillXML();
+		if( $controller = Action::getInstance()->controller ) {
+			$controller->fillXML( $instance );
+		}
 
 		// transform template
-		if( $html = $xslProc->transformToDoc( $xml ) ) {
-			$this->postProcess( $html, $xml, $instance );
-			$html->formatOutput = Debugger::getInstance()->isEnabled();
+		if( $html = $xslProc->transformToXml( $xml ) ) {
 			if( $dontEcho ) {
-				return $html->saveXML();
+				return $html;
 			}
-			// эта строка ломает CKEditor, поэтому она накакзана
-			//header( 'Content-Type: application/xhtml+xml; charset=UTF-8' );
-			echo( $html->saveXML() );
+			echo $html;
 			$this->rendered = true;
+			if( Debugger::getInstance()->isEnabled() ) {
+				echo '<!-- Page rendered in ' . ( microtime( true ) - Debugger::$startTime ) . ' seconds -->';
+			}
 			if( function_exists( 'fastcgi_finish_request' ) ) {
 				fastcgi_finish_request();
 			}
 		} else {
-			throw new exception( "Can't render templates" );
+			$errormsg = error_get_last();
+			throw new exception( $errormsg ? $errormsg['message'] : "Can't render templates" );
 		}
 		return true;
 	}
@@ -148,73 +151,6 @@ ErrorPage
 		$this->redirect = true;
 		header( 'Location: ' . $url );
 		die();
-	}
-
-	/**
-	 * Пост-обработка HTML-страницы
-	 *
-	 * @param \DOMDocument $html
-	 * @param \DOMDocument $xml
-	 * @param string       $instance
-	 */
-	private function postProcess( $html, $xml, $instance ) {
-
-		if( !$htmlRoot = $html->documentElement ) {
-			return;
-		}
-		if( $htmlRoot->nodeName != 'html' ) {
-			return;
-		}
-		// Добавление дебаг-консоли
-		// Ворнинг: это дело зависит от VHOST_DEVMODE, а не от галочки debug.
-		if( Debugger::getInstance()->isConsoleEnabled() and
-		    $instance != 'debug' and !Action::getInstance()->controller->ajax->isAjax
-		) {
-			if( $htmlRoot->nodeName == 'html' ) {
-				$headList = $htmlRoot->getElementsByTagName( 'head' );
-				if( $headList->length ) {
-					$build = Site::getInstance()->getBuild();
-					$head  = $headList->item( 0 );
-					/** @var $consoleCSS \DOMElement */
-					$consoleCSS = $head->appendChild( $html->createElement( 'link' ) );
-					$consoleCSS->setAttribute( 'type', 'text/css' );
-					$consoleCSS->setAttribute( 'rel', 'stylesheet' );
-					$consoleCSS->setAttribute( 'href', '/css/console.css?' . $build );
-					/** @var $consoleJS \DOMElement */
-					$consoleJS = $head->appendChild( $html->createElement( 'script' ) );
-					$consoleJS->setAttribute( 'type', 'text/javascript' );
-					$consoleJS->setAttribute( 'src', '/js/console.js?' . $build );
-				}
-				$bodyList = $htmlRoot->getElementsByTagName( 'body' );
-				if( $bodyList->length ) {
-					$body   = $bodyList->item( 0 );
-					$ins    = Debugger::getInstance()->debugHTML();
-					$debdom = new \DOMDocument();
-					$debdom->loadXML( $ins );
-					$body->appendChild( $html->importNode( $debdom->documentElement, true ) );
-				}
-			}
-		}
-		// Добавление классов на основе User-Agent
-		if( $uac = Site::getInstance()->getUserAgentClass() ) {
-			if( $htmlRoot->hasAttribute( 'class' ) ) {
-				$uac = $htmlRoot->getAttribute( 'class' ) . ' ' . $uac;
-			}
-			$uac = trim( $uac );
-			$htmlRoot->setAttribute( 'class', $uac );
-		}
-		// Добавление объекта config для js
-		if( $body = $htmlRoot->getElementsByTagName( 'body' ) and $body = $body->item( 0 ) ) {
-			$config = Site::getInstance()->getConfig();
-			$confJS = '';
-			foreach( $config as $k => $v ) {
-				$confJS .= "config.{$k}='" . addslashes( $v ) . "';";
-			}
-			/** @var $scriptNode \DOMElement */
-			$scriptNode = $body->insertBefore( $html->createElement( 'script' ), $body->firstChild );
-			$scriptNode->setAttribute( 'type', 'text/javascript' );
-			$scriptNode->appendChild( $html->createTextNode( "var config={};" . $confJS ) );
-		}
 	}
 
 	/**

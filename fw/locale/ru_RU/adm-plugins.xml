@@ -1,0 +1,11 @@
+<locale>
+	<adm>
+		<plugins>
+			<no-plugins>Плагины не найдены.</no-plugins>
+			<name>Плагин</name>
+			<description>Описание</description>
+			<version>Версия</version>
+			<requires>Зависимости</requires>
+		</plugins>
+	</adm>
+</locale>

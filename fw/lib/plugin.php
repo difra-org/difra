@@ -23,18 +23,42 @@ abstract class Plugin {
 	/**
 	 * Конструктор
 	 */
-	final function __construct() {
+	final public function __construct() {
 
 		$this->class = get_class( $this );
 	}
 
 	/**
-	 * Возвращает список зависимостей
+	 * Возвращает список зависимостей и т.п.
 	 * @return array|null
 	 */
-	public function getRequirements() {
+	public function getInfo() {
 
-		return property_exists( $this, 'require' ) ? $this->require : null;
+		$info = array();
+		// requires
+		if( !property_exists( $this, 'require' ) or !$this->require ) {
+			$info['requires'] = array();
+		} elseif( !is_array( $this->require ) ) {
+			$info['requires'] = array( $this->require );
+		} else {
+			$info['requires'] = $this->require;
+		}
+		// provides
+		if( !property_exists( $this, 'provides' ) or !$this->provides ) {
+			$info['provides'] = array();
+		} elseif( !is_array( $this->provides ) ) {
+			$info['provides'] = array( $this->provides );
+		} else {
+			$info['provides'] = $this->provides;
+		}
+		// version
+		if( !property_exists( $this, 'version' ) or !$this->version ) {
+			$info['version'] = 0;
+		} else {
+			$info['version'] = (float) $this->version;
+		}
+		$info['description'] = property_exists( $this, 'description' ) ? $this->description : '';
+		return $info;
 	}
 
 	abstract public function init();
@@ -59,16 +83,6 @@ abstract class Plugin {
 			return false;
 		}
 		$this->enabled = true;
-		if( $requirements = $this->getRequirements() ) {
-			$plugger = Plugger::getInstance();
-			$plugins = $plugger->getAllPlugins();
-			foreach( $requirements as $req ) {
-				if( !isset( $plugins[$req] ) ) {
-					return false;
-				}
-				$plugins[$req]->enable();
-			}
-		}
 		$this->init();
 		return true;
 	}

@@ -50,7 +50,8 @@ abstract class Controller {
 
 		// создание xml с данными
 		$this->xml      = new \DOMDocument;
-		$this->realRoot = $this->root = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
+		$this->realRoot = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
+		$this->root = $this->realRoot->appendChild( $this->xml->createElement( 'content' ) );
 
 		// запуск диспатчера
 		$this->dispatch();
@@ -98,8 +99,16 @@ abstract class Controller {
 			$this->view->rendered = true;
 		} elseif( !$this->view->rendered ) {
 			$this->putExpires();
-			$this->fillXML();
-			$this->view->render( $this->xml );
+			try {
+				$this->view->render( $this->xml );
+			} catch( Exception $ex ) {
+				if( !Debugger::getInstance()->isConsoleEnabled() ) {
+					$this->view->httpError( 500 );
+				} else {
+					echo Debugger::getInstance()->debugHTML( true );
+					die();
+				}
+			}
 		}
 	}
 
@@ -224,26 +233,21 @@ abstract class Controller {
 		}
 	}
 
-	public function fillXML() {
+	public function fillXML( $instance = null ) {
 
-		static $filledXML = false;
-		if( $filledXML ) {
-			return;
-		}
-		$filledXML = true;
-
-		Debugger::addLine( 'Filling XML data for render' );
+		Debugger::addLine( 'Filling XML data for render: Started' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
 		$this->realRoot->setAttribute( 'controller', $this->action->className );
 		$this->realRoot->setAttribute( 'action', $this->action->method );
 		$this->realRoot->setAttribute( 'host', Site::getInstance()->getHost() );
 		$this->realRoot->setAttribute( 'hostname', Site::getInstance()->getHostname() );
 		$this->realRoot->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
+		$this->realRoot->setAttribute( 'instance', $instance ? $instance : $this->view->instance );
 		if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
 			$this->realRoot->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
 		}
 		// get user agent
-		Site::getInstance()->getUserAgentXML( $this->root );
+		Site::getInstance()->getUserAgentXML( $this->realRoot );
 		// ajax flag
 		$this->realRoot->setAttribute( 'ajax',
 					       ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
@@ -277,6 +281,15 @@ abstract class Controller {
 		$this->auth->getAuthXML( $this->realRoot );
 		// locale
 		$this->locale->getLocaleXML( $this->realRoot );
+		// Добавление объекта config для js
+		$config = Site::getInstance()->getConfig();
+		$confJS = '';
+		foreach( $config as $k => $v ) {
+			$confJS .= "config.{$k}='" . addslashes( $v ) . "';";
+		}
+		$this->realRoot->setAttribute( 'jsConfig', $confJS );
+		Debugger::addLine( 'Filling XML data for render: Done' );
+		Debugger::getInstance()->debugXML( $this->realRoot );
 	}
 
 	/**

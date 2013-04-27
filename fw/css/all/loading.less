@@ -1,0 +1,102 @@
+@-webkit-keyframes rotateLoading {
+	from {
+		text-indent: 0;
+	}
+	to {
+		text-indent: -240px;
+	}
+}
+
+@-moz-keyframes rotateLoading {
+	from {
+		text-indent: 0;
+	}
+	to {
+		text-indent: -240px;
+	}
+}
+
+@-o-keyframes rotateLoading {
+	from {
+		text-indent: 0;
+	}
+	to {
+		text-indent: -240px;
+	}
+}
+
+@keyframes rotateLoading {
+	from {
+		text-indent: 0;
+	}
+	to {
+		text-indent: -240px;
+	}
+}
+
+@-webkit-keyframes rotateHugeLoading {
+	from {
+		text-indent: 0;
+	}
+	to {
+		text-indent: -480px;
+	}
+}
+
+@-moz-keyframes rotateHugeLoading {
+	from {
+		text-indent: 0;
+	}
+	to {
+		text-indent: -480px;
+	}
+}
+
+@-o-keyframes rotateHugeLoading {
+	from {
+		text-indent: 0;
+	}
+	to {
+		text-indent: -480px;
+	}
+}
+
+@keyframes rotateHugeLoading {
+	from {
+		text-indent: 0;
+	}
+	to {
+		text-indent: -480px;
+	}
+}
+
+.loading-logo {
+	.websymbols;
+	display: inline-block;
+	font-size: 30px;
+	height: 32px;
+	width: 30px;
+	overflow: hidden;
+	.animation( rotateLoading 1s steps(8) infinite );
+}
+
+#loading-overlay {
+	position: fixed;
+	left: 0;
+	right: 0;
+	top: 0;
+	bottom: 0;
+	z-index: 9999;
+	background: rgba( 0, 0, 0, 0.7 );
+	.loading-logo {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		margin: -32px 0 0 -30px;
+		color: white;
+		font-size: 60px;
+		height: 64px;
+		width: 60px;
+		.animation( rotateHugeLoading 1s steps(8) infinite );
+	}
+}

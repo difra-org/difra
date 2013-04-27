@@ -1,10 +1,11 @@
-<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="/root/index">
-		<h2>
+<?xml version="1.0" encoding="UTF-8"?>
+<xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
+	<xsl:template match="index">
+		<h1>
 			<xsl:value-of select="$locale/adm/stats/h2"/>
-		</h2>
+		</h1>
 
-		<h3>Difra</h3>
+		<h2>Difra</h2>
 		<table class="summary">
 			<tr>
 				<th>
@@ -19,19 +20,16 @@
 					<xsl:value-of select="$locale/adm/stats/summary/loaded-plugins"/>
 				</th>
 				<td>
-					<xsl:value-of select="stats/plugins/@loaded"/>
+					<xsl:choose>
+						<xsl:when test="stats/plugins/@loaded and not(stats/plugins/@loaded='')">
+							<xsl:value-of select="stats/plugins/@loaded"/>
+						</xsl:when>
+						<xsl:otherwise>
+							<xsl:text>—</xsl:text>
+						</xsl:otherwise>
+					</xsl:choose>
 				</td>
 			</tr>
-			<xsl:if test="not(stats/plugins/@disabled='')">
-				<tr>
-					<th>
-						<xsl:value-of select="$locale/adm/stats/summary/disabled-plugins"/>
-					</th>
-					<td style="color:red">
-						<xsl:value-of select="stats/plugins/@disabled"/>
-					</td>
-				</tr>
-			</xsl:if>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/adm/stats/summary/cache-type"/>
@@ -41,9 +39,9 @@
 				</td>
 			</tr>
 		</table>
-		<h3>
+		<h2>
 			<xsl:value-of select="$locale/adm/stats/server/title"/>
-		</h3>
+		</h2>
 		<table class="summary">
 			<tr>
 				<th>
@@ -81,9 +79,9 @@
 				</td>
 			</tr>
 		</table>
-		<h3>
+		<h2>
 			<xsl:value-of select="$locale/adm/stats/extensions/title"/>
-		</h3>
+		</h2>
 		<table class="summary">
 			<tr>
 				<th>
@@ -126,10 +124,15 @@
 				</td>
 			</tr>
 		</table>
-		<h3>
+		<h2>
 			<xsl:value-of select="$locale/adm/stats/database/title"/>
-		</h3>
+		</h2>
 		<xsl:choose>
+			<xsl:when test="stats/mysql/@error">
+				<div class="error">
+					<xsl:value-of select="stats/mysql/@error"/>
+				</div>
+			</xsl:when>
 			<xsl:when test="count(stats/mysql/table/diff[@sign='-'])=0 and count(stats/mysql/table/diff[@sign='+'])=0">
 				<div class="message">
 					<xsl:value-of select="$locale/adm/stats/database/status-ok"/>

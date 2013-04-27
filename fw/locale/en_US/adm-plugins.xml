@@ -1,0 +1,11 @@
+<locale>
+	<adm>
+		<plugins>
+			<no-plugins>No plugins found.</no-plugins>
+			<name>Plugin</name>
+			<description>Description</description>
+			<version>Version</version>
+			<requires>Requires</requires>
+		</plugins>
+	</adm>
+</locale>

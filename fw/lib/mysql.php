@@ -5,7 +5,8 @@ namespace Difra;
 class MySQL {
 
 	private $config = null;
-	public $connected = false;
+	private $connected = null;
+	private $error = null;
 	/**
 	 * @var \mysqli
 	 */
@@ -19,12 +20,18 @@ class MySQL {
 	public function __construct( $new = false ) {
 
 		$this->config = Config::getInstance()->get( 'db' );
-		if( !$this->config ) {
+		// persistent connection
+		if( !empty( $this->config['hostname'] ) ) {
+			$this->config['hostname'] = 'p:' . $this->config['hostname'];
+		} elseif( !$this->config ) {
 			$this->config = array(
+				'hostname' => '',
 				'username' => '',
 				'password' => '',
-				'database' => ''
+				'database' => 'musiq'
 			);
+		} elseif( empty( $this->config['hostname'] ) ) {
+			$this->config['hostname'] = '';
 		}
 	}
 
@@ -49,22 +56,27 @@ class MySQL {
 	 */
 	private function connect() {
 
-		if( $this->connected ) {
+		if( !is_null( $this->connected ) ) {
 			return;
 		}
-		try {
-			$this->db = @new \mysqli( 'p:' . ( isset( $this->config['hostname'] ) ?
-								     $this->config['hostname']
-								     : 'localhost' ),
-						  $this->config['username'], $this->config['password'], $this->config['database'] );
-			if( $this->db->connect_errno ) {
-				throw new Exception( 'Can\'t connect to MySQL: ' . $this->db->connect_error );
-			}
-		} catch( Exception $e ) {
-			View::getInstance()->httpError( 500 );
+		$this->connected = false;
+		$this->db = @new \mysqli( $this->config['hostname'], $this->config['username'], $this->config['password'] );
+		$this->db->set_charset( 'utf8' );
+		if( !$this->db->select_db( $this->config['database'] ) ) {
+			$this->error = $this->db->error;
+			return;
 		}
 		$this->connected = true;
-		$this->db->set_charset( 'utf8' );
+	}
+
+	public function isConnected() {
+
+		return $this->connected ? true : false;
+	}
+
+	public function getError() {
+
+		return $this->error;
 	}
 
 	/**
