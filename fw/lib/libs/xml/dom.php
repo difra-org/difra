@@ -66,9 +66,9 @@ class DOM {
 	 *
 	 * @static
 	 *
-	 * @param \DOMElement $node
-	 * @param array       $array
-	 * @param bool        $verbal
+	 * @param \DOMElement|\DOMNode $node
+	 * @param array                $array
+	 * @param bool                 $verbal
 	 */
 	public static function array2domAttr( &$node, &$array, $verbal = false ) {
 

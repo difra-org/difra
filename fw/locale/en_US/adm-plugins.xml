@@ -6,6 +6,7 @@
 			<description>Description</description>
 			<version>Version</version>
 			<requires>Requires</requires>
+			<failed>Failed to save configuration changes</failed>
 		</plugins>
 	</adm>
 </locale>
