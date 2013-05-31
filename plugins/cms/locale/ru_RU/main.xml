@@ -2,13 +2,11 @@
 <locale>
 	<cms>
 		<adm>
-			<h2>Статичные страницы</h2>
+			<h2>Cтраницы</h2>
 			<newpage>Добавить новую страницу</newpage>
-			<pageslist>Список страниц</pageslist>
 			<name>Название</name>
 			<uri>URI</uri>
 			<hidden>Скрытая</hidden>
-			<actions>Действия</actions>
 			<hidden-flag>Cкрытая</hidden-flag>
 			<add-page>Добавить страницу</add-page>
 			<edit>Редактировать</edit>
@@ -29,18 +27,14 @@
 			<delete-page-confirm-no>Не удалять</delete-page-confirm-no>
 			<menu>
 				<h2>Управление меню</h2>
-				<list>Список</list>
 				<name>Имя</name>
 				<description>Описание</description>
-				<actions>Действия</actions>
 				<empty>В этом проекте нет настраиваемых меню.</empty>
 			</menu>
 			<items>
 				<h2>Список элементов</h2>
-				<list>Список элементов</list>
 				<new>Добавить элемент</new>
 				<description>Описание</description>
-				<actions>Действия</actions>
 				<empty>В выбранном меню еще нет ни одного элемента.</empty>
 			</items>
 			<menuitem>

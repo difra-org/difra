@@ -5,22 +5,28 @@
 		<h2>
 			<xsl:value-of select="$locale/cms/adm/menu/h2"/>
 		</h2>
-		<h3>
-			<xsl:value-of select="$locale/cms/adm/menu/list"/>
-		</h3>
 
 		<xsl:choose>
 			<xsl:when test="menuobj">
 				<table>
-					<tr>
-						<th>
-							<xsl:value-of select="$locale/cms/adm/menu/name"/>
-						</th>
-						<th>
-							<xsl:value-of select="$locale/cms/adm/menu/description"/>
-						</th>
-					</tr>
-					<xsl:apply-templates select="menuobj"/>
+					<colgroup>
+						<col style="width: 250px"/>
+						<col/>
+					</colgroup>
+					<thead>
+						<tr>
+							<th>
+								<xsl:value-of select="$locale/cms/adm/menu/name"/>
+							</th>
+							<th>
+								<xsl:value-of
+									select="$locale/cms/adm/menu/description"/>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<xsl:apply-templates select="menuobj"/>
+					</tbody>
 				</table>
 			</xsl:when>
 			<xsl:otherwise>
@@ -34,7 +40,7 @@
 	<xsl:template match="menuobj">
 		<tr>
 			<td>
-				<a href="/adm/cms/items/view/{@id}">
+				<a href="/adm/content/menu/view/{@id}">
 					<xsl:value-of select="@name"/>
 				</a>
 			</td>

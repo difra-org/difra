@@ -4,11 +4,9 @@
 		<adm>
 			<h2>Pages</h2>
 			<newpage>Add page</newpage>
-			<pageslist>Pages list</pageslist>
 			<name>Name</name>
 			<uri>URI</uri>
 			<hidden>Hidden</hidden>
-			<actions>Actions</actions>
 			<hidden-flag>Hidden</hidden-flag>
 			<add-page>Add page</add-page>
 			<edit>Edit</edit>
@@ -29,18 +27,14 @@
 			<delete-page-confirm-no>Don't delete</delete-page-confirm-no>
 			<menu>
 				<h2>Menu management</h2>
-				<list>List</list>
 				<name>Menu name</name>
 				<description>Description</description>
-				<actions>Actions</actions>
 				<empty>There is no menu to manage.</empty>
 			</menu>
 			<items>
 				<h2>Menu elements</h2>
-				<list>Elements list</list>
 				<new>Add element</new>
 				<description>Description</description>
-				<actions>Actions</actions>
 				<empty>There is no elements in this menu.</empty>
 			</items>
 			<menuitem>

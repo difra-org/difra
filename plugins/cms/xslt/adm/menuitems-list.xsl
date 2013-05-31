@@ -3,37 +3,44 @@
 
 	<xsl:template match="CMSMenuItems">
 		<h2>
-			<a href="/adm/cms/items">
+			<a href="/adm/content/menu">
 				<xsl:value-of select="$locale/cms/adm/menu/h2"/>
 			</a>
 			<xsl:text> → </xsl:text>
 			<xsl:value-of select="$locale/cms/adm/items/h2"/>
 		</h2>
-		<a href="/adm/cms/items/add/{@id}" class="button">
+		<a href="/adm/content/menu/add/{@id}" class="button">
 			<xsl:value-of select="$locale/cms/adm/items/new"/>
 		</a>
-		<h3>
-			<xsl:value-of select="$locale/cms/adm/items/list"/>
-		</h3>
 
 		<xsl:choose>
 			<xsl:when test="menuitem">
 				<table>
-					<tr>
-						<th>
-							<xsl:value-of select="$locale/cms/adm/menuitem/title"/>
-						</th>
-						<th>
-							<xsl:value-of select="$locale/cms/adm/menuitem/type"/>
-						</th>
-						<th>
-							<xsl:value-of select="$locale/cms/adm/menuitem/content"/>
-						</th>
-						<th>
-							<xsl:value-of select="$locale/cms/adm/actions"/>
-						</th>
-					</tr>
-					<xsl:apply-templates select="menuitem"/>
+					<colgroup>
+						<col/>
+						<col style="width: 220px"/>
+						<col style="width: 220px"/>
+						<col style="width: 130px"/>
+					</colgroup>
+					<thead>
+						<tr>
+							<th>
+								<xsl:value-of select="$locale/cms/adm/menuitem/title"/>
+							</th>
+							<th>
+								<xsl:value-of select="$locale/cms/adm/menuitem/type"/>
+							</th>
+							<th>
+								<xsl:value-of
+									select="$locale/cms/adm/menuitem/content"/>
+							</th>
+							<th>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<xsl:apply-templates select="menuitem"/>
+					</tbody>
 				</table>
 			</xsl:when>
 			<xsl:otherwise>
@@ -71,30 +78,24 @@
 				</xsl:when>
 				<xsl:otherwise>
 					<td colspan="3">
-						Непонятный элемент
+						Непонятный элемент.
 					</td>
 				</xsl:otherwise>
 			</xsl:choose>
-			<td>
+			<td class="actions">
 				<!-- TODO: заменить эти кнопочки на вызовы шаблонов -->
-				<a href="/adm/cms/items/edit/{@id}" class="action edit">
-					<xsl:value-of select="$locale/adm/actions/edit"/>
-				</a>
-				<a href="#" onclick="ajaxer.query('/adm/cms/items/up/{@id}')" class="action up">
+				<a href="/adm/content/menu/edit/{@id}" class="action edit"/>
+				<a href="/adm/content/menu/up/{@id}" class="action up ajaxer">
 					<xsl:if test="position()=1">
-						<xsl:attribute name="class">action up disabled</xsl:attribute>
+						<xsl:attribute name="class">action up ajaxer disabled</xsl:attribute>
 					</xsl:if>
-					<xsl:value-of select="$locale/adm/actions/up"/>
 				</a>
-				<a href="#" onclick="ajaxer.query('/adm/cms/items/down/{@id}')" class="action down">
+				<a href="/adm/content/menu/down/{@id}" class="action down ajaxer">
 					<xsl:if test="position()=last()">
-						<xsl:attribute name="class">action down disabled</xsl:attribute>
+						<xsl:attribute name="class">action down ajaxer disabled</xsl:attribute>
 					</xsl:if>
-					<xsl:value-of select="$locale/adm/actions/down"/>
 				</a>
-				<a href="#" onclick="ajaxer.query('/adm/cms/items/delete/{@id}')" class="action delete">
-					<xsl:value-of select="$locale/adm/actions/delete"/>
-				</a>
+				<a href="/adm/content/menu/delete/{@id}" class="action delete ajaxer"/>
 			</td>
 		</tr>
 	</xsl:template>

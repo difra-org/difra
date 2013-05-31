@@ -2,7 +2,7 @@
 
 use Difra\Plugins\CMS;
 
-class AdmCMSIndexController extends \Difra\Controller {
+class AdmContentPagesController extends \Difra\Controller {
 
 	public function dispatch() {
 
@@ -44,7 +44,7 @@ class AdmCMSIndexController extends \Difra\Controller {
 		$page->setTitle( $title->val() );
 		$page->setUri( $tag->val() );
 		$page->setBody( $body );
-		\Difra\Ajax::getInstance()->redirect( '/adm/cms' );
+		\Difra\Ajax::getInstance()->redirect( '/adm/content/pages' );
 	}
 
 	// удаление страницы
@@ -53,21 +53,21 @@ class AdmCMSIndexController extends \Difra\Controller {
 		if( $confirm and $confirm->val() ) {
 			\Difra\Plugins\CMS\Page::get( $id->val() )->delete();
 			$this->ajax->close();
-			$this->ajax->redirect( '/adm/cms' );
+			$this->ajax->redirect( '/adm/content/pages' );
 			return;
 		}
 		$page = \Difra\Plugins\CMS\Page::get( $id->val() );
 		$this->ajax->display(
 			'<span>'
-			. $this->locale->getXPath( 'cms/adm/delete-page-confirm-1' )
-			. $page->getTitle()
-			. $this->locale->getXPath( 'cms/adm/delete-page-confirm-2' )
-			. '</span>'
-			. '<form action="/adm/cms/delete/' . $id . '" method="post" class="ajaxer">'
-			. '<input type="hidden" name="confirm" value="1"/>'
-			. '<input type="submit" value="Да"/>'
-			. '<a href="#" onclick="ajaxer.close(this)" class="button">Нет</a>'
-			. '</form>'
+				. $this->locale->getXPath( 'cms/adm/delete-page-confirm-1' )
+				. $page->getTitle()
+				. $this->locale->getXPath( 'cms/adm/delete-page-confirm-2' )
+				. '</span>'
+				. '<form action="/adm/content/pages/delete/' . $id . '" method="post" class="ajaxer">'
+				. '<input type="hidden" name="confirm" value="1"/>'
+				. '<input type="submit" value="Да"/>'
+				. '<a href="#" onclick="ajaxer.close(this)" class="button">Нет</a>'
+				. '</form>'
 		);
 	}
 }

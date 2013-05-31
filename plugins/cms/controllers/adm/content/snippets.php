@@ -2,7 +2,7 @@
 
 use Difra\Plugins\CMS;
 
-class AdmCMSSnippetsController extends \Difra\Controller {
+class AdmContentSnippetsController extends \Difra\Controller {
 
 	public function dispatch() {
 
@@ -38,7 +38,9 @@ class AdmCMSSnippetsController extends \Difra\Controller {
 		$editNode->setAttribute( 'description', $snippet->getDescription() );
 	}
 
-	public function saveAjaxAction( \Difra\Param\AjaxString $name, \Difra\Param\AjaxString $text, \Difra\Param\AjaxInt $id = null,
+	public function saveAjaxAction( \Difra\Param\AjaxString $name,
+					\Difra\Param\AjaxString $text,
+					\Difra\Param\AjaxInt $id = null,
 					\Difra\Param\AjaxString $description = null ) {
 
 		if( $id ) {
@@ -51,7 +53,7 @@ class AdmCMSSnippetsController extends \Difra\Controller {
 		$snippet->setName( $name );
 		$snippet->setDescription( $description );
 		$snippet->setText( $text );
-		$this->ajax->redirect( '/adm/cms/snippets' );
+		$this->ajax->redirect( '/adm/content/snippets' );
 	}
 
 	public function delAjaxAction( \Difra\Param\AnyInt $id, \Difra\Param\AjaxInt $confirm = null ) {
@@ -61,12 +63,13 @@ class AdmCMSSnippetsController extends \Difra\Controller {
 		}
 		if( !$confirm ) {
 			$this->ajax->confirm( $this->locale->getXPath( 'cms/adm/snippet/del-confirm1' ) .
-					      $snippet->getName() .
-					      $this->locale->getXPath( 'cms/adm/snippet/del-confirm2' ) );
+				$snippet->getName() .
+				$this->locale->getXPath( 'cms/adm/snippet/del-confirm2' ) );
 			return;
 		}
 		$snippet->del();
-		$this->ajax->redirect( '/adm/cms/snippets' );
+		$this->ajax->close();
+		$this->ajax->redirect( '/adm/content/snippets' );
 	}
 }
 

@@ -1,10 +1,9 @@
 <locale>
 	<menu>
 		<adm>
-			<menu_content>Контент</menu_content>
-			<menu_content_cms>Статичные страницы</menu_content_cms>
+			<menu_content_pages>Страницы</menu_content_pages>
 			<menu_content_snippets>Сниппеты</menu_content_snippets>
-			<menu_content_items>Меню</menu_content_items>
+			<menu_content_menu>Меню</menu_content_menu>
 		</adm>
 	</menu>
 </locale>

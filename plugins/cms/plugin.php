@@ -4,9 +4,9 @@ namespace Difra\Plugins\CMS;
 
 class Plugin extends \Difra\Plugin {
 
-	protected $version = 3.1;
+	protected $version = 4;
 	protected $description = 'Content management system';
-	protected $require = 'mysql';
+	protected $require = array( 'mysql', 'editor' );
 
 	public function init() {
 

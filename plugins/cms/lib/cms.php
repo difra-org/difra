@@ -20,9 +20,9 @@ class CMS {
 	public function run() {
 
 		if( $page = \Difra\Plugins\CMS\Page::find() ) {
-			$action             = \Difra\Action::getInstance();
-			$action->className  = '\Difra\Plugins\CMS\Controller';
-			$action->method     = 'pageAction';
+			$action = \Difra\Action::getInstance();
+			$action->className = '\Difra\Plugins\CMS\Controller';
+			$action->method = 'pageAction';
 			$action->parameters = array( $page );
 		}
 	}
@@ -35,7 +35,7 @@ class CMS {
 		if( \Difra\Action::getInstance()->controller->view->instance != 'main' ) {
 			return;
 		}
-		$action   = \Difra\Action::getInstance();
+		$action = \Difra\Action::getInstance();
 		$rootNode = $action->controller->root;
 		$this->getMenuXML( $rootNode, true );
 	}
@@ -46,8 +46,8 @@ class CMS {
 			return;
 		}
 
-		$action      = \Difra\Action::getInstance();
-		$rootNode    = $action->controller->root;
+		$action = \Difra\Action::getInstance();
+		$rootNode = $action->controller->root;
 		$snippetNode = $rootNode->appendChild( $rootNode->ownerDocument->createElement( 'snippets' ) );
 		\Difra\Plugins\CMS\Snippet::getAllXML( $snippetNode );
 	}
@@ -169,7 +169,7 @@ class CMS {
 	 */
 	public function getAvailablePagesXML( $node, $menuId ) {
 
-		$current    = \Difra\Plugins\CMS\Menuitem::getList( $menuId );
+		$current = \Difra\Plugins\CMS\Menuitem::getList( $menuId );
 		$currentIds = array();
 		if( !empty( $current ) ) {
 			foreach( $current as $item ) {
@@ -177,13 +177,15 @@ class CMS {
 			}
 		}
 		$all = \Difra\Plugins\CMS\Page::getList( true );
-		foreach( $all as $item ) {
-			if( in_array( $item->getId(), $currentIds ) ) {
-				continue;
+		if( !empty( $all ) ) {
+			foreach( $all as $item ) {
+				if( in_array( $item->getId(), $currentIds ) ) {
+					continue;
+				}
+				/** @var $pageNode \DOMElement */
+				$pageNode = $node->appendChild( $node->ownerDocument->createElement( 'page' ) );
+				$item->getXML( $pageNode );
 			}
-			/** @var $pageNode \DOMElement */
-			$pageNode = $node->appendChild( $node->ownerDocument->createElement( 'page' ) );
-			$item->getXML( $pageNode );
 		}
 	}
 
@@ -203,9 +205,9 @@ class CMS {
 	 */
 	public static function getSitemap() {
 
-		$db   = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetch( 'SELECT `tag` FROM `cms`' );
-		$res  = array();
+		$res = array();
 		if( empty( $data ) ) {
 			return false;
 		}

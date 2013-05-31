@@ -2,20 +2,40 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 
 	<xsl:template match="CMSList">
-		<h2><xsl:value-of select="$locale/cms/adm/h2"/></h2>
-		<a href="/adm/cms/add" class="button"><xsl:value-of select="$locale/cms/adm/newpage"/></a>
-		<h3><xsl:value-of select="$locale/cms/adm/pageslist"/></h3>
+		<h2>
+			<xsl:value-of select="$locale/cms/adm/h2"/>
+		</h2>
+		<a href="/adm/content/pages/add" class="button">
+			<xsl:value-of select="$locale/cms/adm/newpage"/>
+		</a>
 
 		<xsl:choose>
 			<xsl:when test="page">
 				<table>
-					<tr>
-						<th><xsl:value-of select="$locale/cms/adm/name"/></th>
-						<th><xsl:value-of select="$locale/cms/adm/uri"/></th>
-						<th><xsl:value-of select="$locale/cms/adm/hidden"/></th>
-						<th><xsl:value-of select="$locale/cms/adm/actions"/></th>
-					</tr>
-					<xsl:apply-templates select="page"/>
+					<colgroup>
+						<col/>
+						<col style="width: 120px"/>
+						<col style="width: 120px"/>
+						<col style="width: 100px"/>
+					</colgroup>
+					<thead>
+						<tr>
+							<th>
+								<xsl:value-of select="$locale/cms/adm/name"/>
+							</th>
+							<th>
+								<xsl:value-of select="$locale/cms/adm/uri"/>
+							</th>
+							<th>
+								<xsl:value-of select="$locale/cms/adm/hidden"/>
+							</th>
+							<th>
+							</th>
+						</tr>
+					</thead>
+					<tbody>
+						<xsl:apply-templates select="page"/>
+					</tbody>
 				</table>
 			</xsl:when>
 			<xsl:otherwise>
@@ -44,17 +64,10 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</td>
-			<td>
-				<!-- TODO: заменить эти кнопочки на вызовы шаблонов -->
-				<a href="{@uri}" target="_blank" class="action view">
-					<xsl:value-of select="$locale/cms/adm/view"/>
-				</a>
-				<a href="/adm/cms/edit/{@id}" class="action edit">
-					<xsl:value-of select="$locale/cms/adm/edit"/>
-				</a>
-				<a href="#" onclick="ajaxer.query('/adm/cms/delete/{@id}')" class="action delete">
-					<xsl:value-of select="$locale/cms/adm/delete"/>
-				</a>
+			<td class="actions">
+				<a href="{@uri}" target="_blank" class="action view"/>
+				<a href="/adm/content/pages/edit/{@id}" class="action edit"/>
+				<a href="/adm/content/pages/delete/{@id}" class="action delete ajaxer"/>
 			</td>
 		</tr>
 	</xsl:template>

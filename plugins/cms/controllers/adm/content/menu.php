@@ -2,7 +2,7 @@
 
 use Difra\Plugins\CMS;
 
-class AdmCMSItemsController extends \Difra\Controller {
+class AdmContentMenuController extends \Difra\Controller {
 
 	public function dispatch() {
 
@@ -76,7 +76,7 @@ class AdmCMSItemsController extends \Difra\Controller {
 		$item->setMenu( $menu->val() );
 		$item->setParent( $parent ? $parent->val() : null );
 		$item->setPage( $page->val() );
-		$this->ajax->redirect( '/adm/cms/items/view/' . $menu->val() );
+		$this->ajax->redirect( '/adm/content/menu/view/' . $menu->val() );
 	}
 
 	/**
@@ -102,7 +102,7 @@ class AdmCMSItemsController extends \Difra\Controller {
 		$item->setParent( $parent ? $parent->val() : null );
 		$item->setLink( $link );
 		$item->setLinkLabel( $label );
-		$this->ajax->redirect( '/adm/cms/items/view/' . $menu->val() );
+		$this->ajax->redirect( '/adm/content/menu/view/' . $menu->val() );
 	}
 
 	/**
@@ -115,13 +115,13 @@ class AdmCMSItemsController extends \Difra\Controller {
 		if( !$confirm or !$confirm->val() ) {
 			$this->ajax->display(
 				'<span>'
-				. $this->locale->getXPath( 'cms/adm/menuitem/delete-item-confirm' )
-				. '</span>'
-				. '<form action="/adm/cms/items/delete/' . $id . '" method="post" class="ajaxer">'
-				. '<input type="hidden" name="confirm" value="1"/>'
-				. '<input type="submit" value="Да"/>'
-				. '<a href="#" onclick="ajaxer.close(this)" class="button">Нет</a>'
-				. '</form>'
+					. $this->locale->getXPath( 'cms/adm/menuitem/delete-item-confirm' )
+					. '</span>'
+					. '<form action="/adm/content/menu/delete/' . $id . '" method="post" class="ajaxer">'
+					. '<input type="hidden" name="confirm" value="1"/>'
+					. '<input type="submit" value="Да"/>'
+					. '<a href="#" onclick="ajaxer.close(this)" class="button">Нет</a>'
+					. '</form>'
 			);
 		} else {
 			\Difra\Plugins\CMS\Menuitem::get( $id->val() )->delete();
