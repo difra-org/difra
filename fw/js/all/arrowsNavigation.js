@@ -1,4 +1,4 @@
-$( document ).keydown( function ( e ) {
+$( document ).on( 'keydown', function( e ) {
 
 	if( e.ctrlKey ) {
 		switch( e.keyCode ) {

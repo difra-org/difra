@@ -25,7 +25,7 @@ switcher.ajaxConfig = {
 	success: function( data, status, xhr ) {
 		try {
 			var newdata = $( data );
-		} catch( e ) {
+		} catch( ignore ) {
 			switcher.fallback();
 			return;
 		}
@@ -54,7 +54,9 @@ switcher.ajaxConfig = {
 				switcher.hashChanged = true;
 				window.location = switcher.basePath + '#!' + switcher.url;
 			}
+			//noinspection JSUnresolvedVariable
 			if( typeof _gaq == 'object' && typeof _gaq.push == 'function' ) {
+				//noinspection JSUnresolvedVariable
 				_gaq.push( ['_trackPageview', switcher.url] );
 			}
 		}
@@ -63,7 +65,7 @@ switcher.ajaxConfig = {
 		a.each( function( k, v ) {
 			try {
 				$( '#' + $( v ).attr( 'id' ) ).replaceWith( v ).remove();
-			} catch( e ) {
+			} catch( ignore ) {
 			}
 		} );
 		$( window ).scrollTop( 0 );
@@ -100,7 +102,15 @@ switcher.page = function( url, noPush, data ) {
 	}
 	switcher.noPush = noPush ? true : false;
 	switcher.url = url;
-	if( typeof data != 'undefined' ) {
+	if( typeof data == 'undefined' ) {
+		if( $( '#content,.switcher' ).length ) {
+			$.ajax( url, switcher.ajaxConfig );
+		} else {
+			$( document ).triggerHandler( 'destruct' );
+			loading.hide();
+			window.location = switcher.url;
+		}
+	} else {
 		var conf = switcher.ajaxConfig;
 		conf.type = 'POST';
 		conf.data = data;
@@ -157,16 +167,15 @@ $( document ).ready( function() {
 	}
 } );
 
-$( 'a' ).live( 'click dblclick',
-	       function( event ) {
-		       if( $( this ).hasClass( 'ajaxer' ) || $( this ).hasClass( 'noAjaxer' ) ) {
-			       return;
-		       }
-		       var href = $( this ).attr( 'href' );
-		       if( href == '#' ) {
-			       event.preventDefault();
-		       } else if( href && href.substring( 0, 11 ) != 'javascript:' && href.substr( 0, 1 ) != '#' ) {
-			       event.preventDefault();
-			       switcher.page( $( this ).attr( 'href' ) );
-		       }
-	       } );
+$( document ).on( 'click dblclick', 'a', function( event ) {
+	if( $( this ).hasClass( 'ajaxer' ) || $( this ).hasClass( 'noAjaxer' ) ) {
+		return;
+	}
+	var href = $( this ).attr( 'href' );
+	if( href == '#' ) {
+		event.preventDefault();
+	} else if( href && href.substring( 0, 11 ) != 'javascript:' && href.substr( 0, 1 ) != '#' ) {
+		event.preventDefault();
+		switcher.page( $( this ).attr( 'href' ) );
+	}
+} );

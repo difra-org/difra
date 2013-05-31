@@ -24,4 +24,4 @@ autocenter.run = function() {
 	} );
 };
 
-$( window ).resize( autocenter.run );
+$( window ).on( 'resize', autocenter.run );

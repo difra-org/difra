@@ -20,13 +20,13 @@ ajaxer.httpRequest = function( url, params, headers ) {
 
 	$.ajaxSetup( ajaxer.setup );
 	var data = {};
-	if( typeof params == 'undefined' || !params ) {
+	if( typeof params === 'undefined' || !params ) {
 		data.type = 'GET';
 	} else {
 		data.type = 'POST';
 		data.data = 'json=' + encodeURIComponent( JSON.stringify( params ) );
 	}
-	if( typeof headers != 'undefined' ) {
+	if( typeof headers !== 'undefined' ) {
 		data.headers = headers;
 	}
 	return $.ajax( url, data ).responseText;
@@ -34,7 +34,7 @@ ajaxer.httpRequest = function( url, params, headers ) {
 
 ajaxer.query = function( url, data ) {
 
-	if( typeof debug != 'undefined' ) {
+	if( typeof debug !== 'undefined' ) {
 		debug.addReq( 'Ajaxer request: ' + url );
 	}
 	ajaxer.process( this.httpRequest( url, data ) );
@@ -51,12 +51,15 @@ ajaxer.process = function( data, form ) {
 	try {
 		console.info( 'Server said:', data );
 		var data1 = $.parseJSON( data );
-		if( typeof data1 == 'undefined' || typeof data1.actions == 'undefined' ) {
+		/** @namespace data1.actions */
+		if( typeof data1 === 'undefined' || typeof data1.actions === 'undefined' ) {
+			//noinspection ExceptionCaughtLocallyJS
 			throw "data error";
 		}
 		for( var key in data1.actions ) {
+			//noinspection JSUnfilteredForInLoop
 			var action = data1.actions[key];
-			if( typeof debug != 'undefined' ) {
+			if( typeof debug !== 'undefined' ) {
 				debug.addReq( 'Processing ajaxer method: ' + action.action );
 			}
 			ajaxer.triggerHandler( 'ajaxer-pre-' + action.action );
@@ -142,7 +145,7 @@ ajaxer.smartFind = function( container, name ) {
 	var el = $( container ).find( '[name="' + name.replace( /"/g, "&quot;" ) + '"]' );
 	if( !el.length ) {
 		var nameChop = /^(.*)\[(\d+)]$/.exec( name );
-		if( nameChop != null && nameChop.length == 3 ) {
+		if( nameChop !== null && nameChop.length == 3 ) {
 			var els = $( container ).find( '[name="' + (nameChop[1] + '[]').replace( /"/g, "&quot;" ) + '"]' );
 			if( typeof els[nameChop[2]] != 'undefined' ) {
 				el = $( els[nameChop[2]] );
@@ -150,7 +153,7 @@ ajaxer.smartFind = function( container, name ) {
 		}
 	}
 	return el;
-}
+};
 
 ajaxer.require = function( form, name ) {
 
@@ -217,10 +220,10 @@ ajaxer.invalid = function( form, name, message ) {
 
 ajaxer.redirect = function( url ) {
 
-	if( typeof(switcher) != 'undefined' ) {
-		switcher.page( url );
-	} else {
+	if( typeof(switcher) == 'undefined' ) {
 		document.location( url );
+	} else {
+		switcher.page( url );
 	}
 };
 
@@ -334,8 +337,9 @@ ajaxer.statusUpdate = function( form ) {
 	} );
 	// для этих элементов статус применить не удалось
 	for( var i in ajaxer.statuses ) {
+		//noinspection JSUnfilteredForInLoop
 		if( !ajaxer.statuses[i].used ) {
-			// выводим warning в лог
+			//noinspection JSUnfilteredForInLoop
 			console.warn( 'Status for ' + ajaxer.statuses[i].classname + ': ' + ajaxer.statuses[i].message );
 			// TODO: показывать нотифай вместо записи в лог
 			//ajaxer.notify( {}, ajaxer.statuses[i].message );
@@ -368,6 +372,9 @@ ajaxer.overlayShow = function( content ) {
 ajaxer.overlayHide = function( obj ) {
 
 	var el = $( obj ).parents( '.overlay' );
+	if( !el.length ) {
+		el = $( '.overlay' );
+	}
 	$( 'html' ).css( 'overflow', '' );
 	el.fadeOut( 'fast', function() {
 		$( this ).remove();
@@ -390,7 +397,7 @@ ajaxer.sendForm = function( form, event ) {
 };
 
 ajaxer.submitting = false;
-$( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
+$( document ).on( 'submit', 'form.ajaxer', function( event ) {
 
 	if( ajaxer.submitting ) {
 		return;
@@ -401,33 +408,34 @@ $( document ).delegate( 'form.ajaxer', 'submit', function( event ) {
 	if( !form.find( 'input[type=file]' ).length ) {
 		// serialize method
 		ajaxer.sendForm( this, event );
-	} else {
-		// iframe method
-		if( !$( '#ajaxerFrame' ).length ) {
-			// генерируем uuid для прогрессбара
-			var uuid = '';
-			for( var i = 0; i < 32; i++ ) {
-				uuid += Math.floor( Math.random() * 16 ).toString( 16 );
-			}
-			// модифицируем форму для отправки через iframe
-			form.attr( 'method', 'post' );
-			form.attr( 'enctype', 'multipart/form-data' );
-			var originalAction = form.attr( 'action' );
-			form.attr( 'originalAction', originalAction );
-			form.attr( 'action',
-				form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
-			form.attr( 'target', 'ajaxerFrame' );
-			form.attr( 'uuid', uuid );
-			form.append( '<input type="hidden" name="_method" value="iframe"/>' );
-			// добавляем на страницу iframe
-			var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none" src="/iframe"></iframe>' );
-			frame.one( 'load', function( event ) {
-				ajaxer.initIframe( form, event )
-			} );
-			$( 'body' ).append( frame );
-			switcher.showLoading();
-		}
+		return;
 	}
+	// iframe method
+	if( $( '#ajaxerFrame' ).length ) {
+		return;
+	}
+	// генерируем uuid для прогрессбара
+	var uuid = '';
+	for( var i = 0; i < 32; i++ ) {
+		uuid += Math.floor( Math.random() * 16 ).toString( 16 );
+	}
+	// модифицируем форму для отправки через iframe
+	form.attr( 'method', 'post' );
+	form.attr( 'enctype', 'multipart/form-data' );
+	var originalAction = form.attr( 'action' );
+	form.attr( 'originalAction', originalAction );
+	form.attr( 'action',
+		form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
+	form.attr( 'target', 'ajaxerFrame' );
+	form.attr( 'uuid', uuid );
+	form.append( '<input type="hidden" name="_method" value="iframe"/>' );
+	// добавляем на страницу iframe
+	var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none" src="/iframe"></iframe>' );
+	frame.one( 'load', function( event ) {
+		ajaxer.initIframe( form, event )
+	} );
+	$( 'body' ).append( frame );
+	loading.show();
 } );
 
 /**
@@ -456,7 +464,7 @@ ajaxer.initIframe = function( form, event ) {
 			if( fc ) {
 				val = fc;
 			}
-		} catch( e ) {
+		} catch( ignore ) {
 		}
 		// восстанавливаем форму в первоначальный вид и подчищаем документ
 		form.attr( 'action', form.attr( 'originalAction' ) );
@@ -464,11 +472,12 @@ ajaxer.initIframe = function( form, event ) {
 		form.removeAttr( 'uuid' );
 		form.find( 'input[name=_method]' ).remove();
 		$( 'iframe#ajaxerFrame' ).remove();
+		//noinspection JSJQueryEfficiency
 		var upprog = $( '#upprog' );
 		if( upprog.length ) {
 			loading.find( 'td1' ).css( 'width', Math.ceil( $( '#upprog' ).width() - 20 ) + 'px' );
 		}
-		switcher.hideLoading();
+		loading.hide();
 		ajaxer.process( val, form );
 	} );
 	// сабмиттим форму
@@ -491,21 +500,26 @@ ajaxer.fetchProgress = function( uuid ) {
 	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID': uuid } );
 	res = $.parseJSON( res );
 	if( res.state == 'uploading' ) {
+		//noinspection JSJQueryEfficiency
 		var progressbar = $( '#upprog' );
 		if( !progressbar.length ) {
-			switcher.hideLoading();
+			//noinspection JSUnusedAssignment
+			loading.hide();
+			//noinspection JSJQueryEfficiency
 			var loading = $( '#loading' );
 			if( !loading.length ) {
 				$( 'body' ).append( loading = $( '<div id="loading"></div>' ) );
 			}
 			loading.fadeIn();
 
+			//noinspection JSJQueryEfficiency
 			$( '#loading' )
 				.css( 'background-image', 'none' )
 				.append( '<div id="upprog" class="auto-center"><div class="td1"></div></div>' );
 			autocenter();
 			progressbar = $( '#upprog' );
 		}
+		/** @namespace res.received */
 		progressbar.find( '.td1' )
 			.css( 'width', Math.ceil( ( progressbar.width() - 20 ) * res.received / res.size ) + 'px' );
 	}
@@ -515,7 +529,7 @@ ajaxer.fetchProgress = function( uuid ) {
  * Обработка событий страницы
  */
 
-$( 'a.ajaxer' ).live( 'click dblclick', function( e ) {
+$( document ).on( 'click dblclick', 'a.ajaxer', function( e ) {
 	var href = $( this ).attr( 'href' );
 	if( href && href != '#' ) {
 		ajaxer.query( href );
@@ -523,19 +537,19 @@ $( 'a.ajaxer' ).live( 'click dblclick', function( e ) {
 	e.preventDefault();
 } );
 
-$( '.ajaxer input' ).live( 'keypress', function( e ) {
+$( document ).on( 'keypress', '.ajaxer input', function( e ) {
 	if( e.which == 13 ) {
 		$( this ).parents( 'form' ).submit();
 		e.preventDefault();
 	}
 } );
 
-$( '.submit' ).live( 'click dblclick', function( e ) {
+$( document ).on( 'click dblclick', '.submit', function( e ) {
 	$( this ).parents( 'form' ).submit();
 	e.preventDefault();
 } );
 
-$( '.reset' ).live( 'click dblclick', function( e ) {
+$( document ).on( 'click dblclick', '.reset', function( e ) {
 	ajaxer.reset( $( this ).parents( 'form' ) );
 	e.preventDefault();
 } );
@@ -556,10 +570,11 @@ ajaxer.watcher = function() {
 		} else {
 			ajaxer.notify( mc.lang, mc.message );
 		}
-		if( config.mainhost ) {
-			$.cookie( 'notify', null, { path: "/", domain: '.' + config.mainhost } );
-		} else {
+		/** @namespace config.mainhost */
+		if( typeof config.mainhost === 'undefined' ) {
 			$.cookie( 'notify', null, { path: "/", domain: '.' + window.location.host } );
+		} else {
+			$.cookie( 'notify', null, { path: "/", domain: '.' + config.mainhost } );
 		}
 	}
 };
