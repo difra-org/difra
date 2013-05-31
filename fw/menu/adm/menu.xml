@@ -1,12 +1,11 @@
 <menu>
-	<content href="" priority="70"/>
-	<catalog href="" priority="60"/>
-	<media href="" priority="50"/>
-	<talks href="" priority="40"/>
+	<content href="" priority="80"/>
+	<catalog href="" priority="70"/>
+	<media href="" priority="60"/>
+	<talks href="" priority="50"/>
+	<database href="" priority="40"/>
 	<users href="" priority="30"/>
-	<settings href="" priority="20">
-		<test/>
-	</settings>
+	<settings href="" priority="20"/>
 	<development href="" priority="10" sup="1">
 		<config/>
 		<plugins/>
