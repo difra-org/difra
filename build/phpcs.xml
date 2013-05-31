@@ -1,0 +1,13 @@
+<ruleset name="A-Jam">
+	<description>Description of your coding standard</description>
+
+	<exclude-pattern>../fw/lib/libs/esapi</exclude-pattern>
+	<exclude-pattern>../fw/lib/libs/less</exclude-pattern>
+	<exclude-pattern>../plugins/editor/ckeditor</exclude-pattern>
+	<exclude-pattern>../plugins/jqueryui/css</exclude-pattern>
+	<exclude-pattern>../plugins/jqueryui/js</exclude-pattern>
+	<exclude-pattern>../fw/js/all/jquery</exclude-pattern>
+
+	<rule ref="Generic.PHP.DisallowShortOpenTag"/>
+	<!-- ... -->
+</ruleset>
