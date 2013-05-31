@@ -3,14 +3,14 @@
  */
 var editor = {};
 
+var CKEDITOR_BASEPATH = '/ck/';
+
 editor.config = {
-	baseHref: '/ck/',
 	entities: false,
 	removePlugins: 'elementspath',
 	customConfig: '',
 	contentsCss: ['/css/main.css', '/css/editor.css'],
 	fullPage: false,
-	skin: 'ajam',
 	filebrowserUploadUrl: '/up',
 
 	toolbar: 'Default',
@@ -74,10 +74,10 @@ editor.init = function() {
 		return;
 	}
 	editor.inited = true;
-	if( CKEDITOR.loadFullCore ) {
-		CKEDITOR.basePath = '/ck/';
-		CKEDITOR.loadFullCore();
-	}
+	$( '<script src="/ck/ckeditor.js"></script>' ).appendTo( 'head' );
+	CKEDITOR.basePath = '/ck/';
+	CKEDITOR.plugins.basePath = '/ck/plugins/';
+
 	CKEDITOR.on( 'dialogDefinition', function( ev ) {
 		switch( ev.data.name ) {
 		case 'link':
@@ -93,6 +93,7 @@ editor.init = function() {
 			ev.data.definition.removeContents( 'Upload' );
 		}
 	} );
+
 };
 
 editor.inject = function() {
@@ -115,7 +116,7 @@ editor.inject = function() {
 
 editor.clean = function() {
 
-	if( CKEDITOR && CKEDITOR.instances ) {
+	if( typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances !== 'undefined' ) {
 		for( var instance in CKEDITOR.instances ) {
 			try {
 				CKEDITOR.instances[instance].destroy( true );
@@ -128,7 +129,7 @@ editor.clean = function() {
 
 editor.flush = function() {
 
-	if( CKEDITOR && CKEDITOR.instances ) {
+	if( typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances !== 'undefined' ) {
 		for( var instance in CKEDITOR.instances ) {
 			CKEDITOR.instances[instance].updateElement();
 		}
