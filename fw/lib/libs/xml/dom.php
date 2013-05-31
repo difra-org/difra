@@ -2,11 +2,14 @@
 
 namespace Difra\Libs\XML;
 
+/**
+ * Class DOM
+ * @package Difra\Libs
+ */
 class DOM {
 
 	/**
 	 * Временно для array2xml
-	 *
 	 * @deprecated
 	 * @static
 	 * @return DOM
@@ -19,7 +22,6 @@ class DOM {
 
 	/**
 	 * Функция для переименования ноды в DOM-документе
-	 *
 	 * @static
 	 *
 	 * @param \DOMNode $node
@@ -41,7 +43,6 @@ class DOM {
 
 	/**
 	 * Создаёт XML, в котором значения элементов массива становятся значениями нод
-	 *
 	 * @static
 	 *
 	 * @param \DOMNode $node
@@ -63,14 +64,13 @@ class DOM {
 
 	/**
 	 * Создаёт XML, в котором значения элементов массива становятся значениями аттрибутов
-	 *
 	 * @static
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 * @param array                $array
 	 * @param bool                 $verbal
 	 */
-	public static function array2domAttr( &$node, &$array, $verbal = false ) {
+	public static function array2domAttr( &$node, $array, $verbal = false ) {
 
 		if( is_array( $array ) and !empty( $array ) ) {
 			foreach( $array as $k => $v ) {

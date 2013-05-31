@@ -67,11 +67,11 @@ class Plugger {
 			return $this->plugins;
 		}
 		$plugins = array();
-		$dirs    = $this->getPluginsNames();
+		$dirs = $this->getPluginsNames();
 		if( !empty( $dirs ) ) {
 			foreach( $dirs as $dir ) {
 				include( DIR_PLUGINS . '/' . $dir . '/plugin.php' );
-				$ucf           = ucfirst( $dir );
+				$ucf = ucfirst( $dir );
 				$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
 			}
 		}
@@ -88,7 +88,7 @@ class Plugger {
 			return;
 		}
 		$this->pluginsData = array();
-		$plugins      = $this->getAllPlugins();
+		$plugins = $this->getAllPlugins();
 		if( empty( $plugins ) ) {
 			return;
 		}
@@ -97,12 +97,12 @@ class Plugger {
 		foreach( $plugins as $name => $plugin ) {
 			$info = $plugin->getInfo();
 			$this->pluginsData[$name] = array(
-				'enabled'    => isset( $enabledPlugins[$name] ) and $enabledPlugins[$name],
-				'loaded'     => false,
-				'require'    => $info['requires'],
-				'provides'   => $info['provides'],
-				'version'    => $info['version'],
-				'description'=> $info['description']
+				'enabled' => isset( $enabledPlugins[$name] ) and $enabledPlugins[$name],
+				'loaded' => false,
+				'require' => $info['requires'],
+				'provides' => $info['provides'],
+				'version' => $info['version'],
+				'description' => $info['description']
 			);
 			$provs = array_merge( array( $name ), $info['provides'] );
 			foreach( $provs as $prov ) {
@@ -138,9 +138,10 @@ class Plugger {
 				}
 				// enable plugin
 				$this->plugins[$name]->enable();
-				$this->pluginsData['loaded'] = true;
+				$this->pluginsData[$name]['loaded'] = true;
 				$changed = true;
 				// set plugin's provisions as available
+				$this->provisions[$name]['available'] = true;
 				foreach( $data['provides'] as $prov ) {
 					$this->provisions[$prov]['available'] = true;
 				}
@@ -161,16 +162,31 @@ class Plugger {
 		foreach( $this->pluginsData as $name => $data ) {
 			if( !$data['loaded'] and !empty( $data['require'] ) ) {
 				foreach( $data['require'] as $req ) {
-					if( !$this->provisions[$req]['available'] ) {
+					if( !isset( $this->provisions[$req] ) or !$this->provisions[$req]['available'] ) {
 						$this->pluginsData[$name]['missingReq'][] = $req;
 						$this->pluginsData[$name]['disabled'] = true;
 					}
 				}
 			}
-			if( $data['version'] < (float) Site::VERSION ) {
+			if( $data['version'] < (float)Site::VERSION ) {
 				$this->pluginsData[$name]['old'] = true;
 			}
 		}
+	}
+
+	/**
+	 * Возвращает информацию о плагинах в XML
+	 *
+	 * @param \DOMElement|\DOMNode $node
+	 */
+	public function getPluginsXML( $node ) {
+
+		$this->smartPluginsEnable();
+		$this->fillMissingReq();
+		$pluginsNode = $node->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
+		\Difra\Libs\XML\DOM::array2domAttr( $pluginsNode, $this->pluginsData );
+		$provisionsNode = $node->appendChild( $node->ownerDocument->createElement( 'provisions' ) );
+		\Difra\Libs\XML\DOM::array2domAttr( $provisionsNode, $this->provisions );
 	}
 
 	/**
@@ -193,14 +209,14 @@ class Plugger {
 	 */
 	public function getPaths() {
 
-		$paths   = array();
+		$paths = array();
 		$plugins = $this->getAllPlugins();
 		if( empty( $plugins ) ) {
 			return array();
 		}
 		foreach( $plugins as $name => $plugin ) {
 			if( $plugin->isEnabled() ) {
-				$paths[$name] = $plugin->getPath();
+				$paths[$name] = $plugin->getPath() . '/';
 			}
 		}
 		return $paths;
@@ -248,8 +264,8 @@ class Plugger {
 		if( !$conf ) {
 			$conf = array();
 		}
-		if( !in_array( $name, $conf ) ) {
-			$conf[] = $name;
+		if( !isset( $conf[$name] ) ) {
+			$conf[$name] = true;
 			$config->set( 'plugins', $conf );
 		}
 		return $config->save();
@@ -264,8 +280,8 @@ class Plugger {
 
 		$config = Config::getInstance();
 		$conf = $config->get( 'plugins' );
-		if( ( $k = array_search( $name, $conf ) ) !== false ) {
-			unset( $conf[$k] );
+		if( isset( $conf[$name] ) ) {
+			unset( $conf[$name] );
 			$config->set( 'plugins', $conf );
 		}
 		return $config->save();

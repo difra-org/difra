@@ -2,6 +2,11 @@
 
 namespace Difra;
 
+/**
+ * Class Debugger
+ *
+ * @package Difra
+ */
 class Debugger {
 
 	private $enabled = false;
@@ -9,7 +14,6 @@ class Debugger {
 	private $console = 0;
 	private $cacheResources = true;
 	private static $output = array();
-	public static $startTime = 0;
 	private $hadError = false;
 
 	/**
@@ -46,9 +50,9 @@ class Debugger {
 			}
 			// консоль отключена?
 			if( !$this->enabled or ( isset( $_COOKIE['debugConsole'] ) and !$_COOKIE['debugConsole'] ) ) {
-				$this->console = 1;
+				$this->console = 1; // консоль есть, но отлов ошибок отключен
 			} else {
-				$this->console = 2;
+				$this->console = 2; // консоль включена
 			}
 
 			$this->cacheResources = false;
@@ -67,7 +71,7 @@ class Debugger {
 				ini_set( 'display_errors', 'On' );
 				ini_set( 'error_reporting', E_ALL );
 				ini_set( 'html_errors',
-					 ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+					( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
 			}
 		} else {
 			ini_set( 'display_errors', 'Off' );
@@ -112,9 +116,9 @@ class Debugger {
 	static function addLine( $line ) {
 
 		self::$output[] = array(
-			'class'   => 'messages',
+			'class' => 'messages',
 			'message' => $line,
-			'timer'   => self::getTimer()
+			'timer' => self::getTimer()
 		);
 	}
 
@@ -125,9 +129,9 @@ class Debugger {
 	static function addEventLine( $line ) {
 
 		self::$output[] = array(
-			'class'   => 'events',
+			'class' => 'events',
 			'message' => $line,
-			'timer'   => self::getTimer()
+			'timer' => self::getTimer()
 		);
 	}
 
@@ -142,10 +146,10 @@ class Debugger {
 			return;
 		}
 		self::$output[] = array(
-			'class'   => 'db',
-			'type'    => $type,
+			'class' => 'db',
+			'type' => $type,
 			'message' => $line,
-			'timer'   => self::getTimer()
+			'timer' => self::getTimer()
 		);
 	}
 
@@ -170,7 +174,6 @@ class Debugger {
 	 *
 	 * @param bool $standalone      Консоль выводится на отдельной странице (если произошла фатальная ошибка и запрошенная страница
 	 *                                 не может быть отрендерена)
-	 *
 	 * @return string
 	 */
 	public function debugHTML( $standalone = false ) {
@@ -180,22 +183,26 @@ class Debugger {
 			return '';
 		}
 		/** @var $root \DOMElement */
-		$xml  = new \DOMDocument();
+		$xml = new \DOMDocument();
 		$root = $xml->appendChild( $xml->createElement( 'root' ) );
 		$this->debugXML( $root, $standalone );
 
-		$alreadyDidIt = true;
-		self::addLine( "Page data prepared in " . self::getTimer() . " seconds" );
-
-		return View::getInstance()->render( $xml, 'debug', true ); // TODO: поправить в связи с переносом шаблона в main
+		return View::getInstance()->render( $xml, 'all', true );
 	}
 
+	/**
+	 * Добавляет в XML-ноду данные о дебаге и для дебаг-панели
+	 *
+	 * @param \DOMNode|\DOMElement $node
+	 * @param bool                 $standalone
+	 * @return string
+	 */
 	public function debugXML( $node, $standalone = false ) {
 
 		$node->setAttribute( 'debug', $this->enabled ? '1' : '0' );
 		$node->setAttribute( 'debugConsole', $this->console );
 		if( !$this->console ) {
-			return '';
+			return;
 		}
 		/** @var $debugNode \DOMElement */
 		$debugNode = $node->appendChild( $node->ownerDocument->createElement( 'debug' ) );
@@ -209,19 +216,17 @@ class Debugger {
 	 * Callback для эксцепшенов
 	 *
 	 * @static
-	 *
 	 * @param \Difra\Exception $exception
-	 *
 	 * @return bool
 	 */
 	public static function captureException( $exception ) {
 
 		$err = array(
-			'class'     => 'errors',
-			'stage'     => 'exception',
-			'message'   => $exception->getMessage(),
-			'file'      => $exception->getFile(),
-			'line'      => $exception->getLine(),
+			'class' => 'errors',
+			'stage' => 'exception',
+			'message' => $exception->getMessage(),
+			'file' => $exception->getFile(),
+			'line' => $exception->getLine(),
 			'traceback' => $exception->getTrace()
 		);
 		self::getInstance()->addLineAsArray( $err );
@@ -235,12 +240,10 @@ class Debugger {
 	 * Callback для ловимых ошибок
 	 *
 	 * @static
-	 *
 	 * @param $type
 	 * @param $message
 	 * @param $file
 	 * @param $line
-	 *
 	 * @return bool
 	 */
 	public static function captureNormal( $type, $message, $file, $line ) {
@@ -249,17 +252,17 @@ class Debugger {
 		if( error_reporting() == 0 ) {
 			return false;
 		}
-		$err              = array(
-			'class'   => 'errors',
-			'type'    => $type,
-			'error'   => \Difra\Libs\Debug\errorConstants::getInstance()->getVerbalError( $type ),
+		$err = array(
+			'class' => 'errors',
+			'type' => $type,
+			'error' => Libs\Debug\errorConstants::getInstance()->getVerbalError( $type ),
 			'message' => $message,
-			'file'    => $file,
-			'line'    => $line,
-			'stage'   => 'normal'
+			'file' => $file,
+			'line' => $line,
+			'stage' => 'normal'
 		);
 		$err['traceback'] = debug_backtrace();
-		@array_shift( $err['traceback'] );
+		array_shift( $err['traceback'] );
 		self::getInstance()->addLineAsArray( $err );
 		return false;
 	}
@@ -276,16 +279,16 @@ class Debugger {
 		}
 		// сохраняем информацию об ошибке
 		if( self::$handledByNormal != $error['message'] ) {
-			$error['error']     = Libs\Debug\errorConstants::getInstance()->getVerbalError( $error['type'] );
-			$error['class']     = 'errors';
+			$error['error'] = Libs\Debug\errorConstants::getInstance()->getVerbalError( $error['type'] );
+			$error['class'] = 'errors';
 			$error['traceback'] = debug_backtrace();
-			@array_shift( $error['traceback'] );
+			array_shift( $error['traceback'] );
 			self::getInstance()->addLineAsArray( $error );
 		}
 		// если по каким-то причинам рендер не случился, отрендерим свою страничку
 		if( !View::getInstance()->rendered ) {
 			$controller = Action::getInstance()->controller;
-			$ajax       = $controller->ajax;
+			$ajax = $controller->ajax;
 			if( !$ajax->isAjax ) {
 				echo self::getInstance()->debugHTML( true );
 			} else {
@@ -309,9 +312,9 @@ class Debugger {
 	 * Возвращает время выполнения
 	 * @return float
 	 */
-	private static function getTimer() {
+	public static function getTimer() {
 
-		return microtime( true ) - self::$startTime;
+		return microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'];
 	}
 
 	public static function checkSlow() {
@@ -325,13 +328,13 @@ class Debugger {
 			foreach( self::$output as $line ) {
 				$output .= "{$line['timer']}\t{$line['class']}\t{$line['type']}\t{$line['message']}\n";
 			}
-			$date   = date( 'r' );
+			$date = date( 'r' );
 			$server = print_r( $_SERVER, true );
-			$post   = print_r( $_POST, true );
+			$post = print_r( $_POST, true );
 			$cookie = print_r( $_COOKIE, true );
-			$host   = Site::getInstance()->getHostname();
-			$uri    = Action::getInstance()->getUri();
-			$user   = Auth::getInstance()->data['email'];
+			$host = Site::getInstance()->getHostname();
+			$uri = Action::getInstance()->getUri();
+			$user = Auth::getInstance()->data['email'];
 
 			$output .= <<<MSG
 

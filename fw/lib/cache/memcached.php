@@ -2,21 +2,24 @@
 
 namespace Difra\Cache;
 
+/**
+ * Реализация кэширования через расширение memcached
+ * Class MemCached
+ * @package Difra\Cache
+ */
 class MemCached extends Common {
-	
+
 	public $adapter = 'MemCached';
 
-	private static $_memcache  = null;
+	/** @var \Memcached */
+	private static $_memcache = null;
 	private static $_serialize = true;
-	private static $_lifetime  = 0;
-    
-	public function __construct() {
+	private static $_lifetime = 0;
 
-//		if( !self::isAvailable() ) {
-//			throw new exception( 'Memcache is not available', __FILE__, __LINE__ );
-//		}
-	}
-	
+	/**
+	 * Определение работоспособности расширения
+	 * @return bool
+	 */
 	public static function isAvailable() {
 
 		try {
@@ -26,49 +29,73 @@ class MemCached extends Common {
 			if( self::$_memcache ) {
 				return true;
 			}
-			
+
 			self::$_memcache = new \MemCached;
 			$currentServers = self::$_memcache->getServerList();
 			if( empty( $currentServers ) ) {
 				self::$_memcache->addServers( array( array( '127.0.0.1', '11211', '10' ) ) );
 			}
-			return (bool) self::$_memcache->getVersion();
+			return (bool)self::$_memcache->getVersion();
 		} catch( \Difra\Exception $ex ) {
 			return false;
 		}
 	}
 
-	public function getInstance() {
-
-		static $_instance;
-		return $_instance ? $_instance : $_instance = new self;
-	}
-    
+	/**
+	 * Реализация получения данных из кэша
+	 * @param string $id
+	 * @param bool   $doNotTestCacheValidity
+	 *
+	 * @return mixed|null
+	 */
 	public function realGet( $id, $doNotTestCacheValidity = false ) {
-		
+
 		$data = @self::$_memcache->get( $id );
 		return self::$_serialize ? @unserialize( $data ) : $data;
 	}
-    
+
+	/**
+	 * Реализация определения существования ключа
+	 * @param string $id
+	 *
+	 * @return bool
+	 */
 	public function test( $id ) {
-		
-		$data = self::realGet( $id );
+
+		$data = $this->get( $id );
 		return !empty( $data );
 	}
-    
+
+	/**
+	 * Реализация сохранения данных в кэше
+	 * @param string $id
+	 * @param mixed  $data
+	 * @param bool   $specificLifetime
+	 *
+	 * @return bool
+	 */
 	public function realPut( $id, $data, $specificLifetime = false ) {
-		
+
 		return self::$_memcache->set( $id, self::$_serialize ? serialize( $data ) : $data, $specificLifetime !== false ? $specificLifetime : self::$_lifetime );
 	}
-	
+
+	/**
+	 * Реализация удаления данных из кэша
+	 * @param string $id
+	 *
+	 * @return bool
+	 */
 	public function realRemove( $id ) {
 
 		return @self::$_memcache->delete( $id );
 	}
 
+	/**
+	 * Проверка наличия автоматической подчистки кэша
+	 * @return bool
+	 */
 	public function isAutomaticCleaningAvailable() {
 
-		return false;
+		return true;
 	}
-
 }

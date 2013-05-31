@@ -2,8 +2,14 @@
 
 namespace Difra;
 
+/**
+ * Автоматическая подгрузка классов
+ * Class Autoloader
+ * @package Difra
+ */
 class Autoloader {
 
+	/** @var array Чёрный список классов */
 	static $bl = array( 'sqlite3' );
 
 	/**
@@ -34,10 +40,10 @@ class Autoloader {
 			// классы вида Plugins/Name ищем в plugins/name/lib/name.php
 			if( sizeof( $parts ) == 3 ) {
 				$parts = array();
-				$path  = DIR_PLUGINS . "$name/lib/$name";
+				$path = DIR_PLUGINS . "$name/lib/$name";
 			} else {
 				$parts = array_slice( $parts, 3 );
-				$path  = DIR_PLUGINS . "$name/lib/";
+				$path = DIR_PLUGINS . "$name/lib/";
 			}
 		} else {
 			$path = defined( 'DIR_FW' ) ? DIR_FW . 'lib/' : __DIR__ . '/';

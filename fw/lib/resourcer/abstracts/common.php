@@ -4,7 +4,25 @@ namespace Difra\Resourcer\Abstracts;
 
 use Difra;
 
+/**
+ * Абстрактный класс сборщика ресурсов
+ * Class Common
+ * @package Difra\Resourcer\Abstracts
+ */
 abstract class Common {
+
+	protected $type = null;
+	protected $printable = false;
+	protected $contentType = null;
+
+	/**
+	 * Основная функция — сборщик ресурса
+	 * @param string $instance
+	 *
+	 * @return mixed
+	 */
+	abstract protected function processData( $instance );
+
 
 	protected $resources = array();
 	const CACHE_TTL = 86400;
@@ -412,6 +430,12 @@ abstract class Common {
 		}
 	}
 
+	/**
+	 * Составляет список всех подходящих файлов
+	 * @param string $instance
+	 *
+	 * @return string[]
+	 */
 	public function getFiles( $instance ) {
 
 		$files = array();
@@ -428,7 +452,12 @@ abstract class Common {
 		return $files;
 	}
 
-	// TODO: это заглушка, надо переделать по-уму
+	/**
+	 * Определяет, нужно ли для инстанса включать папки ресурсов all
+	 * @param string $instance
+	 *
+	 * @return bool
+	 */
 	private function withAll( $instance ) {
 
 		$instances = Difra\Config::getInstance()->get( 'instances' );

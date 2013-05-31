@@ -2,6 +2,11 @@
 
 namespace Difra;
 
+/**
+ * Получение ajax-запросов, отправка ответов, отправка экшенов для Ajaxer.js
+ * Class Ajax
+ * @package Difra
+ */
 class Ajax {
 
 	public $isAjax = false;
@@ -18,7 +23,7 @@ class Ajax {
 
 		if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) {
 			$this->isAjax = true;
-			$parameters   = $this->getRequest();
+			$parameters = $this->getRequest();
 			if( empty( $parameters ) ) {
 				return;
 			}
@@ -32,8 +37,8 @@ class Ajax {
 				}
 			}
 		} elseif( isset( $_POST['_method'] ) and $_POST['_method'] == 'iframe' ) {
-			$this->isAjax     = true;
-			$this->isIframe   = true;
+			$this->isAjax = true;
+			$this->isIframe = true;
 			$this->parameters = $_POST;
 			unset( $this->parameters['method_'] );
 			if( !empty( $_FILES ) ) {
@@ -50,14 +55,14 @@ class Ajax {
 					}
 					if( isset( $files['name'] ) and is_array( $files['name'] ) ) {
 						$files2 = $files;
-						$files  = array();
+						$files = array();
 						foreach( $files2['name'] as $k2 => $v2 ) {
 							$files[] = array(
-								'name'     => $v2,
-								'type'     => $files2['type'][$k2],
+								'name' => $v2,
+								'type' => $files2['type'][$k2],
 								'tmp_name' => $files2['tmp_name'][$k2],
-								'error'    => $files2['error'][$k2],
-								'size'     => $files2['size'][$k2]
+								'error' => $files2['error'][$k2],
+								'size' => $files2['size'][$k2]
 							);
 						}
 					}
@@ -133,7 +138,6 @@ class Ajax {
 
 	/**
 	 * Получает данные от ajaxer
-	 *
 	 * @return array
 	 */
 	private function getRequest() {
@@ -172,7 +176,6 @@ class Ajax {
 
 	/**
 	 * Возвращает ответ в json для обработки на стороне клиента
-	 *
 	 * @return string
 	 */
 	public function getResponse() {
@@ -208,7 +211,6 @@ class Ajax {
 
 	/**
 	 * Возвращает true, если в action'ах есть действия с ошибками обработки формы
-	 *
 	 * @return bool
 	 */
 	public function hasProblem() {
@@ -222,7 +224,7 @@ class Ajax {
 	public function clearResponse() {
 
 		$this->response = array();
-		$this->problem  = false;
+		$this->problem = false;
 	}
 
 	/**
@@ -232,9 +234,9 @@ class Ajax {
 	 */
 	public function clean( $problem = false ) {
 
-		$this->actions  = array();
+		$this->actions = array();
 		$this->response = array();
-		$this->problem  = $problem;
+		$this->problem = $problem;
 	}
 
 	/**
@@ -246,9 +248,9 @@ class Ajax {
 	public function notify( $message ) {
 
 		$this->addAction( array(
-				       'action'  => 'notify',
+				       'action' => 'notify',
 				       'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
-				       'lang'    => array(
+				       'lang' => array(
 					       'close' => Locales::getInstance()->getXPath( 'notifications/close' )
 				       )
 				  ) );
@@ -263,9 +265,9 @@ class Ajax {
 	public function error( $message ) {
 
 		$this->addAction( array(
-				       'action'  => 'error',
+				       'action' => 'error',
 				       'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
-				       'lang'    => array(
+				       'lang' => array(
 					       'close' => Locales::getInstance()->getXPath( 'notifications/close' )
 				       )
 				  ) );
@@ -282,7 +284,7 @@ class Ajax {
 		$this->problem = true;
 		$this->addAction( array(
 				       'action' => 'require',
-				       'name'   => $name
+				       'name' => $name
 				  ) );
 	}
 
@@ -296,7 +298,7 @@ class Ajax {
 	public function invalid( $name, $message = null ) {
 
 		$this->problem = true;
-		$action        = array( 'action' => 'invalid', 'name' => $name );
+		$action = array( 'action' => 'invalid', 'name' => $name );
 		if( $message ) {
 			$action['message'] = $message;
 		}
@@ -314,9 +316,9 @@ class Ajax {
 	public function status( $name, $message, $class ) {
 
 		$this->addAction( array(
-				       'action'    => 'status',
-				       'name'      => $name,
-				       'message'   => $message,
+				       'action' => 'status',
+				       'name' => $name,
+				       'message' => $message,
 				       'classname' => $class
 				  ) );
 	}
@@ -331,7 +333,7 @@ class Ajax {
 
 		$this->addAction( array(
 				       'action' => 'redirect',
-				       'url'    => $url
+				       'url' => $url
 				  ) );
 	}
 
@@ -365,7 +367,7 @@ class Ajax {
 
 		$this->addAction( array(
 				       'action' => 'display',
-				       'html'   => $html
+				       'html' => $html
 				  ) );
 	}
 
@@ -381,7 +383,7 @@ class Ajax {
 		$this->addAction( array(
 				       'action' => 'load',
 				       'target' => $target,
-				       'html'   => $html
+				       'html' => $html
 				  ) );
 	}
 
@@ -415,15 +417,15 @@ class Ajax {
 		$action = Action::getInstance();
 		$this->addAction( array(
 				       'action' => 'display',
-				       'html'   =>
+				       'html' =>
 				       '<form action="/' . $action->getUri() . '" class="ajaxer">' .
-				       '<input type="hidden" name="confirm" value="1"/>' .
-				       '<div>' . $text . '</div>' .
-				       '<input type="submit" value="' . $action->controller->locale->getXPath( 'ajaxer/confirm-yes' )
-				       . '"/>' .
-				       '<input type="button" value="' . $action->controller->locale->getXPath( 'ajaxer/confirm-no' ) . '"
+					       '<input type="hidden" name="confirm" value="1"/>' .
+					       '<div>' . $text . '</div>' .
+					       '<input type="submit" value="' . $action->controller->locale->getXPath( 'ajaxer/confirm-yes' )
+					       . '"/>' .
+					       '<input type="button" value="' . $action->controller->locale->getXPath( 'ajaxer/confirm-no' ) . '"
 						onclick="ajaxer.close(this)"/>' .
-				       '</form>'
+					       '</form>'
 				  ) );
 	}
 }

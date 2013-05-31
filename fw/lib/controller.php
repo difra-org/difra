@@ -2,6 +2,11 @@
 
 namespace Difra;
 
+/**
+ * Реализация абстрактного контроллера
+ * Class Controller
+ * @package Difra
+ */
 abstract class Controller {
 
 	/** @var \Difra\View */
@@ -42,14 +47,14 @@ abstract class Controller {
 	final public function __construct() {
 
 		// загрузка основных классов
-		$this->view   = View::getInstance();
+		$this->view = View::getInstance();
 		$this->locale = Locales::getInstance();
 		$this->action = Action::getInstance();
-		$this->auth   = Auth::getInstance();
-		$this->ajax   = Ajax::getInstance();
+		$this->auth = Auth::getInstance();
+		$this->ajax = Ajax::getInstance();
 
 		// создание xml с данными
-		$this->xml      = new \DOMDocument;
+		$this->xml = new \DOMDocument;
 		$this->realRoot = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
 		$this->root = $this->realRoot->appendChild( $this->xml->createElement( 'content' ) );
 
@@ -89,7 +94,7 @@ abstract class Controller {
 			}
 			header( 'Content-Type: text/xml; charset="utf-8"' );
 			$this->xml->formatOutput = true;
-			$this->xml->encoding     = 'utf-8';
+			$this->xml->encoding = 'utf-8';
 			echo rawurldecode( $this->xml->saveXML() );
 			$this->view->rendered = true;
 		} elseif( !$this->view->rendered and $this->ajax->isAjax ) {
@@ -126,10 +131,10 @@ abstract class Controller {
 		$method = null;
 		if( $this->ajax->isAjax and $this->action->methodAjaxAuth and $this->auth->logged ) {
 			$this->isAjaxAction = true;
-			$method             = 'methodAjaxAuth';
+			$method = 'methodAjaxAuth';
 		} elseif( $this->ajax->isAjax and $this->action->methodAjax ) {
 			$this->isAjaxAction = true;
-			$method             = 'methodAjax';
+			$method = 'methodAjax';
 		} elseif( $this->action->methodAuth and $this->auth->logged ) {
 			$method = 'methodAuth';
 		} elseif( $this->action->method ) {
@@ -150,8 +155,8 @@ abstract class Controller {
 	 */
 	private function callAction() {
 
-		$method           = $this->method;
-		$actionMethod     = $this->action->$method;
+		$method = $this->method;
+		$actionMethod = $this->action->$method;
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
 
@@ -174,7 +179,7 @@ abstract class Controller {
 		// получаем значения параметров
 		$callParameters = array();
 		foreach( $actionParameters as $parameter ) {
-			$name  = $parameter->getName();
+			$name = $parameter->getName();
 			$class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
 			switch( call_user_func( array( "$class", "getSource" ) ) ) {
 			case 'query':
@@ -197,8 +202,8 @@ abstract class Controller {
 					array_shift( $namedParameters );
 				} else {
 					if( !empty( $this->action->parameters ) and ( !$parameter->isOptional() or
-										      empty( $namedParameters ) or
-										      $this->action->parameters[0] != $namedParameters[0] )
+						empty( $namedParameters ) or
+						$this->action->parameters[0] != $namedParameters[0] )
 					) {
 						if( !call_user_func( array( "$class", 'verify' ), $this->action->parameters[0] ) ) {
 							$this->view->httpError( 404 );
@@ -233,6 +238,11 @@ abstract class Controller {
 		}
 	}
 
+	/**
+	 * Заполнение XML всевозможными данными для дальнейшего рендера шаблона
+	 *
+	 * @param null $instance
+	 */
 	public function fillXML( $instance = null ) {
 
 		Debugger::addLine( 'Filling XML data for render: Started' );
@@ -250,19 +260,19 @@ abstract class Controller {
 		Site::getInstance()->getUserAgentXML( $this->realRoot );
 		// ajax flag
 		$this->realRoot->setAttribute( 'ajax',
-					       ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-									  $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
-						       : '0' );
+			( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+				$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
+				: '0' );
 		$this->realRoot->setAttribute( 'switcher',
-					       ( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-								   $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
+			( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+				$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
 		// build number
 		$this->realRoot->setAttribute( 'build', Site::getInstance()->getBuild() );
 		// date
 		/** @var $dateNode \DOMElement */
-		$dateNode   = $this->realRoot->appendChild( $this->xml->createElement( 'date' ) );
+		$dateNode = $this->realRoot->appendChild( $this->xml->createElement( 'date' ) );
 		$dateFields = 'deAamBbYycxHMS';
-		$t          = time();
+		$t = time();
 		for( $i = 0; $i < strlen( $dateFields ); $i++ ) {
 			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
 		}
@@ -294,7 +304,6 @@ abstract class Controller {
 
 	/**
 	 * Функция для проверки, что URL был вызван не с «левого» хоста
-	 *
 	 * @throws Exception
 	 */
 	public function checkReferer() {

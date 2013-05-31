@@ -2,12 +2,20 @@
 
 namespace Difra;
 
+/**
+ * Загрузка и сохранение конфигурации проекта
+ * Class Config
+ *
+ * @package Difra
+ */
 class Config {
 
-	/** @var array */
+	/** @var array Текущий конфиг */
 	private $config = null;
+	/** @var bool Флаг изменений в конфиге */
 	private $modified = false;
 
+	/** @var array Конфиг по умолчанию */
 	private $defaultConfig = array(
 		'instances' => array(
 			'main' => array(
@@ -46,37 +54,39 @@ class Config {
 		if( !is_null( $this->config ) ) {
 			return;
 		}
+		$cache = Cache::getInstance();
+		if( $c = $cache->get( 'config' ) and !Debugger::getInstance()->isEnabled() ) {
+			$this->config = $c;
+			return;
+		}
+		$this->config = $this->loadFileConfigs();
 		try {
-			$cache = Cache::getInstance();
-			if( $c = $cache->get( 'config' ) and !Debugger::getInstance()->isEnabled() ) {
-				$this->config = $c;
-				return;
-			}
-			$this->config = $this->loadFileConfigs();
-			$db           = MySQL::getInstance();
-			$conf         = $db->fetchOne( 'SELECT `config` FROM `config` LIMIT 1' );
-			$dbconf       = @unserialize( $conf );
+			$db = MySQL::getInstance();
+			$conf = $db->fetchOne( 'SELECT `config` FROM `config` LIMIT 1' );
+			$dbconf = @unserialize( $conf );
 			if( is_array( $dbconf ) ) {
 				$this->config = $this->merge( $this->config, $dbconf );
 			}
 			$cache->put( 'config', $this->config );
-		} catch( Exception $e ) {
-			$this->config = array();
+
+		} catch( Exception $ex ) {
 		}
 	}
 
+	/**
+	 * Слияние двух массивов конфигураций
+	 * @param array $a1
+	 * @param array $a2
+	 * @return mixed
+	 */
 	function merge( $a1, $a2 ) {
 
 		foreach( $a2 as $k => $v ) {
-			if( array_key_exists( $k, $a1 ) && is_array( $v ) )
-				$a1[$k] = $this->merge( $a1[$k], $a2[$k] );
-
-			else
-				$a1[$k] = $v;
+			$a1[$k] = $v;
 		}
-
 		return $a1;
 	}
+
 	/**
 	 * Получение конфига из config.php
 	 *
@@ -92,7 +102,7 @@ class Config {
 				$newConfig = $this->merge( $newConfig, $conf2 );
 			}
 			if( is_file( DIR_SITE . '/config.php' ) ) {
-				$conf2         = include( DIR_SITE . '/config.php' );
+				$conf2 = include( DIR_SITE . '/config.php' );
 				$newConfig = $this->merge( $newConfig, $conf2 );
 			}
 		}
@@ -114,7 +124,6 @@ class Config {
 	 *
 	 * @param array $a1
 	 * @param array $a2
-	 *
 	 * @return array
 	 */
 	private function subDiff( &$a1, &$a2 ) {
@@ -129,10 +138,15 @@ class Config {
 			} elseif( is_array( $v ) ) {
 				$d = $this->subDiff( $a1[$k], $a2[$k] );
 				if( !empty( $d ) ) {
-					$diff[$k] = $d;
+					$diff[$k] = $a2[$k];
 				}
 			} elseif( $a1[$k] !== $v ) {
 				$diff[$k] = $v;
+			}
+		}
+		foreach( $a1 as $k => $v ) {
+			if( !isset( $a2[$k] ) ) {
+				$diff[$k] = null;
 			}
 		}
 		return $diff;
@@ -147,14 +161,16 @@ class Config {
 		if( !$this->modified ) {
 			return true;
 		}
-		$db = MySQL::getInstance();
-		if( !$db->isConnected() ) {
+		$diff = $this->diff();
+		try {
+			$db = MySQL::getInstance();
+			$db->query( 'DELETE FROM `config`' );
+			$db->query( "INSERT INTO `config` SET `config`='" . $db->escape( serialize( $diff ) ) . "'" );
+			Cache::getInstance()->remove( 'config' );
+		} catch( Exception $e ) {
+			$e->notify();
 			return false;
 		}
-		$db->query( 'DELETE FROM `config`' );
-		$diff = $this->diff();
-		$db->query( "INSERT INTO `config` SET `config`='" . $db->escape( serialize( $diff ) ) . "'" );
-		Cache::getInstance()->remove( 'config' );
 		$this->modified = false;
 		return true;
 	}
@@ -162,7 +178,6 @@ class Config {
 	/**
 	 * Получение значение настройки
 	 * @param string $key
-	 *
 	 * @return mixed
 	 */
 	public function get( $key ) {
@@ -180,14 +195,13 @@ class Config {
 
 		$this->load();
 		$this->config[$key] = $value;
-		$this->modified     = true;
+		$this->modified = true;
 	}
 
 	/**
 	 * Получение значения элемента массива настроек
 	 * @param string $key
 	 * @param string $arrayKey
-	 *
 	 * @return mixed
 	 */
 	public function getValue( $key, $arrayKey ) {
@@ -209,7 +223,7 @@ class Config {
 			$this->config[$key] = array();
 		}
 		$this->config[$key][$arrayKey] = $arrayValue;
-		$this->modified                = true;
+		$this->modified = true;
 	}
 
 	/**
@@ -232,27 +246,14 @@ class Config {
 		return $this->diff();
 	}
 
+	/**
+	 * Возвращает разницу между текущей конфигурацией и конфигурацией, сохранённой в файлах config.php в виде php-массива
+	 *
+	 * @return mixed
+	 */
 	public function getTxtDiff() {
 
-		$diff = $this->getDiff();
-		$txtDiff = array();
-		$this->txtDiff( $txtDiff, $diff );
-		$d2 = array();
-		foreach( $txtDiff as $k => $v ) {
-			$d2[] = "$k => $v";
-		}
-		return implode( "\n", $d2 );
-	}
-
-	private function txtDiff( &$t, &$d, $pref = '' ) {
-
-		if( !is_array( $d ) ) {
-			$t[$pref] = $d;
-		} else {
-			foreach( $d as $k => $v ) {
-				$this->txtDiff( $t, $v, $pref ? "$pref/$k" : $k );
-			}
-		}
+		return var_export( $this->getDiff(), true );
 	}
 
 	/**

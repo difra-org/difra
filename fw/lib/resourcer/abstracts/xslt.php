@@ -1,6 +1,7 @@
 <?php
 
 namespace Difra\Resourcer\Abstracts;
+
 use Difra;
 
 abstract class XSLT extends Common {
@@ -17,8 +18,10 @@ abstract class XSLT extends Common {
 					%symbol;
 					%special;
 				]>
-				<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
-					<xsl:output method="html" encoding="utf-8" omit-xml-declaration="yes" indent="yes"/>
+				<xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
+					<xsl:output method="html" encoding="utf-8" omit-xml-declaration="yes"/>
+					<xsl:param name="locale" select="/root/locale"/>
+					<xsl:template match="/root/locale"/>
 				</xsl:stylesheet>';
 		$dom = new \DOMDocument();
 		$dom->loadXML( $template );
@@ -52,7 +55,11 @@ abstract class XSLT extends Common {
 							continue;
 						}
 						$usedNames[] = $n;
+					} else {
+						continue;
 					}
+				} elseif( $child->nodeName == 'xsl:output' ) {
+					continue;
 				}
 				$dom->documentElement->appendChild( $dom->importNode( $child, true ) );
 			}
@@ -60,25 +67,4 @@ abstract class XSLT extends Common {
 		return $dom->saveXML();
 	}
 
-	/*
-	// функция, рекурсивно раскрывающая <xsl:include> в шаблоне.
-	private function _extendXSL( $text, $path = '/', $depth = 1 ) {
-
-		if( $depth > 10 ) {
-			throw new \Difra\Exception( 'Too long XSLT includes recursion depth.' );
-		}
-		while( true ) {
-			preg_match( '/(.*?)<xsl:include href="(.*?)"\/\>(.*)/is', $text, $matches );
-			if( empty( $matches ) ) {
-				return $text;
-			}
-			preg_match( '/<xsl\:stylesheet.*?\>(.*)<\/xsl\:stylesheet\>/is', file_get_contents( $matches[2]{0} != '/' ? "$path/{$matches[2]}"
-															    : $matches[2] ), $newMatches );
-			if( empty( $newMatches ) ) {
-				continue;
-			}
-			$text = $matches[1] . $this->_extendXSL( $newMatches[1], dirname( $matches[2] ), $depth + 1 ) . $matches[3];
-		}
-	}
-	*/
 }

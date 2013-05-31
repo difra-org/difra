@@ -2,6 +2,10 @@
 
 namespace Difra;
 
+/**
+ * Class Events
+ * @package Difra
+ */
 class Events {
 
 	private $types = array(
@@ -73,10 +77,10 @@ class Events {
 	private function add( $type, $class, $method = false ) {
 
 		if( !in_array( $type, $this->types ) ) {
-			throw new \Difra\Exception( 'Invalid event type: ' . $type );
+			throw new Exception( 'Invalid event type: ' . $type );
 		}
 		$this->events[$type][] = array(
-			'class'  => $class,
+			'class' => $class,
 			'method' => $method
 		);
 	}
@@ -85,8 +89,6 @@ class Events {
 	 * Вызывает все события в нужном порядке
 	 */
 	public function run() {
-
-		Debugger::$startTime = microtime( true );
 
 		Site::getInstance(); // инициализация сайта
 		foreach( $this->events as $type => $foo ) {
@@ -105,14 +107,15 @@ class Events {
 	public function start( $event ) {
 
 		$handlers = $this->events[$event];
-		if( !empty( $handlers ) ) {
-			foreach( $handlers as $handler ) {
-				Debugger::addEventLine( 'Event ' . $event . ' handler ' . $handler['class'] . '->' . ( $handler['method']
-					? $handler['method'] : 'getInstance' ) . ' started' );
-				$inst = call_user_func( array( $handler['class'], 'getInstance' ) );
-				if( $handler['method'] ) {
-					$inst->{$handler['method']}();
-				}
+		if( empty( $handlers ) ) {
+			return;
+		}
+		foreach( $handlers as $handler ) {
+			Debugger::addEventLine( 'Handler for ' . $event . ': ' . $handler['class'] . '->' . ( $handler['method']
+				? $handler['method'] : 'getInstance' ) . ' started' );
+			$inst = call_user_func( array( $handler['class'], 'getInstance' ) );
+			if( $handler['method'] ) {
+				$inst->{$handler['method']}();
 			}
 		}
 	}

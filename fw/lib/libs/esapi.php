@@ -4,6 +4,12 @@ namespace Difra\Libs;
 
 include_once( __DIR__ . '/esapi/trunk/src/ESAPI.php' );
 
+/**
+ * Class ESAPI
+ *
+ * @package Difra\Libs
+ * @deprecated
+ */
 class ESAPI {
 
 	/**

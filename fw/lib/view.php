@@ -2,12 +2,24 @@
 
 namespace Difra;
 
+/**
+ * Class View
+ * @package Difra
+ */
 class View {
 
+	/** @var bool */
 	public $error = false;
+	/** @var bool|string */
 	public $redirect = false;
+	/** @var bool */
 	public $rendered = false;
+	/**
+	 * @var bool|string
+	 * @deprecated
+	 */
 	public $template = false;
+	/** @var string */
 	public $instance = 'main';
 
 	/**
@@ -33,7 +45,7 @@ class View {
 		if( $this->redirect or $this->error ) {
 			return;
 		}
-		$errors = include ( 'view/http_errors.php' );
+		$errors = include( 'view/http_errors.php' );
 
 		if( isset( $errors[$err] ) ) {
 			$error = $errors[$err];
@@ -80,9 +92,9 @@ ErrorPage
 	}
 
 	/**
-	 * @param \DOMDocument  $xml
-	 * @param bool|instance $specificInstance
-	 * @param bool          $dontEcho
+	 * @param \DOMDocument $xml
+	 * @param bool|string  $specificInstance
+	 * @param bool         $dontEcho
 	 *
 	 * @throws exception
 	 * @internal param bool|string $instance
@@ -90,7 +102,6 @@ ErrorPage
 	 */
 	public function render( &$xml, $specificInstance = false, $dontEcho = false ) {
 
-		Debugger::addLine( 'Render start' );
 		if( $this->error or $this->redirect ) {
 			return false;
 		}
@@ -103,13 +114,14 @@ ErrorPage
 		} else {
 			$instance = 'main';
 		}
+		Debugger::addLine( "Render start (instance '$instance')" );
 
 		if( !$resource = Resourcer::getInstance( 'xslt' )->compile( $instance ) ) {
 			throw new exception( "XSLT resource not found" );
 		}
 
-		$xslDom                     = new \DomDocument;
-		$xslDom->resolveExternals   = true;
+		$xslDom = new \DomDocument;
+		$xslDom->resolveExternals = true;
 		$xslDom->substituteEntities = true;
 		if( !$xslDom->loadXML( $resource ) ) {
 			throw new exception( "XSLT load problem for instance '$instance'" );
@@ -123,20 +135,23 @@ ErrorPage
 		}
 
 		// transform template
-		if( $html = $xslProc->transformToXml( $xml ) ) {
+		if( $html = $xslProc->transformToDoc( $xml ) ) {
+
+			$html = $this->normalize( $html );
+
 			if( $dontEcho ) {
 				return $html;
 			}
+
 			echo $html;
-			$this->rendered = true;
 			if( Debugger::getInstance()->isEnabled() ) {
-				echo '<!-- Page rendered in ' . ( microtime( true ) - Debugger::$startTime ) . ' seconds -->';
+				echo '<!-- Page rendered in ' . Debugger::getTimer() . ' seconds -->';
 			}
 			if( function_exists( 'fastcgi_finish_request' ) ) {
 				fastcgi_finish_request();
 			}
 		} else {
-			$errormsg = error_get_last();
+			$errormsg = libxml_get_errors(); //error_get_last();
 			throw new exception( $errormsg ? $errormsg['message'] : "Can't render templates" );
 		}
 		return true;
@@ -166,5 +181,15 @@ ErrorPage
 			// если время на веб-сервере и время на сервере, выполняющем скрипт, отличаются
 			header( 'X-Accel-Expires: ' . ( $ttl ? $ttl : 'off' ) );
 		}
+	}
+
+	public static function normalize( $htmlDoc ) {
+
+		$normalizerXml = include( 'view/normalizer.php' );
+		$normalizerDoc = new \DOMDocument();
+		$normalizerDoc->loadXML( $normalizerXml );
+		$normalizerProc = new \XSLTProcessor();
+		$normalizerProc->importStylesheet( $normalizerDoc );
+		return $normalizerProc->transformToXML( $htmlDoc );
 	}
 }

@@ -4,7 +4,6 @@ namespace Difra;
 
 /**
  * @deprecated
- * TODO: переносим настройки дополнительных полей в настройки соответствующих плагинов
  */
 class Additionals {
 
@@ -22,14 +21,14 @@ class Additionals {
 		return true;
 	}
 
-	const FIELD_OK    = 'field_ok';
+	const FIELD_OK = 'field_ok';
 	const FIELD_EMPTY = 'field_empty';
-	const FIELD_DUPE  = 'field_dupe';
-	const FIELD_BAD   = 'field_bad';
+	const FIELD_DUPE = 'field_dupe';
+	const FIELD_BAD = 'field_bad';
 
 	public static function getStatus( $module, $data ) {
 
-		$err  = array();
+		$err = array();
 		$conf = Config::getInstance()->get( $module );
 		if( !$conf or !isset( $conf['fields'] ) or empty( $conf['fields'] ) ) {
 			return $err;
@@ -44,7 +43,7 @@ class Additionals {
 				$flags = array( $flags );
 			}
 			$value = !empty( $data[$field] ) ? trim( $data[$field] ) : '';
-			$db    = MySQL::getInstance();
+			$db = MySQL::getInstance();
 			foreach( $flags as $flag ) {
 				switch( $flag ) {
 				case 'required':
@@ -59,7 +58,7 @@ class Additionals {
 					}
 					$used =
 						$db->fetchOne( "SELECT `id` FROM `{$module}_fields` WHERE `name`='" . $db->escape( $field )
-							       . "' AND `value`='" . $db->escape( trim( $data[$field] ) ) . "'" );
+							. "' AND `value`='" . $db->escape( trim( $data[$field] ) ) . "'" );
 					if( $used ) {
 						$res = static::FIELD_DUPE;
 					}
@@ -91,8 +90,8 @@ class Additionals {
 			if( !empty( $data[$field] ) ) {
 				$db->query(
 					"REPLACE INTO `{$module}_fields` (`id`,`name`,`value`) VALUES ('" . $db->escape( $id ) . "','"
-					. $db->escape( $field )
-					. "','" . $db->escape( $data[$field] ) . "')" );
+						. $db->escape( $field )
+						. "','" . $db->escape( $data[$field] ) . "')" );
 			}
 		}
 	}
@@ -100,7 +99,7 @@ class Additionals {
 	// сохраняет все дополнительные поля, без ограничений конфига
 	public static function saveAllAdditionals( $module, $id, $data ) {
 
-		$db    = MySQL::getInstance();
+		$db = MySQL::getInstance();
 		$query = array();
 		$db->query( "DELETE FROM `{$module}_fields` WHERE `id`='" . intval( $id ) . "'" );
 		foreach( $data as $key => $value ) {
@@ -114,7 +113,6 @@ class Additionals {
 
 	/**
 	 * Additionals::getAdditionals()
-	 *
 	 * @desc          Возвращает массив с дополнительными полями
 	 *
 	 * @param string  $module
@@ -124,9 +122,9 @@ class Additionals {
 	 */
 	public static function getAdditionals( $module, $id ) {
 
-		$db     = MySQL::getInstance();
-		$query  = "SELECT `name`, `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "'";
-		$res    = $db->fetch( $query );
+		$db = MySQL::getInstance();
+		$query = "SELECT `name`, `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "'";
+		$res = $db->fetch( $query );
 		$fields = array();
 		foreach( $res as $data ) {
 			$fields[$data['name']] = $data['value'];
@@ -136,7 +134,6 @@ class Additionals {
 
 	/**
 	 * Additionals::getAdditionalsXml()
-	 *
 	 * @desc Добавляет xml с дополнительными полями
 	 *
 	 * @param string               $module
@@ -163,7 +160,7 @@ class Additionals {
 		$id =
 			$db->fetchOne(
 				"SELECT `id` FROM `{$module}_fields` WHERE `name`='" . $db->escape( $name ) . "' AND `value`='"
-				. $db->escape( $value ) . "'" );
+					. $db->escape( $value ) . "'" );
 		return $id ? $id : null;
 	}
 
@@ -173,13 +170,12 @@ class Additionals {
 		$id =
 			$db->fetchOne(
 				"SELECT `value` FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='"
-				. $db->escape( $name ) . "'" );
+					. $db->escape( $name ) . "'" );
 		return $id ? $id : null;
 	}
 
 	/**
 	 * Additionals::unSetAdditionalField()
-	 *
 	 * @desc Удаляет дополнительное поле
 	 *
 	 * @param string  $module
@@ -198,7 +194,7 @@ class Additionals {
 			$db = MySQL::getInstance();
 			$db->query(
 				"DELETE FROM `{$module}_fields` WHERE `id`='" . $db->escape( $id ) . "' AND `name`='" . $db->escape( $name )
-				. "'" );
+					. "'" );
 		}
 	}
 }

@@ -1,22 +1,22 @@
 <?php
 
 namespace Difra\Cache;
+
 use Difra;
 
+/**
+ * Реализация кэширования через расширение xcache
+ * Class XCache
+ * @package Difra\Cache
+ */
 class XCache extends Common {
 
 	public $adapter = 'XCache';
 
 	/**
-	 * Constructor
+	 * Определяет работоспособность расширения
+	 * @return bool
 	 */
-	public function __construct() {
-
-		if( !self::isAvailable() ) {
-			throw new Difra\Exception( 'XCache is not available!' );
-		}
-	}
-
 	public static function isAvailable() {
 
 		try {
@@ -34,8 +34,7 @@ class XCache extends Common {
 	}
 
 	/**
-	 * Test if a cache record is available for the given id and (if yes) return it (false else)
-	 *
+	 * Получение данных из кэша
 	 * @param string  $id
 	 * @param boolean $doNotTestCacheValidity
 	 *
@@ -50,8 +49,7 @@ class XCache extends Common {
 	}
 
 	/**
-	 * Test if a cache record is available or not (for the given id)
-	 *
+	 * Проверка существования ключа
 	 * @param string $id cache id
 	 *
 	 * @return boolean
@@ -62,8 +60,7 @@ class XCache extends Common {
 	}
 
 	/**
-	 * Save some string datas into a cache record
-	 *
+	 * Сохранение данных в кэше
 	 * @param string   $id
 	 * @param string   $data
 	 * @param bool|int $specificLifetime
@@ -76,8 +73,7 @@ class XCache extends Common {
 	}
 
 	/**
-	 * Remove a cache record
-	 *
+	 * Удаление данных
 	 * @param string $id
 	 *
 	 * @return boolean
@@ -88,8 +84,7 @@ class XCache extends Common {
 	}
 
 	/**
-	 * Return true if the automatic cleaning is available for the backend
-	 *
+	 * Определяет наличие автоматической подчистки кэша
 	 * @return boolean
 	 */
 	public function isAutomaticCleaningAvailable() {

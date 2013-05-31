@@ -4,10 +4,17 @@ namespace Difra\Cache;
 
 use Difra;
 
+/**
+ * Абстрактный класс для реализаций кэширования
+ * Class Common
+ * @package Difra\Cache
+ */
 abstract class Common {
 
-	// is class available?
-	// abstracts static public function isAvailable();
+	//abstract static public function isAvailable();
+
+	/** @var string */
+	public $adapter = null;
 
 	/**
 	 * Получить данные из бэкэнда
@@ -44,7 +51,6 @@ abstract class Common {
 
 	/**
 	 * Возвращает true, если бэкэнд поддерживает автоматическое удаление старых данных
-	 *
 	 * @return bool
 	 */
 	abstract public function isAutomaticCleaningAvailable();
@@ -84,7 +90,7 @@ abstract class Common {
 
 		$data = array(
 			'expires' => time() + $ttl,
-			'data'    => $data
+			'data' => $data
 		);
 		$this->realPut( Difra\Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
 	}

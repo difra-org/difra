@@ -50,7 +50,7 @@ class Table extends Common {
 		array_shift( $chunks );
 		array_shift( $chunks );
 		// получаем имя таблицы
-		$this->name              = self::chunk2name( array_shift( $chunks ) );
+		$this->name = self::chunk2name( array_shift( $chunks ) );
 		self::$list[$this->name] = $this;
 		// получаем строки с определениями столбцов и ключей
 		$definitions = self::getDefinitions( $chunks );
@@ -96,8 +96,8 @@ class Table extends Common {
 		}
 		array_shift( $chunks );
 		$lines = array();
-		$line  = array();
-		$d     = 0;
+		$line = array();
+		$d = 0;
 		while( !empty( $chunks ) ) {
 			$a = array_shift( $chunks );
 			if( $a == '(' ) {
@@ -105,7 +105,7 @@ class Table extends Common {
 			} elseif( $d == 0 and $a == ')' ) {
 				if( !empty( $line ) ) {
 					$lines[] = $line;
-					$line    = array();
+					$line = array();
 				}
 				break;
 			} elseif( $a == ')' ) {
@@ -113,7 +113,7 @@ class Table extends Common {
 			} elseif( $d == 0 and $a == ',' ) {
 				if( !empty( $line ) ) {
 					$lines[] = $line;
-					$line    = array();
+					$line = array();
 				}
 				continue;
 			}
@@ -133,20 +133,35 @@ class Table extends Common {
 		/** @var $statusNode \DOMElement */
 		$statusNode = $node->appendChild( $node->ownerDocument->createElement( 'table' ) );
 		$statusNode->setAttribute( 'name', $this->name );
+		if( empty( $this->definitions ) ) {
+			$statusNode->setAttribute( 'nodef', 1 );
+			return;
+		}
+		if( empty( $this->goal ) ) {
+			$statusNode->setAttribute( 'nogoal', 1 );
+			return;
+		}
 		$current = array();
-		if( !empty( $this->definitions ) ) {
-			foreach( $this->definitions as $def ) {
-				$current[] = \Difra\MySQL\Parser::def2string( $def );
-			}
+		foreach( $this->definitions as $def ) {
+			$current[] = \Difra\MySQL\Parser::def2string( $def );
 		}
 		$goal = array();
-		if( !empty( $this->goal ) ) {
-			foreach( $this->goal as $g ) {
-				$goal[] = \Difra\MySQL\Parser::def2string( $g );
-			}
+		foreach( $this->goal as $g ) {
+			$goal[] = \Difra\MySQL\Parser::def2string( $g );
 		}
 		$diff = \Difra\Libs\Diff::diffArrays( $current, $goal );
 		if( is_array( $diff ) and !empty( $diff ) ) {
+			$haveDiff = false;
+			foreach( $diff as $d ) {
+				if( $d['sign'] != '=' ) {
+					$haveDiff = true;
+					break;
+				}
+			}
+			if( !$haveDiff ) {
+				return;
+			}
+			$statusNode->setAttribute( 'diff', 1 );
 			foreach( $diff as $d ) {
 				/** @var $diffNode \DOMElement */
 				$diffNode = $statusNode->appendChild( $node->ownerDocument->createElement( 'diff' ) );

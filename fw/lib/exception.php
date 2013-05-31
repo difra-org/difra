@@ -2,11 +2,15 @@
 
 namespace Difra;
 
+/**
+ * Class Exception
+ * @package Difra
+ */
 class Exception extends \exception {
 
 	/**
-	 * Задумка следующая: в случае, если ловим исключение, которое мы не должны были поймать,
-	 * вызываем $ex->notify() и на почту приходит письмо с информацией об ошибке.
+	 * Использование: в случае, если ловим исключение, которое мы не должны были поймать,
+	 * вызываем $ex->notify() и на почту errors@a-jam.ru отправляется письмо с информацией об ошибке.
 	 */
 	public function notify() {
 
@@ -20,7 +24,7 @@ class Exception extends \exception {
 	 */
 	static public function notifyObj( $exception = null ) {
 
-		if( !Debugger::getInstance()->isEnabled() ) {
+		if( !Debugger::getInstance()->isConsoleEnabled() ) {
 			$date   = date( 'r' );
 			$server = print_r( $_SERVER, true );
 			$post   = print_r( $_POST, true );

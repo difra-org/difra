@@ -2,6 +2,11 @@
 
 namespace Difra\Cache;
 
+/**
+ * Реализация отсутствия кэша
+ * Class None
+ * @package Difra\Cache
+ */
 class None extends Common {
 
 	public $adapter = 'None';
@@ -16,14 +21,17 @@ class None extends Common {
 		}
 	}
 
+	/**
+	 * Определение наличия
+	 * @return bool
+	 */
 	public static function isAvailable() {
 
 		return true;
 	}
 
 	/**
-	 * Test if a cache record is available for the given id and (if yes) return it (false else)
-	 *
+	 * Получение данных
 	 * @param string  $id
 	 * @param boolean $doNotTestCacheValidity
 	 *
@@ -35,8 +43,7 @@ class None extends Common {
 	}
 
 	/**
-	 * Test if a cache record is available or not (for the given id)
-	 *
+	 * Проверка существования ключа
 	 * @param string $id cache id
 	 *
 	 * @return boolean
@@ -47,8 +54,7 @@ class None extends Common {
 	}
 
 	/**
-	 * Save some string datas into a cache record
-	 *
+	 * Сохранение данных
 	 * @param string   $id
 	 * @param string   $data
 	 * @param bool|int $specificLifetime
@@ -61,8 +67,7 @@ class None extends Common {
 	}
 
 	/**
-	 * Remove a cache record
-	 *
+	 * Удаление данных
 	 * @param string $id
 	 *
 	 * @return boolean
@@ -73,8 +78,7 @@ class None extends Common {
 	}
 
 	/**
-	 * Return true if the automatic cleaning is available for the backend
-	 *
+	 * Наличие автоматической подчистки кэша
 	 * @return boolean
 	 */
 	public function isAutomaticCleaningAvailable() {

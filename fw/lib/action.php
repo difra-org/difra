@@ -2,6 +2,11 @@
 
 namespace Difra;
 
+/**
+ * Определение нужного контроллера и метода (экшена), запуск выполнения контроллера
+ * Class Action
+ * @package Difra
+ */
 class Action {
 
 	/** @var string[] */
@@ -41,7 +46,6 @@ class Action {
 
 	/**
 	 * Ищет контроллер и action для текущего URI (запускается из события)
-	 *
 	 * @throws exception
 	 */
 	public function find() {
@@ -51,7 +55,7 @@ class Action {
 		}
 
 		// try to load cached data for this url
-		$uri      = $this->getUri();
+		$uri = $this->getUri();
 		$cacheKey = 'action:uri:' . $uri;
 		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $cacheKey ) ) {
 			switch( $data['result'] ) {
@@ -86,7 +90,7 @@ class Action {
 		}
 
 		// get possible controller dirs
-		$path  = '';
+		$path = '';
 		$depth = $dirDepth = 0;
 
 		$controllerDirs = $dirs = $this->getControllerPaths();
@@ -97,7 +101,7 @@ class Action {
 			foreach( $controllerDirs as $nextDir ) {
 				if( is_dir( $nextDir . $path ) ) {
 					$newDirs[] = $nextDir . $path;
-					$dirDepth  = $depth;
+					$dirDepth = $depth;
 				}
 			}
 			if( empty( $newDirs ) ) {
@@ -107,12 +111,12 @@ class Action {
 		}
 
 		// find controller
-		$cname      = '';
+		$cname = '';
 		$controller = null;
 		if( isset( $parts[$dirDepth] ) ) {
 			foreach( $dirs as $tmpDir ) {
 				if( is_file( $tmpDir . $parts[$dirDepth] . '.php' ) ) {
-					$cname      = $parts[$dirDepth];
+					$cname = $parts[$dirDepth];
 					$controller = "{$tmpDir}{$cname}.php";
 					break;
 				}
@@ -121,7 +125,7 @@ class Action {
 		if( !$controller ) {
 			foreach( $dirs as $tmpDir ) {
 				if( is_file( $tmpDir . 'index.php' ) ) {
-					$cname      = 'index';
+					$cname = 'index';
 					$controller = "{$tmpDir}index.php";
 					break;
 				}
@@ -146,7 +150,7 @@ class Action {
 		$className = $className . ucfirst( $cname ) . 'Controller';
 
 		// include controller
-		$match['controller']        = $controller;
+		$match['controller'] = $controller;
 		$match['vars']['className'] = $className;
 		include_once( $controller );
 		if( !class_exists( $className ) ) {
@@ -154,13 +158,13 @@ class Action {
 		}
 
 		// detect action method
-		$methodName  = false;
+		$methodName = false;
 		$methodNames = isset( $parts[$dirDepth] ) ? array( $parts[$dirDepth], 'index' ) : array( 'index' );
 		foreach( $methodNames as $methodTmp ) {
 			foreach( $this->methodTypes as $methodType ) {
 				if( method_exists( $className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
-					$methodName       = $methodTmp;
-					$methodVar        = "method{$methodType[0]}{$methodType[1]}";
+					$methodName = $methodTmp;
+					$methodVar = "method{$methodType[0]}{$methodType[1]}";
 					$this->$methodVar = $match['vars'][$methodVar] = $m;
 				}
 			}
@@ -172,9 +176,9 @@ class Action {
 		$parts = array_slice( $parts, $dirDepth );
 
 		// cache data for this url
-		$this->parameters            = $parts;
+		$this->parameters = $parts;
 		$match['vars']['parameters'] = $this->parameters;
-		$match['result']             = 'action';
+		$match['result'] = 'action';
 		Cache::getInstance()->put( $cacheKey, $match, 300 );
 		$this->className = $className;
 		Debugger::addLine( "Selected controller $className from $controller" );
