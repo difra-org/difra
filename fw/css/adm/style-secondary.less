@@ -1,0 +1,48 @@
+.header-table {
+	border: none;
+	h1, h2, h3, h4, h5, h6 {
+		margin: 0;
+	}
+	td, th {
+		border: none;
+		padding: 0 8px 0 0;
+	}
+}
+
+.alphabet-sort {
+	th {
+		font-weight: normal;
+		vertical-align: top;
+		text-align: left;
+	}
+	&.two-column th {
+		width: 50%;
+	}
+	&.three-column th {
+		width: 33%;
+	}
+	&.four-column th {
+		width: 25%;
+	}
+	span {
+		.button;
+		float: left;
+		background-color: @color-grey;
+		margin-bottom: 6px;
+		padding: 0;
+		width: 25px;
+		text-align: center;
+	}
+	ul {
+		padding: 0 0 0 30px;
+		margin: 0px;
+		li {
+			.button;
+			display: inline-block;
+			margin: 0 0 6px 0;
+			background-color: @color-white;
+			.border-box();
+		}
+	}
+}
+
