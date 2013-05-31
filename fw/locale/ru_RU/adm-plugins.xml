@@ -1,6 +1,7 @@
 <locale>
 	<adm>
 		<plugins>
+			<title>Плагины</title>
 			<no-plugins>Плагины не найдены.</no-plugins>
 			<name>Плагин</name>
 			<description>Описание</description>

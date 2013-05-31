@@ -1,6 +1,7 @@
 <locale>
 	<adm>
 		<plugins>
+			<title>Plugins</title>
 			<no-plugins>No plugins found.</no-plugins>
 			<name>Plugin</name>
 			<description>Description</description>
