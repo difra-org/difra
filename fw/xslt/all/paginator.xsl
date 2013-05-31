@@ -9,6 +9,15 @@
 		</xsl:call-template>
 	</xsl:template>
 
+	<xsl:template match="paginator">
+		<xsl:call-template name="paginator">
+			<xsl:with-param name="current" select="@page"/>
+			<xsl:with-param name="pages" select="@pages"/>
+			<xsl:with-param name="link" select="@link"/>
+			<xsl:with-param name="get" select="@get"/>
+		</xsl:call-template>
+	</xsl:template>
+
 	<xsl:template name="paginator">
 		<xsl:param name="i" select="1"/>
 		<xsl:param name="pages"/>

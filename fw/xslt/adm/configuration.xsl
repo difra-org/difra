@@ -10,7 +10,6 @@
 		<textarea disabled="disabled" cols="80" rows="12">
 			<xsl:value-of select="@current"/>
 		</textarea>
-		<hr/>
 		<h3>
 			<xsl:value-of select="$locale/adm/config/diff"/>
 		</h3>
@@ -18,8 +17,10 @@
 			<xsl:value-of select="@diff"/>
 		</textarea>
 		<br/>
-		<a href="/adm/development/config/reset" class="ajaxer button">
-			<xsl:value-of select="$locale/adm/config/reset"/>
-		</a>
+		<div class="form-buttons">
+			<a href="/adm/development/config/reset" class="ajaxer button">
+				<xsl:value-of select="$locale/adm/config/reset"/>
+			</a>
+		</div>
 	</xsl:template>
 </xsl:stylesheet>

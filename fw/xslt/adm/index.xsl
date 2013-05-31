@@ -7,6 +7,11 @@
 
 		<h2>Difra</h2>
 		<table class="summary">
+			<colgroup>
+				<col style="width:250px"/>
+				<col/>
+			</colgroup>
+			<tbody>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/adm/stats/summary/platform-version"/>
@@ -38,11 +43,17 @@
 					<xsl:value-of select="stats/cache/@type"/>
 				</td>
 			</tr>
+			</tbody>
 		</table>
 		<h2>
 			<xsl:value-of select="$locale/adm/stats/server/title"/>
 		</h2>
 		<table class="summary">
+			<colgroup>
+				<col style="width:250px"/>
+				<col/>
+			</colgroup>
+			<tbody>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/adm/stats/server/webserver"/>
@@ -78,11 +89,17 @@
 					</xsl:choose>
 				</td>
 			</tr>
+			</tbody>
 		</table>
 		<h2>
 			<xsl:value-of select="$locale/adm/stats/extensions/title"/>
 		</h2>
 		<table class="summary">
+			<colgroup>
+				<col style="width:250px"/>
+				<col/>
+			</colgroup>
+			<tbody>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/adm/stats/extensions/required-extensions"/>
@@ -123,6 +140,7 @@
 					</xsl:choose>
 				</td>
 			</tr>
+			</tbody>
 		</table>
 		<h2>
 			<xsl:value-of select="$locale/adm/stats/database/title"/>
@@ -133,83 +151,95 @@
 					<xsl:value-of select="stats/mysql/@error"/>
 				</div>
 			</xsl:when>
-			<xsl:when test="count(stats/mysql/table/diff[@sign='-'])=0 and count(stats/mysql/table/diff[@sign='+'])=0">
+			<xsl:when test="count(stats/mysql/table[@diff=1])=0 and count(stats/mysql/table[@nodef=1])=0 and count(stats/mysql/table[@nogoal=1])=0">
 				<div class="message">
 					<xsl:value-of select="$locale/adm/stats/database/status-ok"/>
 				</div>
 			</xsl:when>
 			<xsl:otherwise>
-				<div class="message">
-					<table class="mysql-diff">
-						<xsl:apply-templates select="stats/mysql/table" mode="diff"/>
-					</table>
-				</div>
+				<xsl:apply-templates select="stats/mysql/table" mode="diff"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="stats/mysql/table" mode="diff">
-		<tr>
-			<xsl:choose>
-				<xsl:when test="diff[@sign='-'] or diff[@sign='+']">
-					<td>
-						<table>
-							<tr>
-								<td colspan="2">
-									<xsl:text>Table </xsl:text>
-									<strong>`<xsl:value-of select="@name"/>`
-									</strong>
-									<xsl:text> diff:</xsl:text>
+		<xsl:choose>
+			<xsl:when test="@diff=1">
+				<table>
+					<colgroup>
+						<col style="width:250px"/>
+						<col/>
+					</colgroup>
+					<tbody>
+					<tr>
+						<td colspan="2">
+							<xsl:text>Table </xsl:text>
+							<strong>`<xsl:value-of select="@name"/>`
+							</strong>
+							<xsl:text> diff:</xsl:text>
 
-								</td>
-							</tr>
-							<tr>
-								<td style="width:50%">Current</td>
-								<td>Described</td>
-							</tr>
-							<xsl:for-each select="diff">
-								<xsl:choose>
-									<xsl:when test="@sign='='">
-										<tr class="small bg-green">
-											<td>
-												<xsl:value-of select="@value"/>
-											</td>
-											<td>
-												<xsl:value-of select="@value"/>
-											</td>
-										</tr>
-									</xsl:when>
-									<xsl:when test="@sign='-'">
-										<tr class="small bg-red">
-											<td>
-												<xsl:value-of select="@value"/>
-											</td>
-											<td>
-											</td>
-										</tr>
-									</xsl:when>
-									<xsl:when test="@sign='+'">
-										<tr class="small bg-red">
-											<td>
-											</td>
-											<td>
-												<xsl:value-of select="@value"/>
-											</td>
-										</tr>
-									</xsl:when>
-								</xsl:choose>
-							</xsl:for-each>
-						</table>
-					</td>
-				</xsl:when>
-				<xsl:otherwise>
-					<td class="gray">
-						<xsl:text>Table `</xsl:text>
-						<xsl:value-of select="@name"/>
-						<xsl:text>` is ok.</xsl:text>
-					</td>
-				</xsl:otherwise>
-			</xsl:choose>
-		</tr>
+						</td>
+					</tr>
+					<tr>
+						<td style="width:50%">Current</td>
+						<td>Described</td>
+					</tr>
+					<xsl:for-each select="diff">
+						<xsl:choose>
+							<xsl:when test="@sign='='">
+								<tr class="small bg-green">
+									<td>
+										<xsl:value-of select="@value"/>
+									</td>
+									<td>
+										<xsl:value-of select="@value"/>
+									</td>
+								</tr>
+							</xsl:when>
+							<xsl:when test="@sign='-'">
+								<tr class="small bg-red">
+									<td>
+										<xsl:value-of select="@value"/>
+									</td>
+									<td>
+									</td>
+								</tr>
+							</xsl:when>
+							<xsl:when test="@sign='+'">
+								<tr class="small bg-red">
+									<td>
+									</td>
+									<td>
+										<xsl:value-of select="@value"/>
+									</td>
+								</tr>
+							</xsl:when>
+						</xsl:choose>
+					</xsl:for-each>
+					</tbody>
+				</table>
+			</xsl:when>
+			<xsl:when test="@nogoal=1">
+				<div class="message error">
+					<xsl:text>Table `</xsl:text>
+					<xsl:value-of select="@name"/>
+					<xsl:text>` is not described.</xsl:text>
+				</div>
+			</xsl:when>
+			<xsl:when test="@nodef=1">
+				<div class="message error">
+					<xsl:text>Table `</xsl:text>
+					<xsl:value-of select="@name"/>
+					<xsl:text>` does not exist.</xsl:text>
+				</div>
+			</xsl:when>
+			<xsl:otherwise>
+				<div class="message">
+					<xsl:text>Table `</xsl:text>
+					<xsl:value-of select="@name"/>
+					<xsl:text>` is ok.</xsl:text>
+				</div>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 </xsl:stylesheet>
