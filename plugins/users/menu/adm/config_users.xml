@@ -1,6 +1,5 @@
 <menu>
-	<config href="">
-		<users href="/adm/users"/>
-	</config>
+	<users>
+		<list/>
+	</users>
 </menu>
-

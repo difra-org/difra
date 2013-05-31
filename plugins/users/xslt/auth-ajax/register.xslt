@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="/root/register">
+	<xsl:template match="register">
 		<div id="register" style="width:750px">
 			<form action="/auth/register2" class="ajaxer">
 				<h2>

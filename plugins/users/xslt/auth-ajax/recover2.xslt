@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="/root/recover2">
+	<xsl:template match="recover2">
 		<div id="recover2">
 			<form action="/auth/recover3/{@code}" class="ajaxer">
 				<h2 id="recovery_title">
