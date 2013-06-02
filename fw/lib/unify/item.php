@@ -41,8 +41,8 @@ class Item extends Storage {
 
 	/**
 	 * Установка значения поля
-	 * @param $name
-	 * @param $value
+	 * @param string $name
+	 * @param mixed  $value
 	 */
 	public function __set( $name, $value ) {
 
@@ -72,7 +72,7 @@ class Item extends Storage {
 		}
 		$db = MySQL::getInstance();
 		$data = $db->fetchRow(
-			'SELECT `' . implode( '`,`', $db->escape( $this->getKeys( $full ) ) ) . '` FROM `' . $db->escape( $this::getTable() ) . '`'
+			'SELECT `' . implode( '`,`', $db->escape( $this::getKeys( $full ) ) ) . '` FROM `' . $db->escape( $this::getTable() ) . '`'
 			. ' WHERE `' . $db->escape( $this::getPrimary() ) . "`='" . $db->escape( $this->getPrimaryValue() ) . "'"
 		);
 		if( empty( $data ) ) {
@@ -86,6 +86,31 @@ class Item extends Storage {
 				$this->data[$k] = $v;
 			}
 		}
+	}
+
+	/**
+	 * Функция получения списка объектов
+	 * @param $search        Строка поиска
+	 * @return array|null
+	 */
+	public static function search( $search ) {
+
+		$db = MySQL::getInstance();
+		$self = get_called_class();
+		$result = $db->fetch(
+			'SELECT SQL_CALC_FOUND_ROWS `' . implode( '`,`', $db->escape( $self::getKeys() ) )
+			. '` FROM `' . $db->escape( $self::getTable() ) . "`" . $search
+		);
+		if( empty( $result ) ) {
+			return null;
+		}
+		$res = array();
+		foreach( $result as $newData ) {
+			$o = new $self;
+			$o->data = $newData;
+			$res[] = $o;
+		}
+		return $res;
 	}
 
 	/**
@@ -157,6 +182,22 @@ class Item extends Storage {
 	}
 
 	/**
+	 * Добавление данных в XML-ноду
+	 *
+	 * @param \DOMNode|\DOMElement $node
+	 */
+	public function getXML( $node ) {
+
+		$this->load();
+		if( empty( $this->data ) ) {
+			return;
+		}
+		foreach( $this->data as $k => $v ) {
+			$node->setAttribute( $k, $v );
+		}
+	}
+
+	/**
 	 * Возвращает имя таблицы
 	 * @return string
 	 */
@@ -194,6 +235,13 @@ class Item extends Storage {
 		return isset( $this->data[$pri = $this::getPrimary()] ) ? $this->data[$pri] : $this->tempPrimary;
 	}
 
+	public function getDefaultSearchConditions() {
+
+		$self = get_called_class();
+		/** @var $defaultSearch null|array */
+		return $self::$defaultSearch();
+	}
+
 	/**
 	 * Возвращает объект с заданным primary
 	 *
@@ -206,4 +254,13 @@ class Item extends Storage {
 		$o->tempPrimary = $primary;
 	}
 
+	/**
+	 * Создание нового объекта
+	 * @return self
+	 */
+	public static function create() {
+
+		$self = get_called_class();
+		return new $self;
+	}
 }

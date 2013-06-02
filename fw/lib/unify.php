@@ -25,6 +25,9 @@ class Unify extends Unify\Item {
 	/** @var Имя Property с Primary Key */
 	static protected $primary = null;
 
+	/** @var null|array Дефолтные условия поиска */
+	static protected $defaultSearch = null;
+
 //	/** @var array[string $name] */
 //	static protected $indexList = null;
 
