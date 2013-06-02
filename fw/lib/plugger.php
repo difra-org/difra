@@ -198,20 +198,6 @@ class Plugger {
 	}
 
 	/**
-	 * Возвращает информацию о плагинах в XML
-	 * @param \DOMElement|\DOMNode $node
-	 */
-	public function getPluginsXML( $node ) {
-
-		$this->smartPluginsEnable();
-		$this->fillMissingReq();
-		$pluginsNode = $node->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
-		\Difra\Libs\XML\DOM::array2domAttr( $pluginsNode, $this->pluginsData );
-		$provisionsNode = $node->appendChild( $node->ownerDocument->createElement( 'provisions' ) );
-		\Difra\Libs\XML\DOM::array2domAttr( $provisionsNode, $this->provisions );
-	}
-
-	/**
 	 * Получает пути к папкам всех включенных плагинов
 	 * @return array
 	 */
