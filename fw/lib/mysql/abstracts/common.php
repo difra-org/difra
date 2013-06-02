@@ -153,13 +153,20 @@ abstract class Common {
 	/**
 	 * Безопасно «обернуть» строку для SQL-запроса
 	 *
-	 * @param string $string        Строка
-	 * @return string
+	 * @param string|array $data        Строка или массив строк
+	 * @return string|array
 	 */
-	public function escape( $string ) {
+	public function escape( $data ) {
 
 		$this->connect();
-		return $this->realEscape( $string );
+		if( !is_array( $data ) ) {
+			return $this->realEscape( $data );
+		}
+		$t = array();
+		foreach( $t as $k => $v ) {
+			$t[$this->escape( $k )] = $this->escape( $v );
+		}
+		return $t;
 	}
 
 	/**
