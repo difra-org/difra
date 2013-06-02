@@ -274,7 +274,7 @@ class Unify {
 	 * @param $primary
 	 * @throws Exception
 	 */
-	public static function getObj( $objKey, $primary ) {
+	final public static function getObj( $objKey, $primary ) {
 
 		$class = self::getClass( $objKey );
 		if( !$class ) {
