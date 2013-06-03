@@ -2,6 +2,11 @@
 
 namespace Difra;
 
+/**
+ * Class Site
+ *
+ * @package Difra
+ */
 class Site {
 
 	const VERSION = '4.1';
