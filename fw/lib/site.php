@@ -4,7 +4,7 @@ namespace Difra;
 
 class Site {
 
-	const VERSION = '4.0';
+	const VERSION = '4.1';
 	const BUILD = '$Rev$';
 	const PATH_PART = '/../../';
 
@@ -19,6 +19,7 @@ class Site {
 
 	/**
 	 * Singleton
+	 *
 	 * @return Site
 	 */
 	static public function getInstance() {
@@ -68,6 +69,7 @@ class Site {
 
 	/**
 	 * Возвращает true, если в данный момент происходит инициализация сайта
+	 *
 	 * @return bool
 	 */
 	public static function isInit() {
@@ -86,6 +88,7 @@ class Site {
 	 * 2. Имя хоста в по алгоритму sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
 	 *    www.subdomain.domain.com domain.com www.domain.com.
 	 * 3. "default".
+	 *
 	 * @return bool
 	 */
 	private function detectHost() {
@@ -162,6 +165,7 @@ class Site {
 
 	/**
 	 * Убирает слеши из $_GET, $_POST, $_COOKIE, $_REQUEST, если включены magic quotes
+	 *
 	 * @return void
 	 */
 	private function _stripSlashes() {
@@ -196,6 +200,7 @@ class Site {
 
 	/**
 	 * Определяет имя хоста из URL
+	 *
 	 * @return string|null
 	 */
 	public function getHostname() {
@@ -209,6 +214,7 @@ class Site {
 
 	/**
 	 * Возвращает имя главного хоста, если он установлен в переменной веб-сервера VHOST_MAIN, либо имя текущего хоста
+	 *
 	 * @return string
 	 */
 	public function getMainhost() {
@@ -218,6 +224,7 @@ class Site {
 
 	/**
 	 * Возвращает имя сайта, которое определено в $this->detectHost()
+	 *
 	 * @return null
 	 */
 	public function getHost() {
@@ -229,7 +236,6 @@ class Site {
 	 * Получить версию ревизии SVN
 	 *
 	 * @param string $dir Путь к папке со слэшем в конце
-	 *
 	 * @return int|bool
 	 */
 	private function getSVNRev( $dir ) {
@@ -257,7 +263,6 @@ class Site {
 	/**
 	 * Возвращает строку, условно обозначающую текущую ревизию
 	 * @param bool $asArray
-	 *
 	 * @return array|string
 	 */
 	public function getBuild( $asArray = false ) {
@@ -322,9 +327,7 @@ class Site {
 
 	/**
 	 * @deprecated
-	 *
 	 * @param $key
-	 *
 	 * @return mixed
 	 */
 	public function getData( $key ) {
@@ -477,7 +480,8 @@ class Site {
 		if( !$a['os'] ) {
 			if( $a['agent'] == 'Safari' and isset( $ua2['Mobile'] ) ) {
 				$a['os'] = 'iOS';
-			} if( $a['agent'] == 'Opera' and isset( $ua2['Tablet'] ) ) {
+			}
+			if( $a['agent'] == 'Opera' and isset( $ua2['Tablet'] ) ) {
 				$a['os'] = 'Tablet';
 			} elseif( $a['agent'] == 'Opera' and isset( $ua2['Mobi'] ) ) {
 				$a['os'] = 'Mobile';
@@ -488,6 +492,7 @@ class Site {
 
 	/**
 	 * Возвращает строку для CSS-классов, основанных на версии браузера
+	 *
 	 * @return string
 	 */
 	public function getUserAgentClass() {
