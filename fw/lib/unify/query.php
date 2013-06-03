@@ -3,6 +3,7 @@
 namespace Difra\Unify;
 
 use Difra\Exception;
+use Difra\MySQL;
 use Difra\Unify;
 
 /**
@@ -75,60 +76,26 @@ class Query {
 	 */
 	public function getQuery() {
 
-		$db = \Difra\MySQL::getInstance();
-
-		// SELECT x,y,z
-
 		$q = 'SELECT ';
 		if( $this->paginator ) {
 			$q .= 'SQL_CALC_FOUND_ROWS ';
 		}
-		/** @var Unify $class */
-		$class = Unify::getClass( $this->objKey );
-		$table = $db->escape( $class::getTable() );
 
 		$q .= $this->getSelectKeys();
-
-		// TODO: JOIN keys
-
-		// FROM
-
+		// TODO: JOIN keys (все джойны и т.п. надо выполнять в дочерних функциях, чтобы поддержать множественные джойны)
 		$q .= " FROM `$table`";
-
 		// TODO: ... LEFT JOIN ... ON ...
-
-		// WHERE
-
 		$q .= $this->getWhere();
-
-		// ORDER
-
-		if( !empty( $this->order ) ) {
-			$o = $db->escape( $this->order );
-			$q .= ' ORDER BY ' . implode( ',', $o );
-		}
-
-		// LIMIT
-
-		if( $this->paginator ) {
-			list( $this->limitFrom, $this->limitNum ) = $this->paginator->getLimit();
-		}
-
-		if( $this->limitFrom or $this->limitNum ) {
-			$q .= ' LIMIT ';
-			if( $this->limitFrom ) {
-				$q .= $this->limitFrom . ',';
-			}
-			if( $this->limitNum ) {
-				$q .= $this->limitNum;
-			} else {
-				$q .= '999999'; // чтобы задать только отступ в LIMIT, считаем это отсутсвтием лимита :)
-			}
-		}
+		$q .= $this->getOrder();
+		$q .= $this->getLimit();
 
 		return $q;
 	}
 
+	/**
+	 * Формирование списка получаемых полей для запроса
+	 * @return string
+	 */
 	public function getSelectKeys() {
 
 		$db = \Difra\MySQL::getInstance();
@@ -181,6 +148,50 @@ class Query {
 	}
 
 	/**
+	 * Формирование строки ORDER для запроса
+	 *
+	 * @return string
+	 */
+	public function getOrder() {
+
+		if( empty( $this->order ) ) {
+			return '';
+		}
+		/** @var Unify $class */
+		$class = Unify::getClass( $this->objKey );
+		$table = $class::getTable();
+		$o = MySQL::getInstance()->escape( $this->order );
+		return ' ORDER BY `' . $table . '`.`' . implode( '`,`' . $table . '`.`', $o ) . '`';
+	}
+
+	/**
+	 * Формирование строки LIMIT для запроса
+	 *
+	 * @return string
+	 */
+	public function getLimit() {
+
+		if( $this->paginator ) {
+			list( $this->limitFrom, $this->limitNum ) = $this->paginator->getLimit();
+		}
+
+		if( !$this->limitFrom and !$this->limitNum ) {
+			return '';
+		}
+		$q = ' LIMIT ';
+		$db = MySQL::getInstance();
+		if( $this->limitFrom ) {
+			$q .= "'" . $db->escape( $this->limitFrom ) . "',";
+		}
+		if( $this->limitNum ) {
+			$q .= "'" . $db->escape( $this->limitNum ) . "'";
+		} else {
+			$q .= '999999'; // чтобы задать только отступ в LIMIT, считаем это отсутсвтием лимита :)
+		}
+		return $q;
+	}
+
+	/**
 	 * Добавить условие поиска
 	 * В формате ключ = значение или строка.
 	 * В строке можно передавать более сложные условия, но тогда должна быть подготовлена (MySQL->escape и т.п.)
@@ -224,10 +235,12 @@ class Query {
 	 * @param string|self $query
 	 * @throws \Difra\Exception
 	 */
-	public function addJoin( $query ) {
+	public function join( $query ) {
 
 		if( is_string( $query ) ) {
-			$this->with[] = $query;
+			$q = new self;
+			$q->setClass( $query );
+			$this->with[] = $q;
 		} elseif( $query instanceof Query ) {
 			$this->with[] = $query;
 		} else {
