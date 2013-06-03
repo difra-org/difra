@@ -89,31 +89,6 @@ class Item extends Storage {
 	}
 
 	/**
-	 * Функция получения списка объектов
-	 * @param $search        Строка поиска
-	 * @return array|null
-	 */
-	public static function search( $search ) {
-
-		$db = MySQL::getInstance();
-		$self = get_called_class();
-		$result = $db->fetch(
-			'SELECT SQL_CALC_FOUND_ROWS `' . implode( '`,`', $db->escape( $self::getKeys() ) )
-			. '` FROM `' . $db->escape( $self::getTable() ) . "`" . $search
-		);
-		if( empty( $result ) ) {
-			return null;
-		}
-		$res = array();
-		foreach( $result as $newData ) {
-			$o = new $self;
-			$o->data = $newData;
-			$res[] = $o;
-		}
-		return $res;
-	}
-
-	/**
 	 * Сохранение изменений
 	 */
 	public function save() {
@@ -235,7 +210,11 @@ class Item extends Storage {
 		return isset( $this->data[$pri = $this::getPrimary()] ) ? $this->data[$pri] : $this->tempPrimary;
 	}
 
-	public function getDefaultSearchConditions() {
+	/**
+	 * Возвращает критерии поиска по умолчанию
+	 * @return array|null
+	 */
+	public static function getDefaultSearchConditions() {
 
 		$self = get_called_class();
 		/** @var $defaultSearch null|array */

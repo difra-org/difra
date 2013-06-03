@@ -27,7 +27,7 @@ class Paginator {
 	 */
 	public function getLimit() {
 
-		return ( $this->page - 1 ) * $this->perpage . ',' . $this->perpage;
+		return array( ( $this->page - 1 ) * $this->perpage, $this->perpage );
 	}
 
 	/**
