@@ -93,11 +93,12 @@ class Plugger {
 			return;
 		}
 		$enabledPlugins = Config::getInstance()->get( 'plugins' );
-		// составление списка плагинов с данными о зависимостях
+
+		// составление списка плагинов
 		foreach( $plugins as $name => $plugin ) {
 			$info = $plugin->getInfo();
 			$this->pluginsData[$name] = array(
-				'enabled' => isset( $enabledPlugins[$name] ) and $enabledPlugins[$name],
+				'enabled' => in_array( $name, $enabledPlugins ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ),
 				'loaded' => false,
 				'require' => $info['requires'],
 				'provides' => $info['provides'],
@@ -120,7 +121,7 @@ class Plugger {
 				}
 			}
 		}
-		// load plugins
+		// Загрузка плагинов
 		do {
 			$changed = false;
 			foreach( $this->pluginsData as $name => $data ) {
@@ -147,6 +148,13 @@ class Plugger {
 				}
 			}
 		} while( $changed );
+		// Инициализация плагинов
+		foreach( $this->plugins as $plugin ) {
+			if( !$plugin->isEnabled() ) {
+				continue;
+			}
+			$plugin->init();
+		}
 	}
 
 	/**
@@ -190,20 +198,6 @@ class Plugger {
 	}
 
 	/**
-	 * Возвращает информацию о плагинах в XML
-	 * @param \DOMElement|\DOMNode $node
-	 */
-	public function getPluginsXML( $node ) {
-
-		$this->smartPluginsEnable();
-		$this->fillMissingReq();
-		$pluginsNode = $node->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
-		\Difra\Libs\XML\DOM::array2domAttr( $pluginsNode, $this->pluginsData );
-		$provisionsNode = $node->appendChild( $node->ownerDocument->createElement( 'provisions' ) );
-		\Difra\Libs\XML\DOM::array2domAttr( $provisionsNode, $this->provisions );
-	}
-
-	/**
 	 * Получает пути к папкам всех включенных плагинов
 	 * @return array
 	 */
@@ -225,7 +219,6 @@ class Plugger {
 	/**
 	 * Позволяет узнать, включен ли плагин с таким названием
 	 * @param string $pluginName
-	 *
 	 * @return bool
 	 */
 	public function isEnabled( $pluginName ) {
@@ -238,9 +231,7 @@ class Plugger {
 
 	/**
 	 * @deprecated
-	 *
 	 * @param string $name
-	 *
 	 * @return bool
 	 */
 	public function isPlugin( $name ) {
@@ -251,7 +242,6 @@ class Plugger {
 
 	/**
 	 * @param string $name
-	 *
 	 * @return bool
 	 */
 	public function turnOn( $name ) {
@@ -273,7 +263,6 @@ class Plugger {
 
 	/**
 	 * @param string $name
-	 *
 	 * @return bool
 	 */
 	public function turnOff( $name ) {

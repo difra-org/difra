@@ -4,6 +4,13 @@ namespace Difra;
 
 abstract class Plugin {
 
+	/** @var int Версия движка, для которой обновлялся плагин */
+	protected $version = 0;
+	/** @var string Описание */
+	protected $description = '';
+	/** @var null|string|array Названия плагинов, требующихся для работы плагина */
+	protected $require = null;
+
 	private $class;
 	private $name = null;
 	private $enabled = false;
@@ -55,7 +62,7 @@ abstract class Plugin {
 		if( !property_exists( $this, 'version' ) or !$this->version ) {
 			$info['version'] = 0;
 		} else {
-			$info['version'] = (float) $this->version;
+			$info['version'] = (float)$this->version;
 		}
 		$info['description'] = property_exists( $this, 'description' ) ? $this->description : '';
 		return $info;
@@ -83,7 +90,7 @@ abstract class Plugin {
 			return false;
 		}
 		$this->enabled = true;
-		$this->init();
+		\Difra\Unify::registerObjects( $this->getObjects() );
 		return true;
 	}
 
@@ -110,6 +117,15 @@ abstract class Plugin {
 			$this->name = basename( dirname( str_replace( '\\', '/', $this->class ) ) );
 		}
 		return $this->name;
+	}
+
+	/**
+	 * Возвращает объекты, предоставляемые плагином
+	 * @return null
+	 */
+	public function getObjects() {
+
+		return property_exists( $this, 'objects' ) ? $this->objects : null;
 	}
 
 	/**

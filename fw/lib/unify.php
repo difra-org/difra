@@ -7,35 +7,30 @@ namespace Difra;
  *
  * @package Difra\Unify
  */
-final class Unify {
+class Unify extends Unify\Item {
 
-	//
-	// работа с классами и объектами
-	//
-
-	/** @var Object[string $objKey][id] */
-	static public $objects = array();
-
-	/** @var string[string $objKey], например 'blog' => 'Difra\Plugins\Blogs\Blog' */
-	static private $classes = array();
-
-	/**
-	 * Регистрация класса
-	 * @param $name
-	 * @param $path
+	/** TODO
+	 * Unify::parents[$name] - ???
+	 * Unify::children[$name] - ???
+	 * Unify::objects[$name][$id] — список объектов - ???
+	 * Обновить wiki
 	 */
-	static public function registerClass( $name, $path ) {
 
-		self::$classes[$name] = $path;
-	}
+	/** @var string Имя класса (post, comment, user, etc.) */
+	static protected $objKey = null;
+	/** @var Имя таблицы */
+	static protected $table = null;
+	/** @var array[string $name] */
+	static protected $propertiesList = null;
+	/** @var Имя Property с Primary Key */
+	static protected $primary = null;
 
-	/**
-	 * Получение пути к классу
-	 * @param $name
-	 * @return null
-	 */
-	static public function getPath( $name ) {
+	/** @var null|array Дефолтные условия поиска */
+	static protected $defaultSearch = null;
 
-		return isset( self::$classes[$name] ) ? self::$classes[$name] : null;
-	}
+//	/** @var array[string $name] */
+//	static protected $indexList = null;
+
+//	/** @var string[string] Опции ('engine'=>'InnoDB',etc.) */
+//	static protected $options = array();
 }
