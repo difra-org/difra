@@ -14,8 +14,8 @@ class Storage {
 	/** @var string[string $name] Список доступных объектов в формате название => имя_класса */
 	static protected $classes = array();
 
-//	/** @var Object[string $objKey][id] */
-//	static public $objects = array();
+	/** @var Object[string $objKey][id] */
+	static public $objects = array();
 
 	/**
 	 * @param string[string] $list Объекты для добавления в список

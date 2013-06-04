@@ -30,12 +30,13 @@ class Item extends Storage {
 		if( isset( $this->data[$name] ) ) {
 			return $this->data[$name];
 		}
+		$self = get_called_class();
 		/** @var array $propertiesList */
-		if( !isset( $this::$propertiesList[$name] ) ) {
+		if( !isset( $self::$propertiesList[$name] ) ) {
 			/** @var $objKey string */
-			throw new Exception( "Object '{$this::$objKey}' has no property '$name'." );
+			throw new Exception( "Object '{$self::$objKey}' has no property '$name'." );
 		}
-		$this->load( isset( $this::$propertiesList[$name]['autoload'] ) ? !$this::$propertiesList[$name]['autoload'] : false );
+		$this->load( isset( $self::$propertiesList[$name]['autoload'] ) ? !$self::$propertiesList[$name]['autoload'] : false );
 		return $this->data[$name];
 	}
 
@@ -93,10 +94,9 @@ class Item extends Storage {
 	 */
 	public function save() {
 
-		$primary = $this->getPrimaryValue();
 		$where = array();
 		$db = MySQL::getInstance();
-		if( $primary ) {
+		if( $primary = $this->getPrimaryValue() ) {
 			if( empty( $this->modified ) ) {
 				return;
 			}
@@ -119,11 +119,16 @@ class Item extends Storage {
 		$db->query( $query );
 		if( !$primary ) {
 			$this->tempPrimary = $db->getLastId();
+			$self = get_called_class();
+			/** @var $objKey string */
+			if( isset( self::$objects[$self::$objKey][$this->tempPrimary] ) ) {
+				return self::$objects[$self::$objKey][$this->tempPrimary];
+			}
 		}
 		$this->modified = array();
 	}
 
-	/** @var string[string $objKey][bool $full][] Список ключей для обычной загрузки */
+	/** @var string[string $objKey][bool $full][] Список ключей для загрузки */
 	protected $objKeys = array();
 
 	/**
@@ -145,10 +150,20 @@ class Item extends Storage {
 		$self::$objKeys[$self::$objKey][$full] = array();
 		/** @var $propertiesList array */
 		foreach( $self::$propertiesList as $name => $prop ) {
+			// Пропускаем внешние ключи
+			if( $prop == 'foreign' or ( isset( $prop['type'] ) and $prop['type'] == 'foreign' ) ) {
+				continue;
+			}
+			// Пропускаем составные индексы
+			if( isset( $prop['type'] ) and $prop['type'] == 'index' ) {
+				continue;
+			}
+			// При не полной загрузке пропускаем поля с autoload=false
 			if( !$full and isset( $prop['$autoload'] ) and !$prop['autoload'] ) {
 				continue;
 			}
-			if( $full === 'only' and isset( $prop['$autoload'] ) and !$prop['autoload'] ) {
+			// При загрузке только полей с autoload=false пропускаем поля без этого свойства
+			if( $full === 'only' and ( !isset( $prop['$autoload'] ) or $prop['autoload'] ) ) {
 				continue;
 			}
 			$self::$objKeys[$self::$objKey][$full][] = $name;
@@ -222,18 +237,6 @@ class Item extends Storage {
 	}
 
 	/**
-	 * Возвращает объект с заданным primary
-	 *
-	 * @param $primary
-	 */
-	public static function get( $primary ) {
-
-		$self = get_called_class();
-		$o = new $self;
-		$o->tempPrimary = $primary;
-	}
-
-	/**
 	 * Создание нового объекта
 	 * @return self
 	 */
@@ -241,5 +244,26 @@ class Item extends Storage {
 
 		$self = get_called_class();
 		return new $self;
+	}
+
+	/**
+	 * Возвращает объект с заданным primary
+	 *
+	 * @param $primary
+	 */
+	public static function get( $primary ) {
+
+		$self = get_called_class();
+		/** @var $objKey string */
+		if( isset( self::$objects[$self::$objKey][$primary] ) ) {
+			return self::$objects[$self::$objKey][$primary];
+		}
+		$o = new $self;
+		$o->tempPrimary = $primary;
+		if( !isset( self::$objects[$o->objKey] ) ) {
+			self::$objects[$o->objKey] = array();
+		}
+		self::$objects[$o->objKey][$primary] = $o;
+		return $o;
 	}
 }
