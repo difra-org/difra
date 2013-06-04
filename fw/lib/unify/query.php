@@ -47,7 +47,7 @@ class Query {
 
 	/**
 	 * Выполнение запроса
-	 * @return array|null
+	 * @return \Difra\Unify[]|null
 	 */
 	public function doQuery() {
 
