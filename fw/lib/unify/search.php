@@ -30,6 +30,14 @@ class Search extends Query {
 
 		$this->objKey = $objKey;
 		$result = $this->doQuery();
+		foreach( $result as $k => $v ) {
+			$primary = $v->getPrimaryValue();
+			if( \Difra\Unify::$objects[$objKey][$primary] ) {
+				$result[$k] = \Difra\Unify::$objects[$objKey][$primary];
+			} else {
+				\Difra\Unify::$objects[$objKey][$primary] = $v;
+			}
+		}
 		return $result;
 	}
 
