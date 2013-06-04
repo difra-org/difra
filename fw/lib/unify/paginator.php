@@ -2,6 +2,8 @@
 
 namespace Difra\Unify;
 
+use Difra\Exception;
+
 /**
  * Пагинатор
  * Class Paginator
@@ -10,15 +12,23 @@ namespace Difra\Unify;
  */
 class Paginator {
 
-	public $perpage = 20;
-	public $page = 1;
+	/** @var int Количество записей на страницу */
+	protected $perpage = 20;
 
-	public $total = null;
-	public $pages = null;
+	/** @var int|null Номер текущей страницы */
+	protected $page = null;
 
-	public $linkPrefix = '';
+	/** @var int Количество найденных элементов */
+	protected $total = null;
 
-	public $get = false;
+	/** @var int Количество страниц */
+	protected $pages = null;
+
+	/** @var string Префикс для ссылки */
+	protected $linkPrefix = '';
+
+	/** @var string|bool Символ для формирования get-параметра, например '?' -> $linkPrefix?page=$page, иначе ссылка будет вида $linkPrefix/page/$page */
+	protected $get = false;
 
 	/**
 	 * Возвращает строку для LIMIT
@@ -53,5 +63,46 @@ class Paginator {
 		$pNode->setAttribute( 'pages', $this->pages );
 		$pNode->setAttribute( 'link', $this->linkPrefix );
 		$pNode->setAttribute( 'get', $this->get );
+	}
+
+	/**
+	 * Установить текущую страницу
+	 * @param $page
+	 * @throws \Difra\Exception
+	 */
+	public function setPage( $page ) {
+
+		if( !ctype_digit( (string)"$page" ) or $page < 1 ) {
+			throw new Exception( "Expected page number as parameter" );
+		}
+		$this->page = (int)$page;
+	}
+
+	/**
+	 * Установить символ для get-параметра
+	 *
+	 * @param string $get
+	 */
+	public function setGet( $get ) {
+
+		$this->get = $get;
+	}
+
+	/**
+	 * Префикс для ссылки
+	 * @param string $linkPrefix
+	 */
+	public function setLinkPrefix( $linkPrefix ) {
+
+		$this->linkPrefix = $linkPrefix;
+	}
+
+	/**
+	 * Установка количества выводимых элементов на страницу результата
+	 * @param int $perpage
+	 */
+	public function setPerpage( $perpage ) {
+
+		$this->perpage = $perpage;
 	}
 }

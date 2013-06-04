@@ -11,16 +11,13 @@ use Difra\Unify;
  *
  * @package Difra\Unify
  */
-class Query {
+class Query extends Paginator {
 
 	/** @var string Имя Unify-объекта, в котором искать */
 	public $objKey = null;
 
 	/** @var array Условия поиска */
 	public $conditions = array();
-
-	/** @var \Difra\Unify\Paginator Пагинатор */
-	public $paginator = null;
 
 	/** @var int Условие для LIMIT — с какого элемента выводить */
 	public $limitFrom = null;
@@ -53,8 +50,8 @@ class Query {
 
 		$db = \Difra\MySQL::getInstance();
 		$result = $db->fetch( $this->getQuery() );
-		if( $this->paginator ) {
-			$this->paginator->setTotal( $db->getFoundRows() );
+		if( $this->page ) {
+			$this->setTotal( $db->getFoundRows() );
 		}
 		if( empty( $result ) ) {
 			return null;
@@ -77,7 +74,7 @@ class Query {
 	public function getQuery() {
 
 		$q = 'SELECT ';
-		if( $this->paginator ) {
+		if( $this->page ) {
 			$q .= 'SQL_CALC_FOUND_ROWS ';
 		}
 
@@ -171,8 +168,8 @@ class Query {
 	 */
 	public function getLimit() {
 
-		if( $this->paginator ) {
-			list( $this->limitFrom, $this->limitNum ) = $this->paginator->getLimit();
+		if( $this->page ) {
+			list( $this->limitFrom, $this->limitNum ) = $this->getLimit();
 		}
 
 		if( !$this->limitFrom and !$this->limitNum ) {
@@ -214,19 +211,6 @@ class Query {
 				$this->conditions[] = $cond;
 			}
 		}
-	}
-
-	/**
-	 * Установить пагинатор для использования при выводе результатов
-	 * @param Paginator $paginator
-	 * @throws \Difra\Exception
-	 */
-	public function setPaginator( $paginator ) {
-
-		if( !( $paginator instanceof Paginator ) ) {
-			throw new Exception( "Expected Unify\\Paginator instance as a parameter" );
-		}
-		$this->paginator = $paginator;
 	}
 
 	/**
