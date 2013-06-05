@@ -20,6 +20,14 @@ class Item extends Storage {
 	protected $modified = array();
 
 	/**
+	 * Деструктор
+	 */
+	public function __destruct() {
+
+		$this->save();
+	}
+
+	/**
 	 * Получение значения поля
 	 * @param $name
 	 * @return mixed
@@ -61,6 +69,18 @@ class Item extends Storage {
 	 */
 	public function load( $full = false ) {
 
+		$this->loadByField( $this::getPrimary(), $this->getPrimaryValue(), $full );
+	}
+
+	/**
+	 * Получить элемент по значению определённого поля
+	 * @param string $field
+	 * @param mixed  $value
+	 * @param bool   $full
+	 * @throws \Difra\Exception
+	 */
+	public function loadByField( $field, $value, $full = false ) {
+
 		if( $this->full ) {
 			return;
 		}
@@ -74,10 +94,12 @@ class Item extends Storage {
 		$db = MySQL::getInstance();
 		$data = $db->fetchRow(
 			'SELECT `' . implode( '`,`', $db->escape( $this::getKeys( $full ) ) ) . '` FROM `' . $db->escape( $this::getTable() ) . '`'
-			. ' WHERE `' . $db->escape( $this::getPrimary() ) . "`='" . $db->escape( $this->getPrimaryValue() ) . "'"
+			. ' WHERE `' . $db->escape( $field ) . "`='" . $db->escape( $value ) . "'"
 		);
 		if( empty( $data ) ) {
-			throw new Exception( "No such object: '" . $this::getObjKey() . "' with `" . $this->getPrimary() . "`='" . $this->getPrimaryValue() . "'." );
+			/** @var $self self */
+			/** @var $objKey string */
+			throw new Exception( "No such object: '" . $self::$objKey . "' with `" . $field . "`='" . $value . "'." );
 		}
 		$this->full = $full ? true : false;
 		if( is_null( $this->data ) ) {
@@ -121,9 +143,7 @@ class Item extends Storage {
 			$this->tempPrimary = $db->getLastId();
 			$self = get_called_class();
 			/** @var $objKey string */
-			if( isset( self::$objects[$self::$objKey][$this->tempPrimary] ) ) {
-				return self::$objects[$self::$objKey][$this->tempPrimary];
-			}
+			self::$objects[$self::$objKey][$this->tempPrimary] = $this;
 		}
 		$this->modified = array();
 	}
@@ -254,16 +274,45 @@ class Item extends Storage {
 	public static function get( $primary ) {
 
 		$self = get_called_class();
-		/** @var $objKey string */
-		if( isset( self::$objects[$self::$objKey][$primary] ) ) {
-			return self::$objects[$self::$objKey][$primary];
+		/** @var string $objKey */
+		$objKey = $self::$objKey;
+		if( isset( self::$objects[$objKey][$primary] ) ) {
+			return self::$objects[$objKey][$primary];
 		}
 		$o = new $self;
 		$o->tempPrimary = $primary;
-		if( !isset( self::$objects[$o->objKey] ) ) {
-			self::$objects[$o->objKey] = array();
+		if( !isset( self::$objects[$objKey] ) ) {
+			self::$objects[$objKey] = array();
 		}
-		self::$objects[$o->objKey][$primary] = $o;
+		self::$objects[$objKey][$primary] = $o;
+		return $o;
+	}
+
+	/**
+	 * Возвращает объект по значению поля (если соответствующих строк в таблице несколько, будет возвращён только первый)
+	 * @param string $field
+	 * @param string $value
+	 * @return self
+	 */
+	public static function getByField( $field, $value ) {
+
+		$self = get_called_class();
+		/** @var string $objKey */
+		$objKey = $self::$objKey;
+		/** @var $o self */
+		$o = new $self;
+		$o->loadByField( $field, $value );
+		if( $primary = $o->getPrimaryValue() ) {
+			if( !isset( self::$objects[$objKey] ) ) {
+				self::$objects[$objKey] = array();
+			}
+			if( !isset( self::$objects[$objKey][$primary] ) ) {
+				return self::$objects[$objKey][$primary] = $o;
+			} else {
+				// такой объект уже есть — вернём его, а полученный оставим сборщику мусора
+				return self::$objects[$objKey][$primary];
+			}
+		}
 		return $o;
 	}
 }
