@@ -140,6 +140,7 @@ class Item extends Storage {
 		}
 		$db->query( $query );
 		if( !$primary ) {
+			$this->full = true;
 			$this->tempPrimary = $db->getLastId();
 			$self = get_called_class();
 			/** @var $objKey string */
