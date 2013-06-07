@@ -31,13 +31,16 @@ class Exception extends \exception {
 			$cookie = print_r( $_COOKIE, true );
 			$user   = Auth::getInstance()->data['email'];
 
+			$uri = !empty( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '-';
+			$host = !empty( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : '-';
+
 			$text = <<<MSG
 {$exception->getMessage()}
 
-Page:	{$_SERVER['REQUEST_URI']}
+Page:	$uri
 Time:	$date
-Host:	{$_SERVER['HTTP_HOST']}
-File:		{$exception->getFile()}
+Host:	$host
+File:	{$exception->getFile()}
 Line:	{$exception->getLine()}
 User:	$user
 
@@ -53,7 +56,7 @@ $post
 $cookie
 MSG;
 
-			mail( 'errors@a-jam.ru', $_SERVER['HTTP_HOST'] . ': ' . $exception->getMessage(), $text );
+			mail( 'errors@a-jam.ru', $host . ': ' . $exception->getMessage(), $text );
 		} else {
 		}
 	}
