@@ -5,6 +5,7 @@ namespace Difra;
 /**
  * Определение нужного контроллера и метода (экшена), запуск выполнения контроллера
  * Class Action
+ *
  * @package Difra
  */
 class Action {
@@ -46,6 +47,7 @@ class Action {
 
 	/**
 	 * Ищет контроллер и action для текущего URI (запускается из события)
+	 *
 	 * @throws exception
 	 */
 	public function find() {
@@ -202,12 +204,12 @@ class Action {
 		if( !is_null( $uri ) ) {
 			return $uri;
 		}
-		if( !empty( $_SERVER['URI'] ) ) {
+		if( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
 			$this->uri = $_SERVER['URI'];
 		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
 			$this->uri = $_SERVER['REQUEST_URI'];
 		} else {
-			die( 'Can\'t get URI' );
+			throw new Exception( 'Can\'t get URI' );
 		}
 		$uri = $this->uri;
 		if( false !== strpos( $uri, '?' ) ) {
