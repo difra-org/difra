@@ -2,11 +2,9 @@
 
 class ActionTest extends PHPUnit_Framework_TestCase {
 
-	/**
-	 * @expectedException \Difra\Exception
-	 */
-	public function getUri_Fail() {
+	public function test_getUri_Fail() {
 
+		$this->setExpectedException( 'Difra\Exception' );
 		$action = new \Difra\Action;
 		$action->getUri();
 	}
