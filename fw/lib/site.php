@@ -38,16 +38,6 @@ class Site {
 	 */
 	public function __construct() {
 
-		Events::register( 'core-init', 'Difra\\Site', 'init' );
-		Events::register( 'core-init', 'Difra\\Debugger' );
-		Events::register( 'plugins-load', 'Difra\Plugger', 'init' );
-		Events::register( 'init-done', 'Difra\\Site', 'initDone' );
-		Events::register( 'action-find', 'Difra\\Action', 'find' );
-		Events::register( 'action-run', 'Difra\\Action', 'run' );
-		Events::register( 'render-run', 'Difra\\Action', 'render' );
-		if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
-			include_once( $initPHP );
-		}
 	}
 
 	public function init() {
@@ -397,7 +387,7 @@ class Site {
 		if( !is_null( $userAgent ) ) {
 			return $userAgent;
 		}
-		if( !isset( $_SERVER['HTTP_USER_AGENT'] ) or !$_SERVER['HTTP_USER_AGENT'] ) {
+		if( empty( $_SERVER['HTTP_USER_AGENT'] ) ) {
 			$userAgent = false;
 			return $userAgent;
 		}
@@ -525,5 +515,16 @@ class Site {
 			$uac[] = $a['engine'];
 		}
 		return $uaClass = trim( implode( ' ', $uac ) );
+	}
+
+	static protected $mode = 'web';
+	public static function setMode( $mode ) {
+
+		self::$mode = $mode;
+	}
+
+	public static function getMode() {
+
+		return self::$mode;
 	}
 }

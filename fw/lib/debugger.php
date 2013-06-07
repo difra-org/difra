@@ -31,50 +31,53 @@ class Debugger {
 	 */
 	public function __construct() {
 
-		if( isset( $_SERVER['VHOST_DEVMODE'] ) and strtolower( $_SERVER['VHOST_DEVMODE'] ) == 'on' ) {
-
-			// дебаг отключен?
-			if( isset( $_GET['debug'] ) and $_GET['debug'] == -1 ) {
-				ini_set( 'display_errors', 'On' );
-				ini_set( 'error_reporting', E_ALL );
-				ini_set( 'html_errors',
-					( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
-				$this->enabled = 0;
-				$this->console = 0;
-				return;
-			}
-			if( ( isset( $_GET['debug'] ) and !$_GET['debug'] ) or ( isset( $_COOKIE['debug'] ) and !$_COOKIE['debug'] ) ) {
-				$this->enabled = false;
-			} else {
-				$this->enabled = true;
-			}
-			// консоль отключена?
-			if( !$this->enabled or ( isset( $_COOKIE['debugConsole'] ) and !$_COOKIE['debugConsole'] ) ) {
-				$this->console = 1; // консоль есть, но отлов ошибок отключен
-			} else {
-				$this->console = 2; // консоль включена
-			}
-
-			$this->cacheResources = false;
-
-			if( $this->console == 2 ) {
-				// консоль активна — перехватываем ошибки
-				ini_set( 'display_errors', 'Off' );
-				ini_set( 'html_errors', 'Off' );
-				ini_set( 'error_reporting', E_ALL );
-				set_error_handler( array( '\Difra\Debugger', 'captureNormal' ) );
-				set_exception_handler( array( '\Difra\Debugger', 'captureException' ) );
-				register_shutdown_function( array( '\Difra\Debugger', 'captureShutdown' ) );
-				$this->console = 2;
-			} else {
-				// консоль не активна — выводим ошибки
-				ini_set( 'display_errors', 'On' );
-				ini_set( 'error_reporting', E_ALL );
-				ini_set( 'html_errors',
-					( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
-			}
-		} else {
+		if( Site::getMode() != 'web' ) {
+			return;
+		}
+		if( !isset( $_SERVER['VHOST_DEVMODE'] ) or strtolower( $_SERVER['VHOST_DEVMODE'] ) != 'on' ) {
 			ini_set( 'display_errors', 'Off' );
+			return;
+		}
+
+		// дебаг отключен?
+		if( isset( $_GET['debug'] ) and $_GET['debug'] == -1 ) {
+			ini_set( 'display_errors', 'On' );
+			ini_set( 'error_reporting', E_ALL );
+			ini_set( 'html_errors',
+				( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+			$this->enabled = 0;
+			$this->console = 0;
+			return;
+		}
+		if( ( isset( $_GET['debug'] ) and !$_GET['debug'] ) or ( isset( $_COOKIE['debug'] ) and !$_COOKIE['debug'] ) ) {
+			$this->enabled = false;
+		} else {
+			$this->enabled = true;
+		}
+		// консоль отключена?
+		if( !$this->enabled or ( isset( $_COOKIE['debugConsole'] ) and !$_COOKIE['debugConsole'] ) ) {
+			$this->console = 1; // консоль есть, но отлов ошибок отключен
+		} else {
+			$this->console = 2; // консоль включена
+		}
+
+		$this->cacheResources = false;
+
+		if( $this->console == 2 ) {
+			// консоль активна — перехватываем ошибки
+			ini_set( 'display_errors', 'Off' );
+			ini_set( 'html_errors', 'Off' );
+			ini_set( 'error_reporting', E_ALL );
+			set_error_handler( array( '\Difra\Debugger', 'captureNormal' ) );
+			set_exception_handler( array( '\Difra\Debugger', 'captureException' ) );
+			register_shutdown_function( array( '\Difra\Debugger', 'captureShutdown' ) );
+			$this->console = 2;
+		} else {
+			// консоль не активна — выводим ошибки
+			ini_set( 'display_errors', 'On' );
+			ini_set( 'error_reporting', E_ALL );
+			ini_set( 'html_errors',
+				( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
 		}
 	}
 

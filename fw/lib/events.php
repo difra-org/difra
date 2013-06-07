@@ -56,6 +56,31 @@ class Events {
 	}
 
 	/**
+	 * Базовый набор событий для работы движка
+	 */
+	public static function init() {
+
+		static $initDone = false;
+		if( $initDone ) {
+			return;
+		}
+		$initDone = true;
+
+		self::register( 'core-init', 'Difra\\Site', 'init' );
+		self::register( 'core-init', 'Difra\\Debugger' );
+		self::register( 'plugins-load', 'Difra\Plugger', 'init' );
+		self::register( 'init-done', 'Difra\\Site', 'initDone' );
+		if( Site::getMode() == 'web' ) {
+			self::register( 'action-find', 'Difra\\Action', 'find' );
+			self::register( 'action-run', 'Difra\\Action', 'run' );
+			self::register( 'render-run', 'Difra\\Action', 'render' );
+			if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
+				include_once( $initPHP );
+			}
+		}
+	}
+
+	/**
 	 * Зарегистрировать обработчик события (статический вариант)
 	 * @param             $type          Имя события
 	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
@@ -90,7 +115,7 @@ class Events {
 	 */
 	public function run() {
 
-		Site::getInstance(); // инициализация сайта
+		self::init();
 		foreach( $this->events as $type => $foo ) {
 			Debugger::addEventLine( 'Event ' . $type . ' started' );
 			$this->start( $type );
