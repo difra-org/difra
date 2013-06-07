@@ -93,6 +93,9 @@ class Plugger {
 			return;
 		}
 		$enabledPlugins = Config::getInstance()->get( 'plugins' );
+		if( !$enabledPlugins ) {
+			$enabledPlugins = array();
+		}
 
 		// составление списка плагинов
 		foreach( $plugins as $name => $plugin ) {
