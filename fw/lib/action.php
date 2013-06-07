@@ -56,45 +56,22 @@ class Action {
 			return;
 		}
 
-		// try to load cached data for this url
 		$uri = $this->getUri();
 		$cacheKey = 'action:uri:' . $uri;
-		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $cacheKey ) ) {
-			switch( $data['result'] ) {
-			case 'action':
-				include_once( $data['controller'] );
-				foreach( $data['vars'] as $k => $v ) {
-					$this->$k = $v;
-				}
-				break;
-			case '404':
-				View::getInstance()->httpError( 404 );
-			}
+		if( $this->loadCache( $uri ) ) {
 			return;
 		}
+
 		$parts = $uri ? explode( '/', $uri ) : array();
 		$match = array( 'vars' => array() );
 
-		// is it a resourcer request?
-		if( sizeof( $parts ) == 2 ) {
-			$resourcer = Resourcer::getInstance( $parts[0], true );
-			if( $resourcer and $resourcer->isPrintable() ) {
-				try {
-					if( !$resourcer->view( $parts[1] ) ) {
-						View::getInstance()->httpError( 404 );
-					}
-					View::getInstance()->rendered = true;
-					die();
-				} catch( Exception $ex ) {
-					View::getInstance()->httpError( 404 );
-				}
-			}
+		if( $this->getResource( $parts ) ) {
+			return;
 		}
 
-		// get possible controller dirs
+		// ищем директории с самой глубокой вложенностью, подходящие под запрос
 		$path = '';
 		$depth = $dirDepth = 0;
-
 		$controllerDirs = $dirs = $this->getControllerPaths();
 		foreach( $parts as $part ) {
 			$path .= "$part/";
@@ -112,7 +89,7 @@ class Action {
 			$dirs = $newDirs;
 		}
 
-		// find controller
+		// ищем файл контроллера с названием из следующей части пути
 		$cname = '';
 		$controller = null;
 		if( isset( $parts[$dirDepth] ) ) {
@@ -124,6 +101,8 @@ class Action {
 				}
 			}
 		}
+
+		// если не нашли, ищем файл контроллера с названием index.php
 		if( !$controller ) {
 			foreach( $dirs as $tmpDir ) {
 				if( is_file( $tmpDir . 'index.php' ) ) {
@@ -134,14 +113,14 @@ class Action {
 			}
 		}
 
-		// 404
+		// файл контроллера не найден — 404
 		if( !$controller ) {
 			Cache::getInstance()->put( $cacheKey, $match, 300 );
 			View::getInstance()->httpError( 404 );
 			return;
 		}
 
-		// assemble controller class name
+		// получаем имя класса контроллера
 		$className = '';
 		for( $i = 0; $i < $dirDepth; $i++ ) {
 			$className .= ucfirst( $parts[$i] );
@@ -151,7 +130,7 @@ class Action {
 		}
 		$className = $className . ucfirst( $cname ) . 'Controller';
 
-		// include controller
+		// подключаем контроллер
 		$match['controller'] = $controller;
 		$match['vars']['className'] = $className;
 		include_once( $controller );
@@ -159,31 +138,79 @@ class Action {
 			throw new exception( "Error! Controller class $className not found" );
 		}
 
-		// detect action method
-		$methodName = false;
+		// получаем имя экшена
+		$foundMethod = false;
 		$methodNames = isset( $parts[$dirDepth] ) ? array( $parts[$dirDepth], 'index' ) : array( 'index' );
 		foreach( $methodNames as $methodTmp ) {
 			foreach( $this->methodTypes as $methodType ) {
 				if( method_exists( $className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
-					$methodName = $methodTmp;
+					$foundMethod = $methodTmp;
 					$methodVar = "method{$methodType[0]}{$methodType[1]}";
 					$this->$methodVar = $match['vars'][$methodVar] = $m;
 				}
 			}
-			if( $methodName and $methodName != 'index' ) {
+			if( $foundMethod and $foundMethod != 'index' ) {
 				$dirDepth++;
 				break;
 			}
 		}
 		$parts = array_slice( $parts, $dirDepth );
 
-		// cache data for this url
+		// кэшируем данные для этого uri
 		$this->parameters = $parts;
 		$match['vars']['parameters'] = $this->parameters;
 		$match['result'] = 'action';
 		Cache::getInstance()->put( $cacheKey, $match, 300 );
 		$this->className = $className;
 		Debugger::addLine( "Selected controller $className from $controller" );
+	}
+
+	/**
+	 * Загрузка данных из кэша
+	 * @param string $cacheKey
+	 * @return bool
+	 */
+	private function loadCache( $cacheKey ) {
+
+		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $cacheKey ) ) {
+			switch( $data['result'] ) {
+			case 'action':
+				include_once( $data['controller'] );
+				foreach( $data['vars'] as $k => $v ) {
+					$this->$k = $v;
+				}
+				break;
+			case '404':
+				View::getInstance()->httpError( 404 );
+			}
+			return true;
+		}
+		return false;
+	}
+
+	/**
+	 * Обработка запросов к ресурсам
+	 * @param string[] $parts
+	 * @return bool
+	 */
+	private function getResource( $parts ) {
+
+		if( sizeof( $parts ) == 2 ) {
+			$resourcer = Resourcer::getInstance( $parts[0], true );
+			if( $resourcer and $resourcer->isPrintable() ) {
+				try {
+					if( !$resourcer->view( $parts[1] ) ) {
+						View::getInstance()->httpError( 404 );
+					}
+					View::getInstance()->rendered = true;
+					die();
+				} catch( Exception $ex ) {
+					View::getInstance()->httpError( 404 );
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	/**
