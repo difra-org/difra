@@ -24,7 +24,7 @@ class Exception extends \exception {
 	 */
 	static public function notifyObj( $exception = null ) {
 
-		if( !Debugger::getInstance()->isConsoleEnabled() ) {
+		if( Site::getMode() == 'web' and !Debugger::getInstance()->isConsoleEnabled() ) {
 			$date   = date( 'r' );
 			$server = print_r( $_SERVER, true );
 			$post   = print_r( $_POST, true );
