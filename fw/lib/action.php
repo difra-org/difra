@@ -14,10 +14,12 @@ class Action {
 	public $parameters = array();
 	/** @var string */
 	public $uri = '';
+
 	/** @var string */
 	public $className = null;
 	/** @var Controller */
 	public $controller = null;
+
 	/** @var string */
 	public $method = null;
 	/** @var string */
@@ -56,125 +58,46 @@ class Action {
 			return;
 		}
 
-		$uri = $this->getUri();
-		$cacheKey = 'action:uri:' . $uri;
-		if( $this->loadCache( $uri ) ) {
+		if( $this->loadCache() ) {
 			return;
 		}
 
+		$uri = $this->getUri();
 		$parts = $uri ? explode( '/', $uri ) : array();
-		$match = array( 'vars' => array() );
 
 		if( $this->getResource( $parts ) ) {
 			return;
 		}
 
-		// ищем директории с самой глубокой вложенностью, подходящие под запрос
-		$path = '';
-		$depth = $dirDepth = 0;
-		$controllerDirs = $dirs = $this->getControllerPaths();
-		foreach( $parts as $part ) {
-			$path .= "$part/";
-			$depth++;
-			$newDirs = array();
-			foreach( $controllerDirs as $nextDir ) {
-				if( is_dir( $nextDir . $path ) ) {
-					$newDirs[] = $nextDir . $path;
-					$dirDepth = $depth;
-				}
-			}
-			if( empty( $newDirs ) ) {
-				break;
-			}
-			$dirs = $newDirs;
-		}
-
-		// ищем файл контроллера с названием из следующей части пути
-		$cname = '';
-		$controller = null;
-		if( isset( $parts[$dirDepth] ) ) {
-			foreach( $dirs as $tmpDir ) {
-				if( is_file( $tmpDir . $parts[$dirDepth] . '.php' ) ) {
-					$cname = $parts[$dirDepth];
-					$controller = "{$tmpDir}{$cname}.php";
-					break;
-				}
-			}
-		}
-
-		// если не нашли, ищем файл контроллера с названием index.php
-		if( !$controller ) {
-			foreach( $dirs as $tmpDir ) {
-				if( is_file( $tmpDir . 'index.php' ) ) {
-					$cname = 'index';
-					$controller = "{$tmpDir}index.php";
-					break;
-				}
-			}
-		}
-
-		// файл контроллера не найден — 404
-		if( !$controller ) {
-			Cache::getInstance()->put( $cacheKey, $match, 300 );
+		if( !$controllerFilename = $this->findController( $parts ) ) {
+			$this->saveCache( '404' );
 			View::getInstance()->httpError( 404 );
 			return;
 		}
 
-		// получаем имя класса контроллера
-		$className = '';
-		for( $i = 0; $i < $dirDepth; $i++ ) {
-			$className .= ucfirst( $parts[$i] );
-		}
-		if( $cname != 'index' ) {
-			$dirDepth++;
-		}
-		$className = $className . ucfirst( $cname ) . 'Controller';
-
-		// подключаем контроллер
-		$match['controller'] = $controller;
-		$match['vars']['className'] = $className;
-		include_once( $controller );
-		if( !class_exists( $className ) ) {
-			throw new exception( "Error! Controller class $className not found" );
+		/** @noinspection PhpIncludeInspection */
+		include_once( $controllerFilename );
+		if( !class_exists( $this->className ) ) {
+			throw new exception( "Error! Controller class {$this->className} not found" );
 		}
 
-		// получаем имя экшена
-		$foundMethod = false;
-		$methodNames = isset( $parts[$dirDepth] ) ? array( $parts[$dirDepth], 'index' ) : array( 'index' );
-		foreach( $methodNames as $methodTmp ) {
-			foreach( $this->methodTypes as $methodType ) {
-				if( method_exists( $className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
-					$foundMethod = $methodTmp;
-					$methodVar = "method{$methodType[0]}{$methodType[1]}";
-					$this->$methodVar = $match['vars'][$methodVar] = $m;
-				}
-			}
-			if( $foundMethod and $foundMethod != 'index' ) {
-				$dirDepth++;
-				break;
-			}
-		}
-		$parts = array_slice( $parts, $dirDepth );
-
-		// кэшируем данные для этого uri
+		$this->findAction( $parts );
 		$this->parameters = $parts;
-		$match['vars']['parameters'] = $this->parameters;
-		$match['result'] = 'action';
-		Cache::getInstance()->put( $cacheKey, $match, 300 );
-		$this->className = $className;
-		Debugger::addLine( "Selected controller $className from $controller" );
+
+		$this->saveCache( 'action' );
+		Debugger::addLine( "Selected controller {$this->className} from $controllerFilename" );
 	}
 
 	/**
 	 * Загрузка данных из кэша
-	 * @param string $cacheKey
 	 * @return bool
 	 */
-	private function loadCache( $cacheKey ) {
+	private function loadCache() {
 
-		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $cacheKey ) ) {
+		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $this->getCacheKey() ) ) {
 			switch( $data['result'] ) {
 			case 'action':
+				/** @noinspection PhpIncludeInspection */
 				include_once( $data['controller'] );
 				foreach( $data['vars'] as $k => $v ) {
 					$this->$k = $v;
@@ -186,6 +109,29 @@ class Action {
 			return true;
 		}
 		return false;
+	}
+
+	private function saveCache( $result = 'action' ) {
+
+		if( $result != '404' ) {
+			$match = array(
+				'vars' => array(
+					'className' => $this->className,
+					'parameters' => $this->parameters,
+				),
+				'result' => $result
+			);
+			foreach( $this->methodTypes as $methodType ) {
+				$methodVar = "method{$methodType[0]}{$methodType[1]}";
+				$match['vars'][$methodVar] = $this->$methodVar;
+			}
+		} else {
+			$match = array(
+				'result' => '404'
+			);
+		}
+
+		Cache::getInstance()->put( $this->getCacheKey(), $match, 300 );
 	}
 
 	/**
@@ -258,7 +204,7 @@ class Action {
 	 * Собирает пути к папкам всех контроллеров
 	 * @return string[]
 	 */
-	public function getControllerPaths() {
+	private function getControllerPaths() {
 
 		static $controllerDirs = null;
 		if( !is_null( $controllerDirs ) ) {
@@ -270,5 +216,96 @@ class Action {
 			$controllerDirs[$k] = $v . 'controllers/';
 		}
 		return $controllerDirs;
+	}
+
+	/**
+	 * @return string
+	 */
+	private function getCacheKey() {
+
+		return 'action:uri:' . $this->getUri();
+	}
+
+	/**
+	 * Поиск папок с самой глубокой вложенностью, подходящих для запроса
+	 * @param string[] $parts
+	 * @return string[]
+	 */
+	private function findControllerDirs( &$parts ) {
+
+		$path = '';
+		$depth = 0;
+		$controllerDirs = $dirs = $this->getControllerPaths();
+		foreach( $parts as $part ) {
+			$path .= "$part/";
+			$depth++;
+			$newDirs = array();
+			foreach( $controllerDirs as $nextDir ) {
+				if( is_dir( $nextDir . $path ) ) {
+					$newDirs[] = $nextDir . $path;
+				}
+			}
+			if( empty( $newDirs ) ) {
+				break;
+			}
+			$dirs = $newDirs;
+		}
+		$this->className = array_slice( $parts, 0, $depth );
+		$parts = array_slice( $parts, $depth );
+		return $dirs;
+	}
+
+	/**
+	 * Поиск подходящего контроллера
+	 * @param $parts
+	 * @return null|string
+	 */
+	private function findController( &$parts ) {
+
+		$dirs = $this->findControllerDirs( $parts );
+		$cname = $controllerFile = null;
+		if( !empty( $parts ) ) {
+			foreach( $dirs as $tmpDir ) {
+				if( is_file( $tmpDir . $parts[0] . '.php' ) ) {
+					$cname = $parts[0];
+					$controllerFile = "{$tmpDir}{$cname}.php";
+					break;
+				}
+				if( is_file( $tmpDir . 'index.php' ) ) {
+					$cname = 'index';
+					$controllerFile = "{$tmpDir}index.php";
+				}
+			}
+		}
+		if( !$cname ) {
+			View::getInstance()->httpError( 404 );
+		}
+		if( $cname != 'index' ) {
+			array_shift( $parts );
+		}
+		$this->className[] = $cname;
+		array_walk( $this->className, 'ucFirst' );
+		$this->className = implode( $this->className ) . 'Controller';
+		return $controllerFile;
+	}
+
+	private function findAction( &$parts ) {
+
+		$foundMethod = false;
+		$methodNames = !empty( $parts ) ? array( $parts[0], 'index' ) : array( 'index' );
+		foreach( $methodNames as $methodTmp ) {
+			foreach( $this->methodTypes as $methodType ) {
+				if( method_exists( $this->className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
+					$foundMethod = $methodTmp;
+					$methodVar = "method{$methodType[0]}{$methodType[1]}";
+					$this->$methodVar = $m;
+				}
+			}
+			if( $foundMethod and $foundMethod != 'index' ) {
+				array_shift( $parts );
+				break;
+			}
+		}
+		return $foundMethod;
 	}
 }
