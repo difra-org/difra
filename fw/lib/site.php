@@ -23,9 +23,8 @@ class Site {
 	static $siteInit = false;
 
 	/**
-	 * Singleton
-	 *
-	 * @return Site
+	 * Синглтон
+	 * @return self
 	 */
 	static public function getInstance() {
 
@@ -34,12 +33,8 @@ class Site {
 	}
 
 	/**
-	 * Constructor
+	 * Инициализация окружения
 	 */
-	public function __construct() {
-
-	}
-
 	public function init() {
 
 		static $initDone = false;
@@ -155,7 +150,7 @@ class Site {
 		}
 
 		// prepare data
-		$this->_stripSlashes();
+		self::stripSlashes();
 	}
 
 	/**
@@ -163,7 +158,7 @@ class Site {
 	 *
 	 * @return void
 	 */
-	private function _stripSlashes() {
+	private static function stripSlashes() {
 
 		if( get_magic_quotes_gpc() != 1 ) {
 			return;
@@ -318,17 +313,6 @@ class Site {
 			'hostname' => $this->getHostname(),
 			'mainhost' => $this->getMainhost()
 		);
-	}
-
-	/**
-	 * @deprecated
-	 * @param $key
-	 * @return mixed
-	 */
-	public function getData( $key ) {
-
-		trigger_error( 'Site->getData() is deprecated, please use Config->get', E_USER_DEPRECATED );
-		return Config::getInstance()->get( $key );
 	}
 
 	public function sessionLoad() {
@@ -517,14 +501,4 @@ class Site {
 		return $uaClass = trim( implode( ' ', $uac ) );
 	}
 
-	static protected $mode = 'web';
-	public static function setMode( $mode ) {
-
-		self::$mode = $mode;
-	}
-
-	public static function getMode() {
-
-		return self::$mode;
-	}
 }

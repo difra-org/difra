@@ -1,7 +1,7 @@
 <?php
 
 require_once( __DIR__ . '/autoloader.php' );
-require_once( __DIR__ . '/site.php' );
+require_once( __DIR__ . '/envi.php' );
 require_once( __DIR__ . '/events.php' );
 
 // Установка констант путей для запуска из PHAR
@@ -11,15 +11,12 @@ if( isset( $_ ) ) {
 }
 
 if( !empty( $_SERVER['REQUEST_METHOD'] ) ) {
-	// web run exec
-	\Difra\Site::setMode( 'web' );
+	\Difra\Envi::setMode( 'web' );
 	\Difra\Events::getInstance()->run();
 } elseif( isset( $_ ) ) {
-	// phar cli exec
-	\Difra\Site::setMode( 'cli' );
+	\Difra\Envi::setMode( 'cli' );
 	\Difra\Events::getInstance()->run();
 } else {
-	// движок подключен из теста или другого скрипта
-	\Difra\Site::setMode( 'include' );
+	\Difra\Envi::setMode( 'cli' );
 	\Difra\Events::getInstance()->run();
 }

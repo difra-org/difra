@@ -4,6 +4,7 @@ namespace Difra;
 
 /**
  * Class Exception
+ *
  * @package Difra
  */
 class Exception extends \exception {
@@ -19,17 +20,16 @@ class Exception extends \exception {
 
 	/**
 	 * @static
-	 *
 	 * @param \Difra\Exception|\exception $exception
 	 */
 	static public function notifyObj( $exception = null ) {
 
-		if( Site::getMode() == 'web' and !Debugger::getInstance()->isConsoleEnabled() ) {
-			$date   = date( 'r' );
+		if( Envi::getMode() == 'web' and !Debugger::getInstance()->isConsoleEnabled() ) {
+			$date = date( 'r' );
 			$server = print_r( $_SERVER, true );
-			$post   = print_r( $_POST, true );
+			$post = print_r( $_POST, true );
 			$cookie = print_r( $_COOKIE, true );
-			$user   = Auth::getInstance()->data['email'];
+			$user = Auth::getInstance()->data['email'];
 
 			$uri = !empty( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '-';
 			$host = !empty( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : '-';

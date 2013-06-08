@@ -4,6 +4,7 @@ namespace Difra;
 
 /**
  * Class Events
+ *
  * @package Difra
  */
 class Events {
@@ -70,7 +71,7 @@ class Events {
 		self::register( 'core-init', 'Difra\\Debugger' );
 		self::register( 'plugins-load', 'Difra\Plugger', 'init' );
 		self::register( 'init-done', 'Difra\\Site', 'initDone' );
-		if( Site::getMode() == 'web' ) {
+		if( Envi::getMode() == 'web' ) {
 			self::register( 'action-find', 'Difra\\Action', 'find' );
 			self::register( 'action-run', 'Difra\\Action', 'run' );
 			self::register( 'render-run', 'Difra\\Action', 'render' );
@@ -96,7 +97,6 @@ class Events {
 	 * @param             $type          Имя события
 	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
 	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
-	 *
 	 * @throws Exception
 	 */
 	private function add( $type, $class, $method = false ) {
@@ -122,7 +122,7 @@ class Events {
 		}
 
 		Debugger::addLine( 'Done running events' );
-		if( Site::getMode() == 'web' ) {
+		if( Envi::getMode() == 'web' ) {
 			Debugger::checkSlow();
 		}
 	}
