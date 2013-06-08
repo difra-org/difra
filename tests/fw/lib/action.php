@@ -16,4 +16,48 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 		$action->getUri();
 	}
 
+	public function test_find_index() {
+
+		$action = new \Difra\Action;
+		$action->uri = '';
+		$action->find();
+		$this->assertEquals( $action->className, 'indexController' );
+		$this->assertEquals( $action->method, 'indexAction' );
+	}
+
+	public function test_find_adm() {
+
+		$action = new \Difra\Action;
+		$action->uri = '/adm';
+		$action->find();
+		$this->assertEquals( $action->className, 'AdmIndexController' );
+		$this->assertEquals( $action->method, 'indexAction' );
+	}
+
+	public function test_find_adm2() {
+
+		$action = new \Difra\Action;
+		$action->uri = '/adm/';
+		$action->find();
+		$this->assertEquals( $action->className, 'AdmIndexController' );
+		$this->assertEquals( $action->method, 'indexAction' );
+	}
+
+	public function test_find_admDevConfig() {
+
+		$action = new \Difra\Action;
+		$action->uri = '/adm/development/config';
+		$action->find();
+		$this->assertEquals( $action->className, 'AdmDevelopmentConfigController' );
+		$this->assertEquals( $action->method, 'indexAction' );
+	}
+
+	public function test_find_admDevConfigReset() {
+
+		$action = new \Difra\Action;
+		$action->uri = '/adm/development/config/reset';
+		$action->find();
+		$this->assertEquals( $action->className, 'AdmDevelopmentConfigController' );
+		$this->assertEquals( $action->method, 'resetAction' );
+	}
 }
