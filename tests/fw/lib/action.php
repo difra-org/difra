@@ -49,6 +49,6 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 		$action->uri = 'adm/development/config/reset';
 		$action->find();
 		$this->assertEquals( $action->className, 'AdmDevelopmentConfigController' );
-		$this->assertEquals( $action->method, 'resetAjaxAction' );
+		$this->assertEquals( $action->methodAjax, 'resetAjaxAction' );
 	}
 }
