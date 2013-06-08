@@ -31,7 +31,7 @@ EOT
 
 	public function test_css() {
 
-		$test = \Difra\Minify::getInstance( 'js' )->minify( <<<EOT
+		$test = \Difra\Minify::getInstance( 'css' )->minify( <<<EOT
 html {
 	min-width: 980px;
 }
@@ -50,8 +50,7 @@ EOT
 		$this->assertEquals( $test,
 			<<<EOT
 
-html{min-width:980px;}
-body{position:absolute;left:0;right:0;top:0;bottom:0;}
+html{min-width:980px;}body{position:absolute;left:0;right:0;top:0;bottom:0;}
 EOT
 		);
 	}
