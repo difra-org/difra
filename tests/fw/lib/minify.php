@@ -20,7 +20,13 @@ test.test = function( e ) {
 
 EOT
 		);
-		$this->assertEquals( $test, "\nvar test={};test.test=function(e){test.testValue=e;testValue2='abcd\\'ed';testValue3=3-4+\n(5-7)/1;testValue4='';};test.o=['t':1,'r':2];" );
+		$this->assertEquals( $test,
+			<<<EOT
+
+var test={};test.test=function(e){test.testValue=e;testValue2='abcd\\'ed';testValue3=3-4+
+(5-7)/1;testValue4='';return Form.Validator.getValidator('IsEmpty').test(element)||(/^(?:[a-z0-9!#$%&'*+/=?^_`{|}~-]\.?){0,63}[a-z0-9!#$%&'*+/=?^_`{|}~-]@(?:(?:[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?\.)*[a-z0-9](?:[a-z0-9-]{0,61}[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\])$/i).test(element.get('value'));};
+EOT
+		);
 	}
 
 	public function test_css() {
