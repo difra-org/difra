@@ -44,11 +44,7 @@
 				<include name="**/*.php"/>
 				<exclude name="**/fw/lib/libs/esapi/**"/>
 				<exclude name="**/fw/lib/libs/less/**"/>
-				<modified/>
-			</fileset>
-
-			<fileset dir="${basedir}/../tests">
-				<include name="**/*.php"/>
+				<exclude name="**/tests/***"/>
 				<modified/>
 			</fileset>
 		</apply>
@@ -62,6 +58,8 @@
 			<arg value="${basedir}/../fw/lib/libs/esapi/"/>
 			<arg value="--exclude"/>
 			<arg value="${basedir}/../fw/lib/libs/less/"/>
+			<arg value="--exclude"/>
+			<arg value="${basedir}/../tests/"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 	</target>
@@ -71,7 +69,7 @@
 			<arg value="--jdepend-xml=${basedir}/logs/jdepend.xml"/>
 			<arg value="--jdepend-chart=${basedir}/pdepend/dependencies.svg"/>
 			<arg value="--overview-pyramid=${basedir}/pdepend/overview-pyramid.svg"/>
-			<arg value="--ignore=fw/lib/libs/esapi,fw/lib/libs/less"/>
+			<arg value="--ignore=fw/lib/libs/esapi,fw/lib/libs/less,tests"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 	</target>
@@ -83,7 +81,7 @@
 			<arg value="text"/>
 			<arg value="${basedir}/phpmd.xml"/>
 			<arg value="--exclude"/>
-			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less"/>
+			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less,{$basedir}/tests"/>
 		</exec>
 	</target>
 
@@ -95,7 +93,7 @@
 			<arg value="--reportfile"/>
 			<arg value="${basedir}/logs/pmd.xml"/>
 			<arg value="--exclude"/>
-			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less"/>
+			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less,${basedir}/../tests"/>
 		</exec>
 	</target>
 
@@ -124,6 +122,8 @@
 			<arg value="fw/lib/libs/esapi"/>
 			<arg value="--exclude"/>
 			<arg value="fw/lib/libs/less"/>
+			<arg value="--exclude"/>
+			<arg value="tests"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 	</target>
@@ -144,7 +144,7 @@
 			<arg path="${basedir}/.."/>
 			<arg value="--output"/>
 			<arg path="${basedir}/code-browser"/>
-			<arg value="--ignore=../build,../fw/lib/libs/esapi,../fw/lib/libs/less,../plugins/editor/ckeditor"/>
+			<arg value="--ignore=../build,../fw/lib/libs/esapi,../fw/lib/libs/less,../plugins/editor/ckeditor,../tests"/>
 		</exec>
 	</target>
 </project>

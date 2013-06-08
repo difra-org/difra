@@ -5,6 +5,7 @@
 			<include mask="*.php"/>
 			<exclude mask="**/fw/lib/libs/esapi/**"/>
 			<exclude mask="**/fw/lib/libs/less/**"/>
+			<exclude mask="**/fw/lib/libs/tests/**"/>
 		</collector>
 
 		<generator output="${basedir}">
