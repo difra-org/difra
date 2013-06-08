@@ -6,7 +6,7 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 
 		$action1 = \Difra\Action::getInstance();
 		$action2 = \Difra\Action::getInstance();
-		$this->assertEquals( $action1, $action2 );
+		$this->assertSame( $action1, $action2 );
 	}
 
 	public function test_getUri_Fail() {
