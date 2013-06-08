@@ -150,7 +150,7 @@ class Item extends Storage {
 	}
 
 	/** @var string[string $objKey][bool $full][] Список ключей для загрузки */
-	protected $objKeys = array();
+	protected static $objKeys = array();
 
 	/**
 	 * Возвращает список ключей
@@ -171,16 +171,16 @@ class Item extends Storage {
 		$self::$objKeys[$self::$objKey][$full] = array();
 		/** @var $propertiesList array */
 		foreach( $self::$propertiesList as $name => $prop ) {
-			// Пропускаем внешние ключи
-			if( $prop == 'foreign' or ( isset( $prop['type'] ) and $prop['type'] == 'foreign' ) ) {
-				continue;
-			}
+//			// Пропускаем внешние ключи
+//			if( $prop == 'foreign' or ( isset( $prop['type'] ) and $prop['type'] == 'foreign' ) ) {
+//				continue;
+//			}
 			// Пропускаем составные индексы
 			if( isset( $prop['type'] ) and $prop['type'] == 'index' ) {
 				continue;
 			}
 			// При не полной загрузке пропускаем поля с autoload=false
-			if( !$full and isset( $prop['$autoload'] ) and !$prop['autoload'] ) {
+			if( !$full and isset( $prop['autoload'] ) and !$prop['autoload'] ) {
 				continue;
 			}
 			// При загрузке только полей с autoload=false пропускаем поля без этого свойства
