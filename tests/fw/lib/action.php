@@ -16,7 +16,7 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 		$action->getUri();
 	}
 
-	public function test_find_index() {
+	public function test_find_IndexIndex() {
 
 		$action = new \Difra\Action;
 		$action->uri = '';
@@ -25,7 +25,7 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $action->method, 'indexAction' );
 	}
 
-	public function test_find_adm() {
+	public function test_find_NameIndex() {
 
 		$action = new \Difra\Action;
 		$action->uri = 'adm';
@@ -34,7 +34,7 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $action->method, 'indexAction' );
 	}
 
-	public function test_find_admDevConfig() {
+	public function test_find_NameIndex2() {
 
 		$action = new \Difra\Action;
 		$action->uri = 'adm/development/config';
@@ -43,12 +43,12 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $action->method, 'indexAction' );
 	}
 
-	public function test_find_admDevConfigReset() {
+	public function test_find_NameNameAjax() {
 
 		$action = new \Difra\Action;
 		$action->uri = 'adm/development/config/reset';
 		$action->find();
 		$this->assertEquals( $action->className, 'AdmDevelopmentConfigController' );
-		$this->assertEquals( $action->method, 'resetAction' );
+		$this->assertEquals( $action->method, 'resetAjaxAction' );
 	}
 }
