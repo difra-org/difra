@@ -4,6 +4,7 @@ namespace Difra;
 
 /**
  * Class View
+ *
  * @package Difra
  */
 class View {
@@ -95,7 +96,6 @@ ErrorPage
 	 * @param \DOMDocument $xml
 	 * @param bool|string  $specificInstance
 	 * @param bool         $dontEcho
-	 *
 	 * @throws exception
 	 * @internal param bool|string $instance
 	 * @return bool|string
@@ -144,6 +144,7 @@ ErrorPage
 			}
 
 			echo $html;
+			$this->rendered = true;
 			if( Debugger::getInstance()->isEnabled() ) {
 				echo '<!-- Page rendered in ' . Debugger::getTimer() . ' seconds -->';
 			}

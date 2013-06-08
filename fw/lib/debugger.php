@@ -275,6 +275,9 @@ class Debugger {
 	 */
 	public static function captureShutdown() {
 
+		if( View::getInstance()->rendered ) {
+			return;
+		}
 		// произошла ошибка?
 		$error = error_get_last();
 		if( !$error ) {
