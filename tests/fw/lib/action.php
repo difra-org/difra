@@ -21,7 +21,7 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 		$action = new \Difra\Action;
 		$action->uri = '';
 		$action->find();
-		$this->assertEquals( $action->className, 'indexController' );
+		$this->assertEquals( $action->className, 'IndexController' );
 		$this->assertEquals( $action->method, 'indexAction' );
 	}
 
