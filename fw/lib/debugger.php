@@ -329,6 +329,7 @@ class Debugger {
 		if( $time > 1 ) {
 			$output = '<pre>';
 			foreach( self::$output as $line ) {
+				if( !isset( $line['type'] ) ) { $line['type'] = null; };
 				$output .= "{$line['timer']}\t{$line['class']}\t{$line['type']}\t{$line['message']}\n";
 			}
 			$date = date( 'r' );
