@@ -13,7 +13,7 @@ class Action {
 	/** @var string[] */
 	public $parameters = array();
 	/** @var string */
-	public $uri = '';
+	public $uri = null;
 
 	/** @var string */
 	public $className = null;
@@ -173,9 +173,8 @@ class Action {
 	 */
 	public function getUri() {
 
-		static $uri = null;
-		if( !is_null( $uri ) ) {
-			return $uri;
+		if( !is_null( $this->uri ) ) {
+			return $this->uri;
 		}
 		if( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
 			$this->uri = $_SERVER['URI'];
@@ -184,12 +183,11 @@ class Action {
 		} else {
 			throw new Exception( 'Can\'t get URI' );
 		}
-		$uri = $this->uri;
-		if( false !== strpos( $uri, '?' ) ) {
-			$uri = substr( $uri, 0, strpos( $uri, '?' ) );
+		if( false !== strpos( $this->uri, '?' ) ) {
+			$this->uri = substr( $this->uri, 0, strpos( $this->uri, '?' ) );
 		}
-		$uri = trim( $uri, '/' );
-		return $uri;
+		$this->uri = trim( $this->uri, '/' );
+		return $this->uri;
 	}
 
 	/**
@@ -289,6 +287,11 @@ class Action {
 		return $controllerFile;
 	}
 
+	/**
+	 * Поиск подходящих экшенов
+	 * @param string[] $parts
+	 * @return bool|string
+	 */
 	private function findAction( &$parts ) {
 
 		$foundMethod = false;
