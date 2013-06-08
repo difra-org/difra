@@ -122,7 +122,9 @@ class Events {
 		}
 
 		Debugger::addLine( 'Done running events' );
-		Debugger::checkSlow();
+		if( Site::getMode() == 'web' ) {
+			Debugger::checkSlow();
+		}
 	}
 
 	/**
