@@ -262,27 +262,29 @@ class Action {
 
 		$dirs = $this->findControllerDirs( $parts );
 		$cname = $controllerFile = null;
-		if( !empty( $parts ) ) {
-			foreach( $dirs as $tmpDir ) {
+		foreach( $dirs as $tmpDir ) {
+			if( !empty( $parts ) ) {
 				if( is_file( $tmpDir . $parts[0] . '.php' ) ) {
 					$cname = $parts[0];
 					$controllerFile = "{$tmpDir}{$cname}.php";
 					break;
 				}
-				if( is_file( $tmpDir . 'index.php' ) ) {
-					$cname = 'index';
-					$controllerFile = "{$tmpDir}index.php";
-				}
+			}
+			if( is_file( $tmpDir . 'index.php' ) ) {
+				$cname = 'index';
+				$controllerFile = "{$tmpDir}index.php";
 			}
 		}
 		if( !$cname ) {
-			View::getInstance()->httpError( 404 );
+			return null;
 		}
 		if( $cname != 'index' ) {
 			array_shift( $parts );
 		}
 		$this->className[] = $cname;
-		array_walk( $this->className, 'ucFirst' );
+		foreach( $this->className as $k => $v ) {
+			$this->className[$k] = ucFirst( $v );
+		};
 		$this->className = implode( $this->className ) . 'Controller';
 		return $controllerFile;
 	}
