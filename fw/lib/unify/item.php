@@ -184,7 +184,7 @@ class Item extends Storage {
 				continue;
 			}
 			// При загрузке только полей с autoload=false пропускаем поля без этого свойства
-			if( $full === 'only' and ( !isset( $prop['$autoload'] ) or $prop['autoload'] ) ) {
+			if( $full === 'only' and ( !isset( $prop['autoload'] ) or $prop['autoload'] ) ) {
 				continue;
 			}
 			$self::$objKeys[$self::$objKey][$full][] = $name;
