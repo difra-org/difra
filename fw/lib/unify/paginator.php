@@ -50,6 +50,11 @@ class Paginator {
 		$this->pages = floor( ( $count - 1 ) / $this->perpage ) + 1;
 	}
 
+	public function getPages() {
+
+		return $this->pages;
+	}
+
 	/**
 	 * Добавляет ноду пагинатора в XML
 	 *

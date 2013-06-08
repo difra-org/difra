@@ -34,10 +34,10 @@ class Query extends Paginator {
 	public $full = false;
 
 	/**
-	 * Установить имя объектов для запроса
-	 * @param $objKey
+	 * Конструктор
+	 * @param $objKey        Имя объектов для запроса
 	 */
-	public function setClass( $objKey ) {
+	public function __construct( $objKey ) {
 
 		$this->objKey = $objKey;
 	}
@@ -98,6 +98,9 @@ class Query extends Paginator {
 		$db = \Difra\MySQL::getInstance();
 		/** @var Unify $class */
 		$class = Unify::getClass( $this->objKey );
+		if( !$class ) {
+			throw new Exception( "Can't query unknown object '{$this->objKey}'" );
+		}
 		$keys = $class::getKeys( $this->full );
 		$keys = $db->escape( $keys );
 		$keysS = array();
@@ -222,8 +225,7 @@ class Query extends Paginator {
 	public function join( $query ) {
 
 		if( is_string( $query ) ) {
-			$q = new self;
-			$q->setClass( $query );
+			$q = new self( $query );
 			$this->with[] = $q;
 		} elseif( $query instanceof Query ) {
 			$this->with[] = $query;
