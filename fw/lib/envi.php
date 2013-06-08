@@ -5,7 +5,7 @@ namespace Difra;
 class Envi {
 
 	/** @var string Режим работы (web, cli, include) */
-	static protected $mode = 'web';
+	static protected $mode = 'include';
 
 	/** Установить режим работы */
 	public static function setMode( $mode ) {
