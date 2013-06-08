@@ -6,6 +6,8 @@ namespace Difra;
  * Class Site
  *
  * @package Difra
+ * @deprecated
+ * Устаревший класс, так как в оригинале он использовался для вызова компонентов движка, теперь для этого используется Events.
  */
 class Site {
 
