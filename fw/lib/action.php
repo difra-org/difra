@@ -111,6 +111,10 @@ class Action {
 		return false;
 	}
 
+	/**
+	 * Сохранить результат в кэш
+	 * @param string $result Тип резултата: 'action' или '404'
+	 */
 	private function saveCache( $result = 'action' ) {
 
 		if( $result != '404' ) {
@@ -236,7 +240,6 @@ class Action {
 		$controllerDirs = $dirs = $this->getControllerPaths();
 		foreach( $parts as $part ) {
 			$path .= "$part/";
-			$depth++;
 			$newDirs = array();
 			foreach( $controllerDirs as $nextDir ) {
 				if( is_dir( $nextDir . $path ) ) {
@@ -246,6 +249,7 @@ class Action {
 			if( empty( $newDirs ) ) {
 				break;
 			}
+			$depth++;
 			$dirs = $newDirs;
 		}
 		$this->className = array_slice( $parts, 0, $depth );
@@ -262,17 +266,22 @@ class Action {
 
 		$dirs = $this->findControllerDirs( $parts );
 		$cname = $controllerFile = null;
-		foreach( $dirs as $tmpDir ) {
-			if( !empty( $parts ) ) {
+		if( !empty( $parts ) ) {
+			foreach( $dirs as $tmpDir ) {
 				if( is_file( $tmpDir . $parts[0] . '.php' ) ) {
 					$cname = $parts[0];
 					$controllerFile = "{$tmpDir}{$cname}.php";
 					break;
 				}
 			}
-			if( is_file( $tmpDir . 'index.php' ) ) {
-				$cname = 'index';
-				$controllerFile = "{$tmpDir}index.php";
+		}
+		if( !$cname ) {
+			foreach( $dirs as $tmpDir ) {
+				if( is_file( $tmpDir . 'index.php' ) ) {
+					$cname = 'index';
+					$controllerFile = "{$tmpDir}index.php";
+					break;
+				}
 			}
 		}
 		if( !$cname ) {
