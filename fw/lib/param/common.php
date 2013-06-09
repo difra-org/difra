@@ -82,15 +82,21 @@ abstract class Common {
 			}
 			return false;
 		}
+		if( is_array( $value ) or is_object( $value ) ) {
+			return false;
+		}
 		$value = self::canonicalize( $value );
 		switch( static::type ) {
 		case 'string':
-			return true;
+			return is_string( $value );
 		case 'int':
 			return filter_var( $value, FILTER_VALIDATE_INT ) or $value === '0';
 		case 'float':
+			if( $value === '0' ) {
+				return true;
+			}
 			$value = str_replace( ',', '.', $value );
-			return filter_var( $value, FILTER_VALIDATE_FLOAT );
+			return filter_var( $value, FILTER_VALIDATE_FLOAT ) ? true : false;
 		case 'data':
 			return true;
 		case 'url':
@@ -108,7 +114,6 @@ abstract class Common {
 
 	/**
 	 * @param $str
-	 *
 	 * @return string|null
 	 */
 	static function canonicalize( $str ) {
