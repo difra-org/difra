@@ -71,7 +71,7 @@ abstract class Common {
 
 		switch( static::type ) {
 		case 'file':
-			if( $value['error'] ) {
+			if( !isset( $value['error'] ) or $value['error'] !== UPLOAD_ERR_OK ) {
 				return false;
 			}
 			return true;
@@ -105,7 +105,7 @@ abstract class Common {
 			return filter_var( $value, FILTER_VALIDATE_URL );
 		case 'email':
 			// TODO: заменить этот фильтр на ESAPI
-			return filter_var( $value, FILTER_VALIDATE_EMAIL );
+			return ( false !== filter_var( $value, FILTER_VALIDATE_EMAIL ) ) ? true : false;
 		case 'ip':
 			return filter_var( $value, FILTER_VALIDATE_IP );
 		default:
@@ -130,7 +130,7 @@ abstract class Common {
 
 		switch( static::type ) {
 		case 'file':
-			if( !$this->value['error'] ) {
+			if( $this->value['error'] === UPLOAD_ERR_OK ) {
 				return file_get_contents( $this->value['tmp_name'] );
 			}
 			return null;
