@@ -254,7 +254,7 @@ class Item extends Storage {
 
 		$self = get_called_class();
 		/** @var $defaultSearch null|array */
-		return $self::$defaultSearch();
+		return $self::$defaultSearch;
 	}
 
 	/**
