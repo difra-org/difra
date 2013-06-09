@@ -37,7 +37,7 @@ abstract class Common {
 			break;
 		case 'float':
 			$value = str_replace( ',', '.', $value );
-			$this->value = filter_var( $value, FILTER_SANITIZE_NUMBER_FLOAT );
+			$this->value = filter_var( $value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
 			break;
 		case 'data':
 			$this->value = $value;
