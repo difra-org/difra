@@ -26,6 +26,9 @@ abstract class Common {
 			}
 			$this->value = $files;
 			return;
+		case 'data':
+			$this->value = $value;
+			return;
 		}
 		$this->value = self::canonicalize( $value );
 		switch( static::type ) {
@@ -38,9 +41,6 @@ abstract class Common {
 		case 'float':
 			$value = str_replace( ',', '.', $value );
 			$this->value = filter_var( $value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION );
-			break;
-		case 'data':
-			$this->value = $value;
 			break;
 		case 'url':
 			// TODO: заменить этот фильтр на ESAPI
@@ -60,6 +60,10 @@ abstract class Common {
 
 	public function __toString() {
 
+		$value = $this->val();
+		if( is_array( $value ) ) {
+			return '';
+		}
 		return (string)$this->val();
 	}
 
@@ -81,6 +85,8 @@ abstract class Common {
 				}
 			}
 			return false;
+		case 'data':
+			return true;
 		}
 		if( is_array( $value ) or is_object( $value ) ) {
 			return false;
@@ -92,13 +98,8 @@ abstract class Common {
 		case 'int':
 			return filter_var( $value, FILTER_VALIDATE_INT ) or $value === '0';
 		case 'float':
-			if( $value === '0' ) {
-				return true;
-			}
 			$value = str_replace( ',', '.', $value );
-			return filter_var( $value, FILTER_VALIDATE_FLOAT ) ? true : false;
-		case 'data':
-			return true;
+			return ( false !== filter_var( $value, FILTER_VALIDATE_FLOAT ) ) ? true : false;
 		case 'url':
 			// TODO: заменить этот фильтр на ESAPI
 			return filter_var( $value, FILTER_VALIDATE_URL );
