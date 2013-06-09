@@ -113,4 +113,77 @@ class ParamTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $i->raw(), array( '1', 2, 3 ) );
 		$this->assertEquals( (string)$i, '' );
 	}
+
+	public function test_Email() {
+
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( 0 ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( null ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( array() ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( \Difra\Action::getInstance() ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( 'user@jam' ) );
+		$this->assertTrue( \Difra\Param\AjaxEmail::verify( 'user@mail.jam' ) );
+		$this->assertTrue( \Difra\Param\AjaxEmail::verify( 'user@a-jam.ru' ) );
+		$this->assertTrue( \Difra\Param\AjaxEmail::verify( 'the.user@a-jam.ru' ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( 'us.@difra.ru' ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( '.us@difra.ru' ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( 'us..er@difra.ru' ) );
+		$this->assertTrue( \Difra\Param\AjaxEmail::verify( 'u.s.er@difra.ru' ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( '@a-jam.ru' ) );
+		$this->assertFalse( \Difra\Param\AjaxEmail::verify( 'user@' ) );
+
+		$i = new \Difra\Param\AjaxEmail( 'user@difra.ru' );
+		$this->assertEquals( $i->val(), 'user@difra.ru' );
+		$this->assertEquals( $i->raw(), 'user@difra.ru' );
+		$this->assertEquals( (string)$i, 'user@difra.ru' );
+	}
+
+	public function test_CheckBox() {
+
+		$cb1 = new \Difra\Param\AjaxCheckbox( 'on' );
+		$this->assertTrue( $cb1->val() );
+		$this->assertEquals( (string)$cb1, '1' );
+		$cb2 = new \Difra\Param\AjaxCheckbox();
+		$this->assertFalse( $cb2->val() );
+		$this->assertEquals( (string)$cb2, '' );
+
+		$this->assertEquals( \Difra\Param\AjaxCheckbox::getSource(), 'ajax' );
+		$this->assertTrue( \Difra\Param\AjaxCheckbox::isNamed() );
+		$this->assertTrue( \Difra\Param\AjaxCheckbox::isAuto() );
+	}
+
+	public function test_Files() {
+
+		$file1 = array(
+			'error' => UPLOAD_ERR_OK,
+			'tmp_name' => __DIR__ . '/data/file1.txt'
+		);
+		$file2 = array(
+			'error' => UPLOAD_ERR_OK,
+			'tmp_name' => __DIR__ . '/data/file2.txt'
+		);
+		$file3 = array(
+			'error' => UPLOAD_ERR_INI_SIZE
+		);
+
+		$this->assertFalse( \Difra\Param\AjaxFile::verify( null ) );
+		$this->assertTrue( \Difra\Param\AjaxFile::verify( $file1 ) );
+		$this->assertTrue( \Difra\Param\AjaxFile::verify( $file2 ) );
+		$this->assertFalse( \Difra\Param\AjaxFile::verify( $file3 ) );
+
+		$this->assertFalse( \Difra\Param\AjaxFiles::verify( null ) );
+		$this->assertTrue( \Difra\Param\AjaxFiles::verify( array( $file1 ) ) );
+		$this->assertTrue( \Difra\Param\AjaxFiles::verify( array( $file2 ) ) );
+		$this->assertFalse( \Difra\Param\AjaxFiles::verify( array( $file3 ) ) );
+		$this->assertTrue( \Difra\Param\AjaxFiles::verify( array( $file1, $file2 ) ) );
+		$this->assertTrue( \Difra\Param\AjaxFiles::verify( array( $file1, $file3 ) ) );
+		$this->assertTrue( \Difra\Param\AjaxFiles::verify( array( $file2, $file3 ) ) );
+		$this->assertTrue( \Difra\Param\AjaxFiles::verify( array( $file1, $file2, $file3 ) ) );
+
+		$files = new \Difra\Param\AjaxFiles( array( $file1, $file2, $file3 ) );
+		$this->assertEquals( $files->val(), array( file_get_contents( __DIR__ . '/data/file1.txt' ), file_get_contents( __DIR__ . '/data/file2.txt' ) ) );
+
+		$file = new \Difra\Param\AjaxFile( $file3 );
+		$this->assertNull( $file->val() );
+		$this->assertEquals( $file->raw(), $file3 );
+	}
 }
