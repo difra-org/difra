@@ -4,7 +4,7 @@ class UnifyTest extends PHPUnit_Framework_TestCase {
 
 	public function test_get() {
 
-		include_once( __DIR__ . '/unify/test-obj.inc' );
+		include_once( __DIR__ . '/data/test-obj.inc' );
 		\Difra\Unify::registerObjects( array( 'test' => 'TestObj' ) );
 		$test = \Difra\Unify::getObj( 'test', 10 ); // проверка кэша
 		$test2 = TestObj::get( 10 );
