@@ -11,11 +11,10 @@ use Difra\Exception, Difra\MySQL;
  */
 abstract class Item extends Storage {
 
-	/** TODO
+	/**
+	 * TODO: рассмотреть необходимость добавления свойств и соответствующих методов. Вероятно, это нужно добавлять в Query, но тогда тут должна быть какая-то связка
 	 * Unify::parents[$name] - ???
 	 * Unify::children[$name] - ???
-	 * Unify::objects[$name][$id] — список объектов - ???
-	 * Обновить wiki
 	 */
 
 	/** @var string Имя класса (post, comment, user, etc.) */
@@ -86,17 +85,18 @@ abstract class Item extends Storage {
 	 */
 	public function load( $full = false ) {
 
-		$this->loadByField( $this::getPrimary(), $this->getPrimaryValue(), $full );
+		$this->loadByField( static::getPrimary(), $this->getPrimaryValue(), $full );
 	}
 
 	/**
-	 * Получить элемент по значению определённого поля
+	 * Загрузить элемент по значению определённого поля (для getByField())
+	 *
 	 * @param string $field
 	 * @param mixed  $value
 	 * @param bool   $full
 	 * @throws \Difra\Exception
 	 */
-	public function loadByField( $field, $value, $full = false ) {
+	protected function loadByField( $field, $value, $full = false ) {
 
 		if( $this->full ) {
 			return;
@@ -110,7 +110,7 @@ abstract class Item extends Storage {
 		}
 		$db = MySQL::getInstance();
 		$data = $db->fetchRow(
-			'SELECT `' . implode( '`,`', $db->escape( $this::getKeys( $full ) ) ) . '` FROM `' . $db->escape( $this::getTable() ) . '`'
+			'SELECT `' . implode( '`,`', $db->escape( static::getKeys( $full ) ) ) . '` FROM `' . $db->escape( static::getTable() ) . '`'
 			. ' WHERE `' . $db->escape( $field ) . "`='" . $db->escape( $value ) . "'"
 		);
 		if( empty( $data ) ) {
@@ -244,7 +244,7 @@ abstract class Item extends Storage {
 	 */
 	public function getPrimaryValue() {
 
-		return isset( $this->data[$pri = $this::getPrimary()] ) ? $this->data[$pri] : $this->tempPrimary;
+		return isset( $this->data[$pri = static::getPrimary()] ) ? $this->data[$pri] : $this->tempPrimary;
 	}
 
 	/**
