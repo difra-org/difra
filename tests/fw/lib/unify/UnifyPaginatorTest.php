@@ -71,7 +71,7 @@ class UnifyPaginatorTest extends PHPUnit_Framework_TestCase {
 		$node->setAttribute( 'get', '' );
 		$xml2 = new DOMDocument();
 		$root2 = $xml2->appendChild( $xml2->createElement( 'test' ) );
-		$paginator->getXML( $root2 );
+		$paginator->getPaginatorXML( $root2 );
 		$this->assertEquals( $xml1, $xml2 );
 	}
 }
