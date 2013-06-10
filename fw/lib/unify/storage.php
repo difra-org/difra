@@ -9,7 +9,7 @@ use Difra\Exception;
  *
  * @package Difra\Unify
  */
-class Storage {
+abstract class Storage {
 
 	/** @var string[string $name] Список доступных объектов в формате название => имя_класса */
 	static protected $classes = array();

@@ -9,15 +9,35 @@ use Difra\Exception, Difra\MySQL;
  *
  * @package Difra\Unify
  */
-class Item extends Storage {
+abstract class Item extends Storage {
+
+	/** TODO
+	 * Unify::parents[$name] - ???
+	 * Unify::children[$name] - ???
+	 * Unify::objects[$name][$id] — список объектов - ???
+	 * Обновить wiki
+	 */
+
+	/** @var string Имя класса (post, comment, user, etc.) */
+	static protected $objKey = null;
+	/** @var Имя таблицы */
+	static protected $table = null;
+	/** @var array[string $name] */
+	static protected $propertiesList = null;
+	/** @var Имя Property с Primary Key */
+	static protected $primary = null;
+
+	/** @var null|array Дефолтные условия поиска */
+	static protected $defaultSearch = null;
+
 	/**
 	 * Работа с объектом
-	 *
 	 */
 
 	protected $data = null; // данные
 	protected $full = false; // данные загружены полностью
 	protected $modified = array();
+	protected $tempPrimary = null;
 
 	/**
 	 * Деструктор
@@ -38,13 +58,11 @@ class Item extends Storage {
 		if( isset( $this->data[$name] ) ) {
 			return $this->data[$name];
 		}
-		$self = get_called_class();
-		/** @var array $propertiesList */
-		if( !isset( $self::$propertiesList[$name] ) ) {
+		if( !isset( static::$propertiesList[$name] ) ) {
 			/** @var $objKey string */
-			throw new Exception( "Object '{$self::$objKey}' has no property '$name'." );
+			throw new Exception( "Object '{static::$objKey}' has no property '$name'." );
 		}
-		$this->load( isset( $self::$propertiesList[$name]['autoload'] ) ? !$self::$propertiesList[$name]['autoload'] : false );
+		$this->load( isset( static::$propertiesList[$name]['autoload'] ) ? !static::$propertiesList[$name]['autoload'] : false );
 		return $this->data[$name];
 	}
 
@@ -97,9 +115,7 @@ class Item extends Storage {
 			. ' WHERE `' . $db->escape( $field ) . "`='" . $db->escape( $value ) . "'"
 		);
 		if( empty( $data ) ) {
-			/** @var $self self */
-			/** @var $objKey string */
-			throw new Exception( "No such object: '" . $self::$objKey . "' with `" . $field . "`='" . $value . "'." );
+			throw new Exception( "No such object: '" . static::$objKey . "' with `" . $field . "`='" . $value . "'." );
 		}
 		$this->full = $full ? true : false;
 		if( is_null( $this->data ) ) {
@@ -142,9 +158,8 @@ class Item extends Storage {
 		if( !$primary ) {
 			$this->full = true;
 			$this->tempPrimary = $db->getLastId();
-			$self = get_called_class();
 			/** @var $objKey string */
-			self::$objects[$self::$objKey][$this->tempPrimary] = $this;
+			self::$objects[static::$objKey][$this->tempPrimary] = $this;
 		}
 		$this->modified = array();
 	}
@@ -159,18 +174,14 @@ class Item extends Storage {
 	 */
 	public static function getKeys( $full = true ) {
 
-		$self = get_called_class();
-		/** @var $objKeys array */
-		/** @var $objKey string */
-		if( isset( $self::$objKeys[$self::$objKey][$full] ) ) {
-			return $self::$objKeys[$self::$objKey][$full];
+		if( isset( static::$objKeys[static::$objKey][$full] ) ) {
+			return static::$objKeys[static::$objKey][$full];
 		}
-		if( !isset( $self::$objKeys[$self::$objKey] ) ) {
-			$self::$objKeys[$self::$objKey] = array();
+		if( !isset( static::$objKeys[static::$objKey] ) ) {
+			static::$objKeys[static::$objKey] = array();
 		}
-		$self::$objKeys[$self::$objKey][$full] = array();
-		/** @var $propertiesList array */
-		foreach( $self::$propertiesList as $name => $prop ) {
+		static::$objKeys[static::$objKey][$full] = array();
+		foreach( static::$propertiesList as $name => $prop ) {
 //			// Пропускаем внешние ключи
 //			if( $prop == 'foreign' or ( isset( $prop['type'] ) and $prop['type'] == 'foreign' ) ) {
 //				continue;
@@ -187,9 +198,9 @@ class Item extends Storage {
 			if( $full === 'only' and ( !isset( $prop['autoload'] ) or $prop['autoload'] ) ) {
 				continue;
 			}
-			$self::$objKeys[$self::$objKey][$full][] = $name;
+			static::$objKeys[static::$objKey][$full][] = $name;
 		}
-		return $self::$objKeys[$self::$objKey][$full];
+		return static::$objKeys[static::$objKey][$full];
 	}
 
 	/**
@@ -214,9 +225,7 @@ class Item extends Storage {
 	 */
 	public static function getTable() {
 
-		$self = get_called_class();
-		/** @var string $table */
-		return $self::$table;
+		return static::$table;
 	}
 
 	/**
@@ -226,15 +235,8 @@ class Item extends Storage {
 	 */
 	public static function getPrimary() {
 
-		$self = get_called_class();
-		/** @var string $primary */
-		return $self::$primary;
+		return static::$primary;
 	}
-
-	/**
-	 * @var mixed Хранилище для значения primary key не загруженных объектов
-	 */
-	protected $tempPrimary = null;
 
 	/**
 	 * Возвращает значение столбца с primary key
@@ -252,35 +254,31 @@ class Item extends Storage {
 	 */
 	public static function getDefaultSearchConditions() {
 
-		$self = get_called_class();
-		/** @var $defaultSearch null|array */
-		return $self::$defaultSearch;
+		return static::$defaultSearch;
 	}
 
 	/**
 	 * Создание нового объекта
-	 * @return self
+	 * @return static
 	 */
 	public static function create() {
 
-		$self = get_called_class();
-		return new $self;
+		return new static;
 	}
 
 	/**
 	 * Возвращает объект с заданным primary
 	 *
 	 * @param $primary
+	 * @return static
 	 */
 	public static function get( $primary ) {
 
-		$self = get_called_class();
-		/** @var string $objKey */
-		$objKey = $self::$objKey;
+		$objKey = static::$objKey;
 		if( isset( self::$objects[$objKey][$primary] ) ) {
 			return self::$objects[$objKey][$primary];
 		}
-		$o = new $self;
+		$o = new static;
 		$o->tempPrimary = $primary;
 		if( !isset( self::$objects[$objKey] ) ) {
 			self::$objects[$objKey] = array();
@@ -293,15 +291,12 @@ class Item extends Storage {
 	 * Возвращает объект по значению поля (если соответствующих строк в таблице несколько, будет возвращён только первый)
 	 * @param string $field
 	 * @param string $value
-	 * @return self
+	 * @return static
 	 */
 	public static function getByField( $field, $value ) {
 
-		$self = get_called_class();
-		/** @var string $objKey */
-		$objKey = $self::$objKey;
-		/** @var $o self */
-		$o = new $self;
+		$objKey = static::$objKey;
+		$o = new static;
 		$o->loadByField( $field, $value );
 		if( $primary = $o->getPrimaryValue() ) {
 			if( !isset( self::$objects[$objKey] ) ) {
