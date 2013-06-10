@@ -59,8 +59,7 @@ abstract class Item extends Storage {
 			return $this->data[$name];
 		}
 		if( !isset( static::$propertiesList[$name] ) ) {
-			/** @var $objKey string */
-			throw new Exception( "Object '{static::$objKey}' has no property '$name'." );
+			throw new Exception( "Object '" . static::$objKey . "' has no property '$name'." );
 		}
 		$this->load( isset( static::$propertiesList[$name]['autoload'] ) ? !static::$propertiesList[$name]['autoload'] : false );
 		return $this->data[$name];
