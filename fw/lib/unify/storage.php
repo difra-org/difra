@@ -45,6 +45,7 @@ abstract class Storage {
 	 * Получение объекта по $objKey
 	 * @param $objKey
 	 * @param $primary
+	 * @return static
 	 * @throws Exception
 	 */
 	final public static function getObj( $objKey, $primary ) {
@@ -53,6 +54,7 @@ abstract class Storage {
 		if( !$class ) {
 			throw new Exception( "Can't find class for object '{$objKey}''" );
 		}
+		/** @var $class Item */
 		return $class::get( $primary );
 	}
 }

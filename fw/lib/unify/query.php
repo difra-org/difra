@@ -48,7 +48,7 @@ class Query extends Paginator {
 	 */
 	public function doQuery() {
 
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		$result = $db->fetch( $this->getQuery() );
 		if( $this->page ) {
 			$this->setTotal( $db->getFoundRows() );
@@ -80,7 +80,9 @@ class Query extends Paginator {
 
 		$q .= $this->getSelectKeys();
 		// TODO: JOIN keys (все джойны и т.п. надо выполнять в дочерних функциях, чтобы поддержать множественные джойны)
-		$q .= " FROM `$table`";
+		$class = Unify::getClass( $this->objKey );
+		/** @var $class Item */
+		$q .= " FROM `{$class::getTable()}`";
 		// TODO: ... LEFT JOIN ... ON ...
 		$q .= $this->getWhere();
 		$q .= $this->getOrder();
@@ -91,11 +93,12 @@ class Query extends Paginator {
 
 	/**
 	 * Формирование списка получаемых полей для запроса
+	 * @throws \Difra\Exception
 	 * @return string
 	 */
 	public function getSelectKeys() {
 
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		/** @var Unify $class */
 		$class = Unify::getClass( $this->objKey );
 		if( !$class ) {
@@ -118,7 +121,7 @@ class Query extends Paginator {
 	 */
 	public function getWhere() {
 
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		/** @var Unify $class */
 		$class = Unify::getClass( $this->objKey );
 		$c = array();

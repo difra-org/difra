@@ -60,7 +60,7 @@ class Paginator {
 	 *
 	 * @param \DOMNode $node
 	 */
-	public function getXML( $node ) {
+	public function getPaginatorXML( $node ) {
 
 		/** @var \DOMElement $pNode */
 		$pNode = $node->appendChild( $node->ownerDocument->createElement( 'paginator' ) );

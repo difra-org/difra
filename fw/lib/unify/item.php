@@ -279,6 +279,7 @@ abstract class Item extends Storage {
 			return self::$objects[$objKey][$primary];
 		}
 		$o = new static;
+		/** @var $o self */
 		$o->tempPrimary = $primary;
 		if( !isset( self::$objects[$objKey] ) ) {
 			self::$objects[$objKey] = array();
@@ -297,6 +298,7 @@ abstract class Item extends Storage {
 
 		$objKey = static::$objKey;
 		$o = new static;
+		/** @var $o self */
 		$o->loadByField( $field, $value );
 		if( $primary = $o->getPrimaryValue() ) {
 			if( !isset( self::$objects[$objKey] ) ) {

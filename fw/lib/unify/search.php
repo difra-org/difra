@@ -32,10 +32,10 @@ class Search extends Query {
 		$result = $this->doQuery();
 		foreach( $result as $k => $v ) {
 			$primary = $v->getPrimaryValue();
-			if( \Difra\Unify::$objects[$objKey][$primary] ) {
-				$result[$k] = \Difra\Unify::$objects[$objKey][$primary];
+			if( Unify::$objects[$objKey][$primary] ) {
+				$result[$k] = Unify::$objects[$objKey][$primary];
 			} else {
-				\Difra\Unify::$objects[$objKey][$primary] = $v;
+				Unify::$objects[$objKey][$primary] = $v;
 			}
 		}
 		return $result;
@@ -57,11 +57,12 @@ class Search extends Query {
 		} else {
 			foreach( $list as $item ) {
 				$itemNode = $node->appendChild( $toNode->ownerDocument->createElement( $objKey ) );
+				/** @var $item Item */
 				$item->getXML( $itemNode );
 			}
 		}
-		if( $this->paginator ) {
-			$this->paginator->getXML( $node );
+		if( $this->page ) {
+			$this->getPaginatorXML( $node );
 		}
 	}
 }
