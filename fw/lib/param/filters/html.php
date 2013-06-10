@@ -52,7 +52,6 @@ class HTML {
 	 * @param string $source               Исходный HTML
 	 * @param bool   $clean                Произвести ли чистку от говн
 	 * @param bool   $withHeaders          Вернуть ли полную HTML-страницу (true) или только содержимое (false)
-	 *
 	 * @return string
 	 */
 	public function process( $source, $clean = true, $withHeaders = false ) {
@@ -114,7 +113,6 @@ class HTML {
 	 * Чистка DOM-документа от недозволенного
 	 *
 	 * @param \DOMElement|\DOMNode $node
-	 *
 	 * @return \DOMElement[]
 	 */
 	private function clean( &$node ) {
@@ -131,11 +129,6 @@ class HTML {
 			break;
 		case XML_COMMENT_NODE:
 			$replaceNodes[] = $node;
-			break;
-		case XML_TEXT_NODE:
-			if( !trim( $node->nodeValue ) ) {
-				$replaceNodes[] = $node;
-			}
 			break;
 		default:
 			$replaceNodes[] = $node;
@@ -192,7 +185,6 @@ class HTML {
 	/**
 	 * Фильтр ссылок
 	 * @param string $link
-	 *
 	 * @return string
 	 */
 	private function cleanLink( $link ) {
@@ -212,7 +204,6 @@ class HTML {
 	/**
 	 * Фильтр стилей
 	 * @param string $attr
-	 *
 	 * @return string
 	 */
 	private function cleanStyles( $attr ) {
@@ -247,7 +238,6 @@ class HTML {
 	/**
 	 * Фильтр ссылок
 	 * @param string $classes
-	 *
 	 * @return string
 	 */
 	private function cleanClasses( $classes ) {
@@ -266,7 +256,6 @@ class HTML {
 	/**
 	 * Фильтр целых положительных чисел ≥1
 	 * @param $input
-	 *
 	 * @return int|string
 	 */
 	private function cleanUnsignedInt( $input ) {
