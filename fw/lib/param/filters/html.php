@@ -233,7 +233,7 @@ class HTML {
 
 				// проверяем значение
 				if( $this->allowedStyles[$styleElements[0]] === true ) {
-					$returnStyle[] = $styleElements[0] . ': ' . \Difra\Libs\ESAPI::encoder() . encodeForCSS( $styleElements[1] );
+					$returnStyle[] = $styleElements[0] . ': ' . \Difra\Libs\ESAPI::encoder()->encodeForCSS( $styleElements[1] );
 				} elseif( is_array( $this->allowedStyles[$styleElements[0]] )
 					and in_array( $styleElements[1], $this->allowedStyles[$styleElements[0]] )
 				) {
