@@ -5,22 +5,13 @@ namespace Difra;
 /**
  * Автоматическая подгрузка классов
  * Class Autoloader
+ *
  * @package Difra
  */
 class Autoloader {
 
 	/** @var array Чёрный список классов */
 	static $bl = array( 'sqlite3' );
-
-	/**
-	 * Синглтон
-	 * @return self
-	 */
-	public static function getInstance() {
-
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self;
-	}
 
 	/**
 	 * Загрузчик классов
