@@ -186,4 +186,14 @@ class ParamTest extends PHPUnit_Framework_TestCase {
 		$this->assertNull( $file->val() );
 		$this->assertEquals( $file->raw(), $file3 );
 	}
+
+	public function test_HTML() {
+
+		$html = file_get_contents( __DIR__ . '/data/h_unsafe.html' );
+
+		$h1 = new \Difra\Param\AjaxHTML( $html );
+		$h2 = new \Difra\Param\AjaxSafeHTML( $html );
+		$this->assertNotContains( 'javascript', $h2->val( true ) );
+		$this->assertNotContains( '<script', $h2->val( true ) );
+	}
 }
