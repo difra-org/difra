@@ -11,7 +11,7 @@ namespace Difra;
  */
 class Site {
 
-	const VERSION = '4.1';
+	const VERSION = '5.0';
 	const BUILD = '$Rev$';
 	const PATH_PART = '/../../';
 
