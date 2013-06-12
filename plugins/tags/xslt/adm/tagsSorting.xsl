@@ -1,6 +1,6 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 
-	<xsl:key name="index" match="/root/adm_tags/tags/*" use="substring( @tag, 1, 1 )"/>
+	<xsl:key name="index" match="/root/content/adm_tags/tags/*" use="substring( @tag, 1, 1 )"/>
 
 	<xsl:template name="sortedTags">
 		<xsl:param name="nodelist" select="."/>
@@ -23,7 +23,7 @@
 							<xsl:sort select="@tag"/>
 							<xsl:if test="substring(@tag,1,1)=$ind">
 								<li>
-									<a href="/adm/tags/edit/{@module}/{@id}" class="ajaxer">
+									<a href="/adm/content/tags/edit/{@module}/{@id}" class="ajaxer">
 										<xsl:value-of select="@tag"/>
 									</a>
 								</li>

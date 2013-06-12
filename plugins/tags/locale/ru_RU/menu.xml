@@ -1,8 +1,7 @@
 <locale>
 	<menu>
 		<adm>
-			<menu_config>Настройки</menu_config>
-			<menu_config_tags>Теги</menu_config_tags>
+			<menu_content_tags>Теги</menu_content_tags>
 		</adm>
 	</menu>
 </locale>
