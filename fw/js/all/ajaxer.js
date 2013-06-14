@@ -126,6 +126,8 @@ ajaxer.triggerHandler = function( action ) {
 
 ajaxer.clean = function( form ) {
 
+	$( form ).find( '.required' ).fadeOut( 'fast' );
+	$( form ).find( '.invalid' ).fadeOut( 'fast' );
 	$( form ).find( '.problem' ).removeClass( 'problem' );
 };
 
@@ -390,9 +392,6 @@ ajaxer.sendForm = function( form, event ) {
 	var data = {
 		form: $( form ).serializeArray()
 	};
-	$( form ).find( '.required' ).fadeOut( 'fast' );
-	$( form ).find( '.invalid' ).fadeOut( 'fast' );
-	$( form ).find( '.problem' ).removeClass( 'problem' );
 	ajaxer.process( this.httpRequest( $( form ).attr( 'action' ), data ), form );
 };
 
@@ -405,6 +404,7 @@ $( document ).on( 'submit', 'form.ajaxer', function( event ) {
 	var form = $( this );
 	$( document ).triggerHandler( 'form-submit' );
 	event.preventDefault();
+	ajaxer.clean( form );
 	if( !form.find( 'input[type=file]' ).length ) {
 		// serialize method
 		ajaxer.sendForm( this, event );
