@@ -1,5 +1,5 @@
 <menu>
-	<config>
-		<tags href="/adm/tags/"/>
-	</config>
+	<content>
+		<tags />
+	</content>
 </menu>

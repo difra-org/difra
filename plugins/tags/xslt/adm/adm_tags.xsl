@@ -13,7 +13,7 @@
 		<table class="sortedTags">
 			<tr>
 				<xsl:call-template name="sortedTags">
-					<xsl:with-param name="nodelist" select="/root/adm_tags/tags/*"/>
+					<xsl:with-param name="nodelist" select="/root/content/adm_tags/tags/*"/>
 					<xsl:with-param name="columns" select="4"/>
 				</xsl:call-template>
 			</tr>
@@ -24,7 +24,7 @@
 		<table class="sortedTags">
 			<tr>
 				<td>
-					<xsl:for-each select="/root/aliases/alias[position() mod 2 &gt; 0]">
+					<xsl:for-each select="/root/content/aliases/alias[position() mod 2 &gt; 0]">
 						<span class="aliasTitle">
 							<xsl:value-of select="@name"/>
 						</span>
@@ -32,7 +32,7 @@
 							<xsl:for-each select="current()/tag">
 								<li class="aliasTag">
 									<xsl:value-of select="@name"/>
-									<a href="/adm/tags/deletealias/{@id}/" class="aliasDeleteLink ajaxer">
+									<a href="/adm/content/tags/deletealias/{@id}/" class="aliasDeleteLink ajaxer">
 										<xsl:value-of select="$locale/adm/actions/delete"/>
 									</a>
 								</li>
@@ -41,7 +41,7 @@
 					</xsl:for-each>
 				</td>
 				<td>
-					<xsl:for-each select="/root/aliases/alias[position() mod 2 = 0]">
+					<xsl:for-each select="/root/content/aliases/alias[position() mod 2 = 0]">
 						<span class="aliasTitle">
 							<xsl:value-of select="@name"/>
 						</span>
@@ -49,7 +49,7 @@
 							<xsl:for-each select="current()/tag">
 								<li class="aliasTag">
 									<xsl:value-of select="@name"/>
-									<a href="/adm/tags/deletealias/{@id}/" class="aliasDeleteLink ajaxer">
+									<a href="/adm/content/tags/deletealias/{@id}/" class="aliasDeleteLink ajaxer">
 										<xsl:value-of select="$locale/adm/actions/delete"/>
 									</a>
 								</li>
