@@ -42,10 +42,8 @@
 									</label>
 								</th>
 								<td>
-									<input type="checkbox"
-									       name="change_pw"
-									       id="changePw"
-									       onchange="javascript:$('#newPw').attr('disabled',($('#changePw').is(':checked'))?'':'disabled')"/>
+									<input type="checkbox" name="change_pw" id="changePw"
+									       onchange="changePassEnabler()"/>
 								</td>
 							</tr>
 							<tr>
