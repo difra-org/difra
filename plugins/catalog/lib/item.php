@@ -77,10 +77,9 @@ class Item {
 
 	/**
 	 * Получение элемента по id
+	 *
 	 * @static
-	 *
 	 * @param int $id
-	 *
 	 * @return Item
 	 */
 	public static function get( $id ) {
@@ -145,13 +144,13 @@ class Item {
 		$db = \Difra\MySQL::getInstance();
 		$extData = $db->fetch(
 			"SELECT `item`,`catalog_items_ext`.`ext` AS `ext_id`,`catalog_ext`.`name` AS `ext_name`," .
-				"`catalog_ext`.`set` AS `ext_type`,`catalog_ext_sets`.`id` AS `set_id`,`catalog_ext_sets`.`name` AS `set_value`," .
-				"`catalog_items_ext`.`value` AS `ext_value`," .
-				"`catalog_ext`.`position` AS `ext_position`,`catalog_ext_sets`.`position` AS `set_position` " .
-				"FROM `catalog_items_ext` LEFT JOIN `catalog_ext` ON `catalog_items_ext`.`ext`=`catalog_ext`.`id` " .
-				"LEFT JOIN `catalog_ext_sets` ON `catalog_items_ext`.`setvalue`=`catalog_ext_sets`.`id` " .
-				"WHERE `item`='" . $db->escape( $this->getId() ) . "' " .
-				"ORDER BY `item`,`catalog_ext`.`position`,`catalog_ext_sets`.`position`"
+			"`catalog_ext`.`set` AS `ext_type`,`catalog_ext_sets`.`id` AS `set_id`,`catalog_ext_sets`.`name` AS `set_value`," .
+			"`catalog_items_ext`.`value` AS `ext_value`," .
+			"`catalog_ext`.`position` AS `ext_position`,`catalog_ext_sets`.`position` AS `set_position` " .
+			"FROM `catalog_items_ext` LEFT JOIN `catalog_ext` ON `catalog_items_ext`.`ext`=`catalog_ext`.`id` " .
+			"LEFT JOIN `catalog_ext_sets` ON `catalog_items_ext`.`setvalue`=`catalog_ext_sets`.`id` " .
+			"WHERE `item`='" . $db->escape( $this->getId() ) . "' " .
+			"ORDER BY `item`,`catalog_ext`.`position`,`catalog_ext_sets`.`position`"
 		);
 		if( !empty( $extData ) ) {
 			foreach( $extData as $ext ) {
@@ -184,15 +183,13 @@ class Item {
 
 	/**
 	 * @static
-	 *
-	 * @param int|null|array     $category
-	 * @param bool               $withExt                -1 — без изображений, false — без расширенных полей, true — с расширенными полями
-	 * @param int                $page
-	 * @param int|null           $perPage
-	 * @param null|bool          $visible
-	 * @param bool               $withSubcategories
-	 * @param bool|array         $ids
-	 *
+	 * @param int|null|array $category
+	 * @param bool           $withExt                -1 — без изображений, false — без расширенных полей, true — с расширенными полями
+	 * @param int            $page
+	 * @param int|null       $perPage
+	 * @param null|bool      $visible
+	 * @param bool           $withSubcategories
+	 * @param bool|array     $ids
 	 * @return Item[]|bool
 	 */
 	public static function getList( $category = null,
@@ -301,13 +298,13 @@ class Item {
 		}
 		$extData = $db->fetch(
 			"SELECT `item`,`catalog_items_ext`.`ext` AS `ext_id`,`catalog_ext`.`name` AS `ext_name`," .
-				"`catalog_ext`.`set` AS `ext_type`,`catalog_ext_sets`.`id` AS `set_id`,`catalog_ext_sets`.`name` AS `set_value`," .
-				"`catalog_items_ext`.`value` AS `ext_value`," .
-				"`catalog_ext`.`position` AS `ext_position`,`catalog_ext_sets`.`position` AS `set_position`" .
-				"FROM `catalog_items_ext` LEFT JOIN `catalog_ext` ON `catalog_items_ext`.`ext`=`catalog_ext`.`id` " .
-				"LEFT JOIN `catalog_ext_sets` ON `catalog_items_ext`.`setvalue`=`catalog_ext_sets`.`id` " .
-				"WHERE `item` IN ('" . implode( "','", $ids ) . "') " .
-				"ORDER BY `item`"
+			"`catalog_ext`.`set` AS `ext_type`,`catalog_ext_sets`.`id` AS `set_id`,`catalog_ext_sets`.`name` AS `set_value`," .
+			"`catalog_items_ext`.`value` AS `ext_value`," .
+			"`catalog_ext`.`position` AS `ext_position`,`catalog_ext_sets`.`position` AS `set_position`" .
+			"FROM `catalog_items_ext` LEFT JOIN `catalog_ext` ON `catalog_items_ext`.`ext`=`catalog_ext`.`id` " .
+			"LEFT JOIN `catalog_ext_sets` ON `catalog_items_ext`.`setvalue`=`catalog_ext_sets`.`id` " .
+			"WHERE `item` IN ('" . implode( "','", $ids ) . "') " .
+			"ORDER BY `item`"
 		);
 		if( !empty( $extData ) ) {
 			foreach( $extData as $ext ) {
@@ -341,7 +338,6 @@ class Item {
 	/**
 	 * Установить тип сортировки
 	 * @static
-	 *
 	 * @param $sort
 	 */
 	static public function setSort( $sort ) {
@@ -352,6 +348,7 @@ class Item {
 
 	/**
 	 * Получить общее количество элементов, которые подходят под критерии поиска последнего запроса Item::getList()
+	 *
 	 * @static
 	 * @return int
 	 */
@@ -371,27 +368,27 @@ class Item {
 		$db = \Difra\MySQL::getInstance();
 		if( $this->id ) {
 			$db->query( 'UPDATE `catalog_items` SET '
-					. "`name`='" . $db->escape( $this->name ) . "',"
-					. "`category`='" . $db->escape( $this->category ) . "',"
-					. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
-					. "`price`=" . ( $this->price ? "'" . $db->escape( $this->price ) . "'" : 'NULL' ) . ','
-					. "`sale`=" . ( $this->sale ? "'" . $db->escape( $this->sale ) . "'" : 'NULL' ) . ','
-					. "`link`='" . $db->escape( $this->link ) . "',"
-					. "`shortdesc`='" . $db->escape( $this->shortdesc ) . "',"
-					. "`description`='" . $db->escape( $this->description ) . "', "
-					. "`modified`=NOW() "
-					. "WHERE `id`='" . $db->escape( $this->id ) . "'"
+				. "`name`='" . $db->escape( $this->name ) . "',"
+				. "`category`='" . $db->escape( $this->category ) . "',"
+				. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
+				. "`price`=" . ( $this->price ? "'" . $db->escape( $this->price ) . "'" : 'NULL' ) . ','
+				. "`sale`=" . ( $this->sale ? "'" . $db->escape( $this->sale ) . "'" : 'NULL' ) . ','
+				. "`link`='" . $db->escape( $this->link ) . "',"
+				. "`shortdesc`='" . $db->escape( $this->shortdesc ) . "',"
+				. "`description`='" . $db->escape( $this->description ) . "', "
+				. "`modified`=NOW() "
+				. "WHERE `id`='" . $db->escape( $this->id ) . "'"
 			);
 		} else {
 			$db->query( 'INSERT INTO `catalog_items` SET '
-					. "`name`='" . $db->escape( $this->name ) . "',"
-					. "`category`='" . $db->escape( $this->category ) . "',"
-					. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
-					. "`price`=" . ( $this->price ? "'" . $db->escape( $this->price ) . "'" : 'NULL' ) . ','
-					. "`sale`=" . ( $this->sale ? "'" . $db->escape( $this->sale ) . "'" : 'NULL' ) . ','
-					. "`link`='" . $db->escape( $this->link ) . "',"
-					. "`shortdesc`='" . $db->escape( $this->shortdesc ) . "',"
-					. "`description`='" . $db->escape( $this->description ) . "'"
+				. "`name`='" . $db->escape( $this->name ) . "',"
+				. "`category`='" . $db->escape( $this->category ) . "',"
+				. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
+				. "`price`=" . ( $this->price ? "'" . $db->escape( $this->price ) . "'" : 'NULL' ) . ','
+				. "`sale`=" . ( $this->sale ? "'" . $db->escape( $this->sale ) . "'" : 'NULL' ) . ','
+				. "`link`='" . $db->escape( $this->link ) . "',"
+				. "`shortdesc`='" . $db->escape( $this->shortdesc ) . "',"
+				. "`description`='" . $db->escape( $this->description ) . "'"
 			);
 			$this->id = $db->getLastId();
 		}
@@ -420,17 +417,17 @@ class Item {
 				foreach( $ext as $k => $v ) {
 					$queries[] =
 						'INSERT INTO `catalog_items_ext` SET ' .
-							"`item`='$itemId'," .
-							"`ext`='$id'," .
-							"`setvalue`='" . $db->escape( $k ) . "'";
+						"`item`='$itemId'," .
+						"`ext`='$id'," .
+						"`setvalue`='" . $db->escape( $k ) . "'";
 				}
 			} else {
 				// value
 				$queries[] =
 					'INSERT INTO `catalog_items_ext` SET ' .
-						"`item`='$itemId'," .
-						"`ext`='$id'," .
-						"`value`='" . $db->escape( $ext ) . "'";
+					"`item`='$itemId'," .
+					"`ext`='$id'," .
+					"`value`='" . $db->escape( $ext ) . "'";
 			}
 		}
 		$db->query( $queries );
@@ -448,6 +445,7 @@ class Item {
 
 	/**
 	 * Возвращает id
+	 *
 	 * @return int
 	 */
 	public function getId() {
@@ -499,6 +497,7 @@ class Item {
 
 	/**
 	 * Возвращает id категории
+	 *
 	 * @return int
 	 */
 	public function getCategory() {
@@ -669,13 +668,12 @@ class Item {
 	 * Добавление изображения
 	 * @param string|\Difra\Param\AjaxFile $image
 	 * @param bool                         $main
-	 *
 	 * @throws \Difra\Exception
 	 */
 	public function addImage( $image, $main = false ) {
 
 		$path = DIR_DATA . 'catalog/items/';
-		@mkdir( $path, 0755, true );
+		@mkdir( $path, 0777, true );
 		$this->save();
 		$this->load();
 		try {
@@ -685,8 +683,8 @@ class Item {
 		}
 		$db = \Difra\MySQL::getInstance();
 		$db->query( 'INSERT INTO `catalog_images` SET '
-				. "`item`='" . $db->escape( $this->id ) . "',"
-				. "`main`=" . ( $main ? '1' : '0' )
+			. "`item`='" . $db->escape( $this->id ) . "',"
+			. "`main`=" . ( $main ? '1' : '0' )
 		);
 		$imgId = $db->getLastId();
 		foreach( $this->imgSizes as $k => $size ) {
@@ -710,7 +708,7 @@ class Item {
 		$db = \Difra\MySQL::getInstance();
 		$db->query( 'UPDATE `catalog_images` SET `main`=0 WHERE `item`=\'' . $db->escape( $this->id ) . "'" );
 		$db->query( 'UPDATE `catalog_images` SET `main`=1 WHERE `item`=\'' . $db->escape( $this->id ) . "' AND `id`='"
-			. $db->escape( $id ) . "'" );
+		. $db->escape( $id ) . "'" );
 	}
 
 	/**
@@ -795,6 +793,7 @@ class Item {
 
 	/**
 	 * Возвращает ключевую часть URL
+	 *
 	 * @return string
 	 */
 	public function getLink() {
@@ -804,6 +803,7 @@ class Item {
 
 	/**
 	 * Возвращает полный URI к элементу
+	 *
 	 * @return string
 	 */
 	public function getFullLink() {

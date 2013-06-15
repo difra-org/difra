@@ -15,7 +15,7 @@ class Album {
 	private $modified = false;
 
 	private $imgSizes = array();
-    private $format = 'png';
+	private $format = 'png';
 
 	public function __construct() {
 
@@ -36,20 +36,21 @@ class Album {
 		return $sizes;
 	}
 
-    /**
-     * Возвращает размеры превью в xml
-     * @param \DOMNode $node
-     */
-    public function getSizesXML( $node ) {
+	/**
+	 * Возвращает размеры превью в xml
+	 *
+	 * @param \DOMNode $node
+	 */
+	public function getSizesXML( $node ) {
 
-        foreach( $this->imgSizes as $size => $sizeData ) {
-            if( isset( $sizeData[0] ) ) {
-                $sizeNode = $node->appendChild( $node->ownerDocument->createElement( $size ) );
-                $sizeNode->setAttribute( 'width', $sizeData[0] );
-                $sizeNode->setAttribute( 'height', $sizeData[1] );
-            }
-        }
-    }
+		foreach( $this->imgSizes as $size => $sizeData ) {
+			if( isset( $sizeData[0] ) ) {
+				$sizeNode = $node->appendChild( $node->ownerDocument->createElement( $size ) );
+				$sizeNode->setAttribute( 'width', $sizeData[0] );
+				$sizeNode->setAttribute( 'height', $sizeData[1] );
+			}
+		}
+	}
 
 	static public function create() {
 
@@ -58,9 +59,7 @@ class Album {
 
 	/**
 	 * @static
-	 *
 	 * @param int $id
-	 *
 	 * @return self
 	 */
 	static public function get( $id ) {
@@ -87,28 +86,26 @@ class Album {
 		$this->description = $data['description'];
 		$this->visible = $data['visible'] ? true : false;
 		$imgData = $db->fetch( "SELECT `id` FROM `gallery_photos` "
-				       . "WHERE `album`='" . $db->escape( $this->id ) . "'"
-				       . "ORDER BY `position`" );
+		. "WHERE `album`='" . $db->escape( $this->id ) . "'"
+		. "ORDER BY `position`" );
 		if( !empty( $imgData ) ) {
 			foreach( $imgData as $img ) {
 				$this->images[] = $img['id'];
 			}
 		}
-        $format = \Difra\Config::getInstance()->getValue( 'gallery', 'format' );
-        if( $format ) {
-            $this->format = $format;
-        }
+		$format = \Difra\Config::getInstance()->getValue( 'gallery', 'format' );
+		if( $format ) {
+			$this->format = $format;
+		}
 		$this->loaded = true;
 		return true;
 	}
 
 	/**
 	 * @static
-	 *
 	 * @param bool|null $visible
-	 * @param int $page
-	 * @param int $perpage
-	 *
+	 * @param int       $page
+	 * @param int       $perpage
 	 * @return self[]
 	 */
 	static public function getList( $visible = null, $page = null, $perpage = null ) {
@@ -129,7 +126,7 @@ class Album {
 		$ids = array();
 		$res = array();
 		$i = 0;
-        $format = \Difra\Config::getInstance()->getValue( 'gallery', 'format' );
+		$format = \Difra\Config::getInstance()->getValue( 'gallery', 'format' );
 		foreach( $data as $row ) {
 			$album = new self;
 			$album->id = $row['id'];
@@ -137,16 +134,16 @@ class Album {
 			$album->description = $row['description'];
 			$album->visible = $row['visible'] ? true : false;
 			$album->loaded = true;
-            if( $format ) {
-                $album->format = $format;
-            }
+			if( $format ) {
+				$album->format = $format;
+			}
 			$res[$i] = $album;
 			$ids[$row['id']] = $i;
 			$i++;
 		}
 		$imgData = $db->fetch( "SELECT `album`,`id` FROM `gallery_photos` "
-					. "WHERE `album` IN ('" . implode( "','", array_keys( $ids ) ) . "') "
-					. "ORDER BY `position`" );
+		. "WHERE `album` IN ('" . implode( "','", array_keys( $ids ) ) . "') "
+		. "ORDER BY `position`" );
 		if( !empty( $imgData ) ) {
 			foreach( $imgData as $img ) {
 				$res[$ids[$img['album']]]->images[] = $img['id'];
@@ -163,18 +160,18 @@ class Album {
 		$db = \Difra\MySQL::getInstance();
 		if( $this->id ) {
 			$db->query( "UPDATE `gallery_albums` SET "
-				    . "`name`='" . $db->escape( $this->name ) . "',"
-				    . "`description`='" . $db->escape( $this->description ) . "',"
-				    . "`visible`=" . ( $this->visible ? '1' : '0' )
-				    . " WHERE `id`='" . $db->escape( $this->id ) . "'" );
+			. "`name`='" . $db->escape( $this->name ) . "',"
+			. "`description`='" . $db->escape( $this->description ) . "',"
+			. "`visible`=" . ( $this->visible ? '1' : '0' )
+			. " WHERE `id`='" . $db->escape( $this->id ) . "'" );
 		} else {
 			$pos = $db->fetchOne( "SELECT MAX(`position`) FROM `gallery_albums`" );
 			$pos = $pos ? intval( $pos ) + 1 : 1;
 			$db->query( "INSERT INTO `gallery_albums` SET "
-				    . "`name`='" . $db->escape( $this->name ) . "',"
-				    . "`description`='" . $db->escape( $this->description ) . "',"
-				    . "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
-				    . "`position`='" . $pos . "'" );
+			. "`name`='" . $db->escape( $this->name ) . "',"
+			. "`description`='" . $db->escape( $this->description ) . "',"
+			. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
+			. "`position`='" . $pos . "'" );
 			$this->id = $db->getLastId();
 		}
 		$this->modified = false;
@@ -195,12 +192,12 @@ class Album {
 		$node->setAttribute( 'name', $this->name );
 		$node->setAttribute( 'description', $this->description );
 		$node->setAttribute( 'visible', $this->visible ? '1' : '0' );
-        $node->setAttribute( 'format', $this->format );
+		$node->setAttribute( 'format', $this->format );
 		foreach( $this->images as $img ) {
 			/** @var \DOMElement $imgNode */
 			$imgNode = $node->appendChild( $node->ownerDocument->createElement( 'image' ) );
 			$imgNode->setAttribute( 'id', $img );
-            $imgNode->setAttribute( 'format', $this->format );
+			$imgNode->setAttribute( 'format', $this->format );
 		}
 	}
 
@@ -261,11 +258,11 @@ class Album {
 	public function moveUp() {
 
 		$this->load();
-		$db      = \Difra\MySQL::getInstance();
-		$items   = $db->fetch( "SELECT `id`,`position` FROM `gallery_albums` ORDER BY `position`" );
+		$db = \Difra\MySQL::getInstance();
+		$items = $db->fetch( "SELECT `id`,`position` FROM `gallery_albums` ORDER BY `position`" );
 		$newSort = array();
-		$pos     = 1;
-		$prev    = false;
+		$pos = 1;
+		$prev = false;
 		foreach( $items as $item ) {
 			if( $item['id'] != $this->id ) {
 				if( $prev ) {
@@ -287,17 +284,17 @@ class Album {
 	public function moveDown() {
 
 		$this->load();
-		$db      = \Difra\MySQL::getInstance();
-		$items   = $db->fetch( "SELECT `id`,`position` FROM `gallery_albums` ORDER BY `position`" );
+		$db = \Difra\MySQL::getInstance();
+		$items = $db->fetch( "SELECT `id`,`position` FROM `gallery_albums` ORDER BY `position`" );
 		$newSort = array();
-		$pos     = 1;
-		$next    = false;
+		$pos = 1;
+		$next = false;
 		foreach( $items as $item ) {
 			if( $item['id'] != $this->id ) {
 				$newSort[$item['id']] = $pos++;
 				if( $next ) {
 					$newSort[$next['id']] = $pos++;
-					$next                 = false;
+					$next = false;
 				}
 			} else {
 				$next = $item;
@@ -344,49 +341,49 @@ class Album {
 			$image = array( $image );
 		}
 		$path = DIR_DATA . 'gallery/';
-		@mkdir( $path, 0755, true );
+		@mkdir( $path, 0777, true );
 		$this->save();
 		$this->load();
-        $Config = \Difra\Config::getInstance();
-        $Images = \Difra\Libs\Images::getInstance();
-        $waterMarkOn = $Config->getValue( 'gallery', 'watermark' );
-        $waterMarkOnPreview = $Config->getValue( 'gallery', 'waterOnPreview' );
-        $waterText = $Config->getValue( 'gallery', 'waterText' );
-        $watermarkImage = null;
-        if( file_exists( $path . 'watermark.png' ) ) {
-            $watermarkImage = file_get_contents( $path . 'watermark.png' );
-        }
+		$Config = \Difra\Config::getInstance();
+		$Images = \Difra\Libs\Images::getInstance();
+		$waterMarkOn = $Config->getValue( 'gallery', 'watermark' );
+		$waterMarkOnPreview = $Config->getValue( 'gallery', 'waterOnPreview' );
+		$waterText = $Config->getValue( 'gallery', 'waterText' );
+		$watermarkImage = null;
+		if( file_exists( $path . 'watermark.png' ) ) {
+			$watermarkImage = file_get_contents( $path . 'watermark.png' );
+		}
 
 		$db = \Difra\MySQL::getInstance();
 		$pos = intval( $db->fetchOne( "SELECT MAX(`position`) FROM `gallery_photos` WHERE `album`='" . $db->escape( $this->id ) . "'" ) ) + 1;
 		foreach( $image as $img ) {
 			$db->query( 'INSERT INTO `gallery_photos` SET '
-				    . "`album`='" . $db->escape( $this->id ) . "',"
-				    . "`position`='$pos'"
+				. "`album`='" . $db->escape( $this->id ) . "',"
+				. "`position`='$pos'"
 			);
 			$imgId = $db->getLastId();
 			foreach( $this->imgSizes as $k => $size ) {
 				if( $size ) {
 
-                    $tmpImg = $Images->scaleAndCrop( $img, $size[0], $size[1], $this->format );
-                    if( $waterMarkOn === 1 && $waterMarkOnPreview === 1 ) {
-                        if( $waterText != '' ) {
-                            $tmpImg = $Images->setWatermark( $tmpImg, $waterText, null, $this->format, 7 );
-                        } elseif( $watermarkImage ) {
-                            $tmpImg = $Images->setWatermark( $tmpImg, null, $watermarkImage, $this->format, 7 );
-                        }
-                    }
+					$tmpImg = $Images->scaleAndCrop( $img, $size[0], $size[1], $this->format );
+					if( $waterMarkOn === 1 && $waterMarkOnPreview === 1 ) {
+						if( $waterText != '' ) {
+							$tmpImg = $Images->setWatermark( $tmpImg, $waterText, null, $this->format, 7 );
+						} elseif( $watermarkImage ) {
+							$tmpImg = $Images->setWatermark( $tmpImg, null, $watermarkImage, $this->format, 7 );
+						}
+					}
 					file_put_contents( $path . $imgId . $k . '.' . $this->format, $tmpImg );
 				} else {
 
-                    $tmpImg = $Images->convert( $img, $this->format );
-                    if( $waterMarkOn === 1 ) {
-                        if( $waterText!='' ) {
-                            $tmpImg = $Images->setWatermark( $tmpImg, $waterText, null, $this->format, 15 );
-                        }elseif( $watermarkImage ) {
-                            $tmpImg = $Images->setWatermark( $tmpImg, null, $watermarkImage, $this->format, 15 );
-                        }
-                    }
+					$tmpImg = $Images->convert( $img, $this->format );
+					if( $waterMarkOn === 1 ) {
+						if( $waterText != '' ) {
+							$tmpImg = $Images->setWatermark( $tmpImg, $waterText, null, $this->format, 15 );
+						} elseif( $watermarkImage ) {
+							$tmpImg = $Images->setWatermark( $tmpImg, null, $watermarkImage, $this->format, 15 );
+						}
+					}
 					file_put_contents( $path . $imgId . $k . '.' . $this->format, $tmpImg );
 				}
 			}
@@ -408,11 +405,11 @@ class Album {
 	public function imageUp( $id ) {
 
 		$this->load();
-		$db      = \Difra\MySQL::getInstance();
-		$items   = $db->fetch( "SELECT `id`,`position` FROM `gallery_photos` WHERE `album`='" . $db->escape( $this->id ) . "' ORDER BY `position`" );
+		$db = \Difra\MySQL::getInstance();
+		$items = $db->fetch( "SELECT `id`,`position` FROM `gallery_photos` WHERE `album`='" . $db->escape( $this->id ) . "' ORDER BY `position`" );
 		$newSort = array();
-		$pos     = 1;
-		$prev    = false;
+		$pos = 1;
+		$prev = false;
 		foreach( $items as $item ) {
 			if( $item['id'] != $id ) {
 				if( $prev ) {
@@ -434,17 +431,17 @@ class Album {
 	public function imageDown( $id ) {
 
 		$this->load();
-		$db      = \Difra\MySQL::getInstance();
-		$items   = $db->fetch( "SELECT `id`,`position` FROM `gallery_photos` WHERE `album`='" . $db->escape( $this->id ) . "' ORDER BY `position`" );
+		$db = \Difra\MySQL::getInstance();
+		$items = $db->fetch( "SELECT `id`,`position` FROM `gallery_photos` WHERE `album`='" . $db->escape( $this->id ) . "' ORDER BY `position`" );
 		$newSort = array();
-		$pos     = 1;
-		$next    = false;
+		$pos = 1;
+		$next = false;
 		foreach( $items as $item ) {
 			if( $item['id'] != $id ) {
 				$newSort[$item['id']] = $pos++;
 				if( $next ) {
 					$newSort[$next['id']] = $pos++;
-					$next                 = false;
+					$next = false;
 				}
 			} else {
 				$next = $item;
