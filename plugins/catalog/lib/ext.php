@@ -10,7 +10,7 @@ class Ext {
 	private $visible = true;
 
 	private $set = false;
-	const SET        = 1;
+	const SET = 1;
 	const SET_IMAGES = 2;
 
 	private $imgWidth = 32;
@@ -50,7 +50,7 @@ class Ext {
 			$ext = new self;
 			$ext->id = $extData['id'];
 			$ext->name = $extData['name'];
-			$ext->group = $extData['group'] ? $extData['group']: false;
+			$ext->group = $extData['group'] ? $extData['group'] : false;
 			$ext->visible = $extData['visible'] ? true : false;
 			$ext->set = $extData['set'];
 			$ext->loaded = true;
@@ -100,11 +100,11 @@ class Ext {
 		$db = \Difra\MySQL::getInstance();
 		if( $this->id and $this->modified ) {
 			$db->query( "UPDATE `catalog_ext` SET "
-				    . "`name`='" . $db->escape( $this->name ) . "',"
-				    . "`group`=" . ( $this->group ? "'" . $db->escape( $this->group ) . "'" : 'NULL' ) . ","
-				    . "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
-				    . "`set`='" . $db->escape( $this->set ) . "'"
-				    . " WHERE `id`='" . $db->escape( $this->id ) . "'"
+				. "`name`='" . $db->escape( $this->name ) . "',"
+				. "`group`=" . ( $this->group ? "'" . $db->escape( $this->group ) . "'" : 'NULL' ) . ","
+				. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
+				. "`set`='" . $db->escape( $this->set ) . "'"
+				. " WHERE `id`='" . $db->escape( $this->id ) . "'"
 			);
 			if( $this->removeSetImages and !( $this->set & self::SET_IMAGES ) ) {
 				$this->removeSetImages();
@@ -118,11 +118,11 @@ class Ext {
 			$position = $db->fetchOne( "SELECT MAX(`position`) FROM `catalog_ext`" );
 			$position = $position ? $position + 1 : 1;
 			$db->query( "INSERT INTO `catalog_ext` SET "
-				    . "`name`='" . $db->escape( $this->name ) . "',"
-				    . "`group`=" . ( $this->group ? "'" . $db->escape( $this->group ) . "'" : 'NULL' ) . ","
-				    . "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
-				    . "`set`='" . $db->escape( $this->set ) . "',"
-				    . "`position`='" . $db->escape( $position ) . "'"
+				. "`name`='" . $db->escape( $this->name ) . "',"
+				. "`group`=" . ( $this->group ? "'" . $db->escape( $this->group ) . "'" : 'NULL' ) . ","
+				. "`visible`=" . ( $this->visible ? '1' : '0' ) . ","
+				. "`set`='" . $db->escape( $this->set ) . "',"
+				. "`position`='" . $db->escape( $position ) . "'"
 			);
 			$this->id = $db->getLastId();
 			$this->modified = false;
@@ -231,7 +231,7 @@ class Ext {
 		$this->load();
 		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetch( 'SELECT `id`,`position` FROM `catalog_ext` WHERE `group`' . ( $this->group ?
-				"='" . $db->escape( $this->group ) . "'" : ' IS NULL' ) . ' ORDER BY `position`' );
+			"='" . $db->escape( $this->group ) . "'" : ' IS NULL' ) . ' ORDER BY `position`' );
 		$newSort = array();
 		$pos = 1;
 		$prev = false;
@@ -256,7 +256,7 @@ class Ext {
 	public function moveDown() {
 
 		$this->load();
-		$db   = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetch( 'SELECT `id`,`position` FROM `catalog_ext` WHERE `group`' . ( $this->group ?
 			"='" . $db->escape( $this->group ) . "'" : ' IS NULL' ) . ' ORDER BY `position`' );
 		$newSort = array();
@@ -267,7 +267,7 @@ class Ext {
 				$newSort[$extData['id']] = $pos++;
 				if( $next ) {
 					$newSort[$next['id']] = $pos++;
-					$next                 = false;
+					$next = false;
 				}
 			} else {
 				$next = $extData;
@@ -292,7 +292,6 @@ class Ext {
 	}
 
 	/**
-	 *
 	 * Функции для работы с наборами значений
 	 *
 	 */
@@ -332,6 +331,7 @@ class Ext {
 	}
 
 	const BAD_IMAGE = -1;
+
 	public function addValue( $value, $image = null ) {
 
 		$this->load();
@@ -341,7 +341,7 @@ class Ext {
 				throw new \Difra\Exception( 'Can\'t add value without image to set with images' );
 			}
 			$path = DIR_DATA . 'catalog/ext/';
-			@mkdir( $path, 0755, true );
+			@mkdir( $path, 0777, true );
 			$smallImage = \Difra\Libs\Images::getInstance()->scaleAndCrop( $image, $this->imgWidth, $this->imgHeight, 'png', true );
 			if( !$smallImage ) {
 				return self::BAD_IMAGE;
@@ -372,7 +372,7 @@ class Ext {
 			"UPDATE `catalog_ext_sets` SET `name`='" . $db->escape( $value ) . "' WHERE `id`='" . $db->escape( $id ) . "'" );
 		if( $image and ( $this->set & self::SET_IMAGES ) ) {
 			$path = DIR_DATA . 'catalog/ext/';
-			@mkdir( $path, 0755, true );
+			@mkdir( $path, 0777, true );
 			$smallImage = \Difra\Libs\Images::getInstance()->scaleAndCrop( $image, $this->imgWidth, $this->imgHeight, 'png', true );
 			if( !$smallImage ) {
 				return self::BAD_IMAGE;
@@ -388,7 +388,7 @@ class Ext {
 		$extId = $db->fetchOne( 'SELECT `ext` FROM `catalog_ext_sets` WHERE `id`=\'' . $db->escape( $id ) . "'" );
 		$data =
 			$db->fetch( 'SELECT `id`,`position` FROM `catalog_ext_sets` WHERE `ext`=\'' . $db->escape( $extId )
-				    . "' ORDER BY `position`" );
+			. "' ORDER BY `position`" );
 		$newSort = array();
 		$pos = 1;
 		$prev = false;
@@ -414,11 +414,11 @@ class Ext {
 
 	static public function moveValueDown( $id ) {
 
-		$db    = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$extId = $db->fetchOne( 'SELECT `ext` FROM `catalog_ext_sets` WHERE `id`=\'' . $db->escape( $id ) . "'" );
-		$data  =
+		$data =
 			$db->fetch( 'SELECT `id`,`position` FROM `catalog_ext_sets` WHERE `ext`=\'' . $db->escape( $extId )
-				    . "' ORDER BY `position`" );
+			. "' ORDER BY `position`" );
 		$newSort = array();
 		$pos = 1;
 		$next = false;
@@ -427,7 +427,7 @@ class Ext {
 				$newSort[$value['id']] = $pos++;
 				if( $next ) {
 					$newSort[$next['id']] = $pos++;
-					$next                 = false;
+					$next = false;
 				}
 			} else {
 				$next = $value;

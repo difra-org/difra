@@ -60,7 +60,7 @@ class Announcements {
 	 */
 	public function saveImage( $id, $fileData ) {
 
-		@mkdir( $this->imagePath, 0755, true );
+		@mkdir( $this->imagePath, 0777, true );
 
 		$Images = \Difra\Libs\Images::getInstance();
 
@@ -174,7 +174,6 @@ class Announcements {
 	/**
 	 * Устанавливает приоритет анонса события
 	 * @static
-	 *
 	 * @param $id
 	 * @param $priority
 	 */
@@ -188,7 +187,6 @@ class Announcements {
 	/**
 	 * Удаляет анонс события и все его картинки
 	 * @param $id
-	 *
 	 * @return bool
 	 */
 	public function delete( $id ) {
@@ -316,17 +314,17 @@ class Announcements {
 
 		// считаем общее количество в категории
 		$all = $db->fetchRow( "SELECT COUNT(`id`) AS `acount` FROM `announcements` WHERE `category`='" .
-			intval( $categoryId ) . "' AND `visible`=1" );
+		intval( $categoryId ) . "' AND `visible`=1" );
 
 		if( $all['acount'] > 0 ) {
 
 			$perPage = $this->settings['perPage'];
-			$pages = floor( ($all['acount'] - 1) / $perPage ) + 1;
+			$pages = floor( ( $all['acount'] - 1 ) / $perPage ) + 1;
 			$node->setAttribute( 'pages', $pages );
 			$node->setAttribute( 'current', $page );
 			$events = \Difra\Plugins\Announcements\Announcement::getByCategoryWithPager( $categoryId, $page, $perPage );
 			if( !empty( $events ) ) {
-				foreach( $events as $k=>$object ) {
+				foreach( $events as $k => $object ) {
 					$object->getXml( $node );
 				}
 				return true;

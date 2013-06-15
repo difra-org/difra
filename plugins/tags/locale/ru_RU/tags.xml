@@ -12,6 +12,8 @@
 			<notDeleted>Произошла ошибка при удалении тега</notDeleted>
 			<tagDeleted>Тег удалён</tagDeleted>
 			<aliases>Альясы тегов</aliases>
+			<aliaseTitle>Создание альяса для тега</aliaseTitle>
+			<aliaseLabel>Альяс для тега</aliaseLabel>
 			<aliasDeleted>Альяс удалён</aliasDeleted>
 			<aliasCreated>Альяс для тега создан</aliasCreated>
 			<aliasCreateError>Возникла ошибка при создании альяса</aliasCreateError>

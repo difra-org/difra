@@ -17,7 +17,7 @@ class Tags {
 
 	private function __construct() {
 
-		$config = \Difra\Config::getInstance()->get( 'tags' );
+		$config = Difra\Config::getInstance()->get( 'tags' );
 		if( !empty( $config ) ) {
 			$this->modules = $config['modules'];
 			$this->maxPt   = $config['cloud']['max'];
@@ -511,27 +511,35 @@ class Tags {
 	 *
 	 * @param \DOMNode $node
 	 */
-	public function getAllTagsXML( $node ) {
+	public function getAllTagsXML( \DOMNode $node, $limit = null ) {
 
 		if( empty( $this->modules ) ) {
-			return;
+			return false;
 		}
 
-		$db = \Difra\MySQL::getInstance();
+		$db = Difra\MySQL::getInstance();
 
 		$tagsNode = $node->appendChild( $node->ownerDocument->createElement( 'tags' ) );
 		foreach( $this->modules as $module ) {
 
-			$tagsData = $db->fetch( "SELECT `id`, `tag` FROM `" . $db->escape( $module ) . "_tags` ORDER BY `tag` ASC" );
+			$limitString = '';
+			if( !is_null( $limit ) ) {
+				$limitString = " LIMIT " . intval( $limit );
+			}
+
+			$tagsData = $db->fetch( "SELECT `id`, `tag`, `link` FROM `" .
+						$db->escape( $module ) . "_tags` ORDER BY `tag` ASC " . $limitString );
 			if( !empty( $tagsData ) ) {
 				foreach( $tagsData as $data ) {
-					/** @var \DOMElement $tagNode */
 					$tagNode = $tagsNode->appendChild( $node->ownerDocument->createElement( 'item', \
 						addslashes( htmlspecialchars( $data['tag'] ) ) ) );
 					$tagNode->setAttribute( 'module', $module );
 					foreach( $data as $key=> $value ) {
 						if( $key == 'tag' && mb_strlen( $value ) > 25 ) {
 							$value = mb_substr( $value, 0, 27 ) . '...';
+						}
+						if( $key == 'link' ) {
+							$value = mb_strtolower( $value );
 						}
 						$tagNode->setAttribute( $key, $value );
 					}

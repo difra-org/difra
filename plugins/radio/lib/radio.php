@@ -5,7 +5,7 @@ namespace Difra\Plugins;
 class Radio {
 
 	const BAD_CONFIG_PATH = 'unableToSaveConfig';
-	const NO_ICECAST      = 'noIceCastConfig';
+	const NO_ICECAST = 'noIceCastConfig';
 	const NO_READ_ICESAST = 'noReadIceCast';
 
 	private $validBitrate = array( 64, 128, 160, 192, 256, 320 );
@@ -21,7 +21,6 @@ class Radio {
 	 * Добавляет треки на ротацию канала
 	 * @param array  $tracks
 	 * @param string $channel
-	 *
 	 * @return bool
 	 */
 	public function addToChannel( $tracks, $channel ) {
@@ -30,13 +29,13 @@ class Radio {
 
 		// забираем продолжительность для треков
 		$tracks = array_map( 'intval', $tracks );
-		$res    = $db->fetchWithId( "SELECT `id`, `playtime`, `group_id` FROM `tracks` WHERE `id` IN (" . implode( ',', $tracks ) . ")" );
+		$res = $db->fetchWithId( "SELECT `id`, `playtime`, `group_id` FROM `tracks` WHERE `id` IN (" . implode( ',', $tracks ) . ")" );
 
 		$insertArray = array();
 		foreach( $res as $data ) {
 
 			$insertArray[] = "('" . intval( $data['id'] ) . "', '" . $db->escape( $channel ) . "', '" .
-					 $this->_stringToTime( $data['playtime'] ) . "', '" . intval( $data['group_id'] ) . "')";
+				$this->_stringToTime( $data['playtime'] ) . "', '" . intval( $data['group_id'] ) . "')";
 		}
 
 		if( !empty( $insertArray ) ) {
@@ -52,13 +51,12 @@ class Radio {
 	 *
 	 * @param array    $tracks
 	 * @param \DOMNode $node
-	 *
 	 * @return void
 	 */
 	public function getTracksChannelsXML( $tracks, $node ) {
 
-		$db          = \Difra\MySQL::getInstance();
-		$tracks      = array_map( 'intval', $tracks );
+		$db = \Difra\MySQL::getInstance();
+		$tracks = array_map( 'intval', $tracks );
 		$channelsXML = $node->appendChild( $node->ownerDocument->createElement( 'tracksInChannels' ) );
 		$db->fetchXML( $channelsXML, "SELECT `id`, `channel` FROM `radio_tracks` WHERE `id` IN (" . implode( ', ', $tracks ) . ")" );
 	}
@@ -72,7 +70,6 @@ class Radio {
 	/**
 	 * Возвращает объект радиоканала
 	 * @param string $channelName
-	 *
 	 * @return \Difra\Plugins\Radio\Channel instance
 	 */
 	public function getChannel( $channelName ) {
@@ -86,9 +83,9 @@ class Radio {
 	 */
 	public function getChannels() {
 
-		$db            = \Difra\MySQL::getInstance();
-		$q             = "SELECT `mount`, `id` FROM `radio_channels` ORDER BY `mount` ASC";
-		$res           = $db->fetch( $q );
+		$db = \Difra\MySQL::getInstance();
+		$q = "SELECT `mount`, `id` FROM `radio_channels` ORDER BY `mount` ASC";
+		$res = $db->fetch( $q );
 		$channelsArray = array();
 		if( !empty( $res ) ) {
 			foreach( $res as $data ) {
@@ -105,7 +102,7 @@ class Radio {
 	public function getChannelsXML( $node ) {
 
 		$channels = $this->getChannels();
-		foreach( $channels as $k=> $data ) {
+		foreach( $channels as $k => $data ) {
 			/** @var \DOMElement $channelItem */
 			$channelItem = $node->appendChild( $node->ownerDocument->createElement( 'channel' ) );
 			$channelItem->setAttribute( 'name', $data );
@@ -116,21 +113,19 @@ class Radio {
 	/**
 	 * Проверяет точку монтирования на наличие в списке каналов
 	 * @param string $name
-	 *
 	 * @return bool
 	 */
 	public function checkMount( $name ) {
 
 		$db = \Difra\MySQL::getInstance();
-		$q  = "SELECT `id` FROM `radio_channels` WHERE `mount`='" . $db->escape( $name ) . "'";
-		$r  = $db->fetchRow( $q );
+		$q = "SELECT `id` FROM `radio_channels` WHERE `mount`='" . $db->escape( $name ) . "'";
+		$r = $db->fetchRow( $q );
 		return isset( $r['id'] ) ? true : false;
 	}
 
 	/**
 	 * Проверяет валидность битрейта
 	 * @param $bitrate
-	 *
 	 * @return bool
 	 */
 	public function checkBitrate( $bitrate ) {
@@ -141,7 +136,6 @@ class Radio {
 	/**
 	 * Проверяет валидность сэмплрейта
 	 * @param $sampleRate
-	 *
 	 * @return bool
 	 */
 	public function checkSampleRate( $sampleRate ) {
@@ -152,7 +146,6 @@ class Radio {
 	/**
 	 * Создаёт новый радиоканал
 	 * @param array $data
-	 *
 	 * @return bool|string
 	 */
 	public function createChannel( $data ) {
@@ -164,7 +157,7 @@ class Radio {
 		}
 
 		$insertData = array();
-		foreach( $data as $key=> $value ) {
+		foreach( $data as $key => $value ) {
 			$insertData[] = " `" . $db->escape( $key ) . "`='" . $db->escape( $value ) . "'";
 		}
 
@@ -188,7 +181,6 @@ class Radio {
 	 * Создаёт конфиги для ices
 	 *
 	 * @param array $data
-	 *
 	 * @return bool|string
 	 */
 	public function makeIces( $data ) {
@@ -198,11 +190,11 @@ class Radio {
 		}
 
 		// проверяем возможность записи конфига
-		$savePath   = DIR_DATA . 'radio/ices/';
+		$savePath = DIR_DATA . 'radio/ices/';
 		$modulePath = $savePath . 'modules/';
 
 		if( !is_dir( $modulePath ) ) {
-			if( !mkdir( $modulePath, 0755, true ) ) {
+			if( !mkdir( $modulePath, 0777, true ) ) {
 				return self::BAD_CONFIG_PATH;
 			}
 		}
@@ -213,9 +205,9 @@ class Radio {
 
 		// собираем конфиг для ices
 
-		$configXML               = new \DOMDocument();
+		$configXML = new \DOMDocument();
 		$configXML->formatOutput = true;
-		$root                    =
+		$root =
 			$configXML->appendChild( $configXML->createElementNS( 'http://www.icecast.org/projects/ices', 'ices:Configuration' ) );
 
 		$playListNode = $root->appendChild( $configXML->createElement( 'Playlist' ) );
@@ -297,10 +289,10 @@ class Radio {
 	public function makeIceCast() {
 
 		$originalConfig = DIR_PLUGINS . 'radio/bin/icecast.xml';
-		$savePath       = DIR_DATA . 'radio/';
+		$savePath = DIR_DATA . 'radio/';
 
 		if( !is_dir( $savePath ) ) {
-			if( !mkdir( $savePath, 0755, true ) ) {
+			if( !mkdir( $savePath, 0777, true ) ) {
 				return self::BAD_CONFIG_PATH;
 			}
 		}
@@ -313,21 +305,21 @@ class Radio {
 			return self::NO_READ_ICESAST;
 		}
 
-		$originalXML                     = new \DOMDocument( '1.0', 'UTF-8' );
+		$originalXML = new \DOMDocument( '1.0', 'UTF-8' );
 		$originalXML->preserveWhiteSpace = false;
 		$originalXML->substituteEntities = true;
-		$originalXML->formatOutput       = true;
+		$originalXML->formatOutput = true;
 		$originalXML->load( $originalConfig );
 
 		// забираем данные о каналах
-		$db  = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$res = $db->fetch( "SELECT `mount`, `password` FROM `radio_channels` WHERE `onLine`=1" );
 		if( !empty( $res ) ) {
 
 			/** @var \DOMElement $root */
 			$root = $originalXML->getElementsByTagName( 'icecast' )->item( 0 );
 			/** @var \DOMElement $limitsNode */
-			$limitsNode     = $root->getElementsByTagName( 'limits' )->item( 0 );
+			$limitsNode = $root->getElementsByTagName( 'limits' )->item( 0 );
 			$oldSourcesNode = $limitsNode->getElementsByTagName( 'sources' )->item( 0 );
 			$newSourcesNode = $root->appendChild( $originalXML->createElement( 'sources', count( $res ) * 2 ) );
 			$limitsNode->replaceChild( $newSourcesNode, $oldSourcesNode );
@@ -358,7 +350,7 @@ class Radio {
 	public function deleteChannel( $mountPoint ) {
 
 		$db = \Difra\MySQL::getInstance();
-		$q  = "DELETE FROM `radio_channels` WHERE `mount`='" . $db->escape( $mountPoint ) . "'";
+		$q = "DELETE FROM `radio_channels` WHERE `mount`='" . $db->escape( $mountPoint ) . "'";
 		$db->query( $q );
 	}
 }

@@ -7,7 +7,6 @@ class Vault {
 	/**
 	 * Добавляет файл во временное хранилище.
 	 * @param $data
-	 *
 	 * @return int
 	 */
 	static function add( $data ) {
@@ -28,7 +27,6 @@ class Vault {
 	/**
 	 * Получает файл из временного хранилища.
 	 * @param $id
-	 *
 	 * @return string|null
 	 */
 	static function get( $id ) {
@@ -90,7 +88,7 @@ class Vault {
 			$usedImages = array();
 		}
 		if( !empty( $newImages[1] ) ) {
-			@mkdir( $path, 0755, true );
+			@mkdir( $path, 0777, true );
 			$urlPrefix = trim( $urlPrefix, '/' );
 			foreach( $newImages[1] as $v ) {
 				$img = Vault::get( $v );
