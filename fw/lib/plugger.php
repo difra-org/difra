@@ -98,7 +98,7 @@ class Plugger {
 		foreach( $plugins as $name => $plugin ) {
 			$info = $plugin->getInfo();
 			$this->pluginsData[$name] = array(
-				'enabled' => in_array( $name, $enabledPlugins ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ),
+				'enabled' => in_array( $name, $enabledPlugins, true ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ),
 				'loaded' => false,
 				'require' => $info['requires'],
 				'provides' => $info['provides'],
@@ -230,34 +230,21 @@ class Plugger {
 	}
 
 	/**
-	 * @deprecated
-	 * @param string $name
-	 * @return bool
-	 */
-	public function isPlugin( $name ) {
-
-		trigger_error( 'Please use Plugger->isEnabled() instead of Plugger->isPlugin()', E_USER_DEPRECATED );
-		return $this->isEnabled( $name );
-	}
-
-	/**
 	 * @param string $name
 	 * @return bool
 	 */
 	public function turnOn( $name ) {
 
-		$config = Config::getInstance();
-		$conf = $config->get( 'plugins' );
 		if( !isset( $this->plugins[$name] ) ) {
 			return false;
 		}
+		$config = Config::getInstance();
+		$conf = $config->get( 'plugins' );
 		if( !$conf ) {
 			$conf = array();
 		}
-		if( !isset( $conf[$name] ) ) {
-			$conf[$name] = true;
-			$config->set( 'plugins', $conf );
-		}
+		$conf[$name] = true;
+		$config->set( 'plugins', $conf );
 		return $config->save();
 	}
 
@@ -271,6 +258,10 @@ class Plugger {
 		$conf = $config->get( 'plugins' );
 		if( isset( $conf[$name] ) ) {
 			unset( $conf[$name] );
+			$config->set( 'plugins', $conf );
+		}
+		if( false !== ( $k = array_search( $name, $conf ) ) ) {
+			unset( $conf[$k] );
 			$config->set( 'plugins', $conf );
 		}
 		return $config->save();
