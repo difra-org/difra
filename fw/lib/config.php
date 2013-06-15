@@ -34,7 +34,7 @@ class Config {
 	 */
 	static public function getInstance() {
 
-		static $instance;
+		static $instance = null;
 		return $instance ? $instance : $instance = new self;
 	}
 
@@ -115,8 +115,7 @@ class Config {
 	 */
 	private function diff() {
 
-		$defaultConfig = $this->loadFileConfigs();
-		return $this->subDiff( $defaultConfig, $this->config );
+		return $this->subDiff( $this->loadFileConfigs(), $this->config );
 	}
 
 	/**
@@ -126,7 +125,7 @@ class Config {
 	 * @param array $a2
 	 * @return array
 	 */
-	private function subDiff( &$a1, &$a2 ) {
+	private function subDiff( $a1, $a2 ) {
 
 		if( empty( $a2 ) ) {
 			return array();
