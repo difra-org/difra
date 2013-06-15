@@ -23,7 +23,7 @@ class AdmDevelopmentPluginsController extends \Difra\Controller {
 
 	public function disableAjaxAction( \Difra\Param\AnyString $name ) {
 
-		if( !\Difra\Plugger::getInstance()->turnOn( $name->val() ) ) {
+		if( !\Difra\Plugger::getInstance()->turnOff( $name->val() ) ) {
 			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'adm/plugins/failed' ) );
 		}
 		$this->ajax->refresh();
