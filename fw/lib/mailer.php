@@ -95,7 +95,7 @@ class Mailer {
 	}
 
 	/**
-	 * Добавляет нужные данные в XML
+	 * Добавляет нужные данные в XML для передачи XSL-шаблону, формирующему письмо
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 * @param array                $data
