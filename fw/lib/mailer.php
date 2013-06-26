@@ -27,7 +27,7 @@ class Mailer {
 	 */
 	public function __construct() {
 
-		$this->fromMail = 'robot@' . $_SERVER['HTTP_HOST'];
+		$this->fromMail = 'robot@' . Envi::getHost( true );
 	}
 
 	/**
@@ -54,12 +54,23 @@ class Mailer {
 			"Content-Type: text/html; charset=\"UTF-8\"",
 			"Date: " . date( 'r' ),
 			"Message-Id: " . md5( microtime() ) . '-' . md5( $fromMail . $email ) . '@' . Envi::getHost( true ),
-			'Content-Transfer-Encoding: 8bit',
-			'From: =?utf-8?B?' . base64_encode( $fromText ) . "==?= <{$fromMail}>"
+			'Content-Transfer-Encoding: 8bit'
 		);
-		$subj = '=?utf-8?B?' . base64_encode( $subject ) . '==?=';
+
+		// Текстовые строки, если они содержат не-ascii символы, нужно энкодить в base64
+		if( preg_match( '/[\\x80-\\xff]+/', $fromText ) ) {
+			$headers[] = 'From: =?utf-8?B?' . base64_encode( $fromText ) . "==?= <{$fromMail}>";
+		} else {
+			$headers[] = "From: $fromText <$fromMail>";
+		}
+		if( preg_match( '/[\\x80-\\xff]+/', $subject ) ) {
+			$subj = '=?utf-8?B?' . base64_encode( $subject ) . '==?=';
+		} else {
+			$subj = $subject;
+		}
+
 		if( !mail( $email, $subj, $body, implode( "\r\n", $headers ) ) ) {
-			throw new exception( "Failed to send message to $email." );
+			throw new Exception( "Failed to send message to $email." );
 		}
 		return true;
 	}
