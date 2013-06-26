@@ -193,25 +193,24 @@ class Site {
 	/**
 	 * Определяет имя хоста из URL
 	 *
+	 * @deprecated
 	 * @return string|null
 	 */
 	public function getHostname() {
 
-		if( !empty( $_SERVER['HTTP_HOST'] ) ) {
-			return $_SERVER['HTTP_HOST'];
-		} else {
-			return null;
-		}
+		return Envi::getHost();
 	}
 
 	/**
 	 * Возвращает имя главного хоста, если он установлен в переменной веб-сервера VHOST_MAIN, либо имя текущего хоста
 	 *
+	 * @deprecated
+	 * Envi::getHost( true ) делает то же саоме
 	 * @return string
 	 */
 	public function getMainhost() {
 
-		return !empty( $_SERVER['VHOST_MAIN'] ) ? $_SERVER['VHOST_MAIN'] : $this->getHostname();
+		return Envi::getHost( true );
 	}
 
 	/**
