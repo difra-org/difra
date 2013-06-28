@@ -5,6 +5,7 @@ namespace Difra;
 /**
  * Реализация абстрактного контроллера
  * Class Controller
+ *
  * @package Difra
  */
 abstract class Controller {
@@ -202,8 +203,8 @@ abstract class Controller {
 					array_shift( $namedParameters );
 				} else {
 					if( !empty( $this->action->parameters ) and ( !$parameter->isOptional() or
-						empty( $namedParameters ) or
-						$this->action->parameters[0] != $namedParameters[0] )
+							empty( $namedParameters ) or
+							$this->action->parameters[0] != $namedParameters[0] )
 					) {
 						if( !call_user_func( array( "$class", 'verify' ), $this->action->parameters[0] ) ) {
 							$this->view->httpError( 404 );
@@ -250,18 +251,18 @@ abstract class Controller {
 		$this->realRoot->setAttribute( 'controller', $this->action->className );
 		$this->realRoot->setAttribute( 'action', $this->action->method );
 		$this->realRoot->setAttribute( 'host', Site::getInstance()->getHost() );
-		$this->realRoot->setAttribute( 'hostname', Site::getInstance()->getHostname() );
-		$this->realRoot->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
+		$this->realRoot->setAttribute( 'hostname', $host = Envi::getHost() );
+		$this->realRoot->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
 		$this->realRoot->setAttribute( 'instance', $instance ? $instance : $this->view->instance );
-		if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
-			$this->realRoot->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
+		if( $host != $mainhost ) {
+			$this->realRoot->setAttribute( 'urlprefix', 'http://' . $mainhost );
 		}
 		// get user agent
-		Site::getInstance()->getUserAgentXML( $this->realRoot );
+		Envi\UserAgent::getUserAgentXML( $this->realRoot );
 		// ajax flag
 		$this->realRoot->setAttribute( 'ajax',
 			( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-				$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
+					$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
 				: '0' );
 		$this->realRoot->setAttribute( 'switcher',
 			( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
@@ -304,6 +305,7 @@ abstract class Controller {
 
 	/**
 	 * Функция для проверки, что URL был вызван не с «левого» хоста
+	 *
 	 * @throws Exception
 	 */
 	public function checkReferer() {
@@ -312,7 +314,7 @@ abstract class Controller {
 			throw new Exception( 'Bad referer' );
 		}
 		if( ( substr( $_SERVER['HTTP_REFERER'], 0, 7 ) != 'http://' ) and (
-			substr( $_SERVER['HTTP_REFERER'], 0, 8 ) != 'https://' )
+				substr( $_SERVER['HTTP_REFERER'], 0, 8 ) != 'https://' )
 		) {
 			throw new Exception( 'Bad referer' );
 		}
