@@ -21,10 +21,8 @@ class EnviTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( \Difra\Envi::getHost( true ), trim( `hostname` ) );
 		$_SERVER['HTTP_HOST'] = 'www.example.com';
 		$this->assertEquals( \Difra\Envi::getHost(), 'www.example.com' );
-		$_SERVER['HTTP_HOST'] = 'sub.example.com';
-		$this->assertEquals( \Difra\Envi::getHost( true ), 'sub.example.com' );
 		$_SERVER['VHOST_MAIN'] = 'example.com';
 		$this->assertEquals( \Difra\Envi::getHost( true ), 'example.com' );
-		$this->assertEquals( \Difra\Envi::getHost(), 'sub.example.com' );
+		$this->assertEquals( \Difra\Envi::getHost(), 'www.example.com' );
 	}
 }
