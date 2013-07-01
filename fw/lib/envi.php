@@ -34,6 +34,9 @@ class Envi {
 		if( $main and !empty( $_SERVER['VHOST_MAIN'] ) ) {
 			return $_SERVER['VHOST_MAIN'];
 		}
-		return $_SERVER['HTTP_HOST'];
+		if( !empty( $_SERVER['HTTP_HOST'] ) ) {
+			return $_SERVER['HTTP_HOST'];
+		}
+		return gethostname();
 	}
 }
