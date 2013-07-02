@@ -54,10 +54,6 @@ class Action {
 	 */
 	public function find() {
 
-		if( $this->className ) {
-			return;
-		}
-
 		if( $this->loadCache() ) {
 			return;
 		}

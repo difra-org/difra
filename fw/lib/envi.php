@@ -2,6 +2,11 @@
 
 namespace Difra;
 
+/**
+ * Class Envi
+ *
+ * @package Difra
+ */
 class Envi {
 
 	/** @var string Режим работы (web, cli, include) */
@@ -17,5 +22,21 @@ class Envi {
 	public static function getMode() {
 
 		return self::$mode;
+	}
+
+	/**
+	 * Получить имя хоста (домена)
+	 * @param bool $main        Получить имя «главного» хоста (нужно в случае, если у сайта есть поддомены)
+	 * @return string
+	 */
+	public static function getHost( $main = false ) {
+
+		if( $main and !empty( $_SERVER['VHOST_MAIN'] ) ) {
+			return $_SERVER['VHOST_MAIN'];
+		}
+		if( !empty( $_SERVER['HTTP_HOST'] ) ) {
+			return $_SERVER['HTTP_HOST'];
+		}
+		return gethostname();
 	}
 }
