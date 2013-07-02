@@ -112,6 +112,15 @@ class EnviUserAgentTest extends PHPUnit_Framework_TestCase {
 			     'engine' => 'WebKit'
 			) );
 
+		\Difra\Envi\UserAgent::setUAString( 'Mozilla/5.0 (iPad; CPU OS 6_1_3 like Mac OS X) AppleWebKit/536.26 (KHTML, like Gecko) Version/6.0 Mobile/10B329 Safari/8536.25' );
+		$this->assertEquals( \Difra\Envi\UserAgent::getUserAgent(),
+			array(
+			     'agent' => 'Safari',
+			     'version' => '6.0',
+			     'os' => 'iOS',
+			     'engine' => 'WebKit'
+			) );
+
 		\Difra\Envi\UserAgent::setUAString( 'Opera/9.80 (Android 2.3.7; Linux; Opera Tablet/46223) Presto/2.11.355 Version/12.10' );
 		$this->assertEquals( \Difra\Envi\UserAgent::getUserAgent(),
 			array(
