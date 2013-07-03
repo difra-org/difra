@@ -10,7 +10,10 @@ namespace Difra;
  */
 abstract class Controller {
 
-	/** @var \Difra\View */
+	/**
+	 * @var \Difra\View
+	 * @deprecated
+	 */
 	public $view;
 	/** @var \Difra\Action */
 	protected $action;
@@ -48,7 +51,7 @@ abstract class Controller {
 	final public function __construct() {
 
 		// загрузка основных классов
-		$this->view = View::getInstance();
+		$this->view = View\Old::getInstance();
 		$this->locale = Locales::getInstance();
 		$this->action = Action::getInstance();
 		$this->auth = Auth::getInstance();

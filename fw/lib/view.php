@@ -9,47 +9,25 @@ namespace Difra;
  */
 class View {
 
-	/** @var bool */
-	public $error = false;
-	/** @var bool|string */
-	public $redirect = false;
-	/** @var bool */
-	public $rendered = false;
+	/**
+	 * @var bool
+	 * @deprecated
+	 */
+	public static $error = false;
 	/**
 	 * @var bool|string
 	 * @deprecated
 	 */
-	public $template = false;
-	/** @var string */
-	public $instance = 'main';
-
+	public static $redirect = false;
+	/** @var bool */
+	public static $rendered = false;
 	/**
-	 * Синглтон
-	 * @return View
-	 */
-	static function getInstance() {
-
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self;
-	}
-
-	/**
-	 * Завершение выполнения с выводом http-ошибки
-	 * Пробует отрендерить шаблон error_xxx, где xxx — номер ошибки, после чего выводит простенькую страничку с ошибкой.
-	 *
-	 * @param int         $err
-	 * @param bool|int    $ttl
-	 * @param null|string $message
-	 * @throws View\Exception
+	 * @var bool|string
 	 * @deprecated
 	 */
-	public function httpError( $err, $ttl = false, $message = null ) {
-
-		if( $ttl ) {
-			self::addExpires( $ttl );
-		}
-		throw new View\Exception( $err, $message );
-	}
+	public static $template = false;
+	/** @var string */
+	public static $instance = 'main';
 
 	/**
 	 * @param \DOMDocument $xml
@@ -59,17 +37,15 @@ class View {
 	 * @internal param bool|string $instance
 	 * @return bool|string
 	 */
-	public function render( &$xml, $specificInstance = false, $dontEcho = false ) {
+	public static function render( &$xml, $specificInstance = false, $dontEcho = false ) {
 
-		if( $this->error or $this->redirect ) {
+		if( self::$error or self::$redirect ) {
 			return false;
 		}
 		if( $specificInstance ) {
 			$instance = $specificInstance;
-		} elseif( $this->template ) {
-			$instance = $this->template;
-		} elseif( $this->instance ) {
-			$instance = $this->instance;
+		} elseif( self::$instance ) {
+			$instance = self::$instance;
 		} else {
 			$instance = 'main';
 		}
@@ -96,14 +72,14 @@ class View {
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
 
-			$html = $this->normalize( $html );
+			$html = self::normalize( $html );
 
 			if( $dontEcho ) {
 				return $html;
 			}
 
 			echo $html;
-			$this->rendered = true;
+			self::$rendered = true;
 			if( Debugger::getInstance()->isEnabled() ) {
 				echo '<!-- Page rendered in ' . Debugger::getTimer() . ' seconds -->';
 			}
@@ -121,9 +97,9 @@ class View {
 	 * Редирект
 	 * @param $url
 	 */
-	public function redirect( $url ) {
+	public static function redirect( $url ) {
 
-		$this->redirect = true;
+		self::$redirect = true;
 		header( 'Location: ' . $url );
 		die();
 	}
