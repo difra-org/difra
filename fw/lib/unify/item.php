@@ -167,7 +167,8 @@ abstract class Item extends Storage {
 	protected static $objKeys = array();
 
 	/**
-	 * Возвращает список ключей
+	 * Возвращает список ключей (обёртка для getKeysArray)
+	 *
 	 * @param bool $full|'only'        Вместе с ключами с autoload=false
 	 * @return array
 	 */
@@ -179,7 +180,17 @@ abstract class Item extends Storage {
 		if( !isset( static::$objKeys[static::$objKey] ) ) {
 			static::$objKeys[static::$objKey] = array();
 		}
-		static::$objKeys[static::$objKey][$full] = array();
+		return static::$objKeys[static::$objKey][$full] = static::getKeysArray( $full );
+	}
+
+	/**
+	 * Возвращает список ключей
+	 * @param bool $full|'only'        Вместе с ключами с autoload=false
+	 * @return array
+	 */
+	private static function getKeysArray( $full = true ) {
+
+		$keys = array();
 		foreach( static::$propertiesList as $name => $prop ) {
 //			// Пропускаем внешние ключи
 //			if( $prop == 'foreign' or ( isset( $prop['type'] ) and $prop['type'] == 'foreign' ) ) {
@@ -197,9 +208,9 @@ abstract class Item extends Storage {
 			if( $full === 'only' and ( !isset( $prop['autoload'] ) or $prop['autoload'] ) ) {
 				continue;
 			}
-			static::$objKeys[static::$objKey][$full][] = $name;
+			$keys[] = $name;
 		}
-		return static::$objKeys[static::$objKey][$full];
+		return $keys;
 	}
 
 	/**
