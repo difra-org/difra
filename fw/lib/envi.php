@@ -39,4 +39,31 @@ class Envi {
 		}
 		return gethostname();
 	}
+
+	/**
+	 * Возвращает текущий URI
+	 *
+	 * @throws Exception
+	 * @return string
+	 */
+	public static function getUri() {
+
+		static $uri = null;
+		if( !is_null( $uri ) ) {
+			return $uri;
+		}
+		if( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
+			$uri = $_SERVER['URI'];
+		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
+			$uri = $_SERVER['REQUEST_URI'];
+		} else {
+			throw new Exception( 'Can\'t get URI' );
+		}
+		if( false !== strpos( $uri, '?' ) ) {
+			$uri = substr( $uri, 0, strpos( $uri, '?' ) );
+		}
+		$uri = '/' . trim( $uri, '/' );
+		return $uri;
+	}
+
 }
