@@ -15,6 +15,9 @@ class EnviTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $mode, 'include' );
 	}
 
+	/**
+	 * @backupGlobals enabled
+	 */
 	public function test_getHost() {
 
 		$this->assertEquals( \Difra\Envi::getHost(), trim( `hostname` ) );
