@@ -60,8 +60,4 @@ class ActionTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( $action->className, 'AdmDevelopmentConfigController' );
 		$this->assertEquals( $action->methodAjax, 'resetAjaxAction' );
 	}
-
-	public function test_findController() {
-
-	}
 }
