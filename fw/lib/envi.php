@@ -40,6 +40,9 @@ class Envi {
 		return gethostname();
 	}
 
+	private static $customUri = null;
+	private static $requestedUri = null;
+
 	/**
 	 * Возвращает текущий URI
 	 *
@@ -48,22 +51,33 @@ class Envi {
 	 */
 	public static function getUri() {
 
-		static $uri = null;
-		if( !is_null( $uri ) ) {
-			return $uri;
+		if( !is_null( self::$requestedUri ) ) {
+			return self::$requestedUri;
 		}
-		if( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
-			$uri = $_SERVER['URI'];
+		if( !is_null( self::$customUri ) ) {
+			self::$requestedUri = self::$customUri;
+		} elseif( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
+			self::$requestedUri = $_SERVER['URI'];
 		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
-			$uri = $_SERVER['REQUEST_URI'];
+			self::$requestedUri = $_SERVER['REQUEST_URI'];
 		} else {
 			throw new Exception( 'Can\'t get URI' );
 		}
-		if( false !== strpos( $uri, '?' ) ) {
-			$uri = substr( $uri, 0, strpos( $uri, '?' ) );
+		if( false !== strpos( self::$requestedUri, '?' ) ) {
+			self::$requestedUri = substr( self::$requestedUri, 0, strpos( self::$requestedUri, '?' ) );
 		}
-		$uri = '/' . trim( $uri, '/' );
-		return $uri;
+		self::$requestedUri = '/' . trim( self::$requestedUri, '/' );
+		return self::$requestedUri;
 	}
 
+	/**
+	 * Устанавливает текущий URI
+	 *
+	 * @param string $uri
+	 */
+	public static function setUri( $uri ) {
+
+		self::$customUri = $uri;
+		self::$requestedUri = null;
+	}
 }
