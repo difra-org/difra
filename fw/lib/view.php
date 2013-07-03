@@ -177,9 +177,7 @@ ErrorPage
 	public static function addExpires( $ttl ) {
 
 		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', $ttl ? ( time() + $ttl ) : 0 ) );
-		if( isset( $SERVER['SERVER_SOFTWARE'] ) and substr( $_SERVER['SERVER_SOFTWARE'], 0, 6 ) ) {
-			// Установка X-Accel-Expires полезна, так как позволяет более точно контролировать кэш,
-			// если время на веб-сервере и время на сервере, выполняющем скрипт, отличаются
+		if( isset( $SERVER['SERVER_SOFTWARE'] ) and substr( $_SERVER['SERVER_SOFTWARE'], 0, 5 ) == 'nginx' ) {
 			header( 'X-Accel-Expires: ' . ( $ttl ? $ttl : 'off' ) );
 		}
 	}
