@@ -41,7 +41,7 @@ class Exception extends \Exception {
 			$root->setAttribute( 'build', \Difra\Site::getInstance()->getBuild() );
 			$configNode = $root->appendChild( $xml->createElement( 'config' ) );
 			\Difra\Site::getInstance()->getConfigXML( $configNode );
-			\Difra\View::render( $xml, 'error_' . $err );
+			\Difra\View::getInstance()->render( $xml, 'error_' . $err );
 		} catch( exception $ex ) {
 			echo( <<<ErrorPage
 			<html>
@@ -56,7 +56,7 @@ class Exception extends \Exception {
 ErrorPage
 			);
 		}
-		\Difra\View::$rendered = true;
+		\Difra\View::getInstance()->rendered = true;
 		die();
 	}
 }

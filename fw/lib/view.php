@@ -40,56 +40,15 @@ class View {
 	 * @param int         $err
 	 * @param bool|int    $ttl
 	 * @param null|string $message
+	 * @throws View\Exception
+	 * @deprecated
 	 */
 	public function httpError( $err, $ttl = false, $message = null ) {
 
-		if( $this->redirect or $this->error ) {
-			return;
-		}
-		$errors = include( 'view/http_errors.php' );
-
-		if( isset( $errors[$err] ) ) {
-			$error = $errors[$err];
-		} else {
-			$error = 'Unknown';
-		}
-
-		header( "HTTP/1.1 $err $error" );
-		if( $ttl and is_numeric( $ttl ) and $ttl >= 0 ) {
+		if( $ttl ) {
 			self::addExpires( $ttl );
 		}
-		$this->rendered = true;
-		try {
-			$xml = new \DOMDocument();
-			/** @var $root \DOMElement */
-			$root = $xml->appendChild( $xml->createElement( 'error' . $err ) );
-			$root->setAttribute( 'host', Site::getInstance()->getHost() );
-			$root->setAttribute( 'hostname', Site::getInstance()->getHostname() );
-			$root->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
-			if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
-				$root->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
-			}
-			$root->setAttribute( 'build', Site::getInstance()->getBuild() );
-			$configNode = $root->appendChild( $xml->createElement( 'config' ) );
-			Site::getInstance()->getConfigXML( $configNode );
-			$this->render( $xml, 'error_' . $err );
-			$this->error = $err;
-		} catch( exception $ex ) {
-			$this->error = $err;
-			echo( <<<ErrorPage
-			<html>
-			<head>
-			<title>$error</title>
-			</head>
-			<body>
-			<center><h1 style="padding:350px 0px 0px 0px">Error $err: $error</h1></center>
-			$message
-			</body>
-			</html>
-ErrorPage
-			);
-		}
-		die();
+		throw new View\Exception( $err, $message );
 	}
 
 	/**
