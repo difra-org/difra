@@ -1,2 +1,9 @@
 /.AppleDouble
+build/api
+build/cache.properties
+build/code-browser
+build/coverage
+build/logs
+build/pdepend
+build/phpdox
 plugins/.AppleDouble
