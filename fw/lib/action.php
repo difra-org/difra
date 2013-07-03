@@ -202,7 +202,7 @@ class Action {
 	 * Собирает пути к папкам всех контроллеров
 	 * @return string[]
 	 */
-	private function getControllerPaths() {
+	public function getControllerPaths() {
 
 		static $controllerDirs = null;
 		if( !is_null( $controllerDirs ) ) {
