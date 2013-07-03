@@ -35,12 +35,12 @@ class Old {
 
 	public function redirect( $url ) {
 
-		return \Difra\View::redirect( $url );
+		\Difra\View::redirect( $url );
 	}
 
 	public static function addExpires( $ttl ) {
 
-		return \Difra\View::addExpires( $ttl );
+		\Difra\View::addExpires( $ttl );
 	}
 
 	public static function normalize( $htmlDoc ) {
