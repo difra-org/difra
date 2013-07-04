@@ -9,27 +9,20 @@ namespace Difra;
  */
 class Debugger {
 
-	private $enabled = false;
+	private static $enabled = false;
 	/** @var int        0 — консоль выключена, 1 — консоль включена, но не активна, 2 — консоль активна */
-	private $console = 0;
-	private $cacheResources = true;
+	private static $console = 0;
+	private static $cacheResources = true;
 	private static $output = array();
-	private $hadError = false;
+	private static $hadError = false;
 
-	/**
-	 * Синглтон
-	 * @return Debugger
-	 */
-	static public function getInstance() {
+	public static function init() {
 
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self;
-	}
-
-	/**
-	 * Конструктор
-	 */
-	public function __construct() {
+		static $initDone = false;
+		if( $initDone ) {
+			return;
+		}
+		$initDone = true;
 
 		if( Envi::getMode() != 'web' ) {
 			return;
@@ -45,25 +38,25 @@ class Debugger {
 			ini_set( 'error_reporting', E_ALL );
 			ini_set( 'html_errors',
 				( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
-			$this->enabled = 0;
-			$this->console = 0;
+			self::$enabled = 0;
+			self::$console = 0;
 			return;
 		}
 		if( ( isset( $_GET['debug'] ) and !$_GET['debug'] ) or ( isset( $_COOKIE['debug'] ) and !$_COOKIE['debug'] ) ) {
-			$this->enabled = false;
+			self::$enabled = false;
 		} else {
-			$this->enabled = true;
+			self::$enabled = true;
 		}
 		// консоль отключена?
-		if( !$this->enabled or ( isset( $_COOKIE['debugConsole'] ) and !$_COOKIE['debugConsole'] ) ) {
-			$this->console = 1; // консоль есть, но отлов ошибок отключен
+		if( !self::$enabled or ( isset( $_COOKIE['debugConsole'] ) and !$_COOKIE['debugConsole'] ) ) {
+			self::$console = 1; // консоль есть, но отлов ошибок отключен
 		} else {
-			$this->console = 2; // консоль включена
+			self::$console = 2; // консоль включена
 		}
 
-		$this->cacheResources = false;
+		self::$cacheResources = false;
 
-		if( $this->console == 2 ) {
+		if( self::$console == 2 ) {
 			// консоль активна — перехватываем ошибки
 			ini_set( 'display_errors', 'Off' );
 			ini_set( 'html_errors', 'Off' );
@@ -71,7 +64,7 @@ class Debugger {
 			set_error_handler( array( '\Difra\Debugger', 'captureNormal' ) );
 			set_exception_handler( array( '\Difra\Debugger', 'captureException' ) );
 			register_shutdown_function( array( '\Difra\Debugger', 'captureShutdown' ) );
-			$this->console = 2;
+			self::$console = 2;
 		} else {
 			// консоль не активна — выводим ошибки
 			ini_set( 'display_errors', 'On' );
@@ -85,9 +78,9 @@ class Debugger {
 	 * Включен ли режим отладки
 	 * @return bool
 	 */
-	public function isEnabled() {
+	public static function isEnabled() {
 
-		return $this->enabled;
+		return self::$enabled;
 	}
 
 	/**
@@ -97,9 +90,9 @@ class Debugger {
 	 * 2 — консоль включена
 	 * @return int
 	 */
-	public function isConsoleEnabled() {
+	public static function isConsoleEnabled() {
 
-		return $this->console;
+		return self::$console;
 	}
 
 	/**
@@ -107,16 +100,16 @@ class Debugger {
 	 *
 	 * @return bool
 	 */
-	public function isResourceCache() {
+	public static function isResourceCache() {
 
-		return $this->cacheResources;
+		return self::$cacheResources;
 	}
 
 	/**
 	 * Добавляет сообщение в лог для консоли
 	 * @param string $line
 	 */
-	static function addLine( $line ) {
+	public static function addLine( $line ) {
 
 		self::$output[] = array(
 			'class' => 'messages',
@@ -129,7 +122,7 @@ class Debugger {
 	 * Добавляет событие в лог для консоли
 	 * @param string $line
 	 */
-	static function addEventLine( $line ) {
+	public static function addEventLine( $line ) {
 
 		self::$output[] = array(
 			'class' => 'events',
@@ -143,9 +136,9 @@ class Debugger {
 	 * @param string $type
 	 * @param string $line
 	 */
-	public function addDBLine( $type, $line ) {
+	public static function addDBLine( $type, $line ) {
 
-		if( !$this->enabled ) {
+		if( !self::$enabled ) {
 			return;
 		}
 		self::$output[] = array(
@@ -160,13 +153,13 @@ class Debugger {
 	 * Добавить ошибку в лог для консоли
 	 * @param $array
 	 */
-	public function addLineAsArray( $array ) {
+	public static function addLineAsArray( $array ) {
 
-		if( !$this->enabled ) {
+		if( !self::$enabled ) {
 			return;
 		}
 		if( $array['class'] == 'errors' ) {
-			$this->hadError = true;
+			self::$hadError = true;
 		}
 		$array['timer'] = self::getTimer();
 		self::$output[] = $array;
@@ -179,7 +172,7 @@ class Debugger {
 	 *                                 не может быть отрендерена)
 	 * @return string
 	 */
-	public function debugHTML( $standalone = false ) {
+	public static function debugHTML( $standalone = false ) {
 
 		static $alreadyDidIt = false;
 		if( $alreadyDidIt ) {
@@ -188,7 +181,7 @@ class Debugger {
 		/** @var $root \DOMElement */
 		$xml = new \DOMDocument();
 		$root = $xml->appendChild( $xml->createElement( 'root' ) );
-		$this->debugXML( $root, $standalone );
+		self::debugXML( $root, $standalone );
 
 		return View::render( $xml, 'all', true );
 	}
@@ -200,11 +193,11 @@ class Debugger {
 	 * @param bool                 $standalone
 	 * @return string
 	 */
-	public function debugXML( $node, $standalone = false ) {
+	public static function debugXML( $node, $standalone = false ) {
 
-		$node->setAttribute( 'debug', $this->enabled ? '1' : '0' );
-		$node->setAttribute( 'debugConsole', $this->console );
-		if( !$this->console ) {
+		$node->setAttribute( 'debug', self::$enabled ? '1' : '0' );
+		$node->setAttribute( 'debugConsole', self::$console );
+		if( !self::$console ) {
 			return;
 		}
 		/** @var $debugNode \DOMElement */
@@ -232,7 +225,7 @@ class Debugger {
 			'line' => $exception->getLine(),
 			'traceback' => $exception->getTrace()
 		);
-		self::getInstance()->addLineAsArray( $err );
+		self::addLineAsArray( $err );
 		return false;
 	}
 
@@ -266,7 +259,7 @@ class Debugger {
 		);
 		$err['traceback'] = debug_backtrace();
 		array_shift( $err['traceback'] );
-		self::getInstance()->addLineAsArray( $err );
+		self::addLineAsArray( $err );
 		return false;
 	}
 
@@ -289,14 +282,13 @@ class Debugger {
 			$error['class'] = 'errors';
 			$error['traceback'] = debug_backtrace();
 			array_shift( $error['traceback'] );
-			self::getInstance()->addLineAsArray( $error );
+			self::addLineAsArray( $error );
 		}
 		// если по каким-то причинам рендер не случился, отрендерим свою страничку
 		if( !View::$rendered ) {
-			$controller = Action::getInstance()->controller;
-			$ajax = $controller->ajax;
+			$ajax = Ajax::getInstance();
 			if( !$ajax->isAjax ) {
-				echo self::getInstance()->debugHTML( true );
+				echo self::debugHTML( true );
 			} else {
 				echo $ajax->getResponse();
 			}
@@ -309,9 +301,9 @@ class Debugger {
 	 *
 	 * @return bool
 	 */
-	public function hadError() {
+	public static function hadError() {
 
-		return $this->hadError;
+		return self::$hadError;
 	}
 
 	/**
@@ -325,7 +317,7 @@ class Debugger {
 
 	public static function checkSlow() {
 
-		if( Debugger::getInstance()->console ) {
+		if( Debugger::$console ) {
 			return;
 		}
 		$time = self::getTimer();
@@ -342,7 +334,7 @@ class Debugger {
 			$post = print_r( $_POST, true );
 			$cookie = print_r( $_COOKIE, true );
 			$host = Envi::getHost();
-			$uri = Action::getInstance()->getUri();
+			$uri = Envi::getUri();
 			$user = Auth::getInstance()->data['email'];
 
 			$output .= <<<MSG

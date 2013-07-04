@@ -7,6 +7,7 @@ use Difra;
 /**
  * Абстрактный класс сборщика ресурсов
  * Class Common
+ *
  * @package Difra\Resourcer\Abstracts
  */
 abstract class Common {
@@ -18,11 +19,9 @@ abstract class Common {
 	/**
 	 * Основная функция — сборщик ресурса
 	 * @param string $instance
-	 *
 	 * @return mixed
 	 */
 	abstract protected function processData( $instance );
-
 
 	protected $resources = array();
 	const CACHE_TTL = 86400;
@@ -41,7 +40,6 @@ abstract class Common {
 	/**
 	 * Проверка допустимости имени инстанса
 	 * @param $instance
-	 *
 	 * @return bool
 	 * @throws \Difra\Exception
 	 */
@@ -56,7 +54,6 @@ abstract class Common {
 	/**
 	 * Вывод ресурса
 	 * @param $instance
-	 *
 	 * @return bool
 	 * @throws \Difra\Exception
 	 */
@@ -133,13 +130,12 @@ abstract class Common {
 	 * Создаёт gz-версию ресурса.
 	 *
 	 * @param $instance
-	 *
 	 * @return string
 	 */
 	public function compileGZ( $instance ) {
 
 		$cache = Difra\Cache::getInstance();
-		if( $cache->adapter == 'None' or !Difra\Debugger::getInstance()->isResourceCache() ) {
+		if( $cache->adapter == 'None' or !Difra\Debugger::isResourceCache() ) {
 			return false;
 		}
 
@@ -151,13 +147,13 @@ abstract class Common {
 		}
 
 		// ждём, пока удастся сделать lock, либо пока не появятся данные от другого процесса
-		$busyKey   = "{$cacheKey}_gz_busy";
+		$busyKey = "{$cacheKey}_gz_busy";
 		$busyValue = rand( 100000, 999999 );
 		while( true ) {
 			if( !$currentBusy = $cache->get( $busyKey ) ) {
 				// появились данные от другого процесса?
 				if( $cached = $cache->get( $cacheKey . '_gz' ) and
-				    $cache->get( $cacheKey . '_gz_build' ) == \Difra\Site::getInstance()->getBuild()
+					$cache->get( $cacheKey . '_gz_build' ) == \Difra\Site::getInstance()->getBuild()
 				) {
 					return $cached;
 				}
@@ -185,7 +181,6 @@ abstract class Common {
 	 * Возвращает собранный ресурс.
 	 * @param      $instance
 	 * @param bool $withSources
-	 *
 	 * @return bool|null
 	 */
 	public function compile( $instance, $withSources = false ) {
@@ -197,7 +192,7 @@ abstract class Common {
 		// get compiled from cache if available
 		$cache = Difra\Cache::getInstance();
 
-		if( $cache->adapter != 'None' and Difra\Debugger::getInstance()->isResourceCache() ) {
+		if( $cache->adapter != 'None' and Difra\Debugger::isResourceCache() ) {
 
 			$cacheKey = "{$instance}_{$this->type}";
 			if( !is_null( $cached = $cache->get( $cacheKey ) ) ) {
@@ -207,13 +202,13 @@ abstract class Common {
 			}
 
 			// ждём, пока удастся сделать lock, либо пока не появятся данные от другого процесса
-			$busyKey   = "{$cacheKey}_busy";
+			$busyKey = "{$cacheKey}_busy";
 			$busyValue = rand( 100000, 999999 );
 			while( true ) {
 				if( !$currentBusy = $cache->get( $busyKey ) ) {
 					// is data arrived?
 					if( !is_null( $cached = $cache->get( $cacheKey ) ) and
-					    $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild()
+						$cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild()
 					) {
 						return $cached;
 					}
@@ -252,7 +247,6 @@ abstract class Common {
 	 * Собирает ресурс.
 	 * @param string $instance
 	 * @param bool   $withSources
-	 *
 	 * @throws \Difra\Exception
 	 * @return string
 	 */
@@ -272,27 +266,26 @@ abstract class Common {
 	/**
 	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов.
 	 * @param string $instance
-	 *
 	 * @return bool
 	 */
 	private function find( $instance ) {
 
 		// TODO: cache this
-		$found   = false;
+		$found = false;
 		$parents = array();
-		$paths   = Difra\Plugger::getInstance()->getPaths();
-		$paths   = array_merge( array(
-					     DIR_SITE,
-					     DIR_ROOT
-					),
-					$paths,
-					array(
-					     DIR_FW
-					) );
+		$paths = Difra\Plugger::getPaths();
+		$paths = array_merge( array(
+					   DIR_SITE,
+					   DIR_ROOT
+				      ),
+			$paths,
+			array(
+			     DIR_FW
+			) );
 		if( !empty( $paths ) ) {
 			foreach( $paths as $dir ) {
 				if( is_dir( $d = "{$dir}/{$this->type}/{$instance}" ) ) {
-					$found     = true;
+					$found = true;
 					$parents[] = $d;
 				}
 				if( $this->withAll( $instance ) and is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
@@ -315,15 +308,13 @@ abstract class Common {
 	 */
 	public function findInstances() {
 
-		$plugger = Difra\Plugger::getInstance();
-
 		// Формируем список папок, где будем искать ресурсы
 		$parents = array(
 			DIR_FW . $this->type,
 			DIR_ROOT . $this->type,
 			DIR_SITE . $this->type,
 		);
-		$paths   = $plugger->getPaths();
+		$paths = Difra\Plugger::getPaths();
 		if( !empty( $paths ) ) {
 			foreach( $paths as $dir ) {
 				$parents[] = "{$dir}/{$this->type}";
@@ -385,15 +376,15 @@ abstract class Common {
 				}
 				$entry = "$dir/$dirEntry";
 				if( is_dir( $entry ) ) { // "special"
-					$exp     = explode( '-', $dirEntry );
+					$exp = explode( '-', $dirEntry );
 					$special = array(
-						'name'    => ( sizeof( $exp ) == 2 ? $exp[0] : $dirEntry ),
+						'name' => ( sizeof( $exp ) == 2 ? $exp[0] : $dirEntry ),
 						'version' => ( sizeof( $exp ) == 2 ? $exp[1] : 0 ),
-						'files'   => array()
+						'files' => array()
 					);
 					if( isset( $this->resources[$instance]['specials'][$special['name']] ) ) {
 						if( $this->resources[$instance]['specials'][$special['name']]['version'] >
-						    $special['version']
+							$special['version']
 						) {
 							continue;
 						} else {
@@ -433,7 +424,6 @@ abstract class Common {
 	/**
 	 * Составляет список всех подходящих файлов
 	 * @param string $instance
-	 *
 	 * @return string[]
 	 */
 	public function getFiles( $instance ) {
@@ -454,8 +444,8 @@ abstract class Common {
 
 	/**
 	 * Определяет, нужно ли для инстанса включать папки ресурсов all
-	 * @param string $instance
 	 *
+	 * @param string $instance
 	 * @return bool
 	 */
 	private function withAll( $instance ) {

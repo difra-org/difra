@@ -5,44 +5,34 @@ namespace Difra;
 class Plugger {
 
 	/** @var \Difra\Plugin[] */
-	private $plugins = null;
+	private static $plugins = null;
 	/** @var array */
-	private $pluginsData = null;
+	private static $pluginsData = null;
 	/** @var array[] */
-	private $provisions = array();
-
-	/**
-	 * Синглтон
-	 * @return Plugger
-	 */
-	static public function getInstance() {
-
-		static $_self = null;
-		return $_self ? $_self : $_self = new self;
-	}
+	private static $provisions = array();
 
 	/**
 	 * Инициализация
 	 */
-	public function init() {
+	public static function init() {
 
-		$this->provisions = array();
-		$this->provisions['mysql'] = array( 'available' => MySQL::getInstance()->isConnected(), 'url' => '/test', 'source' => 'core' );
-		$this->smartPluginsEnable();
+		self::$provisions = array();
+		self::$provisions['mysql'] = array( 'available' => MySQL::getInstance()->isConnected(), 'url' => '/test', 'source' => 'core' );
+		self::smartPluginsEnable();
 	}
 
 	/**
 	 * Возвращает список всех доступных плагинов
 	 * @return string[]
 	 */
-	private function getPluginsNames() {
+	private static function getPluginsNames() {
 
 		static $plugins = null;
 		if( !is_null( $plugins ) ) {
 			return $plugins;
 		}
 		$plugins = array();
-		if( Debugger::getInstance()->isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
+		if( Debugger::isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
 			if( is_dir( DIR_PLUGINS ) and $dir = opendir( DIR_PLUGINS ) ) {
 				while( false !== ( $subdir = readdir( $dir ) ) ) {
 					if( $subdir != '.' and $subdir != '..' and is_dir( DIR_PLUGINS . '/' . $subdir ) ) {
@@ -61,13 +51,13 @@ class Plugger {
 	 * Возвращает массив с объектами всех доступных плагинов
 	 * @return \Difra\Plugin[]
 	 */
-	public function getAllPlugins() {
+	public static function getAllPlugins() {
 
-		if( !is_null( $this->plugins ) ) {
-			return $this->plugins;
+		if( !is_null( self::$plugins ) ) {
+			return self::$plugins;
 		}
 		$plugins = array();
-		$dirs = $this->getPluginsNames();
+		$dirs = self::getPluginsNames();
 		if( !empty( $dirs ) ) {
 			foreach( $dirs as $dir ) {
 				include( DIR_PLUGINS . '/' . $dir . '/plugin.php' );
@@ -75,20 +65,20 @@ class Plugger {
 				$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
 			}
 		}
-		return $this->plugins = $plugins;
+		return self::$plugins = $plugins;
 	}
 
 	/**
 	 * Загружает включенные плагины без недостающих зависимостей
 	 */
-	public function smartPluginsEnable() {
+	public static function smartPluginsEnable() {
 
 		// TODO: cache me!
-		if( !is_null( $this->pluginsData ) ) {
+		if( !is_null( self::$pluginsData ) ) {
 			return;
 		}
-		$this->pluginsData = array();
-		$plugins = $this->getAllPlugins();
+		self::$pluginsData = array();
+		$plugins = self::getAllPlugins();
 		if( empty( $plugins ) ) {
 			return;
 		}
@@ -100,7 +90,7 @@ class Plugger {
 		// составление списка плагинов
 		foreach( $plugins as $name => $plugin ) {
 			$info = $plugin->getInfo();
-			$this->pluginsData[$name] = array(
+			self::$pluginsData[$name] = array(
 				'enabled' => in_array( $name, $enabledPlugins, true ) or ( isset( $enabledPlugins[$name] ) and $enabledPlugins[$name] ),
 				'loaded' => false,
 				'require' => $info['requires'],
@@ -110,14 +100,14 @@ class Plugger {
 			);
 			$provs = array_merge( array( $name ), $info['provides'] );
 			foreach( $provs as $prov ) {
-				if( isset( $this->provisions[$prov] ) ) {
-					if( is_array( $this->provisions[$prov]['source'] ) ) {
-						$this->provisions[$prov]['source'][] = $name;
+				if( isset( self::$provisions[$prov] ) ) {
+					if( is_array( self::$provisions[$prov]['source'] ) ) {
+						self::$provisions[$prov]['source'][] = $name;
 					} else {
-						$this->provisions[$prov]['source'] = array( $this->provisions[$prov]['source'], $name );
+						self::$provisions[$prov]['source'] = array( self::$provisions[$prov]['source'], $name );
 					}
 				} else {
-					$this->provisions[$prov] = array(
+					self::$provisions[$prov] = array(
 						'available' => false,
 						'source' => $name
 					);
@@ -127,7 +117,7 @@ class Plugger {
 		// Загрузка плагинов
 		do {
 			$changed = false;
-			foreach( $this->pluginsData as $name => $data ) {
+			foreach( self::$pluginsData as $name => $data ) {
 				if( !$data['enabled'] or $data['loaded'] ) {
 					// plugin is disabled or already loaded
 					continue;
@@ -135,24 +125,24 @@ class Plugger {
 				// check if all provisions are available
 				if( !empty( $data['require'] ) ) {
 					foreach( $data['require'] as $req ) {
-						if( !$this->provisions[$req]['available'] ) {
+						if( !self::$provisions[$req]['available'] ) {
 							continue 2;
 						}
 					}
 				}
 				// enable plugin
-				$this->plugins[$name]->enable();
-				$this->pluginsData[$name]['loaded'] = true;
+				self::$plugins[$name]->enable();
+				self::$pluginsData[$name]['loaded'] = true;
 				$changed = true;
 				// set plugin's provisions as available
-				$this->provisions[$name]['available'] = true;
+				self::$provisions[$name]['available'] = true;
 				foreach( $data['provides'] as $prov ) {
-					$this->provisions[$prov]['available'] = true;
+					self::$provisions[$prov]['available'] = true;
 				}
 			}
 		} while( $changed );
 		// Инициализация плагинов
-		foreach( $this->plugins as $plugin ) {
+		foreach( self::$plugins as $plugin ) {
 			if( !$plugin->isEnabled() ) {
 				continue;
 			}
@@ -163,24 +153,24 @@ class Plugger {
 	/**
 	 * Заполняет информацию о недостающих плагинах и недостающей версии (missingReq, disabled, old)
 	 */
-	public function fillMissingReq() {
+	public static function fillMissingReq() {
 
 		static $didit = false;
 		if( $didit ) {
 			return;
 		}
 		$didit = true;
-		foreach( $this->pluginsData as $name => $data ) {
+		foreach( self::$pluginsData as $name => $data ) {
 			if( !$data['loaded'] and !empty( $data['require'] ) ) {
 				foreach( $data['require'] as $req ) {
-					if( !isset( $this->provisions[$req] ) or !$this->provisions[$req]['available'] ) {
-						$this->pluginsData[$name]['missingReq'][] = $req;
-						$this->pluginsData[$name]['disabled'] = true;
+					if( !isset( self::$provisions[$req] ) or !self::$provisions[$req]['available'] ) {
+						self::$pluginsData[$name]['missingReq'][] = $req;
+						self::$pluginsData[$name]['disabled'] = true;
 					}
 				}
 			}
 			if( $data['version'] < (float)Site::VERSION ) {
-				$this->pluginsData[$name]['old'] = true;
+				self::$pluginsData[$name]['old'] = true;
 			}
 		}
 	}
@@ -190,24 +180,24 @@ class Plugger {
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 */
-	public function getPluginsXML( $node ) {
+	public static function getPluginsXML( $node ) {
 
-		$this->smartPluginsEnable();
-		$this->fillMissingReq();
+		self::smartPluginsEnable();
+		self::fillMissingReq();
 		$pluginsNode = $node->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
-		\Difra\Libs\XML\DOM::array2domAttr( $pluginsNode, $this->pluginsData );
+		\Difra\Libs\XML\DOM::array2domAttr( $pluginsNode, self::$pluginsData );
 		$provisionsNode = $node->appendChild( $node->ownerDocument->createElement( 'provisions' ) );
-		\Difra\Libs\XML\DOM::array2domAttr( $provisionsNode, $this->provisions );
+		\Difra\Libs\XML\DOM::array2domAttr( $provisionsNode, self::$provisions );
 	}
 
 	/**
 	 * Получает пути к папкам всех включенных плагинов
 	 * @return array
 	 */
-	public function getPaths() {
+	public static function getPaths() {
 
 		$paths = array();
-		$plugins = $this->getAllPlugins();
+		$plugins = self::getAllPlugins();
 		if( empty( $plugins ) ) {
 			return array();
 		}
@@ -224,21 +214,21 @@ class Plugger {
 	 * @param string $pluginName
 	 * @return bool
 	 */
-	public function isEnabled( $pluginName ) {
+	public static function isEnabled( $pluginName ) {
 
-		if( !isset( $this->plugins[$pluginName] ) ) {
+		if( !isset( self::$plugins[$pluginName] ) ) {
 			return false;
 		}
-		return $this->plugins[$pluginName]->isEnabled();
+		return self::$plugins[$pluginName]->isEnabled();
 	}
 
 	/**
 	 * @param string $name
 	 * @return bool
 	 */
-	public function turnOn( $name ) {
+	public static function turnOn( $name ) {
 
-		if( !isset( $this->plugins[$name] ) ) {
+		if( !isset( self::$plugins[$name] ) ) {
 			return false;
 		}
 		$config = Config::getInstance();
@@ -255,7 +245,7 @@ class Plugger {
 	 * @param string $name
 	 * @return bool
 	 */
-	public function turnOff( $name ) {
+	public static function turnOff( $name ) {
 
 		$config = Config::getInstance();
 		$conf = $config->get( 'plugins' );

@@ -49,7 +49,7 @@ class Menu extends Abstracts\XML {
 		foreach( $node as $subname => $subnode ) {
 			/** @noinspection PhpUndefinedFieldInspection */
 			if( $subnode->attributes()->sup and $subnode->attributes()->sup == '1' ) {
-				if( !Debugger::getInstance()->isEnabled() ) {
+				if( !Debugger::isEnabled() ) {
 					$subnode->addAttribute( 'hidden', 1 );
 				}
 			}

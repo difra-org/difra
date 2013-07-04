@@ -1,6 +1,8 @@
 <?php
 
-namespace Difra;
+namespace Difra\Envi;
+
+use Difra\Envi, Difra\Debugger, Difra\View, Difra\Cache, Difra\Resourcer, Difra\Plugger;
 
 /**
  * Определение нужного контроллера и метода (экшена), запуск выполнения контроллера
@@ -11,23 +13,23 @@ namespace Difra;
 class Action {
 
 	/** @var string[] */
-	public $parameters = array();
+	public static $parameters = array();
 
 	/** @var string */
-	public $className = null;
-	/** @var Controller */
-	public $controller = null;
+	public static $className = null;
+	/** @var \Difra\Controller */
+	public static $controller = null;
 
 	/** @var string */
-	public $method = null;
+	public static $method = null;
 	/** @var string */
-	public $methodAuth = null;
+	public static $methodAuth = null;
 	/** @var string */
-	public $methodAjax = null;
+	public static $methodAjax = null;
 	/** @var string */
-	public $methodAjaxAuth = null;
+	public static $methodAjaxAuth = null;
 	/** @var array */
-	public $methodTypes = array(
+	public static $methodTypes = array(
 		array( '', '' ),
 		array( '', 'Auth' ),
 		array( 'Ajax', '' ),
@@ -35,50 +37,39 @@ class Action {
 	);
 
 	/**
-	 * Синглтон
-	 * @static
-	 * @return Action
-	 */
-	static public function getInstance() {
-
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self;
-	}
-
-	/**
 	 * Ищет контроллер и action для текущего URI (запускается из события)
 	 *
-	 * @throws exception
+	 * @throws \Difra\Exception
 	 */
-	public function find() {
+	public static function find() {
 
-		if( $this->loadCache() ) {
+		if( self::loadCache() ) {
 			return;
 		}
 
 		$uri = trim( Envi::getUri(), '/' );
 		$parts = $uri ? explode( '/', $uri ) : array();
 
-		if( $this->getResource( $parts ) ) {
+		if( self::getResource( $parts ) ) {
 			return;
 		}
 
-		if( !$controllerFilename = $this->findController( $parts ) ) {
-			$this->saveCache( '404' );
+		if( !$controllerFilename = self::findController( $parts ) ) {
+			self::saveCache( '404' );
 			throw new View\Exception( 404 );
 		}
 
 		/** @noinspection PhpIncludeInspection */
 		include_once( $controllerFilename );
-		if( !class_exists( $this->className ) ) {
-			throw new exception( "Error! Controller class {$this->className} not found" );
+		if( !class_exists( self::$className ) ) {
+			throw new \Difra\Exception( 'Error! Controller class ' . self::$className . ' not found' );
 		}
 
-		$this->findAction( $parts );
-		$this->parameters = $parts;
+		self::findAction( $parts );
+		self::$parameters = $parts;
 
-		$this->saveCache( 'action' );
-		Debugger::addLine( "Selected controller {$this->className} from $controllerFilename" );
+		self::saveCache( 'action' );
+		Debugger::addLine( 'Selected controller ' . self::$className . " from $controllerFilename" );
 	}
 
 	/**
@@ -86,15 +77,15 @@ class Action {
 	 * @throws View\Exception
 	 * @return bool
 	 */
-	private function loadCache() {
+	private static function loadCache() {
 
-		if( !Debugger::getInstance()->isEnabled() and $data = Cache::getInstance()->get( $this->getCacheKey() ) ) {
+		if( !Debugger::isEnabled() and $data = Cache::getInstance()->get( self::getCacheKey() ) ) {
 			switch( $data['result'] ) {
 			case 'action':
 				/** @noinspection PhpIncludeInspection */
 				include_once( $data['controller'] );
 				foreach( $data['vars'] as $k => $v ) {
-					$this->$k = $v;
+					self::${$k} = $v;
 				}
 				break;
 			case '404':
@@ -109,19 +100,19 @@ class Action {
 	 * Сохранить результат в кэш
 	 * @param string $result Тип резултата: 'action' или '404'
 	 */
-	private function saveCache( $result = 'action' ) {
+	private static function saveCache( $result = 'action' ) {
 
 		if( $result != '404' ) {
 			$match = array(
 				'vars' => array(
-					'className' => $this->className,
-					'parameters' => $this->parameters,
+					'className' => self::$className,
+					'parameters' => self::$parameters,
 				),
 				'result' => $result
 			);
-			foreach( $this->methodTypes as $methodType ) {
+			foreach( self::$methodTypes as $methodType ) {
 				$methodVar = "method{$methodType[0]}{$methodType[1]}";
-				$match['vars'][$methodVar] = $this->$methodVar;
+				$match['vars'][$methodVar] = self::${$methodVar};
 			}
 		} else {
 			$match = array(
@@ -129,7 +120,7 @@ class Action {
 			);
 		}
 
-		Cache::getInstance()->put( $this->getCacheKey(), $match, 300 );
+		Cache::getInstance()->put( self::getCacheKey(), $match, 300 );
 	}
 
 	/**
@@ -138,7 +129,7 @@ class Action {
 	 * @throws View\Exception
 	 * @return bool
 	 */
-	private function getResource( $parts ) {
+	private static function getResource( $parts ) {
 
 		if( sizeof( $parts ) == 2 ) {
 			$resourcer = Resourcer::getInstance( $parts[0], true );
@@ -149,7 +140,7 @@ class Action {
 					}
 					View::$rendered = true;
 					die();
-				} catch( Exception $ex ) {
+				} catch( \Difra\Exception $ex ) {
 					throw new View\Exception( 404 );
 				}
 			}
@@ -160,31 +151,31 @@ class Action {
 	/**
 	 * Запускает исполнение логики контроллера (вызывается из события)
 	 */
-	public function run() {
+	public static function run() {
 
-		$this->controller = new $this->className;
-		$this->controller->run();
+		self::$controller = new self::$className;
+		self::$controller->run();
 	}
 
 	/**
 	 * Вызов render() из контроллера
 	 */
-	public function render() {
+	public static function render() {
 
-		$this->controller->render();
+		self::$controller->render();
 	}
 
 	/**
 	 * Собирает пути к папкам всех контроллеров
 	 * @return string[]
 	 */
-	public function getControllerPaths() {
+	public static function getControllerPaths() {
 
 		static $controllerDirs = null;
 		if( !is_null( $controllerDirs ) ) {
 			return $controllerDirs;
 		}
-		$controllerDirs = Plugger::getInstance()->getPaths();
+		$controllerDirs = Plugger::getPaths();
 		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
 		foreach( $controllerDirs as $k => $v ) {
 			$controllerDirs[$k] = $v . 'controllers/';
@@ -195,7 +186,7 @@ class Action {
 	/**
 	 * @return string
 	 */
-	private function getCacheKey() {
+	private static function getCacheKey() {
 
 		return 'action:uri:' . Envi::getUri();
 	}
@@ -205,11 +196,11 @@ class Action {
 	 * @param string[] $parts
 	 * @return string[]
 	 */
-	private function findControllerDirs( &$parts ) {
+	private static function findControllerDirs( &$parts ) {
 
 		$path = '';
 		$depth = 0;
-		$controllerDirs = $dirs = $this->getControllerPaths();
+		$controllerDirs = $dirs = self::getControllerPaths();
 		foreach( $parts as $part ) {
 			$path .= "$part/";
 			$newDirs = array();
@@ -224,7 +215,7 @@ class Action {
 			$depth++;
 			$dirs = $newDirs;
 		}
-		$this->className = array_slice( $parts, 0, $depth );
+		self::$className = array_slice( $parts, 0, $depth );
 		$parts = array_slice( $parts, $depth );
 		return $dirs;
 	}
@@ -234,9 +225,9 @@ class Action {
 	 * @param $parts
 	 * @return null|string
 	 */
-	private function findController( &$parts ) {
+	private static function findController( &$parts ) {
 
-		$dirs = $this->findControllerDirs( $parts );
+		$dirs = self::findControllerDirs( $parts );
 		$cname = $controllerFile = null;
 		if( !empty( $parts ) ) {
 			foreach( $dirs as $tmpDir ) {
@@ -262,11 +253,11 @@ class Action {
 		if( $cname != 'index' ) {
 			array_shift( $parts );
 		}
-		$this->className[] = $cname;
-		foreach( $this->className as $k => $v ) {
-			$this->className[$k] = ucFirst( $v );
+		self::$className[] = $cname;
+		foreach( self::$className as $k => $v ) {
+			self::$className[$k] = ucFirst( $v );
 		};
-		$this->className = implode( $this->className ) . 'Controller';
+		self::$className = implode( self::$className ) . 'Controller';
 		return $controllerFile;
 	}
 
@@ -275,16 +266,16 @@ class Action {
 	 * @param string[] $parts
 	 * @return bool|string
 	 */
-	private function findAction( &$parts ) {
+	private static function findAction( &$parts ) {
 
 		$foundMethod = false;
 		$methodNames = !empty( $parts ) ? array( $parts[0], 'index' ) : array( 'index' );
 		foreach( $methodNames as $methodTmp ) {
-			foreach( $this->methodTypes as $methodType ) {
-				if( method_exists( $this->className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
+			foreach( self::$methodTypes as $methodType ) {
+				if( method_exists( self::$className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
 					$foundMethod = $methodTmp;
 					$methodVar = "method{$methodType[0]}{$methodType[1]}";
-					$this->$methodVar = $m;
+					self::${$methodVar} = $m;
 				}
 			}
 			if( $foundMethod and $foundMethod != 'index' ) {

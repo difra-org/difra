@@ -9,6 +9,11 @@ namespace Difra;
  */
 class Envi {
 
+	/**
+	 * Режим работы (web, cli, include)
+
+	 */
+
 	/** @var string Режим работы (web, cli, include) */
 	static protected $mode = 'include';
 
@@ -23,6 +28,11 @@ class Envi {
 
 		return self::$mode;
 	}
+
+	/**
+	 * Домен и подсайты
+	 *
+	 */
 
 	/**
 	 * Получить имя хоста (домена)
@@ -40,7 +50,52 @@ class Envi {
 		return gethostname();
 	}
 
+	/**
+	 * Определяет имя папки в sites в следующем порядке:
+	 * 1. Переменная VHOST_NAME, передаваемая от сервера.
+	 * 2. Имя хоста в по алгоритму sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
+	 *    www.subdomain.domain.com domain.com www.domain.com.
+	 * 3. "default".
+	 *
+	 * @return string|bool
+	 */
+	public static function getSiteDir() {
+
+		static $siteDir = null;
+		if( !is_null( $siteDir ) ) {
+			return $siteDir;
+		}
+
+		$sitesLocation = __DIR__ . '/../../sites/';
+		$siteDir = 'default';
+		// хост передаётся от веб-сервера
+		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
+			$siteDir = $_SERVER['VHOST_NAME'];
+			// определяем хост по hostname
+		} elseif( $host = self::getHost() ) {
+			while( $host ) {
+				if( is_dir( $sitesLocation . $host ) ) {
+					$siteDir = $host;
+					break;
+				} elseif( is_dir( $sitesLocation . 'www.' . $host ) ) {
+					$siteDir = 'www.' . $host;
+					break;
+				}
+				$host = explode( '.', $host, 2 );
+				$host = !empty( $host[1] ) ? $host[1] : false;
+			}
+		}
+		return $siteDir;
+	}
+
+	/**
+	 * URI
+
+	 */
+
+	/** @var string|null Кастомный URI (в основном, для тестов) */
 	private static $customUri = null;
+	/** @var string|null Определённый и почищенный URI */
 	private static $requestedUri = null;
 
 	/**

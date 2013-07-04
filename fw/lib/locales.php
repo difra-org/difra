@@ -2,6 +2,8 @@
 
 namespace Difra;
 
+use Difra\Envi\Setup;
+
 class Locales {
 
 	public $locale = 'ru_RU';
@@ -16,16 +18,14 @@ class Locales {
 
 	/**
 	 * @static
-	 *
 	 * @param null $locale
-	 *
 	 * @return Locales
 	 */
 	static function getInstance( $locale = null ) {
 
 		static $locales = array();
 		if( !$locale ) {
-			$locale = Site::getInstance()->getLocale();
+			$locale = Setup::getLocale();
 		}
 		if( isset( $locales[$locale] ) ) {
 			return $locales[$locale];
@@ -37,7 +37,6 @@ class Locales {
 	/**
 	 * Конструктор
 	 * @param $locale
-	 *
 	 * @return \Difra\Locales
 	 */
 	public function __construct( $locale ) {
@@ -51,7 +50,7 @@ class Locales {
 	private function load() {
 
 		if( !$this->loaded ) {
-			$xml             = Resourcer::getInstance( 'locale' )->compile( $this->locale );
+			$xml = Resourcer::getInstance( 'locale' )->compile( $this->locale );
 			$this->localeXML = new \DOMDocument();
 			$this->localeXML->loadXML( $xml );
 		}
@@ -60,7 +59,6 @@ class Locales {
 	/**
 	 * Возвращает дерево языковых строк
 	 * @param \DOMElement $node
-	 *
 	 * @return void
 	 */
 	public function getLocaleXML( $node ) {
@@ -74,7 +72,6 @@ class Locales {
 	/**
 	 * Меняет текущую локаль
 	 * @param string $locale
-	 *
 	 * @return void
 	 */
 	public function setLocale( $locale ) {
@@ -88,22 +85,21 @@ class Locales {
 	 *
 	 * @param string      $string
 	 * @param string|bool $locale
-	 *
 	 * @return array|bool
 	 */
 	public function parseDate( $string, $locale = false ) {
 
 		$string = str_replace( array( '.', '-' ), '/', $string );
-		$pt     = explode( '/', $string );
+		$pt = explode( '/', $string );
 		if( sizeof( $pt ) != 3 ) {
 			return false;
 		}
 		// Возвращает $date[год,месяц,день] в зависимости от локали и dateFormats.
-		$date      = array( 0, 0, 0 );
+		$date = array( 0, 0, 0 );
 		$localeInd = array( 'y' => 0, 'm' => 1, 'd' => 2 );
-		$df        = $this->dateFormats[$locale ? $locale : $this->locale];
-		$df        = str_replace( array( '-', '.' ), '/', $df );
-		$localePt  = explode( '/', $df );
+		$df = $this->dateFormats[$locale ? $locale : $this->locale];
+		$df = str_replace( array( '-', '.' ), '/', $df );
+		$localePt = explode( '/', $df );
 		foreach( $localePt as $ind => $key ) {
 			$date[$localeInd[$key]] = $pt[$ind];
 		}
@@ -117,7 +113,6 @@ class Locales {
 	/**
 	 * Проверяет валидность введенной даты
 	 * @param $string
-	 *
 	 * @return bool
 	 */
 	public function isDate( $string ) {
@@ -132,7 +127,6 @@ class Locales {
 	 * Возвращает дату в формате MySQL
 	 *
 	 * @param string $string        Дата. Если не указано, будет возвращена текущая дата.
-	 *
 	 * @return bool|string
 	 */
 	public function getMysqlDate( $string = null ) {
@@ -150,7 +144,6 @@ class Locales {
 	 * Возвращает строку в синтаксисе MySQL для получения дат в формате локали из базы данных
 	 *
 	 * @param bool $locale
-	 *
 	 * @return mixed
 	 */
 	public function getMysqlFormat( $locale = false ) {
@@ -164,7 +157,6 @@ class Locales {
 	 * Возвращает строчку из языковых файлов по её XPath
 	 *
 	 * @param string $xpath
-	 *
 	 * @return string|bool
 	 */
 	public function getXPath( $xpath ) {
@@ -178,13 +170,12 @@ class Locales {
 		if( empty( $s ) and Debugger::getInstance()->isEnabled() ) {
 			$s = array( 'No language item for: ' . $xpath );
 		}
-		return sizeof( $s ) ? (string) $s[0] : false;
+		return sizeof( $s ) ? (string)$s[0] : false;
 	}
 
 	/**
 	 * Возвращает дату в формате текущей локали
 	 * @param int $timestamp
-	 *
 	 * @return string
 	 */
 	public function getDate( $timestamp ) {
@@ -195,7 +186,6 @@ class Locales {
 	/**
 	 * Возвращает дату и время в формате текущей локали
 	 * @param $timestamp
-	 *
 	 * @return string
 	 */
 	public function getDateTime( $timestamp ) {
@@ -208,12 +198,11 @@ class Locales {
 	 *
 	 * @param         $date
 	 * @param boolean $withTime  - выводить дату вместе с временем
-	 *
 	 * @return string
 	 */
 	public function getDateFromMysql( $date, $withTime = false ) {
 
-		$date    = explode( ' ', $date );
+		$date = explode( ' ', $date );
 		$date[0] = explode( '-', $date[0] );
 		$date[1] = explode( ':', $date[1] );
 
@@ -226,16 +215,15 @@ class Locales {
 	/**
 	 * Создаёт строчку для ссылки
 	 * @param string $string
-	 *
 	 * @return string
 	 */
 	public function makeLink( $string ) {
 
 		$link = '';
-		$num  = preg_match_all( '/[A-Za-zА-Яа-я0-9Ёё]*/u', $string, $matches );
+		$num = preg_match_all( '/[A-Za-zА-Яа-я0-9Ёё]*/u', $string, $matches );
 		if( $num and !empty( $matches[0] ) ) {
 			$matches = array_filter( $matches[0], 'strlen' );
-			$link    = implode( '-', $matches );
+			$link = implode( '-', $matches );
 		}
 		if( $link == '' ) {
 			$link = '-';

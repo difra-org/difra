@@ -2,6 +2,8 @@
 
 namespace Difra;
 
+use Difra\Envi\Setup;
+
 /**
  * Class Site
  *
@@ -14,13 +16,6 @@ class Site {
 	const VERSION = '5.0';
 	const BUILD = '$Rev$';
 	const PATH_PART = '/../../';
-
-	private $locale = 'ru_RU';
-
-	private $siteDir = null;
-	private $host = null;
-
-	private $phpVersion = null;
 
 	static $siteInit = false;
 
@@ -37,24 +32,19 @@ class Site {
 	/**
 	 * Инициализация окружения
 	 */
-	public function init() {
+	public static function init() {
 
 		static $initDone = false;
 		self::$siteInit = true;
 		if( $initDone ) {
 			return;
 		}
-		$this->detectHost();
-		$this->configurePaths();
-		$this->configureLocale();
-		$this->configurePHP();
-		$this->sessionLoad();
-		//header( 'X-Powered-By: Difra' );
+		self::sessionLoad();
 		View::addExpires( 0 );
 		$initDone = true;
 	}
 
-	public function initDone() {
+	public static function initDone() {
 
 		self::$siteInit = false;
 	}
@@ -72,132 +62,6 @@ class Site {
 	public function __destruct() {
 
 		$this->sessionSave();
-	}
-
-	/**
-	 * Определяет имя папки в sites в следующем порядке:
-	 * 1. Переменная VHOST_NAME, передаваемая от сервера.
-	 * 2. Имя хоста в по алгоритму sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
-	 *    www.subdomain.domain.com domain.com www.domain.com.
-	 * 3. "default".
-	 *
-	 * @return bool
-	 */
-	private function detectHost() {
-
-		$sitesDir = __DIR__ . self::PATH_PART . 'sites';
-
-		// хост передаётся от веб-сервера
-		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
-			$this->host = $_SERVER['VHOST_NAME'];
-			// определяем хост по hostname
-		} elseif( $host = Envi::getHost() ) {
-			while( $host ) {
-				if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
-					$this->host = $host;
-					break;
-				}
-				$host = explode( '.', $host, 2 );
-				$host = !empty( $host[1] ) ? $host[1] : false;
-			}
-		}
-		$this->siteDir = $this->host;
-		if( !is_dir( $sitesDir . $this->host ) and is_dir( $sitesDir . 'www.' . $this->host ) ) {
-			$this->siteDir = 'www.' . $this->host;
-		}
-
-		// не нашли подходящий хост. ставим по умолчанию — default
-		if( !$this->host ) {
-			$this->host = 'default';
-		}
-
-		return true;
-	}
-
-	public function configurePaths() {
-
-		if( !defined( 'DIR_ROOT' ) ) {
-			define( 'DIR_ROOT', __DIR__ . self::PATH_PART );
-		}
-		$_SERVER['DOCUMENT_ROOT'] = DIR_ROOT;
-		define( 'DIR_FW', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'fw/' );
-		define( 'DIR_SITE', DIR_ROOT . 'sites/' . $this->siteDir . '/' );
-		define( 'DIR_PLUGINS', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'plugins/' );
-		//define( 'DIR_HTDOCS', DIR_SITE . 'htdocs/' );
-		define( 'DIR_DATA', !empty( $_SERVER['VHOST_DATA'] ) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/' );
-	}
-
-	public function configurePHP() {
-
-		// get php version
-		$this->phpVersion = explode( '.', phpversion() );
-		$this->phpVersion = $this->phpVersion[0] * 100 + $this->phpVersion[1];
-
-		// other
-		setlocale( LC_ALL, array( $this->locale . '.UTF-8', $this->locale . '.utf8' ) );
-		setlocale( LC_NUMERIC, array( 'en_US.UTF-8', 'en_US.utf8' ) );
-		mb_internal_encoding( 'UTF-8' );
-		ini_set( 'short_open_tag', false );
-		ini_set( 'asp_tags', false );
-		ini_set( 'mysql.trace_mode', false );
-
-		// set session domain
-		ini_set( 'session.use_cookies', true );
-		ini_set( 'session.use_only_cookies', true );
-		ini_set( 'session.cookie_domain', '.' . Envi::getHost( true ) );
-
-		// set default time zone
-		if( !ini_get( 'date.timezone' ) ) {
-			date_default_timezone_set( 'Europe/Moscow' );
-		}
-
-		// prepare data
-		self::stripSlashes();
-	}
-
-	/**
-	 * Убирает слеши из $_GET, $_POST, $_COOKIE, $_REQUEST, если включены magic quotes
-	 *
-	 * @return void
-	 */
-	private static function stripSlashes() {
-
-		if( get_magic_quotes_gpc() != 1 ) {
-			return;
-		}
-		$strip_slashes_deep = function ( $value ) use ( &$strip_slashes_deep ) {
-
-			return is_array( $value ) ? array_map( $strip_slashes_deep, $value ) : stripslashes( $value );
-		};
-		$_GET = array_map( $strip_slashes_deep, $_GET );
-		$_POST = array_map( $strip_slashes_deep, $_POST );
-		$_COOKIE = array_map( $strip_slashes_deep, $_COOKIE );
-	}
-
-	/**
-	 * Возвращает название локали
-	 * @return string
-	 */
-	public function getLocale() {
-
-		return $this->locale;
-	}
-
-	public function configureLocale() {
-
-		if( $locale = Config::getInstance()->get( 'locale' ) ) {
-			$this->locale = $locale;
-		}
-	}
-
-	/**
-	 * Возвращает имя сайта, которое определено в $this->detectHost()
-	 *
-	 * @return null
-	 */
-	public function getHost() {
-
-		return $this->host;
 	}
 
 	/**
@@ -286,14 +150,14 @@ class Site {
 	public function getConfig() {
 
 		return array(
-			'locale' => $this->locale,
-			'host' => $this->getHost(),
+			'locale' => Setup::getLocale(),
+			'host' => Envi::getSiteDir(),
 			'hostname' => Envi::getHost(),
 			'mainhost' => Envi::getHost( true )
 		);
 	}
 
-	public function sessionLoad() {
+	public static function sessionLoad() {
 
 		if( !isset( $_SESSION ) and isset( $_COOKIE[ini_get( 'session.name' )] ) ) {
 			session_start();
@@ -319,32 +183,4 @@ class Site {
 			$_SESSION['dhost'] = Envi::getHost( true );
 		}
 	}
-
-	/**
-	 * Методы, для которых готова замена
-	 */
-
-	/**
-	 * Определяет имя хоста из URL
-	 *
-	 * @deprecated
-	 * @return string|null
-	 */
-	public function getHostname() {
-
-		return Envi::getHost();
-	}
-
-	/**
-	 * Возвращает имя главного хоста, если он установлен в переменной веб-сервера VHOST_MAIN, либо имя текущего хоста
-	 *
-	 * @deprecated
-	 * Envi::getHost( true ) делает то же саоме
-	 * @return string
-	 */
-	public function getMainhost() {
-
-		return Envi::getHost( true );
-	}
-
 }
