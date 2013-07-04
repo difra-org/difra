@@ -39,12 +39,9 @@ class EnviTest extends PHPUnit_Framework_TestCase {
 
 		\Difra\Envi::setUri( '/webserver/path' );
 		$this->assertEquals( \Difra\Envi::getUri(), '/webserver/path' );
-	}
-
-	public function test_getUri_Fail() {
 
 		\Difra\Envi::setUri( null );
-		$this->setExpectedException( 'Difra\Exception' );
-		\Difra\Envi::getUri();
+		$this->assertNull( \Difra\Envi::getUri() );
 	}
+
 }
