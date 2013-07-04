@@ -6,7 +6,7 @@ class AdmContentTagsController extends Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction() {
@@ -19,7 +19,8 @@ class AdmContentTagsController extends Difra\Controller {
 		$Tags->getAliasesXML( $aliasesNode );
 	}
 
-	public function saveAjaxAction( \Difra\Param\AjaxInt $tagId, \Difra\Param\AjaxString $module,
+	public function saveAjaxAction( \Difra\Param\AjaxInt $tagId,
+					\Difra\Param\AjaxString $module,
 					\Difra\Param\AjaxString $tagName ) {
 
 		if( \Difra\Plugins\Tags::getInstance()->saveTag( $module->val(), $tagId->val(), $tagName->val() ) ) {
@@ -47,12 +48,13 @@ class AdmContentTagsController extends Difra\Controller {
 		$tagData = \Difra\Plugins\Tags::getInstance()->getTag( $module->val(), $tagId->val() );
 		if( !empty( $tagData ) ) {
 
+			/** @var \DOMElement $mainNode */
 			$mainNode = $this->root->appendChild( $this->xml->createElement( 'tagsEditForm' ) );
 			$mainNode->setAttribute( 'id', $tagData['id'] );
 			$mainNode->setAttribute( 'module', $module->val() );
 			$mainNode->setAttribute( 'tag', $tagData['tag'] );
 
-			$html = $this->view->render( $this->xml, 'forms', true );
+			$html = \Difra\View::render( $this->xml, 'forms', true );
 			$this->ajax->display( $html );
 		}
 	}
