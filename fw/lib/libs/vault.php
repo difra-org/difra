@@ -2,6 +2,8 @@
 
 namespace Difra\Libs;
 
+use Difra\Envi;
+
 class Vault {
 
 	/**
@@ -70,12 +72,12 @@ class Vault {
 
 		// when using AjaxSafeHTML, characters inside src= are encoded using ESAPI
 		$html =
-			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . \Difra\Site::getInstance()->getHostname() . '&#x2f;up&#x2f;tmp&#x2f;',
+			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . '&#x2f;up&#x2f;tmp&#x2f;',
 				'src="/up/tmp/',
 				$html );
 		$html = str_replace( 'src="&#x2f;up&#x2f;tmp&#x2f;', 'src="/up/tmp/', $html );
 		$html =
-			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . \Difra\Site::getInstance()->getHostname() . str_replace( '/', '&#x2f;', "$urlPrefix/" ),
+			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . str_replace( '/', '&#x2f;', "$urlPrefix/" ),
 				'src="' . $urlPrefix . '/',
 				$html );
 		$html = str_replace( 'src="' . str_replace( '/', '&#x2f;', $urlPrefix . '/' ), 'src="' . $urlPrefix . '/', $html );

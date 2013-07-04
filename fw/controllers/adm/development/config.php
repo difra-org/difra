@@ -4,18 +4,18 @@ class AdmDevelopmentConfigController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction() {
 
 		if( !\Difra\Debugger::getInstance()->isEnabled() ) {
-			$this->view->httpError( 404 );
-			return;
+			throw new \Difra\View\Exception( 404 );
 		}
-		$config     = \Difra\Config::getInstance();
+		$config = \Difra\Config::getInstance();
+		/** @var \DOMElement $configNode */
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'configuration' ) );
-		$conf       = $config->getConfig();
+		$conf = $config->getConfig();
 		$configNode->setAttribute( 'current', var_export( $conf, true ) );
 		$configNode->setAttribute( 'diff', $config->getTxtDiff() );
 	}

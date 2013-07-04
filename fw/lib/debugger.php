@@ -190,7 +190,7 @@ class Debugger {
 		$root = $xml->appendChild( $xml->createElement( 'root' ) );
 		$this->debugXML( $root, $standalone );
 
-		return View::getInstance()->render( $xml, 'all', true );
+		return View::render( $xml, 'all', true );
 	}
 
 	/**
@@ -275,7 +275,7 @@ class Debugger {
 	 */
 	public static function captureShutdown() {
 
-		if( View::getInstance()->rendered ) {
+		if( View::$rendered ) {
 			return;
 		}
 		// произошла ошибка?
@@ -292,7 +292,7 @@ class Debugger {
 			self::getInstance()->addLineAsArray( $error );
 		}
 		// если по каким-то причинам рендер не случился, отрендерим свою страничку
-		if( !View::getInstance()->rendered ) {
+		if( !View::$rendered ) {
 			$controller = Action::getInstance()->controller;
 			$ajax = $controller->ajax;
 			if( !$ajax->isAjax ) {
@@ -300,7 +300,7 @@ class Debugger {
 			} else {
 				echo $ajax->getResponse();
 			}
-			$controller->view->rendered = true;
+			View::$rendered = true;
 		}
 	}
 
@@ -341,7 +341,7 @@ class Debugger {
 			$server = print_r( $_SERVER, true );
 			$post = print_r( $_POST, true );
 			$cookie = print_r( $_COOKIE, true );
-			$host = Site::getInstance()->getHostname();
+			$host = Envi::getHost();
 			$uri = Action::getInstance()->getUri();
 			$user = Auth::getInstance()->data['email'];
 

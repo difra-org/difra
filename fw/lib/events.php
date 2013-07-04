@@ -76,6 +76,7 @@ class Events {
 			self::register( 'action-run', 'Difra\\Action', 'run' );
 			self::register( 'render-run', 'Difra\\Action', 'render' );
 			if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
+				/** @noinspection PhpIncludeInspection */
 				include_once( $initPHP );
 			}
 		}

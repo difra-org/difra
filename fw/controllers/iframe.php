@@ -10,7 +10,7 @@ class IframeController extends Difra\Controller {
 	<body></body>
 </html>
 EOH
-);
-		$this->view->rendered = true;
+		);
+		\Difra\View::$rendered = true;
 	}
 }

@@ -2,6 +2,8 @@
 
 namespace Difra\Libs\Auth;
 
+use Difra\View\Exception;
+
 /**
  * Class Digest
  * Поддержка Digest-аутентификации
@@ -31,16 +33,10 @@ class Digest {
 	public function request() {
 
 		header( 'HTTP/1.1 401 Unauthorized' );
-		header( 'WWW-Authenticate: Digest realm="' .
-		$this->realm .
-		'",qop="auth",nonce="' .
-		$this->getNonce( true ) .
-		'",opaque="' .
-		md5( $this->realm ) .
-		'"' .
+		header( 'WWW-Authenticate: Digest realm="' . $this->realm . '",qop="auth",nonce="' . $this->getNonce( true ) . '",opaque="' . md5( $this->realm ) . '"' .
 		( $this->stale ? ',stale=TRUE' : '' ) );
 
-		\Difra\View::getInstance()->httpError( 401 );
+		throw new Exception( 401 );
 	}
 
 	public function verify() {

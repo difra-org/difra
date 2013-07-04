@@ -17,7 +17,7 @@ class Stats {
 	}
 
 	/**
-	 * @param \DOMElement $node
+	 * @param \DOMElement|\DOMNode $node
 	 */
 	function getXML( $node ) {
 
@@ -26,13 +26,13 @@ class Stats {
 		// stats/difra
 		/** @var $difraNode \DOMElement */
 		$difraNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'difra' ) );
-		$ver       = \Difra\Site::getInstance()->getBuild( true );
+		$ver = \Difra\Site::getInstance()->getBuild( true );
 		$difraNode->setAttribute( 'version', $ver[0] );
 
 		// stats/plugins
 		/** @var $pluginsNode \DOMElement */
-		$pluginsNode    = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
-		$plugins        = \Difra\Plugger::getInstance()->getAllPlugins();
+		$pluginsNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
+		$plugins = \Difra\Plugger::getInstance()->getAllPlugins();
 		$enabledPlugins = $disabledPlugins = array();
 		foreach( $plugins as $plugin ) {
 			if( $plugin->isEnabled() ) {
@@ -64,10 +64,10 @@ class Stats {
 
 		// stats/extensions
 		/** @var $extensionsNode \DOMElement */
-		$extensionsNode     = $statsNode->appendChild( $node->ownerDocument->createElement( 'extensions' ) );
-		$extensions         = get_loaded_extensions();
-		$extensionsOk       = array();
-		$extensionsExtra    = array();
+		$extensionsNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'extensions' ) );
+		$extensions = get_loaded_extensions();
+		$extensionsOk = array();
+		$extensionsExtra = array();
 		$extensionsRequired = array(
 			'dom',
 			'SimpleXML',
@@ -100,7 +100,7 @@ class Stats {
 	}
 
 	/**
-	 * @param \DOMElement $node
+	 * @param \DOMElement|\DOMNode $node
 	 */
 	public function verifyPermissions( $node ) {
 

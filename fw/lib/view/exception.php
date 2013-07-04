@@ -56,7 +56,7 @@ class Exception extends \Exception {
 ErrorPage
 			);
 		}
-		\Difra\View::getInstance()->rendered = true;
+		\Difra\View::$rendered = true;
 		die();
 	}
 }

@@ -2,6 +2,8 @@
 
 namespace Difra\Param\Filters;
 
+use Difra\Envi;
+
 class HTML {
 
 	/** @var array Список разрешенных тэгов, параметр — массив аттрибутов и обрабочиков */
@@ -193,7 +195,7 @@ class HTML {
 			return \Difra\Libs\ESAPI::encoder()->encodeForHTMLAttribute( $link );
 		}
 		if( mb_substr( $link, 0, 1 ) == '/' ) {
-			$newLink = 'http://' . \Difra\Site::getInstance()->getHostname() . $link;
+			$newLink = 'http://' . Envi::getHost() . $link;
 			if( \Difra\Libs\ESAPI::validateURL( $newLink ) ) {
 				return \Difra\Libs\ESAPI::encoder()->encodeForHTMLAttribute( $newLink );
 			}

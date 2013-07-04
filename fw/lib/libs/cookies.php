@@ -2,6 +2,8 @@
 
 namespace Difra\Libs;
 
+use Difra\Envi;
+
 /**
  * Cookies
  *
@@ -33,7 +35,7 @@ class Cookies {
 	 */
 	private function __construct() {
 
-		$this->domain = \Difra\Site::getInstance()->getMainhost();
+		$this->domain = Envi::getHost( true );
 		if( strstr( $this->domain, 'www.' ) !== false ) {
 			$this->domain = str_replace( 'www.', '.', $this->domain );
 		} else {
@@ -46,9 +48,7 @@ class Cookies {
 	 * Cookies::setPath()
 	 *
 	 * @desc Устанавливает путь
-	 *
 	 * @param string $path
-	 *
 	 * @return void
 	 */
 	public function setPath( $path ) {
@@ -60,9 +60,7 @@ class Cookies {
 	 * Cookies::setDomain()
 	 *
 	 * @desc Устанавливает домен
-	 *
 	 * @param string $domain
-	 *
 	 * @return void
 	 */
 	public function setDomain( $domain ) {
@@ -74,9 +72,7 @@ class Cookies {
 	 * Cookies::setExpire()
 	 *
 	 * @desc Устанавливает время жизни
-	 *
 	 * @param integer $expireTime
-	 *
 	 * @return void
 	 */
 	public function setExpire( $expireTime ) {
@@ -88,10 +84,8 @@ class Cookies {
 	 * Cookies::set()
 	 *
 	 * @desc Устанавливает куку
-	 *
 	 * @param string       $name
 	 * @param string|array $value
-	 *
 	 * @return boolean
 	 */
 	public function set( $name, $value ) {
@@ -106,9 +100,7 @@ class Cookies {
 	 * Cookies::remove()
 	 *
 	 * @desc Удаляет куку
-	 *
 	 * @param string $name
-	 *
 	 * @return boolean
 	 */
 	public function remove( $name ) {
@@ -118,18 +110,20 @@ class Cookies {
 
 	public function notify( $message, $error = false ) {
 
-		$this->set( 'notify', array(
-					   'type' => $error ? 'error' : 'ok', 'message' => (string) $message, 'lang' => array(
-				'close' => \Difra\Locales::getInstance()->getXPath( 'notifications/close' )
-			)
-				      ) );
+		$this->set( 'notify',
+			array(
+			     'type' => $error ? 'error' : 'ok',
+			     'message' => (string)$message,
+			     'lang' => array(
+				     'close' => \Difra\Locales::getInstance()->getXPath( 'notifications/close' )
+			     )
+			) );
 	}
 
 	/**
 	 * Устанавливает куку, которая указывает Ajaxer'у обратиться по указанному URL
 	 *
 	 * @param $url
-	 *
 	 * @return void
 	 */
 	public function query( $url ) {
