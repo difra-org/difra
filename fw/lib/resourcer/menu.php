@@ -5,20 +5,21 @@ namespace Difra\Resourcer;
 use Difra\Action;
 
 class Menu extends Abstracts\XML {
-	
+
 	protected $type = 'menu';
 	protected $printable = false;
-	
+
 	protected function postprocess( $xml, $instance ) {
-		
+
 		$xml->addAttribute( 'instance', $instance );
 		if( $xml->attributes()->prefix ) {
 			$prefix = $xml->attributes()->prefix;
 		} else {
 			$prefix = '/' . $instance;
 		}
-		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance, '/' . Action::getInstance()->getUri() );
+		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance, '/' . \Difra\Envi::getUri() );
 	}
+
 	private function _recursiveProcessor( $node, $href, $prefix, $instance, $url ) {
 
 		if( $url == $href ) {

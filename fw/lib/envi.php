@@ -61,7 +61,7 @@ class Envi {
 		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
 			self::$requestedUri = $_SERVER['REQUEST_URI'];
 		} else {
-			throw new Exception( 'Can\'t get URI' );
+			return null;
 		}
 		if( false !== strpos( self::$requestedUri, '?' ) ) {
 			self::$requestedUri = substr( self::$requestedUri, 0, strpos( self::$requestedUri, '?' ) );
