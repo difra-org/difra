@@ -13,7 +13,7 @@ class Less {
 		static $less = null;
 		if( !$less ) {
 			$less = new \lessc;
-			if( !Debugger::getInstance()->isEnabled() ) {
+			if( !Debugger::isEnabled() ) {
 				$less->setFormatter( 'compressed' );
 				$less->setPreserveComments( false );
 			} else {

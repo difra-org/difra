@@ -34,7 +34,7 @@ class Sitemap {
 		}
 		// Собираем новый sitemap
 		$sitemap = array();
-		$plugins = \Difra\Plugger::getInstance()->getAllPlugins();
+		$plugins = \Difra\Plugger::getAllPlugins();
 		if( !empty( $plugins ) ) {
 			foreach( $plugins as $plugin ) {
 				if( $plugin->isEnabled() ) {

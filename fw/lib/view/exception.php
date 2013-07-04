@@ -35,7 +35,7 @@ class Exception extends \Exception {
 			$xml = new \DOMDocument();
 			/** @var $root \DOMElement */
 			$root = $xml->appendChild( $xml->createElement( 'error' . $err ) );
-			$root->setAttribute( 'host', \Difra\Site::getInstance()->getHost() );
+			$root->setAttribute( 'host', Envi::getSiteDir() );
 			$root->setAttribute( 'hostname', $host = Envi::getHost() );
 			$root->setAttribute( 'mainhost', $mainHost = Envi::getHost( true ) );
 			if( $host != $mainHost ) {
@@ -44,7 +44,7 @@ class Exception extends \Exception {
 			$root->setAttribute( 'build', \Difra\Site::getInstance()->getBuild() );
 			$configNode = $root->appendChild( $xml->createElement( 'config' ) );
 			\Difra\Site::getInstance()->getConfigXML( $configNode );
-			\Difra\View::getInstance()->render( $xml, 'error_' . $err );
+			\Difra\View::render( $xml, 'error_' . $err );
 		} catch( \Difra\Exception $ex ) {
 			echo( <<<ErrorPage
 <html>

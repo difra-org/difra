@@ -55,7 +55,7 @@ class Config {
 			return;
 		}
 		$cache = Cache::getInstance();
-		if( $c = $cache->get( 'config' ) and !Debugger::getInstance()->isEnabled() ) {
+		if( $c = $cache->get( 'config' ) and !Debugger::isEnabled() ) {
 			$this->config = $c;
 			return;
 		}
@@ -98,11 +98,11 @@ class Config {
 		if( is_null( $newConfig ) ) {
 			$newConfig = $this->defaultConfig;
 			if( is_file( DIR_ROOT . '/config.php' ) ) {
-				$conf2 = include( DIR_ROOT . '/config.php' );
+				$conf2 = include( DIR_ROOT . 'config.php' );
 				$newConfig = $this->merge( $newConfig, $conf2 );
 			}
 			if( is_file( DIR_SITE . '/config.php' ) ) {
-				$conf2 = include( DIR_SITE . '/config.php' );
+				$conf2 = include( DIR_SITE . 'config.php' );
 				$newConfig = $this->merge( $newConfig, $conf2 );
 			}
 		}

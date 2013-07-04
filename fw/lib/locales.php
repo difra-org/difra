@@ -167,7 +167,7 @@ class Locales {
 			$simpleXML = simplexml_import_dom( $this->localeXML );
 		}
 		$s = $simpleXML->xpath( $xpath );
-		if( empty( $s ) and Debugger::getInstance()->isEnabled() ) {
+		if( empty( $s ) and Debugger::isEnabled() ) {
 			$s = array( 'No language item for: ' . $xpath );
 		}
 		return sizeof( $s ) ? (string)$s[0] : false;

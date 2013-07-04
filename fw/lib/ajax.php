@@ -2,9 +2,12 @@
 
 namespace Difra;
 
+use Difra\Envi\Action;
+
 /**
  * Получение ajax-запросов, отправка ответов, отправка экшенов для Ajaxer.js
  * Class Ajax
+ *
  * @package Difra
  */
 class Ajax {
@@ -138,6 +141,7 @@ class Ajax {
 
 	/**
 	 * Получает данные от ajaxer
+	 *
 	 * @return array
 	 */
 	private function getRequest() {
@@ -153,7 +157,6 @@ class Ajax {
 	 * Возвращает значение параметра или null, если параметр не найден
 	 *
 	 * @param string $name                Имя параметра
-	 *
 	 * @return string|array|null
 	 */
 	public function getParam( $name ) {
@@ -166,7 +169,6 @@ class Ajax {
 	 *
 	 * @param string $param                Имя параметра
 	 * @param mixed  $value                Значение параметра
-	 *
 	 * @return void
 	 */
 	public function setResponse( $param, $value ) {
@@ -176,16 +178,16 @@ class Ajax {
 
 	/**
 	 * Возвращает ответ в json для обработки на стороне клиента
+	 *
 	 * @return string
 	 */
 	public function getResponse() {
 
-		$debugger = Debugger::getInstance();
-		if( $debugger->isEnabled() ) {
-			if( $debugger->hadError() ) {
+		if( Debugger::isEnabled() ) {
+			if( Debugger::hadError() ) {
 				$this->clean( true );
 			}
-			$this->load( '#debug', $debugger->debugHTML( false ) );
+			$this->load( '#debug', Debugger::debugHTML( false ) );
 		}
 		if( !empty( $this->actions ) ) {
 			$this->setResponse( 'actions', $this->actions );
@@ -201,7 +203,6 @@ class Ajax {
 	/**
 	 * Добавляет специальный ответ
 	 * @param array $action                Массив с action (типом ответа) и нужными данными
-	 *
 	 * @return void
 	 */
 	private function addAction( $action ) {
@@ -211,6 +212,7 @@ class Ajax {
 
 	/**
 	 * Возвращает true, если в action'ах есть действия с ошибками обработки формы
+	 *
 	 * @return bool
 	 */
 	public function hasProblem() {
@@ -242,7 +244,6 @@ class Ajax {
 	/**
 	 * Показать сообщение
 	 * @param string $message        Текст сообщения
-	 *
 	 * @return void
 	 */
 	public function notify( $message ) {
@@ -259,7 +260,6 @@ class Ajax {
 	/**
 	 * Показать ошибку
 	 * @param string $message        Текст ошибки
-	 *
 	 * @return void
 	 */
 	public function error( $message ) {
@@ -276,7 +276,6 @@ class Ajax {
 	/**
 	 * Не заполнено необходимое поле
 	 * @param string $name                Имя (name) элемента формы, который нужно заполнить
-	 *
 	 * @return void
 	 */
 	public function required( $name ) {
@@ -292,7 +291,6 @@ class Ajax {
 	 * Не корректные данные формы
 	 * @param string $name                Имя (name) элемента формы, заполненного не верно
 	 * @param string $message             Текст ошибки
-	 *
 	 * @return void
 	 */
 	public function invalid( $name, $message = null ) {
@@ -310,7 +308,6 @@ class Ajax {
 	 * @param $name
 	 * @param $message
 	 * @param $class
-	 *
 	 * @return void
 	 */
 	public function status( $name, $message, $class ) {
@@ -326,7 +323,6 @@ class Ajax {
 	/**
 	 * Перенаправление
 	 * @param string $url                URL, по которому будет сделано перенаправление
-	 *
 	 * @return void
 	 */
 	public function redirect( $url ) {
@@ -360,7 +356,6 @@ class Ajax {
 	 * Создать оверлей со следующим html-содержимым
 	 *
 	 * @param string $html                Содержимое innerHTML оверлея
-	 *
 	 * @return void
 	 */
 	public function display( $html ) {
@@ -375,7 +370,6 @@ class Ajax {
 	 * Записать содержимое $html в элемент $target
 	 * @param string $target              Селектор элемента в формате jQuery, например '#targetId'
 	 * @param string $html                Содержимое для innerHTML
-	 *
 	 * @return void
 	 */
 	public function load( $target, $html ) {
@@ -414,18 +408,17 @@ class Ajax {
 	 */
 	public function confirm( $text ) {
 
-		$action = Action::getInstance();
 		$this->addAction( array(
 				       'action' => 'display',
 				       'html' =>
-				       '<form action="/' . $action->getUri() . '" class="ajaxer">' .
-					       '<input type="hidden" name="confirm" value="1"/>' .
-					       '<div>' . $text . '</div>' .
-					       '<input type="submit" value="' . $action->controller->locale->getXPath( 'ajaxer/confirm-yes' )
-					       . '"/>' .
-					       '<input type="button" value="' . $action->controller->locale->getXPath( 'ajaxer/confirm-no' ) . '"
+				       '<form action="/' . Envi::getUri() . '" class="ajaxer">' .
+				       '<input type="hidden" name="confirm" value="1"/>' .
+				       '<div>' . $text . '</div>' .
+				       '<input type="submit" value="' . Action::$controller->locale->getXPath( 'ajaxer/confirm-yes' )
+				       . '"/>' .
+				       '<input type="button" value="' . Action::$controller->locale->getXPath( 'ajaxer/confirm-no' ) . '"
 						onclick="ajaxer.close(this)"/>' .
-					       '</form>'
+				       '</form>'
 				  ) );
 	}
 }
