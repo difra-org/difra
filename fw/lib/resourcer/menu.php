@@ -2,23 +2,42 @@
 
 namespace Difra\Resourcer;
 
-use Difra\Action;
+use Difra\Envi, Difra\Debugger;
 
+/**
+ * Class Menu
+ *
+ * @package Difra\Resourcer
+ */
 class Menu extends Abstracts\XML {
-	
+
 	protected $type = 'menu';
 	protected $printable = false;
-	
+
+	/**
+	 * @param \SimpleXMLElement $xml
+	 * @param string            $instance
+	 */
 	protected function postprocess( $xml, $instance ) {
-		
+
 		$xml->addAttribute( 'instance', $instance );
+		/** @noinspection PhpUndefinedFieldInspection */
 		if( $xml->attributes()->prefix ) {
+			/** @noinspection PhpUndefinedFieldInspection */
 			$prefix = $xml->attributes()->prefix;
 		} else {
 			$prefix = '/' . $instance;
 		}
-		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance, '/' . Action::getInstance()->getUri() );
+		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance, '/' . Envi::getUri() );
 	}
+
+	/**
+	 * @param \SimpleXMLElement $node
+	 * @param string            $href
+	 * @param string            $prefix
+	 * @param string            $instance
+	 * @param string            $url
+	 */
 	private function _recursiveProcessor( $node, $href, $prefix, $instance, $url ) {
 
 		if( $url == $href ) {
@@ -26,15 +45,18 @@ class Menu extends Abstracts\XML {
 		} elseif( mb_substr( $url, 0, mb_strlen( $href ) ) == $href ) {
 			$node->addAttribute( 'selected', 1 );
 		}
+		/** @var \SimpleXMLElement $subnode */
 		foreach( $node as $subname => $subnode ) {
+			/** @noinspection PhpUndefinedFieldInspection */
 			if( $subnode->attributes()->sup and $subnode->attributes()->sup == '1' ) {
-				if( !\Difra\Debugger::getInstance()->isEnabled() ) {
+				if( !Debugger::getInstance()->isEnabled() ) {
 					$subnode->addAttribute( 'hidden', 1 );
 				}
 			}
 			$newHref = "$href/$subname";
 			$newPrefix = "{$prefix}_{$subname}";
 			$subnode->addAttribute( 'id', $newPrefix );
+			/** @noinspection PhpUndefinedFieldInspection */
 			if( !isset( $subnode->attributes()->href ) ) {
 				$subnode->addAttribute( 'href', $newHref );
 			};

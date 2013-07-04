@@ -9,87 +9,34 @@ namespace Difra;
  */
 class View {
 
-	/** @var bool */
-	public $error = false;
-	/** @var bool|string */
-	public $redirect = false;
-	/** @var bool */
-	public $rendered = false;
+	/**
+	 * @var bool
+	 * @deprecated
+	 */
+	public static $error = false;
 	/**
 	 * @var bool|string
 	 * @deprecated
 	 */
-	public $template = false;
+	public static $redirect = false;
+	/** @var bool */
+	public static $rendered = false;
+	/**
+	 * @var bool|string
+	 * @deprecated
+	 */
+	public static $template = false;
 	/** @var string */
-	public $instance = 'main';
+	public static $instance = 'main';
 
 	/**
-	 * Синглтон
-	 * @return View
+	 * Временный метод для обратной совместимости
+	 * @return View\Old
+	 * @deprecated
 	 */
-	static function getInstance() {
+	public function getInstance() {
 
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self;
-	}
-
-	/**
-	 * Завершение выполнения с выводом http-ошибки
-	 * Пробует отрендерить шаблон error_xxx, где xxx — номер ошибки, после чего выводит простенькую страничку с ошибкой.
-	 *
-	 * @param int         $err
-	 * @param bool|int    $ttl
-	 * @param null|string $message
-	 */
-	public function httpError( $err, $ttl = false, $message = null ) {
-
-		if( $this->redirect or $this->error ) {
-			return;
-		}
-		$errors = include( 'view/http_errors.php' );
-
-		if( isset( $errors[$err] ) ) {
-			$error = $errors[$err];
-		} else {
-			$error = 'Unknown';
-		}
-
-		header( "HTTP/1.1 $err $error" );
-		if( $ttl and is_numeric( $ttl ) and $ttl >= 0 ) {
-			self::addExpires( $ttl );
-		}
-		$this->rendered = true;
-		try {
-			$xml = new \DOMDocument();
-			/** @var $root \DOMElement */
-			$root = $xml->appendChild( $xml->createElement( 'error' . $err ) );
-			$root->setAttribute( 'host', Site::getInstance()->getHost() );
-			$root->setAttribute( 'hostname', Site::getInstance()->getHostname() );
-			$root->setAttribute( 'mainhost', Site::getInstance()->getMainhost() );
-			if( Site::getInstance()->getHostname() != Site::getInstance()->getMainhost() ) {
-				$root->setAttribute( 'urlprefix', 'http://' . Site::getInstance()->getMainhost() );
-			}
-			$root->setAttribute( 'build', Site::getInstance()->getBuild() );
-			$configNode = $root->appendChild( $xml->createElement( 'config' ) );
-			Site::getInstance()->getConfigXML( $configNode );
-			$this->render( $xml, 'error_' . $err );
-			$this->error = $err;
-		} catch( exception $ex ) {
-			$this->error = $err;
-			echo( <<<ErrorPage
-			<html>
-			<head>
-			<title>$error</title>
-			</head>
-			<body>
-			<center><h1 style="padding:350px 0px 0px 0px">Error $err: $error</h1></center>
-			$message
-			</body>
-			</html>
-ErrorPage
-			);
-		}
-		die();
+		return View\Old::getInstance();
 	}
 
 	/**
@@ -100,17 +47,15 @@ ErrorPage
 	 * @internal param bool|string $instance
 	 * @return bool|string
 	 */
-	public function render( &$xml, $specificInstance = false, $dontEcho = false ) {
+	public static function render( &$xml, $specificInstance = false, $dontEcho = false ) {
 
-		if( $this->error or $this->redirect ) {
+		if( self::$error or self::$redirect ) {
 			return false;
 		}
 		if( $specificInstance ) {
 			$instance = $specificInstance;
-		} elseif( $this->template ) {
-			$instance = $this->template;
-		} elseif( $this->instance ) {
-			$instance = $this->instance;
+		} elseif( self::$instance ) {
+			$instance = self::$instance;
 		} else {
 			$instance = 'main';
 		}
@@ -137,14 +82,14 @@ ErrorPage
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
 
-			$html = $this->normalize( $html );
+			$html = self::normalize( $html );
 
 			if( $dontEcho ) {
 				return $html;
 			}
 
 			echo $html;
-			$this->rendered = true;
+			self::$rendered = true;
 			if( Debugger::getInstance()->isEnabled() ) {
 				echo '<!-- Page rendered in ' . Debugger::getTimer() . ' seconds -->';
 			}
@@ -162,9 +107,9 @@ ErrorPage
 	 * Редирект
 	 * @param $url
 	 */
-	public function redirect( $url ) {
+	public static function redirect( $url ) {
 
-		$this->redirect = true;
+		self::$redirect = true;
 		header( 'Location: ' . $url );
 		die();
 	}
@@ -177,9 +122,7 @@ ErrorPage
 	public static function addExpires( $ttl ) {
 
 		header( 'Expires: ' . gmdate( 'D, d M Y H:i:s', $ttl ? ( time() + $ttl ) : 0 ) );
-		if( isset( $SERVER['SERVER_SOFTWARE'] ) and substr( $_SERVER['SERVER_SOFTWARE'], 0, 6 ) ) {
-			// Установка X-Accel-Expires полезна, так как позволяет более точно контролировать кэш,
-			// если время на веб-сервере и время на сервере, выполняющем скрипт, отличаются
+		if( isset( $SERVER['SERVER_SOFTWARE'] ) and substr( $_SERVER['SERVER_SOFTWARE'], 0, 5 ) == 'nginx' ) {
 			header( 'X-Accel-Expires: ' . ( $ttl ? $ttl : 'off' ) );
 		}
 	}

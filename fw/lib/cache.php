@@ -5,6 +5,7 @@ namespace Difra;
 /**
  * Абстрактная фабрика классов кэширования
  * Class Cache
+ *
  * @package Difra
  */
 class Cache {
@@ -18,6 +19,7 @@ class Cache {
 
 	/**
 	 * Configured cache adapters.
+	 *
 	 * @var array
 	 */
 	private static $_adapters = array();
@@ -27,7 +29,6 @@ class Cache {
 	 * existing one.
 	 *
 	 * @param string $configName
-	 *
 	 * @return \Difra\Cache\Common
 	 */
 	public static function getInstance( $configName = self::INST_DEFAULT ) {
@@ -47,9 +48,9 @@ class Cache {
 			} elseif( Cache\MemCache::isAvailable() ) {
 				Debugger::getInstance()->addLine( "Auto-detected cache type: Memcache" );
 				return self::getInstance( $_auto = self::INST_MEMCACHE );
-			} elseif( Cache\SharedMemory::isAvailable() ) {
-				Debugger::getInstance()->addLine( "Auto-detected cache type: Shared Memory" );
-				return self::getInstance( $_auto = self::INST_SHAREDMEM );
+//			} elseif( Cache\SharedMemory::isAvailable() ) {
+//				Debugger::getInstance()->addLine( "Auto-detected cache type: Shared Memory" );
+//				return self::getInstance( $_auto = self::INST_SHAREDMEM );
 			} else {
 				Debugger::getInstance()->addLine( "No cache detected" );
 				return self::getInstance( $_auto = self::INST_NONE );

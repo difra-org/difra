@@ -10,5 +10,10 @@
 	<exclude-pattern>../tests</exclude-pattern>
 
 	<rule ref="Generic.PHP.DisallowShortOpenTag"/>
-	<!-- ... -->
+	<rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+	<rule ref="Generic.Files.LineEndings">
+		<properties>
+			<property name="eolChar" value="\n"/>
+		</properties>
+	</rule>
 </ruleset>

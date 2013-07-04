@@ -39,4 +39,45 @@ class Envi {
 		}
 		return gethostname();
 	}
+
+	private static $customUri = null;
+	private static $requestedUri = null;
+
+	/**
+	 * Возвращает текущий URI
+	 *
+	 * @throws Exception
+	 * @return string
+	 */
+	public static function getUri() {
+
+		if( !is_null( self::$requestedUri ) ) {
+			return self::$requestedUri;
+		}
+		if( !is_null( self::$customUri ) ) {
+			self::$requestedUri = self::$customUri;
+		} elseif( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
+			self::$requestedUri = $_SERVER['URI'];
+		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
+			self::$requestedUri = $_SERVER['REQUEST_URI'];
+		} else {
+			return null;
+		}
+		if( false !== strpos( self::$requestedUri, '?' ) ) {
+			self::$requestedUri = substr( self::$requestedUri, 0, strpos( self::$requestedUri, '?' ) );
+		}
+		self::$requestedUri = '/' . trim( self::$requestedUri, '/' );
+		return self::$requestedUri;
+	}
+
+	/**
+	 * Устанавливает текущий URI
+	 *
+	 * @param string $uri
+	 */
+	public static function setUri( $uri ) {
+
+		self::$customUri = $uri;
+		self::$requestedUri = null;
+	}
 }

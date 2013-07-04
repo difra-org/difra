@@ -12,8 +12,6 @@ class Action {
 
 	/** @var string[] */
 	public $parameters = array();
-	/** @var string */
-	public $uri = null;
 
 	/** @var string */
 	public $className = null;
@@ -58,7 +56,7 @@ class Action {
 			return;
 		}
 
-		$uri = $this->getUri();
+		$uri = trim( Envi::getUri(), '/' );
 		$parts = $uri ? explode( '/', $uri ) : array();
 
 		if( $this->getResource( $parts ) ) {
@@ -67,8 +65,7 @@ class Action {
 
 		if( !$controllerFilename = $this->findController( $parts ) ) {
 			$this->saveCache( '404' );
-			View::getInstance()->httpError( 404 );
-			return;
+			throw new View\Exception( 404 );
 		}
 
 		/** @noinspection PhpIncludeInspection */
@@ -86,6 +83,7 @@ class Action {
 
 	/**
 	 * Загрузка данных из кэша
+	 * @throws View\Exception
 	 * @return bool
 	 */
 	private function loadCache() {
@@ -100,7 +98,7 @@ class Action {
 				}
 				break;
 			case '404':
-				View::getInstance()->httpError( 404 );
+				throw new View\Exception( 404 );
 			}
 			return true;
 		}
@@ -137,6 +135,7 @@ class Action {
 	/**
 	 * Обработка запросов к ресурсам
 	 * @param string[] $parts
+	 * @throws View\Exception
 	 * @return bool
 	 */
 	private function getResource( $parts ) {
@@ -146,14 +145,13 @@ class Action {
 			if( $resourcer and $resourcer->isPrintable() ) {
 				try {
 					if( !$resourcer->view( $parts[1] ) ) {
-						View::getInstance()->httpError( 404 );
+						throw new View\Exception( 404 );
 					}
-					View::getInstance()->rendered = true;
+					View::$rendered = true;
 					die();
 				} catch( Exception $ex ) {
-					View::getInstance()->httpError( 404 );
+					throw new View\Exception( 404 );
 				}
-				return true;
 			}
 		}
 		return false;
@@ -169,28 +167,6 @@ class Action {
 	}
 
 	/**
-	 * Возвращает текущий URI
-	 */
-	public function getUri() {
-
-		if( !is_null( $this->uri ) ) {
-			return $this->uri;
-		}
-		if( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
-			$this->uri = $_SERVER['URI'];
-		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
-			$this->uri = $_SERVER['REQUEST_URI'];
-		} else {
-			throw new Exception( 'Can\'t get URI' );
-		}
-		if( false !== strpos( $this->uri, '?' ) ) {
-			$this->uri = substr( $this->uri, 0, strpos( $this->uri, '?' ) );
-		}
-		$this->uri = trim( $this->uri, '/' );
-		return $this->uri;
-	}
-
-	/**
 	 * Вызов render() из контроллера
 	 */
 	public function render() {
@@ -202,7 +178,7 @@ class Action {
 	 * Собирает пути к папкам всех контроллеров
 	 * @return string[]
 	 */
-	private function getControllerPaths() {
+	public function getControllerPaths() {
 
 		static $controllerDirs = null;
 		if( !is_null( $controllerDirs ) ) {
@@ -221,7 +197,7 @@ class Action {
 	 */
 	private function getCacheKey() {
 
-		return 'action:uri:' . $this->getUri();
+		return 'action:uri:' . Envi::getUri();
 	}
 
 	/**

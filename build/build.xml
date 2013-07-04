@@ -3,7 +3,6 @@
 <project name="difra" default="build">
 	<target name="build" depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdox,phpunit,phpcb"/>
 
-
 	<target name="build-parallel" depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
 
 	<target name="tools-parallel" description="Run tools in parallel">
