@@ -110,6 +110,7 @@ class UserAgent {
 		if( isset( $ua['Mozilla'] ) and strpos( $ua['Mozilla'], 'MSIE' ) ) {
 			return self::$agentId = 'IE';
 		}
+		return self::$agent = false;
 	}
 
 	private static $engine = null;

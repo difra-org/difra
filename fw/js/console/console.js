@@ -17,14 +17,14 @@ debug.switchTab = function() {
 
 debug.toggleDebugger = function() {
 
-	var deb = $.cookie( 'debug' ) == '0' ? false : true;
+	var deb = $.cookie( 'debug' ) != '0';
 	$.cookie( 'debug', deb ? '0' : '1' );
 	ajaxer.reload();
 };
 
 debug.toggleConsole = function() {
 
-	var deb = $.cookie( 'debugConsole' ) == '0' ? false : true;
+	var deb = $.cookie( 'debugConsole' ) != '0';
 	$.cookie( 'debugConsole', deb ? '0' : '1' );
 	ajaxer.reload();
 };
@@ -32,7 +32,7 @@ debug.toggleConsole = function() {
 debug.reqData = '';
 debug.addReq = function( message ) {
 	if( message ) {
-		debug.reqData += '<tr><td>' + ( $( '<div/>' ).text( message ).html() ) + '</td></tr>';
+		debug.reqData += '<tr><td>' + ( $( '<div></div>' ).text( message ).html() ) + '</td></tr>';
 	}
 	$( '#debug-requests' ).html( debug.reqData );
 };

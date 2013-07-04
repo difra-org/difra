@@ -91,7 +91,7 @@ class Site {
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
 			$this->host = $_SERVER['VHOST_NAME'];
 			// определяем хост по hostname
-		} elseif( $host = $this->getHostname() ) {
+		} elseif( $host = Envi::getHost() ) {
 			while( $host ) {
 				if( is_dir( $sitesDir . $host ) or is_dir( $sitesDir . 'www.' . $host ) ) {
 					$this->host = $host;
@@ -144,7 +144,7 @@ class Site {
 		// set session domain
 		ini_set( 'session.use_cookies', true );
 		ini_set( 'session.use_only_cookies', true );
-		ini_set( 'session.cookie_domain', '.' . $this->getMainhost() );
+		ini_set( 'session.cookie_domain', '.' . Envi::getHost( true ) );
 
 		// set default time zone
 		if( !ini_get( 'date.timezone' ) ) {
@@ -288,8 +288,8 @@ class Site {
 		return array(
 			'locale' => $this->locale,
 			'host' => $this->getHost(),
-			'hostname' => $this->getHostname(),
-			'mainhost' => $this->getMainhost()
+			'hostname' => Envi::getHost(),
+			'mainhost' => Envi::getHost( true )
 		);
 	}
 
@@ -297,7 +297,7 @@ class Site {
 
 		if( !isset( $_SESSION ) and isset( $_COOKIE[ini_get( 'session.name' )] ) ) {
 			session_start();
-			if( !isset( $_SESSION['dhost'] ) or $_SESSION['dhost'] != $this->getMainhost() ) {
+			if( !isset( $_SESSION['dhost'] ) or $_SESSION['dhost'] != Envi::getHost( true ) ) {
 				$_SESSION = array();
 			}
 		}
@@ -309,14 +309,14 @@ class Site {
 		if( !isset( $_SESSION ) ) {
 			session_start();
 			$_SESSION = array();
-			$_SESSION['dhost'] = $this->getMainhost();
+			$_SESSION['dhost'] = Envi::getHost( true );
 		}
 	}
 
 	public function sessionSave() {
 
 		if( !empty( $_SESSION ) and empty( $_SESSION['dhost'] ) ) {
-			$_SESSION['dhost'] = $this->getMainhost();
+			$_SESSION['dhost'] = Envi::getHost( true );
 		}
 	}
 

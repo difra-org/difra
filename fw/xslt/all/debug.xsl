@@ -50,8 +50,7 @@
 							<span class="tab-title">Сообщения</span>
 							<div class="tab-content">
 								<table>
-									<xsl:apply-templates select="*[@class='messages']"
-											     mode="debugLine"/>
+									<xsl:apply-templates select="*[@class='messages']" mode="debugLine"/>
 								</table>
 							</div>
 						</li>
@@ -62,8 +61,7 @@
 							<span class="tab-title">Ошибки</span>
 							<div class="tab-content">
 								<table>
-									<xsl:apply-templates select="*[@class='errors']"
-											     mode="debugLine"/>
+									<xsl:apply-templates select="*[@class='errors']" mode="debugLine"/>
 								</table>
 							</div>
 						</li>
@@ -79,15 +77,14 @@
 							<span class="tab-title">База данных</span>
 							<div class="tab-content">
 								<table>
-									<xsl:apply-templates select="*[@class='db']"
-											     mode="debugLine"/>
+									<xsl:apply-templates select="*[@class='db']" mode="debugLine"/>
 								</table>
 							</div>
 						</li>
 						<li>
 							<span class="tab-title">Запросы</span>
 							<div class="tab-content">
-								<table id="debug-requests"></table>
+								<table id="debug-requests"/>
 							</div>
 						</li>
 					</ul>

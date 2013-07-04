@@ -14,12 +14,15 @@ class Exception extends \Exception {
 		if( isset( $errors[$message] ) ) {
 			$err = $message;
 			$error = $errors[$err];
+			$msg = '';
 		} elseif( isset( $errors[$code] ) ) {
 			$err = $code;
-			$error = $message ? $message : $errors[$code];
+			$error = $errors[$err];
+			$msg = $message;
 		} else {
 			$err = 500;
-			$error = $message;
+			$error = $errors[$err];
+			$msg = $message;
 		}
 
 		header( "HTTP/1.1 $err $error" );
@@ -42,21 +45,23 @@ class Exception extends \Exception {
 			$configNode = $root->appendChild( $xml->createElement( 'config' ) );
 			\Difra\Site::getInstance()->getConfigXML( $configNode );
 			\Difra\View::getInstance()->render( $xml, 'error_' . $err );
-		} catch( exception $ex ) {
+		} catch( \Difra\Exception $ex ) {
 			echo( <<<ErrorPage
-			<html>
-			<head>
-			<title>$error</title>
-			</head>
-			<body>
-			<center><h1 style="padding:350px 0px 0px 0px">Error $err: $error</h1></center>
-			$message
-			</body>
-			</html>
+<html>
+	<head>
+		<title>$error</title>
+	</head>
+	<body>
+		<center>
+			<h1 style="padding:350px 0px 0px 0px">Error $err: $error</h1>
+			$msg
+		</center>
+	</body>
+</html>
 ErrorPage
 			);
 		}
-		\Difra\View::getInstance()->rendered = true;
+		\Difra\View::$rendered = true;
 		die();
 	}
 }

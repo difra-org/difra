@@ -11,17 +11,18 @@ class SitemapController extends \Difra\Controller {
 	 * /sitemap-2.xml и т.д.
 	 *
 	 * @param Difra\Param\AnyInt $page
+	 * @throws Difra\View\Exception
 	 */
 	public function indexAction( \Difra\Param\AnyInt $page = null ) {
 
 		$this->outputType = 'text/xml';
-		$this->cache      = self::CACHE_TTL;
+		$this->cache = self::CACHE_TTL;
 		if( !$page ) {
 			$this->output = \Difra\Libs\XML\Sitemap::getXML();
 		} else {
 			$res = \Difra\Libs\XML\Sitemap::getXML( $page->val() );
 			if( !$res ) {
-				$this->view->httpError( 404, $this->cache );
+				throw new \Difra\View\Exception( 404 );
 			}
 			$this->output = $res;
 		}

@@ -14,6 +14,6 @@ class CapchaController extends Difra\Controller {
 		header( "Cache-Control: post-check=0, pre-check=0", false );
 		header( "Pragma: no-cache" );
 		echo $Capcha->viewCapcha();
-		$this->view->rendered = true;
+		\Difra\View::$rendered = true;
 	}
 }

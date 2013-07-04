@@ -4,6 +4,7 @@
  */
 
 namespace Difra\Minify\JS;
+
 use Difra;
 
 class JSMin {
@@ -31,6 +32,7 @@ class JSMin {
 	 * @return string
 	 */
 	public static function minify( $js ) {
+
 		$jsmin = new JSMin( $js );
 		return $jsmin->min();
 	}
@@ -43,6 +45,7 @@ class JSMin {
 	 * @param string $input Javascript to be minified
 	 */
 	public function __construct( $input ) {
+
 		$this->input = str_replace( "\r", "\n", $input );
 		$this->inputLength = strlen( $this->input );
 	}
@@ -51,26 +54,28 @@ class JSMin {
 
 	/**
 	 * Action -- do something! What to do is determined by the $command argument.
-	 *
 	 * action treats a string as a single character. Wow!
 	 * action recognizes a regular expression if it is preceded by ( or , or =.
 	 *
 	 * @uses next()
 	 * @uses get()
 	 * @throws JSMinException If parser errors are found:
-	 *	 - Unterminated string literal
-	 *	 - Unterminated regular expression set in regex literal
-	 *	 - Unterminated regular expression literal
+	 *         - Unterminated string literal
+	 *         - Unterminated regular expression set in regex literal
+	 *         - Unterminated regular expression literal
 	 * @param int $command One of class constants:
-	 *      ACTION_KEEP_A      Output A. Copy B to A. Get the next B.
-	 *      ACTION_DELETE_A    Copy B to A. Get the next B. (Delete A).
-	 *      ACTION_DELETE_A_B  Get the next B. (Delete B).
+	 *                     ACTION_KEEP_A      Output A. Copy B to A. Get the next B.
+	 *                     ACTION_DELETE_A    Copy B to A. Get the next B. (Delete A).
+	 *                     ACTION_DELETE_A_B  Get the next B. (Delete B).
 	 */
 	protected function action( $command ) {
+
 		switch( $command ) {
+			/** @noinspection PhpMissingBreakStatementInspection */
 		case self::ACTION_KEEP_A:
 			$this->output .= $this->a;
 
+			/** @noinspection PhpMissingBreakStatementInspection */
 		case self::ACTION_DELETE_A:
 			$this->a = $this->b;
 
@@ -98,17 +103,17 @@ class JSMin {
 			$this->b = $this->next();
 
 			if( $this->b === '/'
-			    && ( $this->a === '(' || $this->a === ',' || $this->a === '='
-				 || $this->a === ':'
-				 || $this->a === '['
-				 || $this->a === '!'
-				 || $this->a === '&'
-				 || $this->a === '|'
-				 || $this->a === '?'
-				 || $this->a === '{'
-				 || $this->a === '}'
-				 || $this->a === ';'
-				 || $this->a === "\n" )
+				&& ( $this->a === '(' || $this->a === ',' || $this->a === '='
+					|| $this->a === ':'
+					|| $this->a === '['
+					|| $this->a === '!'
+					|| $this->a === '&'
+					|| $this->a === '|'
+					|| $this->a === '?'
+					|| $this->a === '{'
+					|| $this->a === '}'
+					|| $this->a === ';'
+					|| $this->a === "\n" )
 			) {
 
 				$this->output .= $this->a . $this->b;
@@ -157,6 +162,7 @@ class JSMin {
 	 * @return string|null
 	 */
 	protected function get() {
+
 		$c = $this->lookAhead;
 
 		if( $c === null and $this->inputIndex < $this->inputLength ) {
@@ -179,8 +185,9 @@ class JSMin {
 	 * @return bool
 	 */
 	protected function isAlphaNum( $c ) {
+
 		return ( 'a' <= $c and $c <= 'z' ) or ( $c >= 'A' and $c <= 'Z' ) or ( $c >= '0' and $c <= '9' ) or $c == '_' or $c == '$' or $c > '~' or
-						      $c == '\\';
+		$c == '\\';
 	}
 
 	/**
@@ -191,6 +198,7 @@ class JSMin {
 	 * @return string
 	 */
 	protected function min() {
+
 		$this->a = "\n";
 		$this->action( self::ACTION_DELETE_A_B );
 
@@ -279,10 +287,12 @@ class JSMin {
 	 * @return string
 	 */
 	protected function next() {
+
 		$c = $this->get();
 
 		if( $c === '/' ) {
 			switch( $this->peek() ) {
+				/** @noinspection PhpMissingBreakStatementInspection */
 			case '/':
 				while( true ) {
 					$c = $this->get();
@@ -292,6 +302,7 @@ class JSMin {
 					}
 				}
 
+				/** @noinspection PhpMissingBreakStatementInspection */
 			case '*':
 				$this->get();
 
@@ -324,6 +335,7 @@ class JSMin {
 	 * @return string|null
 	 */
 	protected function peek() {
+
 		return $this->lookAhead = $this->get();
 	}
 }

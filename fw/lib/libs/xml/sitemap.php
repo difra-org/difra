@@ -12,7 +12,6 @@ class Sitemap {
 	 * Если не задан параметр $page, будет возвращен индексный sitemap.xml
 	 *
 	 * @param int|null $page
-	 *
 	 * @return bool|string
 	 */
 	public static function getXML( $page = null ) {
@@ -98,14 +97,13 @@ class Sitemap {
 	 * Формирует индексный sitemap.xml
 	 *
 	 * @param int $pages
-	 *
 	 * @return string
 	 */
 	private static function makeIndexXML( $pages ) {
 
 		$indexXML = new \DOMDocument;
 		$smiNode = $indexXML->appendChild( $indexXML->createElementNS( self::NS, 'sitemapindex' ) );
-		$urlPref = 'http://' . \Difra\Site::getInstance()->getHostname();
+		$urlPref = 'http://' . \Difra\Envi::getHost();
 		for( $i = 1; $i <= $pages; $i++ ) {
 			$smNode = $smiNode->appendChild( $indexXML->createElement( 'sitemap' ) );
 			$smNode->appendChild( $indexXML->createElement( 'loc', "$urlPref/sitemap-" . $i . '.xml' ) );
@@ -117,7 +115,6 @@ class Sitemap {
 	 * Формирует sitemap.xml со ссылками
 	 *
 	 * @param array $urls
-	 *
 	 * @return string
 	 */
 	private static function makeSitemapXML( &$urls ) {

@@ -11,6 +11,7 @@ JSON.stringify = JSON.stringify || function( obj ) {
 	} else {
 		var n, v, json = [], arr = ( obj && obj.constructor == Array );
 		for( n in obj ) {
+			//noinspection JSUnfilteredForInLoop
 			v = obj[n];
 			t = typeof(v);
 			if( t == "string" ) {

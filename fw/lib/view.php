@@ -34,7 +34,7 @@ class View {
 	 * @return View\Old
 	 * @deprecated
 	 */
-	public function getInstance() {
+	public static function getInstance() {
 
 		return View\Old::getInstance();
 	}

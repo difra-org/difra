@@ -176,20 +176,26 @@ class Typographer {
 		$this->text = preg_replace( '/(^|[^.])\.{3}([^.]|$)/', '$1' . $this->hellip . '$2', $this->text );
 
 		// Градусы Цельсия
-		$this->text = preg_replace( '/(\d+)( |\&\#160;|\&nbsp;)?(C|F)([\W \.,:\!\?"\]\)]|$)/', '$1' .
-				$this->space . $this->deg . '$3$4', $this->text );
+		$this->text = preg_replace( '/(\d+)( |\&\#160;|\&nbsp;)?(C|F)([\W \.,:\!\?"\]\)]|$)/',
+			'$1' .
+			$this->space . $this->deg . '$3$4',
+			$this->text );
 
 		// XXXX г.
 		$this->text = preg_replace( '/(^|\D)(\d{4})г( |\.|$)/', '$1$2' . $this->space . 'г$3', $this->text );
 
 		$m = '(км|м|дм|см|мм)';
 		// Кв. км м дм см мм
-		$this->text = preg_replace( '/(^|\D)(\d+)( |\&\#160;|\&nbsp;)?' . $m . '2(\D|$)/', '$1$2' .
-				$this->space . '$4' . $this->sup2 . '$5', $this->text );
+		$this->text = preg_replace( '/(^|\D)(\d+)( |\&\#160;|\&nbsp;)?' . $m . '2(\D|$)/',
+			'$1$2' .
+			$this->space . '$4' . $this->sup2 . '$5',
+			$this->text );
 
 		// Куб. км м дм см мм
-		$this->text = preg_replace( '/(^|\D)(\d+)( |\&\#160;|\&nbsp;)?' . $m . '3(\D|$)/', '$1$2' .
-				$this->space . '$4' . $this->sup3 . '$5', $this->text );
+		$this->text = preg_replace( '/(^|\D)(\d+)( |\&\#160;|\&nbsp;)?' . $m . '3(\D|$)/',
+			'$1$2' .
+			$this->space . '$4' . $this->sup3 . '$5',
+			$this->text );
 
 		if( $this->doMacros ) {
 			// ГРАД(n)
@@ -240,7 +246,8 @@ class Typographer {
 
 		$this->text = preg_replace( '/(<\/typo:quot1>[\.\?\!]{1,3})"([\n\.\?\!, \)][^>]{0,1})/', '$1</typo:quot1>$2', $this->text );
 		$this->text = preg_replace( '/(<typo:quot1>[а-яА-Я\w\.\- \n]*?)<typo:quot1>(.+?)<\/typo:quot1>/',
-			'$1<typo:quot2>$2</typo:quot2>', $this->text );
+			'$1<typo:quot2>$2</typo:quot2>',
+			$this->text );
 		$this->text = preg_replace( '/(<\/typo:quot2>.+?)<typo:quot1>(.+?)<\/typo:quot1>/', '$1<typo:quot2>$2</typo:quot2>', $this->text );
 		$this->text = preg_replace( '/(<typo:quot2>.+?<\/typo:quot2>)\.(.+?<typo:quot1>)/', '$1<\/typo:quot1>.$2', $this->text );
 		$this->text = preg_replace( '/(<typo:quot2>.+?<\/typo:quot2>)\.(?!<\/typo:quot1>)/', '$1</typo:quot1>.$2$3$4', $this->text );
@@ -274,8 +281,10 @@ class Typographer {
 
 		$this->text = preg_replace( '/(^|\n|>) ?(-|—) /', '$1— ', $this->text );
 
-		$this->text = preg_replace( '/(^|[^\d\-])(\d{1,4}) ?(—|-) ?(\d{1,4})([^\d\-\=]|$)/', '$1$2' .
-				$this->tireinterval . '$4$5', $this->text );
+		$this->text = preg_replace( '/(^|[^\d\-])(\d{1,4}) ?(—|-) ?(\d{1,4})([^\d\-\=]|$)/',
+			'$1$2' .
+			$this->tireinterval . '$4$5',
+			$this->text );
 
 		$this->text = preg_replace( '/ -(?= )/', $this->space . $this->tire, $this->text );
 		$this->text = preg_replace( '/(?<=&nbsp;|&#160;)-(?= )/', $this->tire, $this->text );
@@ -294,7 +303,7 @@ class Typographer {
 		$n = strpos( $this->text, "\n" );
 
 		if( $this->_isHTMLCode ) {
-			return false;
+			return;
 		}
 
 		if( $n !== false ) {
@@ -384,13 +393,59 @@ class Typographer {
 	private function replaceWindowsCodes() {
 
 		$after = array(
-			'&#167;', '&#169;', '&#174;', '&#8482;', '&#176;', '&#171;', '&#183;', '&#187;', '&#133;', '&#8216;', '&#8217;',
-			'&#8220;', '&#8221;', '&#164;', '&#166;', '&#8222;', '&#8226;', '&#8211;', $this->plusmn, $this->tire, $this->number,
-			'&#8240;', '&#8364;', '&#182;', '&#172;'
+			'&#167;',
+			'&#169;',
+			'&#174;',
+			'&#8482;',
+			'&#176;',
+			'&#171;',
+			'&#183;',
+			'&#187;',
+			'&#133;',
+			'&#8216;',
+			'&#8217;',
+			'&#8220;',
+			'&#8221;',
+			'&#164;',
+			'&#166;',
+			'&#8222;',
+			'&#8226;',
+			'&#8211;',
+			$this->plusmn,
+			$this->tire,
+			$this->number,
+			'&#8240;',
+			'&#8364;',
+			'&#182;',
+			'&#172;'
 		);
 
 		$before = array(
-			'§', '©', '®', '™', '°', '«', '·', '»', '…', '‘', '’', '“', '”', '¤', '¦', '„', '•', '–', '±', '—', '№', '‰', '€', '¶', '¬'
+			'§',
+			'©',
+			'®',
+			'™',
+			'°',
+			'«',
+			'·',
+			'»',
+			'…',
+			'‘',
+			'’',
+			'“',
+			'”',
+			'¤',
+			'¦',
+			'„',
+			'•',
+			'–',
+			'±',
+			'—',
+			'№',
+			'‰',
+			'€',
+			'¶',
+			'¬'
 		);
 
 		$this->text = str_replace( $before, $after, $this->text );

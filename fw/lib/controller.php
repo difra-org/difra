@@ -86,12 +86,12 @@ abstract class Controller {
 
 		if( !empty( $this->action->parameters ) ) {
 			$this->putExpires( true );
-			$this->view->httpError( 404 );
+			throw new \Difra\View\Exception( 404 );
 		} elseif( !is_null( $this->output ) ) {
 			$this->putExpires();
 			header( 'Content-Type: ' . $this->outputType . '; charset="utf-8"' );
 			echo $this->output;
-			$this->view->rendered = true;
+			View::$rendered = true;
 		} elseif( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
 			if( $_GET['xml'] == '2' ) {
 				$this->fillXML();
@@ -100,19 +100,19 @@ abstract class Controller {
 			$this->xml->formatOutput = true;
 			$this->xml->encoding = 'utf-8';
 			echo rawurldecode( $this->xml->saveXML() );
-			$this->view->rendered = true;
-		} elseif( !$this->view->rendered and $this->ajax->isAjax ) {
+			View::$rendered = true;
+		} elseif( !View::$rendered and $this->ajax->isAjax ) {
 			$this->putExpires();
-			header( 'Content-type: text/plain' ); // тут нужен application/json, но тупая опера предлагает сохранить файл
+			header( 'Content-type: text/plain' ); // тут нужен application/json, но тогда опера предлагает сохранить файл
 			echo( $this->ajax->getResponse() );
-			$this->view->rendered = true;
-		} elseif( !$this->view->rendered ) {
+			View::$rendered = true;
+		} elseif( !View::$rendered ) {
 			$this->putExpires();
 			try {
-				$this->view->render( $this->xml );
+				View::render( $this->xml );
 			} catch( Exception $ex ) {
 				if( !Debugger::getInstance()->isConsoleEnabled() ) {
-					$this->view->httpError( 500 );
+					throw new View\Exception( 500 );
 				} else {
 					echo Debugger::getInstance()->debugHTML( true );
 					die();
@@ -145,11 +145,9 @@ abstract class Controller {
 			$method = 'method';
 		} elseif( $this->action->methodAuth or $this->action->methodAjaxAuth ) {
 			$this->action->parameters = array();
-			$this->view->httpError( 401 );
-			return;
+			throw new View\Exception( 401 );
 		} else {
-			$this->view->httpError( 404 );
-			return;
+			throw new View\Exception( 404 );
 		}
 		$this->method = $method;
 	}
@@ -193,13 +191,12 @@ abstract class Controller {
 					if( sizeof( $this->action->parameters ) >= 2 and $this->action->parameters[0] == $name ) {
 						array_shift( $this->action->parameters );
 						if( !call_user_func( array( "$class", 'verify' ), $this->action->parameters[0] ) ) {
-							$this->view->httpError( 404 );
-							return;
+							throw new View\Exception( 404 );
 						}
 						$callParameters[$parameter->getName()] =
 							new $class( array_shift( $this->action->parameters ) );
 					} elseif( !$parameter->isOptional() ) {
-						$this->view->httpError( 404 );
+						throw new View\Exception( 404 );
 					} else {
 						$callParameters[$parameter->getName()] = null;
 					}
@@ -210,11 +207,11 @@ abstract class Controller {
 							$this->action->parameters[0] != $namedParameters[0] )
 					) {
 						if( !call_user_func( array( "$class", 'verify' ), $this->action->parameters[0] ) ) {
-							$this->view->httpError( 404 );
+							throw new View\Exception( 404 );
 						}
 						$callParameters[$name] = new $class( array_shift( $this->action->parameters ) );
 					} elseif( !$parameter->isOptional() ) {
-						$this->view->httpError( 404 );
+						throw new View\Exception( 404 );
 					} else {
 						$callParameters[$parameter->getName()] = null;
 					}
@@ -324,7 +321,7 @@ abstract class Controller {
 		$domain = explode( '://', $_SERVER['HTTP_REFERER'], 2 );
 		$domain = explode( '/', $domain[1] );
 		$domain = $domain[0] . '/';
-		if( false === strpos( $domain, Site::getInstance()->getMainhost() ) ) {
+		if( false === strpos( $domain, Envi::getHost( true ) ) ) {
 			throw new Exception( 'Bad referer' );
 		}
 	}
