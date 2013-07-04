@@ -30,6 +30,16 @@ class View {
 	public static $instance = 'main';
 
 	/**
+	 * Временный метод для обратной совместимости
+	 * @return View\Old
+	 * @deprecated
+	 */
+	public function getInstance() {
+
+		return View\Old::getInstance();
+	}
+
+	/**
 	 * @param \DOMDocument $xml
 	 * @param bool|string  $specificInstance
 	 * @param bool         $dontEcho
