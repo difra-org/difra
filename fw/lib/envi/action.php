@@ -282,4 +282,13 @@ class Action {
 		}
 		return $foundMethod;
 	}
+
+	/**
+	 * Возвращает имя класса найденного контроллера
+	 * @return null|string
+	 */
+	public static function getControllerClass() {
+
+		return self::$className;
+	}
 }
