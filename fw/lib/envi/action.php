@@ -13,12 +13,12 @@ use Difra\Envi, Difra\Debugger, Difra\View, Difra\Cache, Difra\Resourcer, Difra\
 class Action {
 
 	/** @var string[] */
-	public static $parameters = array();
+	private static $parameters = array();
 
 	/** @var string */
-	public static $className = null;
+	private static $className = null;
 	/** @var \Difra\Controller */
-	public static $controller = null;
+	private static $controller = null;
 
 	/** @var string */
 	public static $method = null;
@@ -157,7 +157,7 @@ class Action {
 			self::find();
 		}
 		if( !self::$controller ) {
-			self::$controller = new self::$className;
+			self::$controller = new self::$className( self::$parameters );
 		}
 		return self::$controller;
 	}

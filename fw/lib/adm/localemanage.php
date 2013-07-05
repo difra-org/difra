@@ -35,6 +35,9 @@ class Localemanage {
 		return $locales;
 	}
 
+	/**
+	 * @param \DOMElement $node
+	 */
 	public function getLocalesTreeXML( $node ) {
 
 		$tree = $this->getLocalesTree();
@@ -43,12 +46,15 @@ class Localemanage {
 			case 'xpaths':
 				break;
 			default:
+				/** @var \DOMElement $localeNode */
 				$localeNode = $node->appendChild( $node->ownerDocument->createElement( 'locale' ) );
 				$localeNode->setAttribute( 'name', $loc );
 				foreach( $data as $module => $data2 ) {
+					/** @var \DOMElement $moduleNode */
 					$moduleNode = $localeNode->appendChild( $localeNode->ownerDocument->createElement( 'module' ) );
 					$moduleNode->setAttribute( 'name', $module );
 					foreach( $data2 as $k => $v ) {
+						/** @var \DOMElement $strNode */
 						$strNode = $moduleNode->appendChild( $moduleNode->ownerDocument->createElement( 'item' ) );
 						$strNode->setAttribute( 'xpath', $k );
 						$strNode->setAttribute( 'missing', 0 );
@@ -85,10 +91,10 @@ class Localemanage {
 	}
 
 	/**
-	 * @param \DOMNode $node
-	 * @param array    $arr
-	 * @param array    $allxpaths
-	 * @param string   $xpath
+	 * @param \DOMElement|\DOMNode $node
+	 * @param array                $arr
+	 * @param array                $allxpaths
+	 * @param string               $xpath
 	 */
 	public function xml2tree( $node, &$arr, &$allxpaths, $xpath ) {
 

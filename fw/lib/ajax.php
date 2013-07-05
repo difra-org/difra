@@ -414,9 +414,9 @@ class Ajax {
 				       '<form action="/' . Envi::getUri() . '" class="ajaxer">' .
 				       '<input type="hidden" name="confirm" value="1"/>' .
 				       '<div>' . $text . '</div>' .
-				       '<input type="submit" value="' . Action::$controller->locale->getXPath( 'ajaxer/confirm-yes' )
+				       '<input type="submit" value="' . Controller::getInstance()->locale->getXPath( 'ajaxer/confirm-yes' )
 				       . '"/>' .
-				       '<input type="button" value="' . Action::$controller->locale->getXPath( 'ajaxer/confirm-no' ) . '"
+				       '<input type="button" value="' . Controller::getInstance()->locale->getXPath( 'ajaxer/confirm-no' ) . '"
 						onclick="ajaxer.close(this)"/>' .
 				       '</form>'
 				  ) );

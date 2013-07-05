@@ -65,9 +65,7 @@ class View {
 		$xslProc = new \XsltProcessor();
 		$xslProc->importStyleSheet( $xslDom );
 
-		if( $controller = \Difra\Envi\Action::$controller ) {
-			$controller->fillXML( $instance );
-		}
+		Controller::getInstance()->fillXML( $instance );
 
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {

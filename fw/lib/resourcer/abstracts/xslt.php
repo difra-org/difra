@@ -30,6 +30,7 @@ abstract class XSLT extends Common {
 		foreach( $files as $filename ) {
 			$template = new \DOMDocument();
 			$template->load( $filename['raw'] );
+			/** @var \DOMElement $child */
 			foreach( $template->documentElement->childNodes as $child ) {
 				switch( $child->nodeType ) {
 				case XML_TEXT_NODE:

@@ -454,7 +454,7 @@ class Typographer {
 	/**
 	 * Возвращает настройки типографа
 	 * @static
-	 * @param \DOMNode $node
+	 * @param \DOMElement|\DOMNode $node
 	 */
 	public static function getSettingsXML( $node ) {
 

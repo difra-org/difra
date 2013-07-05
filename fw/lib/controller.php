@@ -40,6 +40,8 @@ class Controller {
 	/** @var \DOMElement */
 	public $realRoot;
 
+	protected static $parameters = array();
+
 	/**
 	 * Вызов фабрики
 	 * @return Controller|null
@@ -56,7 +58,7 @@ class Controller {
 	/**
 	 * Конструктор
 	 */
-	final public function __construct() {
+	final public function __construct( $parameters = array() ) {
 
 		// загрузка основных классов
 		$this->locale = Locales::getInstance();
@@ -101,7 +103,7 @@ class Controller {
 	final static public function render() {
 
 		$controller = self::getInstance();
-		if( !empty( Action::$parameters ) ) {
+		if( !empty( self::$parameters ) ) {
 			$controller->putExpires( true );
 			throw new \Difra\View\Exception( 404 );
 		} elseif( !is_null( $controller->output ) ) {
@@ -161,7 +163,7 @@ class Controller {
 		} elseif( Action::$method ) {
 			$method = 'method';
 		} elseif( Action::$methodAuth or Action::$methodAjaxAuth ) {
-			Action::$parameters = array();
+			self::$parameters = array();
 			throw new View\Exception( 401 );
 		} else {
 			throw new View\Exception( 404 );
@@ -205,13 +207,13 @@ class Controller {
 				// параметр из query — нужно соблюдать очередность параметров
 				if( call_user_func( array( "$class", "isNamed" ) ) ) {
 					// именованный параметр
-					if( sizeof( Action::$parameters ) >= 2 and Action::$parameters[0] == $name ) {
-						array_shift( Action::$parameters );
-						if( !call_user_func( array( "$class", 'verify' ), Action::$parameters[0] ) ) {
+					if( sizeof( self::$parameters ) >= 2 and self::$parameters[0] == $name ) {
+						array_shift( self::$parameters );
+						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
 							throw new View\Exception( 404 );
 						}
 						$callParameters[$parameter->getName()] =
-							new $class( array_shift( Action::$parameters ) );
+							new $class( array_shift( self::$parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						throw new View\Exception( 404 );
 					} else {
@@ -219,14 +221,14 @@ class Controller {
 					}
 					array_shift( $namedParameters );
 				} else {
-					if( !empty( Action::$parameters ) and ( !$parameter->isOptional() or
+					if( !empty( self::$parameters ) and ( !$parameter->isOptional() or
 							empty( $namedParameters ) or
-							Action::$parameters[0] != $namedParameters[0] )
+							self::$parameters[0] != $namedParameters[0] )
 					) {
-						if( !call_user_func( array( "$class", 'verify' ), Action::$parameters[0] ) ) {
+						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
 							throw new View\Exception( 404 );
 						}
-						$callParameters[$name] = new $class( array_shift( Action::$parameters ) );
+						$callParameters[$name] = new $class( array_shift( self::$parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						throw new View\Exception( 404 );
 					} else {
@@ -265,10 +267,8 @@ class Controller {
 
 		Debugger::addLine( 'Filling XML data for render: Started' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
-		$this->realRoot->setAttribute( 'controller', Action::$className );
-		$this->realRoot->setAttribute( 'action', Action::$method );
-		$this->realRoot->setAttribute( 'host', Envi::getSiteDir() );
-		$this->realRoot->setAttribute( 'hostname', $host = Envi::getHost() );
+		$this->realRoot->setAttribute( 'site', Envi::getSiteDir() );
+		$this->realRoot->setAttribute( 'host', $host = Envi::getHost() );
 		$this->realRoot->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
 		$this->realRoot->setAttribute( 'instance', $instance ? $instance : View::$instance );
 		if( $host != $mainhost ) {

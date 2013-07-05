@@ -12,14 +12,13 @@ abstract class XML extends Common {
 	 *
 	 * @param      $instance
 	 * @param bool $withFilenames
-	 *
 	 * @return mixed
 	 */
 	protected function processData( $instance, $withFilenames = false ) {
-		
+
 		$files = $this->getFiles( $instance );
-		
-		$newXml = new \SimpleXMLElement("<{$this->type}></{$this->type}>");
+
+		$newXml = new \SimpleXMLElement( "<{$this->type}></{$this->type}>" );
 		foreach( $files as $file ) {
 			$filename = $withFilenames ? $file['raw'] : false;
 			$xml = simplexml_load_file( $file['raw'] );
@@ -34,8 +33,14 @@ abstract class XML extends Common {
 		return $newXml->asXML();
 	}
 
+	/**
+	 * @param \SimpleXMLElement $xml1
+	 * @param \SimpleXMLElement $xml2
+	 * @param string            $filename
+	 */
 	private function _mergeXML( &$xml1, &$xml2, &$filename ) {
 
+		/** @var \SimpleXMLElement $node */
 		foreach( $xml2 as $name => $node ) {
 			if( !$filename and property_exists( $xml1, $name ) ) {
 				$attr = $xml1->$name->attributes();
