@@ -70,16 +70,16 @@ class Events {
 		self::register( 'core-init', 'Difra\\Envi\\Setup', 'run' );
 		self::register( 'core-init', 'Difra\\Site', 'init' );
 		self::register( 'core-init', 'Difra\\Debugger', 'init' );
-		self::register( 'plugins-load', 'Difra\Plugger', 'init' );
+		self::register( 'plugins-load', 'Difra\\Plugger', 'init' );
 		self::register( 'init-done', 'Difra\\Site', 'initDone' );
 		if( Envi::getMode() == 'web' ) {
-			self::register( 'action-find', 'Difra\\Envi\\Action', 'find' );
-			self::register( 'action-run', 'Difra\\Envi\\Action', 'run' );
-			self::register( 'render-run', 'Difra\\Envi\\Action', 'render' );
-			if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
-				/** @noinspection PhpIncludeInspection */
-				include_once( $initPHP );
-			}
+			self::register( 'action-find', 'Difra\\Controller', 'init' );
+			self::register( 'action-run', 'Difra\\Controller', 'run' );
+			self::register( 'render-run', 'Difra\\Controller', 'render' );
+		}
+		if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
+			/** @noinspection PhpIncludeInspection */
+			include_once( $initPHP );
 		}
 	}
 

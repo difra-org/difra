@@ -151,18 +151,15 @@ class Action {
 	/**
 	 * Запускает исполнение логики контроллера (вызывается из события)
 	 */
-	public static function run() {
+	public static function getController() {
 
-		self::$controller = new self::$className;
-		self::$controller->run();
-	}
-
-	/**
-	 * Вызов render() из контроллера
-	 */
-	public static function render() {
-
-		self::$controller->render();
+		if( !self::$className ) {
+			self::find();
+		}
+		if( !self::$controller ) {
+			self::$controller = new self::$className;
+		}
+		return self::$controller;
 	}
 
 	/**

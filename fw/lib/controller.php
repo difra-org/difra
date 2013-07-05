@@ -10,7 +10,7 @@ use Difra\Envi\Action;
  *
  * @package Difra
  */
-abstract class Controller {
+class Controller {
 
 	/** @var \Difra\Locales */
 	public $locale;
@@ -41,6 +41,19 @@ abstract class Controller {
 	public $realRoot;
 
 	/**
+	 * Вызов фабрики
+	 * @return Controller|null
+	 */
+	public static function getInstance() {
+
+		static $instance = null;
+		if( is_null( $instance ) ) {
+			$instance = Action::getController();
+		}
+		return $instance;
+	}
+
+	/**
 	 * Конструктор
 	 */
 	final public function __construct() {
@@ -60,49 +73,60 @@ abstract class Controller {
 	}
 
 	/**
+	 * Предварительная инициализация.
+	 * Имеет смысл, чтобы не выполнять дополнительные действия на 404 страницах.
+	 */
+	final static public function init() {
+
+		self::getInstance();
+	}
+
+	/**
 	 * Выбирает подходящий вариант action'а и запускает его
 	 */
-	final public function run() {
+	final static public function run() {
 
-		$this->chooseAction();
-		if( !$this->method ) {
+		$controller = self::getInstance();
+		$controller->chooseAction();
+		if( !$controller->method ) {
 			throw new Exception( 'Controller failed to choose action method' );
 		}
 		Debugger::addLine( 'Selected method ' . Action::$method );
-		$this->callAction();
+		$controller->callAction();
 	}
 
 	/**
 	 * Выводит ответ в зависимости от типа запроса
 	 */
-	final public function render() {
+	final static public function render() {
 
+		$controller = self::getInstance();
 		if( !empty( Action::$parameters ) ) {
-			$this->putExpires( true );
+			$controller->putExpires( true );
 			throw new \Difra\View\Exception( 404 );
-		} elseif( !is_null( $this->output ) ) {
-			$this->putExpires();
-			header( 'Content-Type: ' . $this->outputType . '; charset="utf-8"' );
-			echo $this->output;
+		} elseif( !is_null( $controller->output ) ) {
+			$controller->putExpires();
+			header( 'Content-Type: ' . $controller->outputType . '; charset="utf-8"' );
+			echo $controller->output;
 			View::$rendered = true;
 		} elseif( Debugger::isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
 			if( $_GET['xml'] == '2' ) {
-				$this->fillXML();
+				$controller->fillXML();
 			}
 			header( 'Content-Type: text/xml; charset="utf-8"' );
-			$this->xml->formatOutput = true;
-			$this->xml->encoding = 'utf-8';
-			echo rawurldecode( $this->xml->saveXML() );
+			$controller->xml->formatOutput = true;
+			$controller->xml->encoding = 'utf-8';
+			echo rawurldecode( $controller->xml->saveXML() );
 			View::$rendered = true;
-		} elseif( !View::$rendered and $this->ajax->isAjax ) {
-			$this->putExpires();
+		} elseif( !View::$rendered and $controller->ajax->isAjax ) {
+			$controller->putExpires();
 			header( 'Content-type: text/plain' ); // тут нужен application/json, но тогда опера предлагает сохранить файл
-			echo( $this->ajax->getResponse() );
+			echo( $controller->ajax->getResponse() );
 			View::$rendered = true;
 		} elseif( !View::$rendered ) {
-			$this->putExpires();
+			$controller->putExpires();
 			try {
-				View::render( $this->xml );
+				View::render( $controller->xml );
 			} catch( Exception $ex ) {
 				if( !Debugger::isConsoleEnabled() ) {
 					throw new View\Exception( 500 );
