@@ -2,16 +2,19 @@
 
 namespace Difra;
 
+/**
+ * Class Resourcer
+ *
+ * @package Difra
+ */
 class Resourcer {
 
 	/**
-	 * @static
-	 *
-	 * @param      $type
-	 * @param bool $quiet
-	 *
+	 * Фабрика сборщиков ресурсов
+	 * @param string $type
+	 * @param bool   $quiet
 	 * @return Resourcer\CSS|Resourcer\JS|Resourcer\XSLT|Resourcer\Menu|Resourcer\Locale
-	 * @throws exception
+	 * @throws Exception
 	 */
 	static public function getInstance( $type, $quiet = false ) {
 

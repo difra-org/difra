@@ -2,6 +2,11 @@
 
 namespace Difra;
 
+/**
+ * Class Plugger
+ *
+ * @package Difra
+ */
 class Plugger {
 
 	/** @var \Difra\Plugin[] */

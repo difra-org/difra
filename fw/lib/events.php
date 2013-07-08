@@ -9,7 +9,8 @@ namespace Difra;
  */
 class Events {
 
-	private $types = array(
+	/** @var array */
+	private static $types = array(
 		'core-init', // загрузка нужных классов
 		'plugins-load', // загрузка плагинов
 		'config', // загрузка полных настроек
@@ -28,33 +29,9 @@ class Events {
 
 		'done' // статистика и прочее
 	);
-	private $events = null;
 
-	/**
-	 * Синглтон
-	 * @return Events
-	 */
-	public static function getInstance() {
-
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self;
-	}
-
-	/**
-	 * Конструктор
-	 */
-	public function __construct() {
-
-		foreach( $this->types as $type ) {
-			$this->events[$type] = array();
-		}
-	}
-
-	/**
-	 * Деструктор
-	 */
-	public function __destruct() {
-	}
+	/** @var array */
+	private static $events = null;
 
 	/**
 	 * Базовый набор событий для работы движка
@@ -66,6 +43,10 @@ class Events {
 			return;
 		}
 		$initDone = true;
+
+		foreach( self::$types as $type ) {
+			self::$events[$type] = array();
+		}
 
 		self::register( 'core-init', 'Difra\\Envi\\Setup', 'run' );
 		self::register( 'core-init', 'Difra\\Site', 'init' );
@@ -88,25 +69,14 @@ class Events {
 	 * @param             $type          Имя события
 	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
 	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
+	 * @throws Exception
 	 */
 	public static function register( $type, $class, $method = false ) {
 
-		self::getInstance()->add( $type, $class, $method );
-	}
-
-	/**
-	 * Зарегистрировать обработчик события (динамический вариант)
-	 * @param             $type          Имя события
-	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
-	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
-	 * @throws Exception
-	 */
-	private function add( $type, $class, $method = false ) {
-
-		if( !in_array( $type, $this->types ) ) {
+		if( !in_array( $type, self::$types ) ) {
 			throw new Exception( 'Invalid event type: ' . $type );
 		}
-		$this->events[$type][] = array(
+		self::$events[$type][] = array(
 			'class' => $class,
 			'method' => $method
 		);
@@ -115,12 +85,12 @@ class Events {
 	/**
 	 * Вызывает все события в нужном порядке
 	 */
-	public function run() {
+	public static function run() {
 
 		self::init();
-		foreach( $this->events as $type => $foo ) {
+		foreach( self::$events as $type => $foo ) {
 			Debugger::addEventLine( 'Event ' . $type . ' started' );
-			$this->start( $type );
+			self::start( $type );
 		}
 
 		Debugger::addLine( 'Done running events' );
@@ -133,9 +103,9 @@ class Events {
 	 * Вызывает обрабочики указанного события
 	 * @param $event
 	 */
-	public function start( $event ) {
+	public static function start( $event ) {
 
-		$handlers = $this->events[$event];
+		$handlers = self::$events[$event];
 		if( empty( $handlers ) ) {
 			return;
 		}

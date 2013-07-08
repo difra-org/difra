@@ -287,7 +287,7 @@ class Controller {
 			( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
 				$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
 		// build number
-		$this->realRoot->setAttribute( 'build', Site::getInstance()->getBuild() );
+		$this->realRoot->setAttribute( 'build', \Difra\Envi\Version::getBuild() );
 		// date
 		/** @var $dateNode \DOMElement */
 		$dateNode = $this->realRoot->appendChild( $this->xml->createElement( 'date' ) );

@@ -2,13 +2,16 @@
 
 namespace Difra;
 
+/**
+ * Class Minify
+ *
+ * @package Difra
+ */
 class Minify {
 
 	/**
 	 * @static
-	 *
 	 * @param string $type
-	 *
 	 * @return self
 	 */
 	static public function getInstance( $type ) {

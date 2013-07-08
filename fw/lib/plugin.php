@@ -2,6 +2,11 @@
 
 namespace Difra;
 
+/**
+ * Class Plugin
+ *
+ * @package Difra
+ */
 abstract class Plugin {
 
 	/** @var int Версия движка, для которой обновлялся плагин */
