@@ -111,7 +111,7 @@ class Page {
 	 */
 	public static function find() {
 
-		$uri = '/' . Envi::getUri();
+		$uri = Envi::getUri();
 		$cache = \Difra\Cache::getInstance();
 		if( !$data = $cache->get( 'cms_tags' ) ) {
 			$db = \Difra\MySQL::getInstance();
