@@ -2,27 +2,37 @@
 
 use Difra\Plugins\CMS;
 
+/**
+ * Class AdmContentPagesController
+ */
 class AdmContentPagesController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
-	// список страниц
+	/**
+	 * Список страниц
+	 */
 	public function indexAction() {
 
 		$listNode = $this->root->appendChild( $this->xml->createElement( 'CMSList' ) );
 		\Difra\Plugins\CMS::getInstance()->getListXML( $listNode );
 	}
 
-	// форма добавления страницы
+	/**
+	 * Форма добавления страницы
+	 */
 	public function addAction() {
 
 		$this->root->appendChild( $this->xml->createElement( 'CMSAdd' ) );
 	}
 
-	// форма редактирования страницы
+	/**
+	 * Форма редактирования страницы
+	 * @param \Difra\Param\AnyInt $id
+	 */
 	public function editAction( \Difra\Param\AnyInt $id ) {
 
 		/** @var $editNode \DOMElement */
@@ -30,7 +40,13 @@ class AdmContentPagesController extends \Difra\Controller {
 		\Difra\Plugins\CMS\Page::get( $id->val() )->getXML( $editNode );
 	}
 
-	// сохранение страницы
+	/**
+	 * Сохранение страницы
+	 * @param \Difra\Param\AjaxString $title
+	 * @param \Difra\Param\AjaxString $tag
+	 * @param \Difra\Param\AjaxHTML   $body
+	 * @param \Difra\Param\AjaxInt    $id
+	 */
 	public function saveAjaxAction( \Difra\Param\AjaxString $title,
 					\Difra\Param\AjaxString $tag,
 					\Difra\Param\AjaxHTML $body,
@@ -47,7 +63,11 @@ class AdmContentPagesController extends \Difra\Controller {
 		\Difra\Ajax::getInstance()->redirect( '/adm/content/pages' );
 	}
 
-	// удаление страницы
+	/**
+	 * Удаление страницы
+	 * @param \Difra\Param\AnyInt       $id
+	 * @param \Difra\Param\AjaxCheckbox $confirm
+	 */
 	public function deleteAjaxAction( \Difra\Param\AnyInt $id, \Difra\Param\AjaxCheckbox $confirm = null ) {
 
 		if( $confirm and $confirm->val() ) {
@@ -59,15 +79,15 @@ class AdmContentPagesController extends \Difra\Controller {
 		$page = \Difra\Plugins\CMS\Page::get( $id->val() );
 		$this->ajax->display(
 			'<span>'
-				. $this->locale->getXPath( 'cms/adm/delete-page-confirm-1' )
-				. $page->getTitle()
-				. $this->locale->getXPath( 'cms/adm/delete-page-confirm-2' )
-				. '</span>'
-				. '<form action="/adm/content/pages/delete/' . $id . '" method="post" class="ajaxer">'
-				. '<input type="hidden" name="confirm" value="1"/>'
-				. '<input type="submit" value="Да"/>'
-				. '<a href="#" onclick="ajaxer.close(this)" class="button">Нет</a>'
-				. '</form>'
+			. $this->locale->getXPath( 'cms/adm/delete-page-confirm-1' )
+			. $page->getTitle()
+			. $this->locale->getXPath( 'cms/adm/delete-page-confirm-2' )
+			. '</span>'
+			. '<form action="/adm/content/pages/delete/' . $id . '" method="post" class="ajaxer">'
+			. '<input type="hidden" name="confirm" value="1"/>'
+			. '<input type="submit" value="Да"/>'
+			. '<a href="#" onclick="ajaxer.close(this)" class="button">Нет</a>'
+			. '</form>'
 		);
 	}
 }

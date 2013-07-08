@@ -9,11 +9,16 @@ use Difra, Difra\Plugins;
  */
 class Menu {
 
+	/** @var int */
 	private $id = null;
+	/** @var string */
 	private $name = '';
+	/** @var string */
 	private $description = '';
 
+	/** @var bool */
 	private $modified = false;
+	/** @var bool */
 	private $loaded = true;
 
 	/**
@@ -40,13 +45,12 @@ class Menu {
 	 * Получение меню по id
 	 *
 	 * @param $id
-	 *
 	 * @return Menu
 	 */
 	public static function get( $id ) {
 
-		$menu         = new self;
-		$menu->id     = $id;
+		$menu = new self;
+		$menu->id = $id;
 		$menu->loaded = false;
 		return $menu;
 	}
@@ -59,10 +63,10 @@ class Menu {
 	public static function getList() {
 
 		try {
-			$cache    = \Difra\Cache::getInstance();
+			$cache = \Difra\Cache::getInstance();
 			$cacheKey = 'cms_menu_list';
 			if( !$data = $cache->get( $cacheKey ) ) {
-				$db   = \Difra\MySQL::getInstance();
+				$db = \Difra\MySQL::getInstance();
 				$data =
 					$db->fetch( 'SELECT * FROM `cms_menu` ORDER BY `name`' );
 				$cache->put( $cacheKey, $data );
@@ -72,12 +76,12 @@ class Menu {
 			}
 			$res = array();
 			foreach( $data as $menuData ) {
-				$menu              = new self;
-				$menu->id          = $menuData['id'];
-				$menu->name        = $menuData['name'];
+				$menu = new self;
+				$menu->id = $menuData['id'];
+				$menu->name = $menuData['name'];
 				$menu->description = $menuData['description'];
-				$menu->loaded      = true;
-				$res[]             = $menu;
+				$menu->loaded = true;
+				$res[] = $menu;
 			}
 			return $res;
 		} catch( \Exception $e ) {
@@ -106,14 +110,14 @@ class Menu {
 		if( !$this->id ) {
 			$this->save();
 		}
-		$db   = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetchRow( "SELECT * FROM `cms_menu` WHERE `id`='" . $db->escape( $this->id ) . "'" );
 		if( !$data ) {
 			return false;
 		}
-		$this->name        = $data['name'];
+		$this->name = $data['name'];
 		$this->description = $data['description'];
-		$this->loaded      = true;
+		$this->loaded = true;
 		return true;
 	}
 
@@ -125,15 +129,15 @@ class Menu {
 		$db = \Difra\MySQL::getInstance();
 		if( !$this->id ) {
 			$db->query( 'INSERT INTO `cms_menu` SET '
-				    . "`name`='" . $db->escape( $this->name ) . "',"
-				    . "`description`='" . $db->escape( $this->description ) . "'"
+				. "`name`='" . $db->escape( $this->name ) . "',"
+				. "`description`='" . $db->escape( $this->description ) . "'"
 			);
 			$this->id = $db->getLastId();
 		} else {
 			$db->query( 'UPDATE `cms_menu` SET '
-				    . "`name`='" . $db->escape( $this->name ) . "',"
-				    . "`description`='" . $db->escape( $this->description ) . "'"
-				    . " WHERE `id`='" . $db->escape( $this->id ) . "'"
+				. "`name`='" . $db->escape( $this->name ) . "',"
+				. "`description`='" . $db->escape( $this->description ) . "'"
+				. " WHERE `id`='" . $db->escape( $this->id ) . "'"
 			);
 		}
 		self::clearCache();
@@ -144,7 +148,6 @@ class Menu {
 	 * Возвращает данные меню в XML
 	 *
 	 * @param \DOMElement $node
-	 *
 	 * @return bool
 	 */
 	public function getXML( $node ) {
@@ -163,9 +166,9 @@ class Menu {
 	 */
 	public function delete() {
 
-		$this->loaded   = true;
+		$this->loaded = true;
 		$this->modified = false;
-		$db             = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$db->query( "DELETE FROM `cms_menu` WHERE `id`='" . $db->escape( $this->id ) . "'" );
 		self::clearCache();
 	}

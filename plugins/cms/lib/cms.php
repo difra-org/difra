@@ -2,6 +2,11 @@
 
 namespace Difra\Plugins;
 
+/**
+ * Class CMS
+ *
+ * @package Difra\Plugins\CMS
+ */
 class CMS {
 
 	/**
@@ -20,10 +25,7 @@ class CMS {
 	public function run() {
 
 		if( $page = \Difra\Plugins\CMS\Page::find() ) {
-			$action = \Difra\Action::getInstance();
-			$action->className = '\Difra\Plugins\CMS\Controller';
-			$action->method = 'pageAction';
-			$action->parameters = array( $page );
+			\Difra\Envi\Action::setCustomAction( '\Difra\Plugins\CMS\Controller', 'pageAction', array( $page ) );
 		}
 	}
 
@@ -32,22 +34,20 @@ class CMS {
 	 */
 	public function addMenuXML() {
 
-		if( \Difra\Action::getInstance()->controller->view->instance != 'main' ) {
+		if( \Difra\View::$instance != 'main' ) {
 			return;
 		}
-		$action = \Difra\Action::getInstance();
-		$rootNode = $action->controller->root;
+		$rootNode = \Difra\Controller::getInstance()->root;
 		$this->getMenuXML( $rootNode, true );
 	}
 
 	public function getSnippets() {
 
-		if( \Difra\Action::getInstance()->controller->view->instance != 'main' ) {
+		if( \Difra\View::$instance != 'main' ) {
 			return;
 		}
 
-		$action = \Difra\Action::getInstance();
-		$rootNode = $action->controller->root;
+		$rootNode = \Difra\Controller::getInstance()->root;
 		$snippetNode = $rootNode->appendChild( $rootNode->ownerDocument->createElement( 'snippets' ) );
 		\Difra\Plugins\CMS\Snippet::getAllXML( $snippetNode );
 	}
@@ -60,9 +60,8 @@ class CMS {
 	/**
 	 * Возвращает список страниц в XML
 	 *
-	 * @param \DOMElement $node
-	 * @param bool|int    $visible
-	 *
+	 * @param \DOMElement|\DOMNode $node
+	 * @param bool|int             $visible
 	 * @return bool
 	 */
 	public function getListXML( $node, $visible = null ) {
@@ -87,7 +86,6 @@ class CMS {
 	 * Возвращает список меню в XML
 	 *
 	 * @param \DOMNode $node
-	 *
 	 * @return bool
 	 */
 	public function getMenuListXML( $node ) {
@@ -108,7 +106,6 @@ class CMS {
 	 * Возвращает все меню со всеми элементами в XML
 	 *
 	 * @param \DOMElement $node
-	 *
 	 * @return bool
 	 */
 	public function getMenuXML( $node ) {
@@ -135,7 +132,6 @@ class CMS {
 	/**
 	 * @param \DOMNode $node
 	 * @param          $menuId
-	 *
 	 * @return bool
 	 */
 	public function getMenuItemsXML( $node, $menuId ) {
@@ -211,7 +207,7 @@ class CMS {
 		if( empty( $data ) ) {
 			return false;
 		}
-		$host = 'http://' . \Difra\Site::getInstance()->getHostname();
+		$host = 'http://' . \Difra\Envi::getHost();
 		foreach( $data as $t ) {
 			$res[] = array( 'loc' => $host . $t['tag'] );
 		}

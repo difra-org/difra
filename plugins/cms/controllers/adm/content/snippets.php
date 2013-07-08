@@ -2,11 +2,14 @@
 
 use Difra\Plugins\CMS;
 
+/**
+ * Class AdmContentSnippetsController
+ */
 class AdmContentSnippetsController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction() {
@@ -25,11 +28,14 @@ class AdmContentSnippetsController extends \Difra\Controller {
 		$this->root->appendChild( $this->xml->createElement( 'snippetAdd' ) );
 	}
 
+	/**
+	 * @param \Difra\Param\AnyInt $id
+	 * @throws Difra\View\Exception
+	 */
 	public function editAction( \Difra\Param\AnyInt $id ) {
 
 		if( !$snippet = \Difra\Plugins\CMS\Snippet::getById( $id->val() ) ) {
-			$this->view->httpError( 404 );
-			return;
+			throw new \Difra\View\Exception( 404 );
 		}
 		/** @var $editNode \DOMElement */
 		$editNode = $this->root->appendChild( $this->xml->createElement( 'snippetEdit', $snippet->getText() ) );
@@ -38,6 +44,13 @@ class AdmContentSnippetsController extends \Difra\Controller {
 		$editNode->setAttribute( 'description', $snippet->getDescription() );
 	}
 
+	/**
+	 * @param \Difra\Param\AjaxString $name
+	 * @param \Difra\Param\AjaxString $text
+	 * @param \Difra\Param\AjaxInt    $id
+	 * @param \Difra\Param\AjaxString $description
+	 * @throws Difra\Exception
+	 */
 	public function saveAjaxAction( \Difra\Param\AjaxString $name,
 					\Difra\Param\AjaxString $text,
 					\Difra\Param\AjaxInt $id = null,
@@ -56,6 +69,10 @@ class AdmContentSnippetsController extends \Difra\Controller {
 		$this->ajax->redirect( '/adm/content/snippets' );
 	}
 
+	/**
+	 * @param \Difra\Param\AnyInt  $id
+	 * @param \Difra\Param\AjaxInt $confirm
+	 */
 	public function delAjaxAction( \Difra\Param\AnyInt $id, \Difra\Param\AjaxInt $confirm = null ) {
 
 		if( !$snippet = \Difra\Plugins\CMS\Snippet::getById( $id->val() ) ) {
@@ -63,8 +80,8 @@ class AdmContentSnippetsController extends \Difra\Controller {
 		}
 		if( !$confirm ) {
 			$this->ajax->confirm( $this->locale->getXPath( 'cms/adm/snippet/del-confirm1' ) .
-				$snippet->getName() .
-				$this->locale->getXPath( 'cms/adm/snippet/del-confirm2' ) );
+			$snippet->getName() .
+			$this->locale->getXPath( 'cms/adm/snippet/del-confirm2' ) );
 			return;
 		}
 		$snippet->del();

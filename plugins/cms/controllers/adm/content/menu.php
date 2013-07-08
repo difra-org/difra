@@ -2,11 +2,14 @@
 
 use Difra\Plugins\CMS;
 
+/**
+ * Class AdmContentMenuController
+ */
 class AdmContentMenuController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	/**
@@ -115,13 +118,13 @@ class AdmContentMenuController extends \Difra\Controller {
 		if( !$confirm or !$confirm->val() ) {
 			$this->ajax->display(
 				'<span>'
-					. $this->locale->getXPath( 'cms/adm/menuitem/delete-item-confirm' )
-					. '</span>'
-					. '<form action="/adm/content/menu/delete/' . $id . '" method="post" class="ajaxer">'
-					. '<input type="hidden" name="confirm" value="1"/>'
-					. '<input type="submit" value="Да"/>'
-					. '<a href="#" onclick="ajaxer.close(this)" class="button">Нет</a>'
-					. '</form>'
+				. $this->locale->getXPath( 'cms/adm/menuitem/delete-item-confirm' )
+				. '</span>'
+				. '<form action="/adm/content/menu/delete/' . $id . '" method="post" class="ajaxer">'
+				. '<input type="hidden" name="confirm" value="1"/>'
+				. '<input type="submit" value="Да"/>'
+				. '<a href="#" onclick="ajaxer.close(this)" class="button">Нет</a>'
+				. '</form>'
 			);
 		} else {
 			\Difra\Plugins\CMS\Menuitem::get( $id->val() )->delete();
