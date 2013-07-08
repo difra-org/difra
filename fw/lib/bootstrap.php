@@ -12,11 +12,11 @@ if( isset( $_ ) ) {
 
 if( !empty( $_SERVER['REQUEST_METHOD'] ) ) {
 	\Difra\Envi::setMode( 'web' );
-	\Difra\Events::getInstance()->run();
+	\Difra\Events::run();
 } elseif( isset( $_ ) ) {
 	\Difra\Envi::setMode( 'cli' );
-	\Difra\Events::getInstance()->run();
+	\Difra\Events::run();
 } else {
 	\Difra\Envi::setMode( 'cli' );
-	\Difra\Events::getInstance()->run();
+	\Difra\Events::run();
 }

@@ -4,6 +4,11 @@ namespace Difra;
 
 use Difra\Envi\Setup;
 
+/**
+ * Class Locales
+ *
+ * @package Difra
+ */
 class Locales {
 
 	public $locale = 'ru_RU';

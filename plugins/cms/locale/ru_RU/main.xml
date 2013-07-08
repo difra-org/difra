@@ -3,7 +3,6 @@
 	<cms>
 		<adm>
 			<h2>Cтраницы</h2>
-			<newpage>Добавить новую страницу</newpage>
 			<name>Название</name>
 			<uri>URI</uri>
 			<hidden>Скрытая</hidden>
@@ -56,6 +55,7 @@
 				<title>Сниппеты</title>
 				<title-add>Добавление сниппета</title-add>
 				<title-edit>Редактирование сниппета</title-edit>
+				<no-snippet>Нет сниппетов.</no-snippet>
 				<name>Название</name>
 				<description>Описание</description>
 				<text>Текст</text>

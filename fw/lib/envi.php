@@ -15,7 +15,7 @@ class Envi {
 	 */
 
 	/** @var string Режим работы (web, cli, include) */
-	static protected $mode = 'include';
+	protected static $mode = 'include';
 
 	/** Установить режим работы */
 	public static function setMode( $mode ) {
@@ -134,5 +134,36 @@ class Envi {
 
 		self::$customUri = $uri;
 		self::$requestedUri = null;
+	}
+
+	/**
+	 * Environment data getters
+
+	 */
+
+	/**
+	 * Возвращает текущие настройки в XML
+	 *
+	 * @param \DOMElement|\DOMNode $node
+	 */
+	public static function getConfigXML( $node ) {
+
+		$config = self::getConfig();
+		foreach( $config as $k => $v ) {
+			$node->setAttribute( $k, $v );
+		}
+	}
+
+	/**
+	 * Возвращает массив текущих настроек
+	 */
+	public static function getConfig() {
+
+		return array(
+			'locale' => Envi\Setup::getLocale(),
+			'host' => self::getSiteDir(),
+			'hostname' => self::getHost(),
+			'mainhost' => self::getHost( true )
+		);
 	}
 }

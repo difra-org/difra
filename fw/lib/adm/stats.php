@@ -26,7 +26,7 @@ class Stats {
 		// stats/difra
 		/** @var $difraNode \DOMElement */
 		$difraNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'difra' ) );
-		$ver = \Difra\Site::getInstance()->getBuild( true );
+		$ver = \Difra\Envi\Version::getBuild( true );
 		$difraNode->setAttribute( 'version', $ver[0] );
 
 		// stats/plugins

@@ -6,7 +6,7 @@
 			<xsl:value-of select="$locale/cms/adm/h2"/>
 		</h2>
 		<a href="/adm/content/pages/add" class="button">
-			<xsl:value-of select="$locale/cms/adm/newpage"/>
+			<xsl:value-of select="$locale/adm/actions/add"/>
 		</a>
 
 		<xsl:choose>

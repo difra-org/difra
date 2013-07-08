@@ -13,9 +13,13 @@ use Difra\MySQL\Abstracts\None;
  */
 class MySQL {
 
+	/** Автоматическое определение адатера */
 	const INST_AUTO = 'auto';
+	/** MySQLi */
 	const INST_MySQLi = 'MySQLi';
+	/** Заглушка на случай, когда не доступно ни одного адаптера */
 	const INST_NONE = 'none';
+	/** Адаптер по умолчанию */
 	const INST_DEFAULT = self::INST_AUTO;
 
 	private static $adapters = array();

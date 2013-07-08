@@ -22,7 +22,7 @@ class CMS {
 	/**
 	 * Определяет, зашел ли пользователь на страницу с CMS
 	 */
-	public function run() {
+	public static function run() {
 
 		if( $page = \Difra\Plugins\CMS\Page::find() ) {
 			\Difra\Envi\Action::setCustomAction( '\Difra\Plugins\CMS\Controller', 'pageAction', array( $page ) );
@@ -32,16 +32,16 @@ class CMS {
 	/**
 	 * Добавляет в XML менюшки
 	 */
-	public function addMenuXML() {
+	public static function addMenuXML() {
 
 		if( \Difra\View::$instance != 'main' ) {
 			return;
 		}
 		$rootNode = \Difra\Controller::getInstance()->root;
-		$this->getMenuXML( $rootNode, true );
+		self::getMenuXML( $rootNode, true );
 	}
 
-	public function getSnippets() {
+	public static function getSnippets() {
 
 		if( \Difra\View::$instance != 'main' ) {
 			return;
@@ -108,7 +108,7 @@ class CMS {
 	 * @param \DOMElement $node
 	 * @return bool
 	 */
-	public function getMenuXML( $node ) {
+	public static function getMenuXML( $node ) {
 
 		$data = \Difra\Plugins\CMS\Menu::getList();
 		if( empty( $data ) ) {
@@ -119,7 +119,7 @@ class CMS {
 			$menuNode = $node->appendChild( $node->ownerDocument->createElement( 'CMSMenu' ) );
 			$menuNode->setAttribute( 'autorender', '0' );
 			$menu->getXML( $menuNode );
-			$this->getMenuItemsXML( $menuNode, $menu->getId() );
+			self::getMenuItemsXML( $menuNode, $menu->getId() );
 		}
 		return true;
 	}
@@ -134,7 +134,7 @@ class CMS {
 	 * @param          $menuId
 	 * @return bool
 	 */
-	public function getMenuItemsXML( $node, $menuId ) {
+	public static function getMenuItemsXML( $node, $menuId ) {
 
 		$data = \Difra\Plugins\CMS\Menuitem::getList( $menuId );
 		if( empty( $data ) ) {
