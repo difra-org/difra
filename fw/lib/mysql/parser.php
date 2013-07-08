@@ -8,12 +8,11 @@ class Parser {
 	 * Сравнивает структуру SQL-таблиц с состоянием, сохраненным в файлах bin/db.sql и возвращает результат в XML.
 	 *
 	 * @param $node
-	 *
 	 * @return array|bool
 	 */
 	public static function getStatusXML( $node ) {
 
-		$classList     = array();
+		$classList = array();
 		$currentChunks = self::chop( self::getCurrentSQL() );
 		if( !empty( $currentChunks ) ) {
 			foreach( $currentChunks as $chunks ) {
@@ -51,10 +50,10 @@ class Parser {
 	 */
 	public static function getGoalSQL() {
 
-		$paths   = \Difra\Plugger::getInstance()->getPaths();
+		$paths = \Difra\Plugger::getPaths();
 		$paths[] = DIR_FW;
 		$paths[] = DIR_ROOT;
-		$tables  = array();
+		$tables = array();
 		foreach( $paths as $path ) {
 			if( is_readable( $path . '/bin/db.sql' ) ) {
 				$tables[] = file_get_contents( $path . '/bin/db.sql' );
@@ -66,20 +65,19 @@ class Parser {
 	/**
 	 * Получение текущей структуры таблиц в текстовом виде.
 	 * @param bool $asArray
-	 *
 	 * @return string|array
 	 */
 	public static function getCurrentSQL( $asArray = false ) {
 
-		$db     = \Difra\MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$tables = $db->fetch( 'SHOW TABLES' );
 		if( empty( $tables ) ) {
 			return false;
 		}
 		$tablesSQL = array();
 		foreach( $tables as $table ) {
-			$tableName   = array_pop( $table );
-			$t           = $db->fetchRow( 'SHOW CREATE TABLE `' . $db->escape( $tableName ) . '`' );
+			$tableName = array_pop( $table );
+			$t = $db->fetchRow( 'SHOW CREATE TABLE `' . $db->escape( $tableName ) . '`' );
 			$tablesSQL[] = array_pop( $t );
 		}
 		if( $asArray ) {
@@ -95,20 +93,19 @@ class Parser {
 	 * @param string $text                SQL-строка
 	 * @param bool   $tree                Части, заключённые в скобки, добавляются как ветки дерева
 	 * @param bool   $recursive           Внутренний параметр
-	 *
 	 * @return array
 	 */
 	private static function chop( $text, $tree = false, $recursive = false ) {
 
-		$lines  = array();
+		$lines = array();
 		$shards = array();
-		$next   = '';
-		$i      = 0;
-		$size   = mb_strlen( $text );
-		$comm   = $linecomm = false;
-		$str    = '';
+		$next = '';
+		$i = 0;
+		$size = mb_strlen( $text );
+		$comm = $linecomm = false;
+		$str = '';
 		while( $i < $size ) {
-			$a  = mb_substr( $text, $i, 1 );
+			$a = mb_substr( $text, $i, 1 );
 			$a1 = ( $i < $size - 1 ) ? mb_substr( $text, $i + 1, 1 ) : '';
 			$i++;
 
@@ -118,7 +115,7 @@ class Parser {
 				$str .= $a;
 				if( mb_substr( $str, 0, 1 ) == $a and mb_substr( $str, -1 ) != '\\' ) {
 					$shards[] = $str;
-					$str      = '';
+					$str = '';
 				}
 				continue;
 			}
@@ -127,7 +124,7 @@ class Parser {
 				if( $a == '"' or $a == "'" or $a == '`' ) {
 					if( $next !== '' ) {
 						$shards[] = $next;
-						$next     = '';
+						$next = '';
 					}
 					$str = $a;
 					continue;
@@ -147,7 +144,7 @@ class Parser {
 			if( $a == '/' and $a1 == '*' ) {
 				if( $next !== '' ) {
 					$shards[] = $next;
-					$next     = '';
+					$next = '';
 				}
 				$comm = true;
 				$i++;
@@ -164,7 +161,7 @@ class Parser {
 			if( $a == '-' and $a1 == '-' and \Difra\Libs\Strings::isWhitespace( mb_substr( $text, $i + 1, 1 ) ) ) {
 				if( $next !== '' ) {
 					$shards[] = $next;
-					$next     = '';
+					$next = '';
 				}
 				$linecomm = true;
 				$i += 2;
@@ -174,7 +171,7 @@ class Parser {
 			if( $a == '#' ) {
 				if( $next !== '' ) {
 					$shards[] = $next;
-					$next     = '';
+					$next = '';
 				}
 				$linecomm = true;
 				continue;
@@ -183,7 +180,7 @@ class Parser {
 			if( $a == '(' ) {
 				if( $next !== '' ) {
 					$shards[] = $next;
-					$next     = '';
+					$next = '';
 				}
 				$res = self::chop( mb_substr( $text, $i ), $tree, true );
 				if( $tree ) {
@@ -206,7 +203,7 @@ class Parser {
 			if( !$recursive and $a == ';' ) {
 				if( $next !== '' ) {
 					$shards[] = $next;
-					$next     = '';
+					$next = '';
 				}
 				if( !empty( $shards ) ) {
 					$lines[] = $shards;
@@ -215,7 +212,7 @@ class Parser {
 			} elseif( $a == ',' or $a == ';' or $a == '=' ) {
 				if( $next !== '' ) {
 					$shards[] = $next;
-					$next     = '';
+					$next = '';
 				}
 				$shards[] = $a;
 				continue;
@@ -225,7 +222,7 @@ class Parser {
 			} else {
 				if( $next !== '' ) {
 					$shards[] = $next;
-					$next     = '';
+					$next = '';
 					continue;
 				}
 			}
@@ -246,7 +243,6 @@ class Parser {
 	 * Возвращает имя класса для загрузки SQL-команды, порубленной на чанки
 	 *
 	 * @param $chunks
-	 *
 	 * @return string|null
 	 */
 	public static function getChunksClass( $chunks ) {
@@ -262,7 +258,6 @@ class Parser {
 	/**
 	 * Преобразует набор чанков в строку
 	 * @param $array
-	 *
 	 * @return string
 	 */
 	public static function def2string( $array ) {
@@ -272,7 +267,7 @@ class Parser {
 			$keywords = include( dirname( __FILE__ ) . '/keywords.php' );
 		}
 		$res = '';
-		$d   = '';
+		$d = '';
 		foreach( $array as $v ) {
 			$u = mb_strtoupper( $v );
 			if( isset( $keywords[$u] ) ) {

@@ -7,8 +7,16 @@
 
 namespace Difra\Plugins\CMS;
 
+/**
+ * Class Controller
+ *
+ * @package Difra\Plugins\CMS
+ */
 class Controller extends \Difra\Controller {
 
+	/**
+	 * @param \Difra\Param\AnyInt $id
+	 */
 	public function pageAction( \Difra\Param\AnyInt $id ) {
 
 		/** @var $pageNode \DOMElement */

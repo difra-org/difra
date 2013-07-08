@@ -32,7 +32,7 @@ class Stats {
 		// stats/plugins
 		/** @var $pluginsNode \DOMElement */
 		$pluginsNode = $statsNode->appendChild( $node->ownerDocument->createElement( 'plugins' ) );
-		$plugins = \Difra\Plugger::getInstance()->getAllPlugins();
+		$plugins = \Difra\Plugger::getAllPlugins();
 		$enabledPlugins = $disabledPlugins = array();
 		foreach( $plugins as $plugin ) {
 			if( $plugin->isEnabled() ) {

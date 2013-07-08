@@ -2,6 +2,8 @@
 
 namespace Difra\Adm;
 
+use Difra\Envi\Action;
+
 class Localemanage {
 
 	static public function getInstance() {
@@ -23,7 +25,7 @@ class Localemanage {
 	public function getLocalesTree() {
 
 		$instances = $this->getLocalesList();
-		$locales   = array( 'xpaths' => array() );
+		$locales = array( 'xpaths' => array() );
 		foreach( $instances as $instance ) {
 			$xml = new \DOMDocument();
 			$xml->loadXML( $this->getLocale( $instance ) );
@@ -33,6 +35,9 @@ class Localemanage {
 		return $locales;
 	}
 
+	/**
+	 * @param \DOMElement $node
+	 */
 	public function getLocalesTreeXML( $node ) {
 
 		$tree = $this->getLocalesTree();
@@ -41,12 +46,15 @@ class Localemanage {
 			case 'xpaths':
 				break;
 			default:
+				/** @var \DOMElement $localeNode */
 				$localeNode = $node->appendChild( $node->ownerDocument->createElement( 'locale' ) );
 				$localeNode->setAttribute( 'name', $loc );
 				foreach( $data as $module => $data2 ) {
+					/** @var \DOMElement $moduleNode */
 					$moduleNode = $localeNode->appendChild( $localeNode->ownerDocument->createElement( 'module' ) );
 					$moduleNode->setAttribute( 'name', $module );
 					foreach( $data2 as $k => $v ) {
+						/** @var \DOMElement $strNode */
 						$strNode = $moduleNode->appendChild( $moduleNode->ownerDocument->createElement( 'item' ) );
 						$strNode->setAttribute( 'xpath', $k );
 						$strNode->setAttribute( 'missing', 0 );
@@ -83,10 +91,10 @@ class Localemanage {
 	}
 
 	/**
-	 * @param \DOMNode $node
-	 * @param array    $arr
-	 * @param array    $allxpaths
-	 * @param string   $xpath
+	 * @param \DOMElement|\DOMNode $node
+	 * @param array                $arr
+	 * @param array                $allxpaths
+	 * @param string               $xpath
 	 */
 	public function xml2tree( $node, &$arr, &$allxpaths, $xpath ) {
 
@@ -104,8 +112,8 @@ class Localemanage {
 				}
 				$arr[$module][$xpath] = array(
 					'source' => basename( $source ),
-					'text'   => $item->nodeValue,
-					'usage'  => ( $usage = $this->findUsages( $xpath ) )
+					'text' => $item->nodeValue,
+					'usage' => ( $usage = $this->findUsages( $xpath ) )
 				);
 				if( $usage ) {
 					if( !isset( $allxpaths[$module] ) ) {
@@ -145,7 +153,7 @@ class Localemanage {
 		static $templates = null;
 		if( is_null( $templates ) ) {
 			$resourcer = \Difra\Resourcer::getInstance( 'xslt' );
-			$types     = $resourcer->findInstances();
+			$types = $resourcer->findInstances();
 			foreach( $types as $type ) {
 				$templates[$type] = $resourcer->compile( $type );
 			}
@@ -158,7 +166,7 @@ class Localemanage {
 		static $menus = null;
 		if( is_null( $menus ) ) {
 			$resourcer = \Difra\Resourcer::getInstance( 'menu' );
-			$types     = $resourcer->findInstances();
+			$types = $resourcer->findInstances();
 			foreach( $types as $type ) {
 				$menus[$type] = $resourcer->compile( $type );
 			}
@@ -169,7 +177,7 @@ class Localemanage {
 		static $controllers = null;
 		if( is_null( $controllers ) ) {
 			$controllers = array();
-			$dirs        = \Difra\Action::getInstance()->getControllerPaths();
+			$dirs = Action::getControllerPaths();
 			foreach( $dirs as $dir ) {
 				$this->getAllFiles( $controllers, $dir );
 				$this->getAllFiles( $controllers, $dir . '../lib' );

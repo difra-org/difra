@@ -7,6 +7,7 @@ use Difra;
 /**
  * Абстрактный класс для реализаций кэширования
  * Class Common
+ *
  * @package Difra\Cache
  */
 abstract class Common {
@@ -20,7 +21,6 @@ abstract class Common {
 	 * Получить данные из бэкэнда
 	 * @param string $id
 	 * @param bool   $doNotTestCacheValidity
-	 *
 	 * @return mixed|null
 	 */
 	abstract public function realGet( $id, $doNotTestCacheValidity = false );
@@ -42,15 +42,14 @@ abstract class Common {
 	/**
 	 * Проверить наличие записи в кэше
 	 * @deprecated
-	 *
 	 * @param string $id
-	 *
 	 * @return bool
 	 */
 	abstract public function test( $id );
 
 	/**
 	 * Возвращает true, если бэкэнд поддерживает автоматическое удаление старых данных
+	 *
 	 * @return bool
 	 */
 	abstract public function isAutomaticCleaningAvailable();
@@ -68,12 +67,11 @@ abstract class Common {
 	/**
 	 * Получить запись из кэша
 	 * @param $key
-	 *
 	 * @return string|null
 	 */
 	public function get( $key ) {
 
-		$data = $this->realGet( Difra\Site::getInstance()->getHost() . '_' . $key );
+		$data = $this->realGet( Difra\Envi::getSiteDir() . '_' . $key );
 		if( !$data or !isset( $data['expires'] ) or $data['expires'] < time() ) {
 			return null;
 		}
@@ -92,7 +90,7 @@ abstract class Common {
 			'expires' => time() + $ttl,
 			'data' => $data
 		);
-		$this->realPut( Difra\Site::getInstance()->getHost() . '_' . $key, $data, $ttl );
+		$this->realPut( Difra\Envi::getSiteDir() . '_' . $key, $data, $ttl );
 	}
 
 	/**
@@ -101,14 +99,12 @@ abstract class Common {
 	 */
 	public function remove( $key ) {
 
-		$this->realRemove( Difra\Site::getInstance()->getHost() . '_' . $key );
+		$this->realRemove( Difra\Envi::getSiteDir() . '_' . $key );
 	}
 
 	/**
 	 * @deprecated
-	 *
 	 * @param $key
-	 *
 	 * @return null
 	 */
 	public function smartGet( $key ) {
@@ -118,7 +114,6 @@ abstract class Common {
 
 	/**
 	 * @deprecated
-	 *
 	 * @param     $key
 	 * @param     $data
 	 * @param int $ttl
@@ -130,7 +125,6 @@ abstract class Common {
 
 	/**
 	 * @deprecated
-	 *
 	 * @param $key
 	 */
 	public function smartRemove( $key ) {

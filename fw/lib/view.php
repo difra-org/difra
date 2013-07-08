@@ -30,16 +30,6 @@ class View {
 	public static $instance = 'main';
 
 	/**
-	 * Временный метод для обратной совместимости
-	 * @return View\Old
-	 * @deprecated
-	 */
-	public static function getInstance() {
-
-		return View\Old::getInstance();
-	}
-
-	/**
 	 * @param \DOMDocument $xml
 	 * @param bool|string  $specificInstance
 	 * @param bool         $dontEcho
@@ -75,9 +65,7 @@ class View {
 		$xslProc = new \XsltProcessor();
 		$xslProc->importStyleSheet( $xslDom );
 
-		if( $controller = Action::getInstance()->controller ) {
-			$controller->fillXML( $instance );
-		}
+		Controller::getInstance()->fillXML( $instance );
 
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
@@ -90,7 +78,7 @@ class View {
 
 			echo $html;
 			self::$rendered = true;
-			if( Debugger::getInstance()->isEnabled() ) {
+			if( Debugger::isEnabled() ) {
 				echo '<!-- Page rendered in ' . Debugger::getTimer() . ' seconds -->';
 			}
 			if( function_exists( 'fastcgi_finish_request' ) ) {

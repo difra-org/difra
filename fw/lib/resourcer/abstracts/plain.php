@@ -9,9 +9,7 @@ abstract class Plain extends Common {
 
 	/**
 	 * Сборка ресурсов в единую строку
-	 *
 	 * @param $instance
-	 *
 	 * @return string
 	 */
 	protected function processData( $instance ) {
@@ -37,7 +35,7 @@ abstract class Plain extends Common {
 
 	private function getFile( $file ) {
 
-		$debuggerEnabled = \Difra\Debugger::getInstance()->isEnabled();
+		$debuggerEnabled = \Difra\Debugger::isEnabled();
 		if( !$debuggerEnabled and !empty( $file['min'] ) ) {
 			return file_get_contents( $file['min'] );
 		} elseif( !$debuggerEnabled and !empty( $file['raw'] ) ) {

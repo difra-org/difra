@@ -33,10 +33,10 @@ class MySQL {
 			}
 
 			if( MySQLi::isAvailable() ) {
-				Debugger::getInstance()->addLine( "MySQL module: MySQLi" );
+				Debugger::addLine( "MySQL module: MySQLi" );
 				return self::getInstance( $auto = self::INST_MySQLi );
 			} else {
-				Debugger::getInstance()->addLine( "No suitable MySQL module detected" );
+				Debugger::addLine( "No suitable MySQL module detected" );
 				return self::getInstance( $auto = self::INST_NONE );
 			}
 		}

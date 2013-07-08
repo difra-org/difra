@@ -40,19 +40,19 @@ class Cache {
 				return self::getInstance( $_auto );
 			}
 			if( Cache\XCache::isAvailable() ) {
-				Debugger::getInstance()->addLine( "Auto-detected cache type: XCache" );
+				Debugger::addLine( "Auto-detected cache type: XCache" );
 				return self::getInstance( $_auto = self::INST_XCACHE );
 			} elseif( Cache\MemCached::isAvailable() ) {
-				Debugger::getInstance()->addLine( "Auto-detected cache type: MemCached" );
+				Debugger::addLine( "Auto-detected cache type: MemCached" );
 				return self::getInstance( $_auto = self::INST_MEMCACHED );
 			} elseif( Cache\MemCache::isAvailable() ) {
-				Debugger::getInstance()->addLine( "Auto-detected cache type: Memcache" );
+				Debugger::addLine( "Auto-detected cache type: Memcache" );
 				return self::getInstance( $_auto = self::INST_MEMCACHE );
 //			} elseif( Cache\SharedMemory::isAvailable() ) {
 //				Debugger::getInstance()->addLine( "Auto-detected cache type: Shared Memory" );
 //				return self::getInstance( $_auto = self::INST_SHAREDMEM );
 			} else {
-				Debugger::getInstance()->addLine( "No cache detected" );
+				Debugger::addLine( "No cache detected" );
 				return self::getInstance( $_auto = self::INST_NONE );
 			}
 		}

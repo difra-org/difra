@@ -67,18 +67,19 @@ class Events {
 		}
 		$initDone = true;
 
+		self::register( 'core-init', 'Difra\\Envi\\Setup', 'run' );
 		self::register( 'core-init', 'Difra\\Site', 'init' );
-		self::register( 'core-init', 'Difra\\Debugger' );
-		self::register( 'plugins-load', 'Difra\Plugger', 'init' );
+		self::register( 'core-init', 'Difra\\Debugger', 'init' );
+		self::register( 'plugins-load', 'Difra\\Plugger', 'init' );
 		self::register( 'init-done', 'Difra\\Site', 'initDone' );
 		if( Envi::getMode() == 'web' ) {
-			self::register( 'action-find', 'Difra\\Action', 'find' );
-			self::register( 'action-run', 'Difra\\Action', 'run' );
-			self::register( 'render-run', 'Difra\\Action', 'render' );
-			if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
-				/** @noinspection PhpIncludeInspection */
-				include_once( $initPHP );
-			}
+			self::register( 'action-find', 'Difra\\Controller', 'init' );
+			self::register( 'action-run', 'Difra\\Controller', 'run' );
+			self::register( 'render-run', 'Difra\\Controller', 'render' );
+		}
+		if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
+			/** @noinspection PhpIncludeInspection */
+			include_once( $initPHP );
 		}
 	}
 
@@ -141,10 +142,7 @@ class Events {
 		foreach( $handlers as $handler ) {
 			Debugger::addEventLine( 'Handler for ' . $event . ': ' . $handler['class'] . '->' . ( $handler['method']
 				? $handler['method'] : 'getInstance' ) . ' started' );
-			$inst = call_user_func( array( $handler['class'], 'getInstance' ) );
-			if( $handler['method'] ) {
-				$inst->{$handler['method']}();
-			}
+			call_user_func( array( $handler['class'], $handler['method'] ) );
 		}
 	}
 }

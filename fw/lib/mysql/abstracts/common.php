@@ -118,7 +118,7 @@ abstract class Common {
 			$this->connect();
 			$this->realQuery( $query );
 			$this->queries++;
-			Debugger::getInstance()->addDBLine( 'MySQL', $query );
+			Debugger::addDBLine( 'MySQL', $query );
 		} else {
 			try {
 				$this->transactionStart();
@@ -145,7 +145,7 @@ abstract class Common {
 	public function fetch( $query, $replica = false ) {
 
 		$this->connect();
-		Debugger::getInstance()->addDBLine( 'MySQL', $query );
+		Debugger::addDBLine( 'MySQL', $query );
 		$this->queries++;
 		return $this->realFetch( $query, $replica );
 	}

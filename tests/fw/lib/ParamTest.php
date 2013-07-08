@@ -21,7 +21,6 @@ class ParamTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( \Difra\Param\AjaxInt::verify( '-4.6' ) );
 		$this->assertFalse( \Difra\Param\AjaxInt::verify( array( 'abc' ) ) );
 		$this->assertFalse( \Difra\Param\AjaxInt::verify( array( 10 ) ) );
-		$this->assertFalse( \Difra\Param\AjaxInt::verify( \Difra\Action::getInstance() ) );
 
 		$i = new \Difra\Param\AjaxInt( '-10' );
 		$this->assertEquals( $i->val(), -10 );
@@ -48,7 +47,6 @@ class ParamTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( \Difra\Param\AjaxString::verify( '-4.6' ) );
 		$this->assertFalse( \Difra\Param\AjaxString::verify( array( 'abc' ) ) );
 		$this->assertFalse( \Difra\Param\AjaxString::verify( array( 10 ) ) );
-		$this->assertFalse( \Difra\Param\AjaxString::verify( \Difra\Action::getInstance() ) );
 
 		$i = new \Difra\Param\AjaxString( '-10a' );
 		$this->assertEquals( $i->val(), '-10a' );
@@ -77,7 +75,6 @@ class ParamTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( \Difra\Param\AjaxFloat::verify( '-4,6' ) );
 		$this->assertFalse( \Difra\Param\AjaxFloat::verify( array( 'abc' ) ) );
 		$this->assertFalse( \Difra\Param\AjaxFloat::verify( array( 10 ) ) );
-		$this->assertFalse( \Difra\Param\AjaxFloat::verify( \Difra\Action::getInstance() ) );
 
 		$i = new \Difra\Param\AjaxFloat( -10.3 );
 		$this->assertEquals( $i->val(), -10.3 );
@@ -106,7 +103,6 @@ class ParamTest extends PHPUnit_Framework_TestCase {
 		$this->assertTrue( \Difra\Param\AjaxData::verify( '-4,6' ) );
 		$this->assertTrue( \Difra\Param\AjaxData::verify( array( 'abc' ) ) );
 		$this->assertTrue( \Difra\Param\AjaxData::verify( array( 10 ) ) );
-		$this->assertTrue( \Difra\Param\AjaxData::verify( \Difra\Action::getInstance() ) );
 
 		$i = new \Difra\Param\AjaxData( array( '1', 2, 3 ) );
 		$this->assertEquals( $i->val(), array( '1', 2, 3 ) );
@@ -119,7 +115,6 @@ class ParamTest extends PHPUnit_Framework_TestCase {
 		$this->assertFalse( \Difra\Param\AjaxEmail::verify( 0 ) );
 		$this->assertFalse( \Difra\Param\AjaxEmail::verify( null ) );
 		$this->assertFalse( \Difra\Param\AjaxEmail::verify( array() ) );
-		$this->assertFalse( \Difra\Param\AjaxEmail::verify( \Difra\Action::getInstance() ) );
 		$this->assertFalse( \Difra\Param\AjaxEmail::verify( 'user@jam' ) );
 		$this->assertTrue( \Difra\Param\AjaxEmail::verify( 'user@mail.jam' ) );
 		$this->assertTrue( \Difra\Param\AjaxEmail::verify( 'user@a-jam.ru' ) );

@@ -9,7 +9,7 @@ class AdmDevelopmentConfigController extends \Difra\Controller {
 
 	public function indexAction() {
 
-		if( !\Difra\Debugger::getInstance()->isEnabled() ) {
+		if( !\Difra\Debugger::isEnabled() ) {
 			throw new \Difra\View\Exception( 404 );
 		}
 		$config = \Difra\Config::getInstance();

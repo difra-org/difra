@@ -15,6 +15,7 @@
 
 // размеры шрифтов
 
+@font-smallest: 10px;
 @font-small: 13px;
 @font-medium: 14px;
 @font-large: 15px;
@@ -107,12 +108,13 @@ input[type='submit'],
 	background-color: @color-darkgrey;
 	color: @color-white;
 	border: none;
-	border-radius: 11px;
-	padding: 2px 8px 3px;
+	border-radius: 14px;
+	padding: 4px 8px 5px;
 	margin: 8px 2px 2px 0;
 	width: auto;
 	text-decoration: none;
 	cursor: pointer;
+	font-size: 13px;
 	&:hover, &:visited, &:active {
 		color: @color-white;
 	}
@@ -143,6 +145,26 @@ a {
 		}
 	}
 }
+
+textarea {
+	width: 100%;
+	margin: 0;
+	.border-box();
+}
+
+.full-width {
+	width: 100%;
+	.border-box();
+}
+
+.form-buttons {
+	margin: 25px 0 0;
+}
+/*
+a {
+	color: @color-links;
+	&:hover {
+	*/
 
 // левый столбец
 
@@ -190,6 +212,9 @@ a {
 			}
 			&#menu_content > span:before {
 				content: "?";
+			}
+			&#menu_database > span:before {
+				content: "Y";
 			}
 			&#menu_catalog > span:before {
 				content: "i";
@@ -333,6 +358,10 @@ a {
 
 .small {
 	font-size: @font-small;
+}
+
+.smallest {
+	font-size: @font-smallest;
 }
 
 .error {

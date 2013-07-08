@@ -2,21 +2,16 @@
 
 namespace Difra;
 
+use Difra\Envi\Action;
+
 /**
  * Реализация абстрактного контроллера
  * Class Controller
  *
  * @package Difra
  */
-abstract class Controller {
+class Controller {
 
-	/**
-	 * @var \Difra\View
-	 * @deprecated
-	 */
-	public $view;
-	/** @var \Difra\Action */
-	protected $action;
 	/** @var \Difra\Locales */
 	public $locale;
 	/** @var \Difra\Ajax */
@@ -35,7 +30,7 @@ abstract class Controller {
 
 	/** @var bool|int Кэширование страницы на стороне веб-сервера (в секундах) */
 	public $cache = false;
-	// Значение по умолчанию
+	/** Значение по умолчанию */
 	const DEFAULT_CACHE = 60;
 
 	/** @var \DOMDocument */
@@ -45,15 +40,30 @@ abstract class Controller {
 	/** @var \DOMElement */
 	public $realRoot;
 
+	protected static $parameters = array();
+
+	/**
+	 * Вызов фабрики
+	 * @return Controller|null
+	 */
+	public static function getInstance() {
+
+		static $instance = null;
+		if( is_null( $instance ) ) {
+			$instance = Action::getController();
+		}
+		return $instance;
+	}
+
 	/**
 	 * Конструктор
 	 */
-	final public function __construct() {
+	final public function __construct( $parameters = array() ) {
+
+		self::$parameters = $parameters;
 
 		// загрузка основных классов
-		$this->view = View\Old::getInstance();
 		$this->locale = Locales::getInstance();
-		$this->action = Action::getInstance();
 		$this->auth = Auth::getInstance();
 		$this->ajax = Ajax::getInstance();
 
@@ -67,54 +77,65 @@ abstract class Controller {
 	}
 
 	/**
+	 * Предварительная инициализация.
+	 * Имеет смысл, чтобы не выполнять дополнительные действия на 404 страницах.
+	 */
+	final static public function init() {
+
+		self::getInstance();
+	}
+
+	/**
 	 * Выбирает подходящий вариант action'а и запускает его
 	 */
-	final public function run() {
+	final static public function run() {
 
-		$this->chooseAction();
-		if( !$this->method ) {
+		$controller = self::getInstance();
+		$controller->chooseAction();
+		if( !$controller->method ) {
 			throw new Exception( 'Controller failed to choose action method' );
 		}
-		Debugger::addLine( "Selected method {$this->action->method}" );
-		$this->callAction();
+		Debugger::addLine( 'Selected method ' . Action::$method );
+		$controller->callAction();
 	}
 
 	/**
 	 * Выводит ответ в зависимости от типа запроса
 	 */
-	final public function render() {
+	final static public function render() {
 
-		if( !empty( $this->action->parameters ) ) {
-			$this->putExpires( true );
+		$controller = self::getInstance();
+		if( !empty( self::$parameters ) ) {
+			$controller->putExpires( true );
 			throw new \Difra\View\Exception( 404 );
-		} elseif( !is_null( $this->output ) ) {
-			$this->putExpires();
-			header( 'Content-Type: ' . $this->outputType . '; charset="utf-8"' );
-			echo $this->output;
+		} elseif( !is_null( $controller->output ) ) {
+			$controller->putExpires();
+			header( 'Content-Type: ' . $controller->outputType . '; charset="utf-8"' );
+			echo $controller->output;
 			View::$rendered = true;
-		} elseif( Debugger::getInstance()->isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
+		} elseif( Debugger::isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
 			if( $_GET['xml'] == '2' ) {
-				$this->fillXML();
+				$controller->fillXML();
 			}
 			header( 'Content-Type: text/xml; charset="utf-8"' );
-			$this->xml->formatOutput = true;
-			$this->xml->encoding = 'utf-8';
-			echo rawurldecode( $this->xml->saveXML() );
+			$controller->xml->formatOutput = true;
+			$controller->xml->encoding = 'utf-8';
+			echo rawurldecode( $controller->xml->saveXML() );
 			View::$rendered = true;
-		} elseif( !View::$rendered and $this->ajax->isAjax ) {
-			$this->putExpires();
+		} elseif( !View::$rendered and $controller->ajax->isAjax ) {
+			$controller->putExpires();
 			header( 'Content-type: text/plain' ); // тут нужен application/json, но тогда опера предлагает сохранить файл
-			echo( $this->ajax->getResponse() );
+			echo( $controller->ajax->getResponse() );
 			View::$rendered = true;
 		} elseif( !View::$rendered ) {
-			$this->putExpires();
+			$controller->putExpires();
 			try {
-				View::render( $this->xml );
+				View::render( $controller->xml );
 			} catch( Exception $ex ) {
-				if( !Debugger::getInstance()->isConsoleEnabled() ) {
+				if( !Debugger::isConsoleEnabled() ) {
 					throw new View\Exception( 500 );
 				} else {
-					echo Debugger::getInstance()->debugHTML( true );
+					echo Debugger::debugHTML( true );
 					die();
 				}
 			}
@@ -133,18 +154,18 @@ abstract class Controller {
 	private function chooseAction() {
 
 		$method = null;
-		if( $this->ajax->isAjax and $this->action->methodAjaxAuth and $this->auth->logged ) {
+		if( $this->ajax->isAjax and Action::$methodAjaxAuth and $this->auth->logged ) {
 			$this->isAjaxAction = true;
 			$method = 'methodAjaxAuth';
-		} elseif( $this->ajax->isAjax and $this->action->methodAjax ) {
+		} elseif( $this->ajax->isAjax and Action::$methodAjax ) {
 			$this->isAjaxAction = true;
 			$method = 'methodAjax';
-		} elseif( $this->action->methodAuth and $this->auth->logged ) {
+		} elseif( Action::$methodAuth and $this->auth->logged ) {
 			$method = 'methodAuth';
-		} elseif( $this->action->method ) {
+		} elseif( Action::$method ) {
 			$method = 'method';
-		} elseif( $this->action->methodAuth or $this->action->methodAjaxAuth ) {
-			$this->action->parameters = array();
+		} elseif( Action::$methodAuth or Action::$methodAjaxAuth ) {
+			self::$parameters = array();
 			throw new View\Exception( 401 );
 		} else {
 			throw new View\Exception( 404 );
@@ -158,7 +179,7 @@ abstract class Controller {
 	private function callAction() {
 
 		$method = $this->method;
-		$actionMethod = $this->action->$method;
+		$actionMethod = Action::${$method};
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
 
@@ -188,13 +209,13 @@ abstract class Controller {
 				// параметр из query — нужно соблюдать очередность параметров
 				if( call_user_func( array( "$class", "isNamed" ) ) ) {
 					// именованный параметр
-					if( sizeof( $this->action->parameters ) >= 2 and $this->action->parameters[0] == $name ) {
-						array_shift( $this->action->parameters );
-						if( !call_user_func( array( "$class", 'verify' ), $this->action->parameters[0] ) ) {
+					if( sizeof( self::$parameters ) >= 2 and self::$parameters[0] == $name ) {
+						array_shift( self::$parameters );
+						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
 							throw new View\Exception( 404 );
 						}
 						$callParameters[$parameter->getName()] =
-							new $class( array_shift( $this->action->parameters ) );
+							new $class( array_shift( self::$parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						throw new View\Exception( 404 );
 					} else {
@@ -202,14 +223,14 @@ abstract class Controller {
 					}
 					array_shift( $namedParameters );
 				} else {
-					if( !empty( $this->action->parameters ) and ( !$parameter->isOptional() or
+					if( !empty( self::$parameters ) and ( !$parameter->isOptional() or
 							empty( $namedParameters ) or
-							$this->action->parameters[0] != $namedParameters[0] )
+							self::$parameters[0] != $namedParameters[0] )
 					) {
-						if( !call_user_func( array( "$class", 'verify' ), $this->action->parameters[0] ) ) {
+						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
 							throw new View\Exception( 404 );
 						}
-						$callParameters[$name] = new $class( array_shift( $this->action->parameters ) );
+						$callParameters[$name] = new $class( array_shift( self::$parameters ) );
 					} elseif( !$parameter->isOptional() ) {
 						throw new View\Exception( 404 );
 					} else {
@@ -248,12 +269,10 @@ abstract class Controller {
 
 		Debugger::addLine( 'Filling XML data for render: Started' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
-		$this->realRoot->setAttribute( 'controller', $this->action->className );
-		$this->realRoot->setAttribute( 'action', $this->action->method );
-		$this->realRoot->setAttribute( 'host', Site::getInstance()->getHost() );
-		$this->realRoot->setAttribute( 'hostname', $host = Envi::getHost() );
+		$this->realRoot->setAttribute( 'site', Envi::getSiteDir() );
+		$this->realRoot->setAttribute( 'host', $host = Envi::getHost() );
 		$this->realRoot->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
-		$this->realRoot->setAttribute( 'instance', $instance ? $instance : $this->view->instance );
+		$this->realRoot->setAttribute( 'instance', $instance ? $instance : View::$instance );
 		if( $host != $mainhost ) {
 			$this->realRoot->setAttribute( 'urlprefix', 'http://' . $mainhost );
 		}
@@ -278,12 +297,12 @@ abstract class Controller {
 			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
 		}
 		// debug flag
-		$this->realRoot->setAttribute( 'debug', Debugger::getInstance()->isEnabled() ? '1' : '0' );
+		$this->realRoot->setAttribute( 'debug', Debugger::isEnabled() ? '1' : '0' );
 		// config values (for js variable)
 		$configNode = $this->realRoot->appendChild( $this->xml->createElement( 'config' ) );
 		Site::getInstance()->getConfigXML( $configNode );
 		// menu
-		if( $menuResource = Resourcer::getInstance( 'menu' )->compile( $this->view->instance ) ) {
+		if( $menuResource = Resourcer::getInstance( 'menu' )->compile( View::$instance ) ) {
 			$menuXML = new \DOMDocument();
 			$menuXML->loadXML( $menuResource );
 			$this->realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
@@ -300,7 +319,7 @@ abstract class Controller {
 		}
 		$this->realRoot->setAttribute( 'jsConfig', $confJS );
 		Debugger::addLine( 'Filling XML data for render: Done' );
-		Debugger::getInstance()->debugXML( $this->realRoot );
+		Debugger::debugXML( $this->realRoot );
 	}
 
 	/**

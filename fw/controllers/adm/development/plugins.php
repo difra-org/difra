@@ -10,12 +10,12 @@ class AdmDevelopmentPluginsController extends \Difra\Controller {
 	public function indexAction() {
 
 		$pluginsNode = $this->root->appendChild( $this->xml->createElement( 'plugins' ) );
-		\Difra\Plugger::getInstance()->getPluginsXML( $pluginsNode );
+		\Difra\Plugger::getPluginsXML( $pluginsNode );
 	}
 
 	public function enableAjaxAction( \Difra\Param\AnyString $name ) {
 
-		if( !\Difra\Plugger::getInstance()->turnOn( $name->val() ) ) {
+		if( !\Difra\Plugger::turnOn( $name->val() ) ) {
 			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'adm/plugins/failed' ) );
 		}
 		$this->ajax->refresh();
@@ -23,7 +23,7 @@ class AdmDevelopmentPluginsController extends \Difra\Controller {
 
 	public function disableAjaxAction( \Difra\Param\AnyString $name ) {
 
-		if( !\Difra\Plugger::getInstance()->turnOff( $name->val() ) ) {
+		if( !\Difra\Plugger::turnOff( $name->val() ) ) {
 			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'adm/plugins/failed' ) );
 		}
 		$this->ajax->refresh();
