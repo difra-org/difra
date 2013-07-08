@@ -291,4 +291,19 @@ class Action {
 
 		return self::$className;
 	}
+
+	/**
+	 * Позволяет задать контроллер и экшен вручную
+	 * (например, из плагина CMS)
+	 *
+	 * @param string $controllerClass
+	 * @param string $actionMethod
+	 * @param array  $parameters
+	 */
+	public static function setCustomAction( $controllerClass, $actionMethod, $parameters = array() ) {
+
+		self::$className = $controllerClass;
+		self::$method = $actionMethod;
+		self::$parameters = $parameters;
+	}
 }
