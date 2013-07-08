@@ -30,7 +30,7 @@ class Controller {
 
 	/** @var bool|int Кэширование страницы на стороне веб-сервера (в секундах) */
 	public $cache = false;
-	// Значение по умолчанию
+	/** Значение по умолчанию */
 	const DEFAULT_CACHE = 60;
 
 	/** @var \DOMDocument */
@@ -59,6 +59,8 @@ class Controller {
 	 * Конструктор
 	 */
 	final public function __construct( $parameters = array() ) {
+
+		self::$parameters = $parameters;
 
 		// загрузка основных классов
 		$this->locale = Locales::getInstance();
