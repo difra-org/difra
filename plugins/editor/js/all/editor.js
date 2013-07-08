@@ -79,18 +79,19 @@ editor.init = function() {
 	CKEDITOR.plugins.basePath = '/ck/plugins/';
 
 	CKEDITOR.on( 'dialogDefinition', function( ev ) {
+		//noinspection SwitchStatementWithNoDefaultBranchJS
 		switch( ev.data.name ) {
-		case 'link':
-			ev.data.definition.removeContents( 'advanced' );
-			ev.data.definition.removeContents( 'target' );
-			break;
-		case 'image':
-			ev.data.definition.removeContents( 'advanced' );
-			ev.data.definition.removeContents( 'Link' );
-			break;
-		case 'flash':
-			ev.data.definition.removeContents( 'advanced' );
-			ev.data.definition.removeContents( 'Upload' );
+			case 'link':
+				ev.data.definition.removeContents( 'advanced' );
+				ev.data.definition.removeContents( 'target' );
+				break;
+			case 'image':
+				ev.data.definition.removeContents( 'advanced' );
+				ev.data.definition.removeContents( 'Link' );
+				break;
+			case 'flash':
+				ev.data.definition.removeContents( 'advanced' );
+				ev.data.definition.removeContents( 'Upload' );
 		}
 	} );
 
@@ -104,7 +105,6 @@ editor.inject = function() {
 			editor.config.bodyClass = $( this ).attr( 'bodyClass' );
 			editor.config.toolbar = $( this ).attr( 'editor' );
 
-			/* TODO: в блогах переделать fileupload на обычную загрузку через Editor */
 			if( $( this ).attr( 'fileupload' ) ) {
 				editor.config['filebrowserUploadUrl'] = '/uploadimage/';
 			}
@@ -119,6 +119,7 @@ editor.clean = function() {
 	if( typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances !== 'undefined' ) {
 		for( var instance in CKEDITOR.instances ) {
 			try {
+				//noinspection JSUnfilteredForInLoop
 				CKEDITOR.instances[instance].destroy( true );
 			} catch( err ) {
 				console.warn( 'Error: ', err.message );
@@ -131,6 +132,7 @@ editor.flush = function() {
 
 	if( typeof CKEDITOR !== 'undefined' && typeof CKEDITOR.instances !== 'undefined' ) {
 		for( var instance in CKEDITOR.instances ) {
+			//noinspection JSUnfilteredForInLoop
 			CKEDITOR.instances[instance].updateElement();
 		}
 	}
