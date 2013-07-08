@@ -84,18 +84,22 @@ h6 {
 }
 
 table {
+	border-collapse: collapse;
 	margin: 10px 0;
 	width: 100%;
 	border: 1px solid @color-lightgrey;
 	.border-radius( 2px );
 	tr {
+		th {
+			height: 26px;
+		}
 		th, td {
 			text-align: left;
 			border-bottom: 1px dotted @color-lightgrey;
 			padding: 8px 16px;
 		}
 		&:last-child {
-			th, td {
+			td {
 				border-bottom: none;
 			}
 		}
