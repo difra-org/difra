@@ -9,21 +9,30 @@
 				<xsl:value-of select="$locale/adm/actions/add"/>
 			</a>
 		</xsl:if>
-		<table>
-			<tr>
-				<xsl:if test="/root/@debug=1">
-					<th>
-						<xsl:value-of select="$locale/cms/adm/snippet/name"/>
-					</th>
-				</xsl:if>
-				<th>
-					<xsl:value-of select="$locale/cms/adm/snippet/description"/>
-				</th>
-				<th>
-				</th>
-			</tr>
-			<xsl:apply-templates select="snippet" mode="adm"/>
-		</table>
+		<xsl:choose>
+			<xsl:when test="snippet">
+				<table>
+					<tr>
+						<xsl:if test="/root/@debug=1">
+							<th>
+								<xsl:value-of select="$locale/cms/adm/snippet/name"/>
+							</th>
+						</xsl:if>
+						<th>
+							<xsl:value-of select="$locale/cms/adm/snippet/description"/>
+						</th>
+						<th>
+						</th>
+					</tr>
+					<xsl:apply-templates select="snippet" mode="adm"/>
+				</table>
+			</xsl:when>
+			<xsl:otherwise>
+				<span class="message">
+					<xsl:value-of select="$locale/cms/adm/snippet/no-snippet"/>
+				</span>
+			</xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 	<xsl:template match="snippet" mode="adm">
