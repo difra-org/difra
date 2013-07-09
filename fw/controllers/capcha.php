@@ -1,7 +1,11 @@
 <?php
 
+/**
+ * Class CapchaController
+ */
 class CapchaController extends Difra\Controller {
 
+	/** View capcha */
 	public function indexAction() {
 
 		$Capcha = Difra\Libs\Capcha::getInstance();

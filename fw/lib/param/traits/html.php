@@ -2,6 +2,11 @@
 
 namespace Difra\Param\Traits;
 
+/**
+ * Class HTML
+ *
+ * @package Difra\Param\Traits
+ */
 trait HTML {
 
 	private $savedImages = false;
@@ -10,7 +15,6 @@ trait HTML {
 	/**
 	 * Проверка значения
 	 * @param string $value
-	 *
 	 * @return string
 	 */
 	public static function verify( $value ) {
@@ -33,7 +37,6 @@ trait HTML {
 	 * Получение «причёсанного» html
 	 *
 	 * @param bool $quiet
-	 *
 	 * @return string
 	 */
 	public function val( $quiet = false ) {
@@ -49,6 +52,7 @@ trait HTML {
 
 	/**
 	 * Получение html в оригинальном виде
+	 *
 	 * @return string
 	 */
 	function raw() {

@@ -130,6 +130,7 @@ abstract class Plugin {
 	 */
 	public function getObjects() {
 
+		/** @noinspection PhpUndefinedFieldInspection */
 		return property_exists( $this, 'objects' ) ? $this->objects : null;
 	}
 

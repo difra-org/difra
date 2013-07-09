@@ -2,6 +2,12 @@
 
 namespace Difra\MySQL\SQL;
 
+/**
+ * Class Common
+ *
+ * @package Difra\MySQL\SQL
+ * @deprecated
+ */
 abstract class Common {
 
 	/** @var self[] Если объекты в базе именованные (например, таблицы), то добавляем их в этот массив в виде: имя => объект */
@@ -10,7 +16,6 @@ abstract class Common {
 	/**
 	 * Создание объекта из чанков
 	 * @param array $chunks
-	 *
 	 * @return mixed
 	 */
 	//abstract public static function create( $chunks = null );
@@ -27,7 +32,6 @@ abstract class Common {
 	/**
 	 * Возвращает имя из чанка (при необходимости убирает `)
 	 * @param $name
-	 *
 	 * @return string
 	 */
 	public static function chunk2name( $name ) {

@@ -4,6 +4,11 @@ namespace Difra\Adm;
 
 use Difra\Exception;
 
+/**
+ * Class Stats
+ *
+ * @package Difra\Adm
+ */
 class Stats {
 
 	/**

@@ -49,10 +49,9 @@ class Events {
 		}
 
 		self::register( 'core-init', 'Difra\\Envi\\Setup', 'run' );
-		self::register( 'core-init', 'Difra\\Site', 'init' );
+		self::register( 'core-init', 'Difra\\Envi\\Session', 'init' );
 		self::register( 'core-init', 'Difra\\Debugger', 'init' );
 		self::register( 'plugins-load', 'Difra\\Plugger', 'init' );
-		self::register( 'init-done', 'Difra\\Site', 'initDone' );
 		if( Envi::getMode() == 'web' ) {
 			self::register( 'action-find', 'Difra\\Controller', 'init' );
 			self::register( 'action-run', 'Difra\\Controller', 'run' );
@@ -73,6 +72,7 @@ class Events {
 	 */
 	public static function register( $type, $class, $method = false ) {
 
+		self::init();
 		if( !in_array( $type, self::$types ) ) {
 			throw new Exception( 'Invalid event type: ' . $type );
 		}
@@ -103,7 +103,7 @@ class Events {
 	 * Вызывает обрабочики указанного события
 	 * @param $event
 	 */
-	public static function start( $event ) {
+	private static function start( $event ) {
 
 		$handlers = self::$events[$event];
 		if( empty( $handlers ) ) {

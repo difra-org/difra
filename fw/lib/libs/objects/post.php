@@ -2,6 +2,12 @@
 
 namespace Difra\Libs\Objects;
 
+/**
+ * Class Post
+ *
+ * @package Difra\Libs\Objects
+ * @deprecated
+ */
 class Post {
 
 	public $title = '';

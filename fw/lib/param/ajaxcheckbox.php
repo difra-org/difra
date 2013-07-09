@@ -2,6 +2,11 @@
 
 namespace Difra\Param;
 
+/**
+ * Class AjaxCheckbox
+ *
+ * @package Difra\Param
+ */
 class AjaxCheckbox extends Common {
 
 	const source = 'ajax';

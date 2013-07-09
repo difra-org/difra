@@ -21,9 +21,10 @@ abstract class Common {
 	/** @var int */
 	public $queries = 0;
 
-	//
-	// Абстрактные методы
-	//
+	/**
+	 * Абстрактные методы
+	 *
+	 */
 
 	/**
 	 * Инициализация соединения с базой
@@ -80,9 +81,10 @@ abstract class Common {
 	 */
 	protected function transactionCancel() { }
 
-	//
-	// Функционал
-	//
+	/**
+	 * Функционал
+	 *
+	 */
 
 	/**
 	 * Устанавливает соединение с базой
@@ -128,7 +130,7 @@ abstract class Common {
 				$this->transactionCommit();
 			} catch( Exception $ex ) {
 				$this->transactionCancel();
-				if( !\Difra\Site::isInit() ) {
+				if( self::$errorReporting ) {
 					throw new Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
 				}
 			}
@@ -346,5 +348,22 @@ abstract class Common {
 
 		static $nd = null;
 		return $nd ? $nd : $nd = extension_loaded( 'mysqlnd' );
+	}
+
+	/**
+	 * Error handling
+	 * TODO: activate it after init because Difra should work without MySQL
+
+	 */
+
+	/** @var bool Error reporting state */
+	public static $errorReporting = true;
+
+	/**
+	 * Enable exception throwing on errors
+	 */
+	public static function enableErrorReporting() {
+
+		self::$errorReporting = true;
 	}
 }

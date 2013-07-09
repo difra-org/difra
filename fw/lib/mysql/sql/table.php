@@ -2,6 +2,12 @@
 
 namespace Difra\MySQL\SQL;
 
+/**
+ * Class Table
+ *
+ * @package Difra\MySQL\SQL
+ * @deprecated
+ */
 class Table extends Common {
 
 	private $name = '';
@@ -11,7 +17,6 @@ class Table extends Common {
 	/**
 	 * Создаёт новый объект таблицы
 	 * @param array $chunks
-	 *
 	 * @return Table
 	 */
 	public static function create( $chunks = null ) {
@@ -26,7 +31,6 @@ class Table extends Common {
 	/**
 	 * Возвращает объект
 	 * @param $name
-	 *
 	 * @return null
 	 */
 	public static function getByName( $name ) {
@@ -38,7 +42,6 @@ class Table extends Common {
 	 * Загружает структуру таблиц из чанков
 	 * @param array $chunks
 	 * @param bool  $goal
-	 *
 	 * @throws \Difra\Exception
 	 */
 	public function loadChunks( $chunks, $goal = true ) {
@@ -65,7 +68,6 @@ class Table extends Common {
 	 * Устанавливает Goal таблицы, имя которой содержится в чанках, либо создаёт новый объект таблицы
 	 *
 	 * @param $chunks
-	 *
 	 * @throws \Difra\Exception
 	 */
 	public static function autoGoal( $chunks ) {
@@ -85,7 +87,6 @@ class Table extends Common {
 	/**
 	 * Получает определения столбцов и ключей из чанков
 	 * @param $chunks
-	 *
 	 * @return array
 	 * @throws \Difra\Exception
 	 */

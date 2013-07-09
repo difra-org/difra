@@ -165,5 +165,17 @@ class EnviUserAgentTest extends PHPUnit_Framework_TestCase {
 			     'os' => 'Macintosh',
 			     'engine' => 'Presto'
 			) );
+
+		// TODO: решить что-то с определением дефолтного андроидовского браузера
+		/*
+		\Difra\Envi\UserAgent::setUAString( 'Mozilla/5.0 (Linux; U; Android 4.1.2; ru-ru; LG-E435 Build/JZO56K) AppleWebKit/534.30 (KHTML, like Gecko) Version/4.0 Mobile Safari/534.30' );
+		$this->assertEquals( \Difra\Envi\UserAgent::getUserAgent(),
+			array(
+			     'agent' => false,
+			     'version' => '4.0',
+			     'os' => 'Android',
+			     'engine' => 'WebKit'
+			) );
+		*/
 	}
 }

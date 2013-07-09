@@ -41,9 +41,9 @@ class Exception extends \Exception {
 			if( $host != $mainHost ) {
 				$root->setAttribute( 'urlprefix', 'http://' . $mainHost );
 			}
-			$root->setAttribute( 'build', \Difra\Site::getInstance()->getBuild() );
+			$root->setAttribute( 'build', \Difra\Envi\Version::getBuild() );
 			$configNode = $root->appendChild( $xml->createElement( 'config' ) );
-			\Difra\Site::getInstance()->getConfigXML( $configNode );
+			Envi::getConfigXML( $configNode );
 			\Difra\View::render( $xml, 'error_' . $err );
 		} catch( \Difra\Exception $ex ) {
 			echo( <<<ErrorPage

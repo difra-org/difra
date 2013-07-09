@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class AdmDevelopmentPluginsController
+ */
 class AdmDevelopmentPluginsController extends \Difra\Controller {
 
 	public function dispatch() {
@@ -13,6 +16,11 @@ class AdmDevelopmentPluginsController extends \Difra\Controller {
 		\Difra\Plugger::getPluginsXML( $pluginsNode );
 	}
 
+	/**
+	 * Enable plugin
+	 *
+	 * @param \Difra\Param\AnyString $name
+	 */
 	public function enableAjaxAction( \Difra\Param\AnyString $name ) {
 
 		if( !\Difra\Plugger::turnOn( $name->val() ) ) {
@@ -21,6 +29,11 @@ class AdmDevelopmentPluginsController extends \Difra\Controller {
 		$this->ajax->refresh();
 	}
 
+	/**
+	 * Disable plugin
+	 *
+	 * @param \Difra\Param\AnyString $name
+	 */
 	public function disableAjaxAction( \Difra\Param\AnyString $name ) {
 
 		if( !\Difra\Plugger::turnOff( $name->val() ) ) {

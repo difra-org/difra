@@ -4,6 +4,11 @@ namespace Difra\Resourcer\Abstracts;
 
 use Difra;
 
+/**
+ * Class XSLT
+ *
+ * @package Difra\Resourcer\Abstracts
+ */
 abstract class XSLT extends Common {
 
 	protected function processData( $instance ) {

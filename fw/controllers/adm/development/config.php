@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class AdmDevelopmentConfigController
+ */
 class AdmDevelopmentConfigController extends \Difra\Controller {
 
 	public function dispatch() {

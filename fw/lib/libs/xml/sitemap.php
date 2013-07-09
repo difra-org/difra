@@ -2,9 +2,16 @@
 
 namespace Difra\Libs\XML;
 
+/**
+ * Class Sitemap
+ *
+ * @package Difra\Libs\XML
+ */
 class Sitemap {
 
+	/** xml namespace */
 	const NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
+	/** links per page */
 	const PERPAGE = 150;
 
 	/**

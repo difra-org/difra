@@ -4,6 +4,11 @@ namespace Difra\Adm;
 
 use Difra\Envi\Action;
 
+/**
+ * Class Localemanage
+ *
+ * @package Difra\Adm
+ */
 class Localemanage {
 
 	static public function getInstance() {
