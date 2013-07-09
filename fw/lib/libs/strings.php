@@ -2,12 +2,16 @@
 
 namespace Difra\Libs;
 
+/**
+ * Class Strings
+ *
+ * @package Difra\Libs
+ */
 class Strings {
 
 	/**
 	 * Определяет, является ли символ пробельным
 	 * @param string $char
-	 *
 	 * @return bool
 	 */
 	public static function isWhitespace( $char ) {

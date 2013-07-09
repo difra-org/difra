@@ -2,6 +2,11 @@
 
 namespace Difra\Param;
 
+/**
+ * Class AjaxSafeHTML
+ *
+ * @package Difra\Param
+ */
 class AjaxSafeHTML extends Common {
 
 	const source = 'ajax';

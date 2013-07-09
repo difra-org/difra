@@ -4,7 +4,14 @@ namespace Difra\Libs;
 
 use Difra\Envi;
 
+/**
+ * Class Vault
+ *
+ * @package Difra\Libs
+ */
 class Vault {
+
+	// TODO: проверить работоспособность, так как Envi\Session::load() были заменены на Envi\Session::start()
 
 	/**
 	 * Добавляет файл во временное хранилище.
@@ -17,7 +24,7 @@ class Vault {
 		$db->query( 'DELETE FROM `vault` WHERE `created`<DATE_SUB(now(),INTERVAL 3 HOUR)' );
 		$db->query( "INSERT INTO `vault` SET `data`='" . $db->escape( $data ) . "'" );
 		if( $id = $db->getLastId() ) {
-			\Difra\Site::getInstance()->sessionStart();
+			Envi\Session::start();
 			if( !isset( $_SESSION['vault'] ) ) {
 				$_SESSION['vault'] = array();
 			}
@@ -33,7 +40,7 @@ class Vault {
 	 */
 	static function get( $id ) {
 
-		\Difra\Site::getInstance()->sessionLoad();
+		Envi\Session::start();
 		if( !isset( $_SESSION['vault'] ) or !isset( $_SESSION['vault'][$id] ) ) {
 			return null;
 		}
@@ -47,7 +54,7 @@ class Vault {
 	 */
 	static function delete( $id ) {
 
-		\Difra\Site::getInstance()->sessionLoad();
+		Envi\Session::start();
 		if( !isset( $_SESSION['vault'][$id] ) ) {
 			return;
 		}

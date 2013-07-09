@@ -28,6 +28,7 @@ abstract class XML extends Common {
 			}
 		}
 		if( method_exists( $this, 'postprocess' ) ) {
+			/** @noinspection PhpUndefinedMethodInspection */
 			$this->postprocess( $newXml, $instance );
 		}
 		return $newXml->asXML();

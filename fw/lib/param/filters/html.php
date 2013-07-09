@@ -189,6 +189,7 @@ class HTML {
 	 * @param string $link
 	 * @return string
 	 */
+	/** @noinspection PhpUnusedPrivateMethodInspection */
 	private function cleanLink( $link ) {
 
 		if( \Difra\Libs\ESAPI::validateURL( $link ) ) {
@@ -208,6 +209,7 @@ class HTML {
 	 * @param string $attr
 	 * @return string
 	 */
+	/** @noinspection PhpUnusedPrivateMethodInspection */
 	private function cleanStyles( $attr ) {
 
 		$returnStyle = array();
@@ -242,6 +244,7 @@ class HTML {
 	 * @param string $classes
 	 * @return string
 	 */
+	/** @noinspection PhpUnusedPrivateMethodInspection */
 	private function cleanClasses( $classes ) {
 
 		$newClasses = array();
@@ -260,6 +263,7 @@ class HTML {
 	 * @param $input
 	 * @return int|string
 	 */
+	/** @noinspection PhpUnusedPrivateMethodInspection */
 	private function cleanUnsignedInt( $input ) {
 
 		$input = intval( $input );

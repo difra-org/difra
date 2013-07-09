@@ -4,6 +4,11 @@ namespace Difra\Resourcer;
 
 use Difra\Libs\Less;
 
+/**
+ * Class CSS
+ *
+ * @package Difra\Resourcer
+ */
 class CSS extends Abstracts\Plain {
 
 	protected $type = 'css';

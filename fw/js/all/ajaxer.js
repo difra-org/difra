@@ -50,15 +50,15 @@ ajaxer.process = function( data, form ) {
 	ajaxer.statusInit();
 	try {
 		console.info( 'Server said:', data );
-		var data1 = $.parseJSON( data );
-		/** @namespace data1.actions */
-		if( typeof data1 === 'undefined' || typeof data1.actions === 'undefined' ) {
+		var dataObj = $.parseJSON( data );
+		/** @namespace dataObj.actions */
+		if( typeof dataObj === 'undefined' || typeof dataObj.actions === 'undefined' ) {
 			//noinspection ExceptionCaughtLocallyJS
 			throw "data error";
 		}
-		for( var key in data1.actions ) {
+		for( var key in dataObj.actions ) {
 			//noinspection JSUnfilteredForInLoop
-			var action = data1.actions[key];
+			var action = dataObj.actions[key];
 			if( typeof debug !== 'undefined' ) {
 				debug.addReq( 'Processing ajaxer method: ' + action.action );
 			}
@@ -459,6 +459,7 @@ ajaxer.initIframe = function( form, event ) {
 		} else if( rawframe.document ) {
 			val = rawframe.document.body.innerHTML;
 		}
+		//noinspection EmptyCatchBlockJS
 		try {
 			var fc = $( val ).text();
 			if( fc ) {

@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class IframeController
+ */
 class IframeController extends Difra\Controller {
 
 	public function indexAction() {

@@ -1,7 +1,11 @@
 <?php
 
+/**
+ * Class SitemapController
+ */
 class SitemapController extends \Difra\Controller {
 
+	/** Cache lifetime */
 	const CACHE_TTL = 10800; // 3 hours
 
 	/**

@@ -2,6 +2,11 @@
 
 namespace Difra\Param;
 
+/**
+ * Class Common
+ *
+ * @package Difra\Param
+ */
 abstract class Common {
 
 	const type = null;

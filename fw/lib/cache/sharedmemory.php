@@ -6,6 +6,7 @@ namespace Difra\Cache;
  * Реализация кэширования в SharedMemory
  * TODO: Этот функионал давно не использовался и требует проверки.
  * Class SharedMemory
+ *
  * @package Difra\Cache
  */
 class SharedMemory extends Common {
@@ -30,7 +31,6 @@ class SharedMemory extends Common {
 	 * Получение данных из кэша
 	 * @param string  $id
 	 * @param boolean $doNotTestCacheValidity
-	 *
 	 * @return string
 	 */
 	public function realGet( $id, $doNotTestCacheValidity = false ) {
@@ -66,7 +66,6 @@ class SharedMemory extends Common {
 	/**
 	 * Проверка существования ключа
 	 * @param string $id
-	 *
 	 * @return boolean
 	 */
 	public function test( $id ) {
@@ -80,7 +79,6 @@ class SharedMemory extends Common {
 	 * @param string   $id
 	 * @param string   $data
 	 * @param bool|int $specificLifetime
-	 *
 	 * @return bool
 	 */
 	public function realPut( $id, $data, $specificLifetime = false ) {
@@ -107,7 +105,7 @@ class SharedMemory extends Common {
 			// Get highest segment id
 			$highest = 0;
 			reset( $structure );
-			while( list( $k, $v ) = each( $structure ) ) {
+			foreach( $structure as $v ) {
 				if( $v > $highest ) {
 					$highest = $v;
 				}
@@ -167,7 +165,6 @@ class SharedMemory extends Common {
 	/**
 	 * Удаление данных
 	 * @param string $id
-	 *
 	 * @return boolean
 	 */
 	public function realRemove( $id ) {
@@ -208,7 +205,7 @@ class SharedMemory extends Common {
 			}
 
 			if( $id == '' ) {
-				while( list( $k, $v ) = each( $structure ) ) {
+				foreach( $structure as $v ) {
 					// Delete old segment
 					$del_id = shm_attach( self::SHM_BLOCK_ID + $v );
 					shm_remove( $del_id );
@@ -234,7 +231,6 @@ class SharedMemory extends Common {
 	/**
 	 * Очистка кэша
 	 * @param string $mode
-	 *
 	 * @return boolean true if no problem
 	 */
 	public function clean( $mode = '' ) {
@@ -245,6 +241,7 @@ class SharedMemory extends Common {
 
 	/**
 	 * Получение информации о Shared Memory
+	 *
 	 * @return array|bool
 	 */
 	public function cacheInfo() {

@@ -63,6 +63,7 @@ switcher.ajaxConfig = {
 		$( document ).triggerHandler( 'switch' );
 
 		a.each( function( k, v ) {
+			//noinspection EmptyCatchBlockJS
 			try {
 				$( '#' + $( v ).attr( 'id' ) ).replaceWith( v ).remove();
 			} catch( ignore ) {

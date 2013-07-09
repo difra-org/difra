@@ -2,6 +2,13 @@
 
 namespace Difra\Libs;
 
+use Difra\Envi\Session;
+
+/**
+ * Class Capcha
+ *
+ * @package Difra\Libs
+ */
 class Capcha {
 
 	private $key = false;
@@ -10,16 +17,17 @@ class Capcha {
 	private $keyLength = 5;
 
 	/**
-	 * Конструктор
+	 * Constructor: load key from session.
 	 */
 	public function __construct() {
 
-		\Difra\Site::getInstance()->sessionStart();
+		Session::start();
 		$this->key = isset( $_SESSION['capcha_key'] ) ? $_SESSION['capcha_key'] : false;
 	}
 
 	/**
-	 * Синглтон
+	 * Singleton
+	 *
 	 * @return Capcha
 	 */
 	static function getInstance() {
@@ -29,9 +37,9 @@ class Capcha {
 	}
 
 	/**
-	 * Проверка введенного значения капчи
-	 * @param string $inKey
+	 * Verify entered key
 	 *
+	 * @param string $inKey
 	 * @return bool
 	 */
 	public function verifyKey( $inKey ) {
@@ -40,24 +48,36 @@ class Capcha {
 	}
 
 	/**
-	 * Создаёт изображение заданного размера с заданным текстом
+	 * Capcha generators
+
+	 */
+
+	/** Gray blurred text */
+	const METHOD_GRAYBLUR = 'grayblur';
+	/** Gray noised text */
+	const METHOD_GRAYNOISE = 'graynoise';
+
+	/** Default method */
+	const METHOD_DEFAULT = self::METHOD_GRAYBLUR;
+
+	/**
+	 * Creates image with text
+	 *
 	 * @param int    $sizeX
 	 * @param int    $sizeY
 	 * @param string $text
-	 *
+	 * @param string $generator
 	 * @return \Imagick
 	 */
-	public function mkCapcha( $sizeX, $sizeY, $text ) {
+	public function mkCapcha( $sizeX, $sizeY, $text, $generator = self::METHOD_DEFAULT ) {
 
 		// init image
 		$image = new \Imagick();
 		$image->newImage( $sizeX, $sizeY, new \ImagickPixel( 'white' ) );
 		$image->setImageFormat( 'png' );
 
-		$method = 'grayblur';
-
-		switch( $method ) {
-		case 'graynoise':
+		switch( $generator ) {
+		case self::METHOD_GRAYNOISE:
 			$draw = new \ImagickDraw();
 			$draw->setFontSize( 35 );
 			$draw->setFontWeight( 900 );
@@ -68,8 +88,8 @@ class Capcha {
 			$image->addNoiseImage( \imagick::NOISE_LAPLACIAN );
 			$image->gaussianBlurImage( 1, 1 );
 			break;
-		case 'grayblur':
-			$draw  = new \ImagickDraw();
+		case self::METHOD_GRAYBLUR:
+			$draw = new \ImagickDraw();
 			$order = array();
 			for( $i = 0; $i < strlen( $text ); $i++ ) {
 				$order[$i] = $i;
@@ -82,16 +102,16 @@ class Capcha {
 					$i = $order[$n];
 					$draw->setFont( __DIR__ . '/capcha/DejaVuSans.ttf' );
 					$draw->setFontSize( $j
-								    ? rand( $sizeY * 3 / 5, $sizeY * 5 / 6 )
-								    : rand( $sizeY * 4 / 6,
-									    $sizeY * 5 / 6 ) );
+						? rand( $sizeY * 3 / 5, $sizeY * 5 / 6 )
+						: rand( $sizeY * 4 / 6,
+							$sizeY * 5 / 6 ) );
 					$draw->setFontWeight( rand( 100, 900 ) );
 					$draw->setGravity( \imagick::GRAVITY_CENTER );
 					$image->annotateImage( $draw,
-							       ( $i - strlen( $text ) / 2 ) * $sizeX / ( strlen( $text ) + 2.3 ),
-							       0,
-							       rand( -25, 25 ),
-							       $text{$i} );
+						( $i - strlen( $text ) / 2 ) * $sizeX / ( strlen( $text ) + 2.3 ),
+						0,
+						rand( -25, 25 ),
+						$text{$i} );
 					$image->gaussianBlurImage( 1, 1 );
 				}
 			}
@@ -101,14 +121,14 @@ class Capcha {
 	}
 
 	/**
-	 * Генерирует случайный текст для капчи
-	 * @param $len
+	 * Generates random key
 	 *
+	 * @param int $len
 	 * @return string
 	 */
 	public function genKey( $len ) {
 
-		$a     = '';
+		$a = '';
 		$chars = 'ACDEFGHJKLNPRUVXYacdhknpsuvxyz3467';
 		for( $i = 0; $i < $len; $i++ ) {
 			$a .= $chars{rand( 0, strlen( $chars ) - 1 )};
@@ -134,7 +154,8 @@ class Capcha {
 				'pee',
 				'pizd',
 				'pi3d',
-				'nu3g'
+				'nu3g',
+				'fukk'
 			);
 		$upA = strtolower( $a );
 		foreach( $bad as $b ) {
@@ -146,20 +167,21 @@ class Capcha {
 	}
 
 	/**
-	 * Гененрирует ключ и создаёт капчу
+	 * Create capcha image with new key
+	 *
 	 * @return \Imagick
 	 */
 	public function viewCapcha() {
 
 		$this->key = $this->genKey( $this->keyLength );
-		$data      = $this->mkCapcha( $this->sizeX, $this->sizeY, $this->key );
-		\Difra\Site::getInstance()->sessionStart();
+		$data = $this->mkCapcha( $this->sizeX, $this->sizeY, $this->key );
+		Session::start();
 		$_SESSION['capcha_key'] = $this->key;
 		return $data;
 	}
 
 	/**
-	 * Установка размеров капчи для $this->viewCapcha()
+	 * Set image size for $this->viewCapcha()
 	 *
 	 * @param int $sizeX
 	 * @param int $sizeY
@@ -171,7 +193,7 @@ class Capcha {
 	}
 
 	/**
-	 * Установка длины ключа для $this->viewCapcha()
+	 * Set key length for $this->viewCapcha()
 	 *
 	 * @param $n
 	 */

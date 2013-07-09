@@ -2,6 +2,7 @@
 
 namespace Difra\Libs\Auth;
 
+use Difra\Envi\Session;
 use Difra\View\Exception;
 
 /**
@@ -80,7 +81,7 @@ class Digest {
 
 	private function getNonce( $regen = false ) {
 
-		\Difra\Site::getInstance()->sessionStart();
+		Session::start();
 		if( $regen ) {
 			$key = '';
 			for( $i = 0; $i < 16; $i++ ) {
@@ -94,7 +95,7 @@ class Digest {
 
 	private function checkNC( $nc ) {
 
-		\Difra\Site::getInstance()->sessionStart();
+		Session::start();
 		if( !isset( $_SESSION['digest_nc'] ) or $_SESSION['digest_nc'] >= $nc ) {
 			return false;
 		}

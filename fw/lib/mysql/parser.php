@@ -2,6 +2,12 @@
 
 namespace Difra\MySQL;
 
+/**
+ * Class Parser
+ *
+ * @package Difra\MySQL
+ * @deprecated
+ */
 class Parser {
 
 	/**

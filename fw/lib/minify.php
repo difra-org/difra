@@ -10,9 +10,8 @@ namespace Difra;
 class Minify {
 
 	/**
-	 * @static
 	 * @param string $type
-	 * @return self
+	 * @return \Difra\Minify\Common
 	 */
 	static public function getInstance( $type ) {
 

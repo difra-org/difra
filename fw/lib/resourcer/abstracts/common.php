@@ -141,7 +141,7 @@ abstract class Common {
 
 		$cacheKey = "{$instance}_{$this->type}";
 		if( $cached = $cache->get( $cacheKey . '_gz' ) ) {
-			if( $cache->get( $cacheKey . '_gz_build' ) == \Difra\Site::getInstance()->getBuild() ) {
+			if( $cache->get( $cacheKey . '_gz_build' ) == \Difra\Envi\Version::getBuild() ) {
 				return $cached;
 			}
 		}
@@ -153,7 +153,7 @@ abstract class Common {
 			if( !$currentBusy = $cache->get( $busyKey ) ) {
 				// появились данные от другого процесса?
 				if( $cached = $cache->get( $cacheKey . '_gz' ) and
-					$cache->get( $cacheKey . '_gz_build' ) == \Difra\Site::getInstance()->getBuild()
+					$cache->get( $cacheKey . '_gz_build' ) == \Difra\Envi\Version::getBuild()
 				) {
 					return $cached;
 				}
@@ -168,11 +168,11 @@ abstract class Common {
 				usleep( 50000 );
 			}
 		}
-		// lock получен — кешируем данные
+		// got lock, cache data
 		$cache->put( $cacheKey . '_gz', $data = gzencode( $this->compile( $instance ), 9 ), self::CACHE_TTL );
-		$cache->put( $cacheKey . '_gz_build', Difra\Site::getInstance()->getBuild(), self::CACHE_TTL );
+		$cache->put( $cacheKey . '_gz_build', \Difra\Envi\Version::getBuild(), self::CACHE_TTL );
 		$cache->put( $cacheKey . '_gz_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT', self::CACHE_TTL );
-		// снимаем lock
+		// unlock
 		$cache->remove( $busyKey );
 		return $data;
 	}
@@ -196,7 +196,7 @@ abstract class Common {
 
 			$cacheKey = "{$instance}_{$this->type}";
 			if( !is_null( $cached = $cache->get( $cacheKey ) ) ) {
-				if( $cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild() ) {
+				if( $cache->get( $cacheKey . '_build' ) == \Difra\Envi\Version::getBuild() ) {
 					return $cached;
 				}
 			}
@@ -208,7 +208,7 @@ abstract class Common {
 				if( !$currentBusy = $cache->get( $busyKey ) ) {
 					// is data arrived?
 					if( !is_null( $cached = $cache->get( $cacheKey ) ) and
-						$cache->get( $cacheKey . '_build' ) == \Difra\Site::getInstance()->getBuild()
+						$cache->get( $cacheKey . '_build' ) == \Difra\Envi\Version::getBuild()
 					) {
 						return $cached;
 					}
@@ -231,7 +231,7 @@ abstract class Common {
 
 			// cache data
 			$cache->put( $cacheKey, $resource, self::CACHE_TTL );
-			$cache->put( $cacheKey . '_build', \Difra\Site::getInstance()->getBuild(), self::CACHE_TTL );
+			$cache->put( $cacheKey . '_build', \Difra\Envi\Version::getBuild(), self::CACHE_TTL );
 			$cache->put( $cacheKey . '_modified', gmdate( 'D, d M Y H:i:s' ) . ' GMT', self::CACHE_TTL );
 
 			// unlock cache

@@ -65,6 +65,7 @@ class Plugger {
 		$dirs = self::getPluginsNames();
 		if( !empty( $dirs ) ) {
 			foreach( $dirs as $dir ) {
+				/** @noinspection PhpIncludeInspection */
 				include( DIR_PLUGINS . '/' . $dir . '/plugin.php' );
 				$ucf = ucfirst( $dir );
 				$plugins[$dir] = call_user_func( array( "\\Difra\\Plugins\\$ucf\\Plugin", "getInstance" ) );
@@ -174,7 +175,7 @@ class Plugger {
 					}
 				}
 			}
-			if( $data['version'] < (float)Site::VERSION ) {
+			if( $data['version'] < (float)Envi\Version::VERSION ) {
 				self::$pluginsData[$name]['old'] = true;
 			}
 		}

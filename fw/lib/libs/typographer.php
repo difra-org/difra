@@ -4,6 +4,11 @@
 
 namespace Difra\Libs;
 
+/**
+ * Class Typographer
+ *
+ * @package Difra\Libs
+ */
 class Typographer {
 
 	private $text;

@@ -2,6 +2,11 @@
 
 namespace Difra\Libs;
 
+/**
+ * Class Diff
+ *
+ * @package Difra\Libs
+ */
 class Diff {
 
 	/**
@@ -15,7 +20,6 @@ class Diff {
 	 *
 	 * @param string[] $array1
 	 * @param string[] $array2
-	 *
 	 * @return bool
 	 */
 	static public function diffArrays( $array1, $array2 ) {
@@ -33,7 +37,6 @@ class Diff {
 	 * @param int      $i1           Внутренний параметр
 	 * @param int      $i2           Внутренний параметр
 	 * @param int      $depth        Внутренний параметр
-	 *
 	 * @return array
 	 */
 	static private function _diffArrays( $array1, $array2, $result = array(), $i1 = 0, $i2 = 0, $depth = 0 ) {
@@ -64,9 +67,9 @@ class Diff {
 		// берём строки из первого
 		if( isset( $array1[$i1] ) ) {
 			$result1 = $result;
-			$i1a     = $i1;
-			$da      = $depth;
-			$a2a     = array_slice( $array2, $i2 );
+			$i1a = $i1;
+			$da = $depth;
+			$a2a = array_slice( $array2, $i2 );
 			do {
 				$result1[] = array( 'sign' => '-', 'value' => $array1[$i1a++] );
 				$da++;
@@ -78,9 +81,9 @@ class Diff {
 		// берём строку из второго
 		if( isset( $array2[$i2] ) ) {
 			$result1 = $result;
-			$i2a     = $i2;
-			$da      = $depth;
-			$a1a     = array_slice( $array1, $i1 );
+			$i2a = $i2;
+			$da = $depth;
+			$a1a = array_slice( $array1, $i1 );
 			do {
 				$result1[] = array( 'sign' => '+', 'value' => $array2[$i2a++] );
 				$da++;

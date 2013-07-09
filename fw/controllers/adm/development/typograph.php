@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * Class AdmDevelopmentTypographController
+ */
 class AdmDevelopmentTypographController extends \Difra\Controller {
 
 	public function dispatch() {
@@ -7,12 +10,31 @@ class AdmDevelopmentTypographController extends \Difra\Controller {
 		\Difra\View::$instance = 'adm';
 	}
 
+	/**
+	 * View typograph settings
+	 */
 	public function indexAction() {
 
 		$mainNode = $this->root->appendChild( $this->xml->createElement( 'typograph' ) );
 		\Difra\Libs\Typographer::getSettingsXML( $mainNode );
 	}
 
+	/**
+	 * Save typograph settings
+	 *
+	 * @param \Difra\Param\AjaxCheckbox $spaceAfterShortWord
+	 * @param \Difra\Param\AjaxInt      $lengthShortWord
+	 * @param \Difra\Param\AjaxCheckbox $spaceBeforeLastWord
+	 * @param \Difra\Param\AjaxInt      $lengthLastWord
+	 * @param \Difra\Param\AjaxCheckbox $spaceAfterNum
+	 * @param \Difra\Param\AjaxCheckbox $spaceBeforeParticles
+	 * @param \Difra\Param\AjaxCheckbox $delRepeatSpace
+	 * @param \Difra\Param\AjaxCheckbox $delSpaceBeforePunctuation
+	 * @param \Difra\Param\AjaxCheckbox $delSpaceBeforeProcent
+	 * @param \Difra\Param\AjaxCheckbox $doReplaceBefore
+	 * @param \Difra\Param\AjaxCheckbox $doReplaceAfter
+	 * @param \Difra\Param\AjaxCheckbox $doMacros
+	 */
 	public function saveAjaxAction( \Difra\Param\AjaxCheckbox $spaceAfterShortWord,
 					\Difra\Param\AjaxInt $lengthShortWord,
 					\Difra\Param\AjaxCheckbox $spaceBeforeLastWord,

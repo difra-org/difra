@@ -52,7 +52,7 @@ class MySQLi extends Common {
 	protected function realQuery( $query ) {
 
 		$this->db->query( $query );
-		if( $err = $this->db->error and !\Difra\Site::isInit() ) {
+		if( $err = $this->db->error and self::$errorReporting ) {
 			throw new Exception( "MySQL error: [$err] on request [$query]" );
 		}
 	}
@@ -68,7 +68,7 @@ class MySQLi extends Common {
 
 		$res = $this->db->query( $query );
 		if( $err = $this->db->error ) {
-			if( !\Difra\Site::isInit() ) {
+			if( self::$errorReporting ) {
 				throw new Exception( 'MySQL: ' . $err );
 			}
 			return null;

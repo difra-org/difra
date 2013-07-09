@@ -98,10 +98,12 @@ class Config {
 		if( is_null( $newConfig ) ) {
 			$newConfig = $this->defaultConfig;
 			if( is_file( DIR_ROOT . '/config.php' ) ) {
+				/** @noinspection PhpIncludeInspection */
 				$conf2 = include( DIR_ROOT . 'config.php' );
 				$newConfig = $this->merge( $newConfig, $conf2 );
 			}
 			if( is_file( DIR_SITE . '/config.php' ) ) {
+				/** @noinspection PhpIncludeInspection */
 				$conf2 = include( DIR_SITE . 'config.php' );
 				$newConfig = $this->merge( $newConfig, $conf2 );
 			}

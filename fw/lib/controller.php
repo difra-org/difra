@@ -300,7 +300,7 @@ class Controller {
 		$this->realRoot->setAttribute( 'debug', Debugger::isEnabled() ? '1' : '0' );
 		// config values (for js variable)
 		$configNode = $this->realRoot->appendChild( $this->xml->createElement( 'config' ) );
-		Site::getInstance()->getConfigXML( $configNode );
+		Envi::getConfigXML( $configNode );
 		// menu
 		if( $menuResource = Resourcer::getInstance( 'menu' )->compile( View::$instance ) ) {
 			$menuXML = new \DOMDocument();
@@ -312,7 +312,7 @@ class Controller {
 		// locale
 		$this->locale->getLocaleXML( $this->realRoot );
 		// Добавление объекта config для js
-		$config = Site::getInstance()->getConfig();
+		$config = Envi::getConfig();
 		$confJS = '';
 		foreach( $config as $k => $v ) {
 			$confJS .= "config.{$k}='" . addslashes( $v ) . "';";
