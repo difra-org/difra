@@ -4,8 +4,16 @@ namespace Difra\Envi;
 
 use Difra\Envi;
 
+/**
+ * Class Setup
+ *
+ * @package Difra\Envi
+ */
 class Setup {
 
+	/**
+	 * Set up environment
+	 */
 	public static function run() {
 
 		// paths
@@ -46,8 +54,14 @@ class Setup {
 		}
 	}
 
+	/** @var string Default locale */
 	static private $locale = 'ru_RU';
 
+	/**
+	 * Set locale
+	 *
+	 * @param $locale
+	 */
 	public static function setLocale( $locale ) {
 
 		self::$locale = $locale;
@@ -55,6 +69,11 @@ class Setup {
 		setlocale( LC_NUMERIC, array( 'en_US.UTF-8', 'en_US.utf8' ) );
 	}
 
+	/**
+	 * Get locale name
+	 *
+	 * @return string
+	 */
 	public static function getLocale() {
 
 		return self::$locale;
