@@ -3,6 +3,7 @@
 namespace Difra\Plugins\CMS;
 
 use Difra\Envi;
+use Difra\Exception;
 
 /**
  * Class Page
@@ -114,8 +115,12 @@ class Page {
 		$uri = Envi::getUri();
 		$cache = \Difra\Cache::getInstance();
 		if( !$data = $cache->get( 'cms_tags' ) ) {
-			$db = \Difra\MySQL::getInstance();
-			$data1 = $db->fetch( 'SELECT `id`,`tag` FROM `cms` WHERE `hidden`=0' );
+			try {
+				$db = \Difra\MySQL::getInstance();
+				$data1 = $db->fetch( 'SELECT `id`,`tag` FROM `cms` WHERE `hidden`=0' );
+			} catch( Exception $ex ) {
+				return false;
+			}
 			$data = array();
 			if( !empty( $data1 ) ) {
 				foreach( $data1 as $v ) {
