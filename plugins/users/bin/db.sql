@@ -30,8 +30,7 @@ CREATE TABLE `users_recovers` (
 	PRIMARY KEY (`id`),
 	KEY `used` (`used`),
 	KEY `user_id` (`user_id`),
-	CONSTRAINT `users_recovers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`)
-		ON DELETE CASCADE
+	CONSTRAINT `users_recovers_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 )
 	ENGINE =InnoDB
 	DEFAULT CHARSET =utf8;
@@ -42,8 +41,7 @@ CREATE TABLE `users_fields` (
 	`value` CHAR(250) DEFAULT NULL,
 	PRIMARY KEY (`id`, `name`),
 	KEY `key_name_value` (`name`, `value`),
-	CONSTRAINT `users_fields_ibfk_1` FOREIGN KEY (`id`) REFERENCES `users` (`id`)
-		ON DELETE CASCADE
+	CONSTRAINT `users_fields_ibfk_1` FOREIGN KEY (`id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 )
 	ENGINE =InnoDB
 	DEFAULT CHARSET =utf8;
@@ -56,8 +54,7 @@ CREATE TABLE `users_sessions` (
 	PRIMARY KEY (`id`),
 	KEY `id` (`id`),
 	KEY `session_id` (`session_id`),
-	CONSTRAINT `sessionToUser_ifk` FOREIGN KEY (`id`) REFERENCES `users` (`id`)
-		ON DELETE CASCADE
+	CONSTRAINT `sessionToUser_ifk` FOREIGN KEY (`id`) REFERENCES `users` (`id`) ON DELETE CASCADE
 )
 	ENGINE =InnoDB
 	DEFAULT CHARSET =utf8;
