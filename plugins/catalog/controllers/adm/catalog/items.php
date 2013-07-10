@@ -4,11 +4,12 @@ class AdmCatalogItemsController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function categoryAction( \Difra\Param\AnyInt $id ) {
 
+		/** @var \DOMElement $listNode */
 		$listNode = $this->root->appendChild( $this->xml->createElement( 'CatalogItemsList' ) );
 		\Difra\Plugins\Catalog::getInstance()->getCategoriesListXML( $listNode );
 		$listNode->setAttribute( 'selected', $id->val() );
@@ -17,6 +18,7 @@ class AdmCatalogItemsController extends \Difra\Controller {
 
 	public function addAction( \Difra\Param\NamedInt $to = null ) {
 
+		/** @var \DOMElement $addNode */
 		$addNode = $this->root->appendChild( $this->xml->createElement( 'CatalogItemAdd' ) );
 		\Difra\Plugins\Catalog::getInstance()->getCategoriesListXML( $addNode );
 		if( $to ) {
@@ -63,6 +65,7 @@ class AdmCatalogItemsController extends \Difra\Controller {
 
 	public function editAction( \Difra\Param\AnyInt $id ) {
 
+		/** @var \DOMElement $editNode */
 		$editNode = $this->root->appendChild( $this->xml->createElement( 'CatalogItemEdit' ) );
 		\Difra\Plugins\Catalog::getInstance()->getCategoriesListXML( $editNode );
 		\Difra\Plugins\Catalog\Ext::getListXML( $editNode, true, true );
