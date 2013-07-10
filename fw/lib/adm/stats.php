@@ -3,6 +3,7 @@
 namespace Difra\Adm;
 
 use Difra\Exception;
+use Difra\MySQL;
 
 /**
  * Class Stats
@@ -59,7 +60,7 @@ class Stats {
 		try {
 			\Difra\MySQL\Parser::getStatusXML( $mysqlNode );
 		} catch( Exception $ex ) {
-			$mysqlNode->setAttribute( 'error', $ex->getMessage() );
+			$mysqlNode->setAttribute( 'error', $ex->getMessage() . ': ' . MySQL::getInstance()->getError() );
 		}
 
 		// stats/system
