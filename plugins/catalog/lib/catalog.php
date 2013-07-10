@@ -124,11 +124,11 @@ class Catalog {
 	/**
 	 * Возвращает список элементов по id в XML
 	 *
-	 * @param \DOMNode|null $node
-	 * @param array         $ids
-	 * @param int           $page
-	 * @param int|null      $perPage
-	 *
+	 * @param \DOMNode $node
+	 * @param array    $ids
+	 * @param int      $page
+	 * @param int      $perPage
+	 * @param int      $categoryId
 	 * @return array|bool
 	 */
 	public function getItemsById( $node, $ids, $page = 1, $perPage = null, $categoryId = null ) {
@@ -141,8 +141,8 @@ class Catalog {
 	/**
 	 * Заполняет XML данными из массива элементов каталога
 	 *
-	 * @param $node
-	 * @param $list
+	 * @param \DOMElement|\DOMNode $node
+	 * @param Catalog\Item[] $list
 	 */
 	private function _items2xml( $node, $list ) {
 
@@ -187,7 +187,7 @@ class Catalog {
 	 *
 	 * @return bool
 	 */
-	public function getCategoriesListXML( $node, $visible = null, $selected = null ) {
+	public static function getCategoriesListXML( $node, $visible = null, $selected = null ) {
 
 		$list = \Difra\Plugins\Catalog\Category::getList( $visible );
 		if( empty( $list ) ) {
@@ -209,6 +209,7 @@ class Catalog {
 		}
 
 		foreach( $list as $cat ) {
+			/** @var \DOMElement $catNode */
 			$catNode = $node->appendChild( $node->ownerDocument->createElement( 'category' ) );
 			$cat->getXML( $catNode );
 			if( !empty( $selectedList ) and in_array( $cat->getId(), $selectedList ) ) {
@@ -279,12 +280,13 @@ class Catalog {
 	/**
 	 * Добавляет список категорий в XML (для меню)
 	 */
-	public function addCategoryXML() {
+	public static function addCategoryXML() {
 
-		$controller = \Difra\Action::getInstance()->controller;
+		$controller = \Difra\Controller::getInstance();
+		/** @var \DOMElement $catalogNode */
 		$catalogNode = $controller->root->appendChild( $controller->xml->createElement( 'catalogCategories' ) );
 		$catalogNode->setAttribute( 'autorender', '0' );
-		$this->getCategoriesListXML( $catalogNode, true, $this->getSelectedCategory() );
+		self::getCategoriesListXML( $catalogNode, true, self::getSelectedCategory() );
 	}
 
 	/**
@@ -293,16 +295,16 @@ class Catalog {
 	 *
 	 */
 
-	private $selectedCategory = 0;
+	private static $selectedCategory = 0;
 
 	public function setSelectedCategory( $id ) {
 
-		$this->selectedCategory = $id;
+		self::$selectedCategory = $id;
 	}
 
-	public function getSelectedCategory() {
+	public static function getSelectedCategory() {
 
-		return $this->selectedCategory;
+		return self::$selectedCategory;
 	}
 
 	/**
