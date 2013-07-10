@@ -106,9 +106,8 @@
 					<xsl:value-of select="$locale/catalog/adm/item/more-images"/>
 				</th>
 				<td>
-					<a href="#" class="action"
-					   onclick="$(this).before('&lt;input type=&quot;file&quot; name=&quot;images[]&quot; multiple=&quot;multiple&quot;/&gt;')">
-						<xsl:value-of select="$locale/catalog/adm/item/add-image"/>
+					<a href="#" class="action add"
+					   onclick="$(this).before('&lt;input type=&quot;file&quot; name=&quot;images[]&quot; multiple=&quot;multiple&quot;/&gt;&lt;br/&gt;')">
 					</a>
 				</td>
 			</tr>

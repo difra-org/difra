@@ -50,12 +50,10 @@
 					<xsl:text>_</xsl:text>
 					<xsl:value-of select="position()"/>
 				</xsl:attribute>
-				<td>
-					<xsl:call-template name="repeat">
-						<xsl:with-param name="times" select="$depth"/>
-						<xsl:with-param name="text">&#160;&#160;&#160;&#160;&#160;</xsl:with-param>
-					</xsl:call-template>
-					<xsl:value-of select="@name"/>
+				<td style="padding-left: {$depth*40+16}px">
+					<a href="/adm/catalog/items/category/{@id}">
+						<xsl:value-of select="@name"/>
+					</a>
 				</td>
 				<td>
 					<xsl:choose>
@@ -70,15 +68,7 @@
 							</a>
 						</xsl:otherwise>
 					</xsl:choose>
-					<a href="/adm/catalog/items/category/{@id}" class="action">
-						<xsl:value-of select="$locale/adm/actions/content"/>
-					</a>
-					<xsl:call-template name="actionEdit">
-						<xsl:with-param name="link">
-							<xsl:text>/adm/catalog/categories/edit/</xsl:text>
-							<xsl:value-of select="@id"/>
-						</xsl:with-param>
-					</xsl:call-template>
+					<a class="action edit" href="/adm/catalog/categories/edit/{@id}"/>
 					<xsl:call-template name="actionUp">
 						<xsl:with-param name="link">
 							<xsl:text>/adm/catalog/categories/up/</xsl:text>
@@ -101,12 +91,7 @@
 							<xsl:text>_</xsl:text>
 						</xsl:with-param>
 					</xsl:call-template>
-					<xsl:call-template name="actionDelete">
-						<xsl:with-param name="link">
-							<xsl:text>/adm/catalog/categories/delete/</xsl:text>
-							<xsl:value-of select="@id"/>
-						</xsl:with-param>
-					</xsl:call-template>
+					<a class="action delete" href="/adm/catalog/categories/delete/{@id}"/>
 				</td>
 				<xsl:call-template name="CatalogSubcategory">
 					<xsl:with-param name="depth" select="$depth+1"/>
