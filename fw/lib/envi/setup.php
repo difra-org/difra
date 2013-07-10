@@ -18,9 +18,8 @@ class Setup {
 
 		// paths
 		if( !defined( 'DIR_ROOT' ) ) {
-			define( 'DIR_ROOT', __DIR__ . '/../../../' );
+			define( 'DIR_ROOT', dirname( dirname( dirname( __DIR__ ) ) ) . '/' );
 		}
-		$_SERVER['DOCUMENT_ROOT'] = DIR_ROOT;
 		define( 'DIR_FW', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'fw/' );
 		define( 'DIR_SITE', DIR_ROOT . 'sites/' . Envi::getSiteDir() . '/' );
 		define( 'DIR_PLUGINS', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'plugins/' );
