@@ -59,33 +59,33 @@ class Envi {
 	 *
 	 * @return string|bool
 	 */
-	public static function getSiteDir() {
+	public static function getSite() {
 
-		static $siteDir = null;
-		if( !is_null( $siteDir ) ) {
-			return $siteDir;
+		static $site = null;
+		if( !is_null( $site ) ) {
+			return $site;
 		}
 
 		$sitesLocation = __DIR__ . '/../../sites/';
-		$siteDir = 'default';
+		$site = 'default';
 		// хост передаётся от веб-сервера
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
-			$siteDir = $_SERVER['VHOST_NAME'];
+			$site = $_SERVER['VHOST_NAME'];
 			// определяем хост по hostname
 		} elseif( $host = self::getHost() ) {
 			while( $host ) {
 				if( is_dir( $sitesLocation . $host ) ) {
-					$siteDir = $host;
+					$site = $host;
 					break;
 				} elseif( is_dir( $sitesLocation . 'www.' . $host ) ) {
-					$siteDir = 'www.' . $host;
+					$site = 'www.' . $host;
 					break;
 				}
 				$host = explode( '.', $host, 2 );
 				$host = !empty( $host[1] ) ? $host[1] : false;
 			}
 		}
-		return $siteDir;
+		return $site;
 	}
 
 	/**
@@ -161,7 +161,7 @@ class Envi {
 
 		return array(
 			'locale' => Envi\Setup::getLocale(),
-			'host' => self::getSiteDir(),
+			'host' => self::getSite(),
 			'hostname' => self::getHost(),
 			'mainhost' => self::getHost( true )
 		);

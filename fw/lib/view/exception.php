@@ -35,7 +35,7 @@ class Exception extends \Exception {
 			$xml = new \DOMDocument();
 			/** @var $root \DOMElement */
 			$root = $xml->appendChild( $xml->createElement( 'error' . $err ) );
-			$root->setAttribute( 'host', Envi::getSiteDir() );
+			$root->setAttribute( 'host', Envi::getSite() );
 			$root->setAttribute( 'hostname', $host = Envi::getHost() );
 			$root->setAttribute( 'mainhost', $mainHost = Envi::getHost( true ) );
 			if( $host != $mainHost ) {
