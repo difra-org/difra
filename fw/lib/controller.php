@@ -269,7 +269,7 @@ class Controller {
 
 		Debugger::addLine( 'Filling XML data for render: Started' );
 		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
-		$this->realRoot->setAttribute( 'site', Envi::getSiteDir() );
+		$this->realRoot->setAttribute( 'site', Envi::getSite() );
 		$this->realRoot->setAttribute( 'host', $host = Envi::getHost() );
 		$this->realRoot->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
 		$this->realRoot->setAttribute( 'instance', $instance ? $instance : View::$instance );

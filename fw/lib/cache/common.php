@@ -71,7 +71,7 @@ abstract class Common {
 	 */
 	public function get( $key ) {
 
-		$data = $this->realGet( Difra\Envi::getSiteDir() . '_' . $key );
+		$data = $this->realGet( Difra\Envi::getSite() . '_' . $key );
 		if( !$data or !isset( $data['expires'] ) or $data['expires'] < time() ) {
 			return null;
 		}
@@ -90,7 +90,7 @@ abstract class Common {
 			'expires' => time() + $ttl,
 			'data' => $data
 		);
-		$this->realPut( Difra\Envi::getSiteDir() . '_' . $key, $data, $ttl );
+		$this->realPut( Difra\Envi::getSite() . '_' . $key, $data, $ttl );
 	}
 
 	/**
@@ -99,7 +99,7 @@ abstract class Common {
 	 */
 	public function remove( $key ) {
 
-		$this->realRemove( Difra\Envi::getSiteDir() . '_' . $key );
+		$this->realRemove( Difra\Envi::getSite() . '_' . $key );
 	}
 
 	/**
