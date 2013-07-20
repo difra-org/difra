@@ -35,7 +35,7 @@ class Auth {
 	 */
 	public function __construct() {
 
-		$this->_load();
+		$this->load();
 	}
 
 	/**
@@ -76,7 +76,7 @@ class Auth {
 		$this->data = $data;
 		$this->additionals = $additionals;
 		$this->logged = true;
-		$this->_save();
+		$this->save();
 	}
 
 	/**
@@ -86,7 +86,7 @@ class Auth {
 
 		$this->id = $this->data = $this->additionals = null;
 		$this->logged = false;
-		$this->_save();
+		$this->save();
 	}
 
 	/**
@@ -94,13 +94,13 @@ class Auth {
 	 */
 	public function update() {
 
-		$this->_save();
+		$this->save();
 	}
 
 	/**
 	 * Сохранение текущего состояния авторизации в сессии
 	 */
-	private function _save() {
+	private function save() {
 
 		Session::start();
 		if( $this->logged ) {
@@ -120,9 +120,8 @@ class Auth {
 	 * Загрузка информации об авторизации из сессии
 	 * @return bool
 	 */
-	private function _load() {
+	private function load() {
 
-		Session::start();
 		if( !isset( $_SESSION['auth'] ) ) {
 			return false;
 		}
@@ -179,7 +178,7 @@ class Auth {
 	public function setAdditionals( $additionals ) {
 
 		$this->additionals = $additionals;
-		$this->_save();
+		$this->save();
 	}
 
 	/**

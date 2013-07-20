@@ -4,11 +4,12 @@ class AdmCatalogConfigController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction() {
 
+		/** @var \DOMElement $configNode */
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'CatalogConfig' ) );
 		$conf = \Difra\Config::getInstance();
 		$configNode->setAttribute( 'maxdepth', $conf->getValue( 'catalog', 'maxdepth' ) );

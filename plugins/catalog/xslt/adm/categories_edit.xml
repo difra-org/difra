@@ -63,6 +63,16 @@
 		</form>
 	</xsl:template>
 
+	<xsl:template name="categorySelectSpaces">
+		<xsl:param name="num"/>
+		<xsl:if test="$num &gt; 0">
+			&#160;&#160;&#160;&#160;&#160;
+			<xsl:call-template name="categorySelectSpaces">
+				<xsl:with-param name="num" select="$num - 1"/>
+			</xsl:call-template>
+		</xsl:if>
+	</xsl:template>
+
 	<xsl:template name="CatalogCategorySelect">
 		<xsl:param name="parent" select="0"/>
 		<xsl:param name="depth" select="1"/>
@@ -76,24 +86,9 @@
 					<xsl:if test="@id=$selected">
 						<xsl:attribute name="selected">selected</xsl:attribute>
 					</xsl:if>
-					<!--
-					<xsl:call-template name="repeat">
-						<xsl:with-param name="times" select="$depth - 1"/>
-						<xsl:with-param name="text">┃&#160;</xsl:with-param>
+					<xsl:call-template name="categorySelectSpaces">
+						<xsl:with-param name="num" select="$depth -1"/>
 					</xsl:call-template>
-					<xsl:choose>
-						<xsl:when test="position()=last()">┗&#160;</xsl:when>
-						<xsl:otherwise>┣&#160;</xsl:otherwise>
-					</xsl:choose>
-					-->
-					<xsl:call-template name="repeat">
-						<xsl:with-param name="times" select="$depth - 1"/>
-						<xsl:with-param name="text">· &#160;</xsl:with-param>
-					</xsl:call-template>
-					<xsl:choose>
-						<xsl:when test="position()=last()">· &#160;</xsl:when>
-						<xsl:otherwise>· &#160;</xsl:otherwise>
-					</xsl:choose>
 					<xsl:value-of select="@name"/>
 				</option>
 				<xsl:call-template name="CatalogCategorySelect">

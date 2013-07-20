@@ -8,11 +8,12 @@ class AdmCatalogCategoriesController extends Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction() {
 
+		/** @var \DOMElement $categoriesNode */
 		$categoriesNode = $this->root->appendChild( $this->xml->createElement( 'CatalogCategories' ) );
 		Catalog::getInstance()->getCategoriesListXML( $categoriesNode );
 		$conf = \Difra\Config::getInstance()->get( 'catalog' );
@@ -21,6 +22,7 @@ class AdmCatalogCategoriesController extends Difra\Controller {
 
 	public function addAction( \Difra\Param\NamedInt $to = null ) {
 
+		/** @var \DOMElement $addNode */
 		$addNode = $this->root->appendChild( $this->xml->createElement( 'CatalogCategoriesAdd' ) );
 		if( $to ) {
 			$addNode->setAttribute( 'parent', $to->val() );
@@ -33,6 +35,7 @@ class AdmCatalogCategoriesController extends Difra\Controller {
 	public function editAction( \Difra\Param\AnyInt $id ) {
 
 		$cat = \Difra\Plugins\Catalog\Category::get( $id->val() );
+		/** @var \DOMElement $editNode */
 		$editNode = $this->root->appendChild( $this->xml->createElement( 'CatalogCategoriesEdit' ) );
 		Catalog::getInstance()->getCategoriesListXML( $editNode );
 		$cat->getXML( $editNode );

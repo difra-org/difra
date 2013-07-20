@@ -85,7 +85,6 @@ CREATE TABLE `catalog_images` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 /*
--- catalog items table
 CREATE TABLE `catalog_cart` (
   `user` int(11) NOT NULL,
   `cart` blob,

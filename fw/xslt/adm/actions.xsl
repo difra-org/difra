@@ -12,17 +12,13 @@
 
 	<xsl:template name="actionEdit">
 		<xsl:param name="link"/>
-		<a href="{$link}" class="action edit">
-			<xsl:value-of select="$locale/adm/actions/edit"/>
-		</a>
+		<a href="{$link}" class="action edit"/>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
 
 	<xsl:template name="actionDelete">
 		<xsl:param name="link"/>
-		<a href="{$link}" class="action delete ajaxer">
-			<xsl:value-of select="$locale/adm/actions/delete"/>
-		</a>
+		<a href="{$link}" class="action delete ajaxer"/>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
 
@@ -54,7 +50,6 @@
 					</xsl:attribute>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:value-of select="$locale/adm/actions/up"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
@@ -87,7 +82,6 @@
 					</xsl:attribute>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:value-of select="$locale/adm/actions/down"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
@@ -107,7 +101,6 @@
 					<xsl:attribute name="class">action left ajaxer</xsl:attribute>
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:value-of select="$locale/adm/actions/left"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>
@@ -128,7 +121,6 @@
 					=
 				</xsl:otherwise>
 			</xsl:choose>
-			<xsl:value-of select="$locale/adm/actions/right"/>
 		</a>
 		<xsl:value-of select="$actionSpacer"/>
 	</xsl:template>

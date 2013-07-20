@@ -16,9 +16,12 @@ class Action {
 	private static $parameters = array();
 
 	/** @var string */
-	private static $className = null;
+	private static $controllerClass = null;
+	/** @var string */
+	private static $controllerFile = '';
+
 	/** @var \Difra\Controller */
-	private static $controller = null;
+	private static $controllerObj = null;
 
 	/** @var string */
 	public static $method = null;
@@ -44,32 +47,31 @@ class Action {
 	public static function find() {
 
 		if( self::loadCache() ) {
+			Debugger::addLine( 'Cached controller ' . self::$controllerClass . ' from ' . self::$controllerFile );
 			return;
 		}
 
 		$uri = trim( Envi::getUri(), '/' );
 		$parts = $uri ? explode( '/', $uri ) : array();
 
-		if( self::getResource( $parts ) ) {
-			return;
-		}
+		self::getResource( $parts );
 
-		if( !$controllerFilename = self::findController( $parts ) ) {
+		if( !self::$controllerFile = self::findController( $parts ) ) {
 			self::saveCache( '404' );
 			throw new View\Exception( 404 );
 		}
 
 		/** @noinspection PhpIncludeInspection */
-		include_once( $controllerFilename );
-		if( !class_exists( self::$className ) ) {
-			throw new \Difra\Exception( 'Error! Controller class ' . self::$className . ' not found' );
+		include_once( self::$controllerFile );
+		if( !class_exists( self::$controllerClass ) ) {
+			throw new \Difra\Exception( 'Error! Controller class ' . self::$controllerClass . ' not found' );
 		}
 
 		self::findAction( $parts );
 		self::$parameters = $parts;
 
 		self::saveCache( 'action' );
-		Debugger::addLine( 'Selected controller ' . self::$className . " from $controllerFilename" );
+		Debugger::addLine( 'Selected controller ' . self::$controllerClass . ' from ' . self::$controllerFile );
 	}
 
 	/**
@@ -79,21 +81,21 @@ class Action {
 	 */
 	private static function loadCache() {
 
-		if( !Debugger::isEnabled() and $data = Cache::getInstance()->get( self::getCacheKey() ) ) {
-			switch( $data['result'] ) {
-			case 'action':
-				/** @noinspection PhpIncludeInspection */
-				include_once( $data['controller'] );
-				foreach( $data['vars'] as $k => $v ) {
-					self::${$k} = $v;
-				}
-				break;
-			case '404':
-				throw new View\Exception( 404 );
-			}
-			return true;
+		if( Debugger::isEnabled() or !$data = Cache::getInstance()->get( self::getCacheKey() ) ) {
+			return false;
 		}
-		return false;
+		switch( $data['result'] ) {
+		case 'action':
+			/** @noinspection PhpIncludeInspection */
+			foreach( $data['vars'] as $k => $v ) {
+				self::${$k} = $v;
+			}
+			include_once( self::$controllerFile );
+			break;
+		case '404':
+			throw new View\Exception( 404 );
+		}
+		return true;
 	}
 
 	/**
@@ -105,8 +107,9 @@ class Action {
 		if( $result != '404' ) {
 			$match = array(
 				'vars' => array(
-					'className' => self::$className,
-					'parameters' => self::$parameters,
+					'controllerClass' => self::$controllerClass,
+					'controllerFile' => self::$controllerFile,
+					'parameters' => self::$parameters
 				),
 				'result' => $result
 			);
@@ -131,18 +134,19 @@ class Action {
 	 */
 	private static function getResource( $parts ) {
 
-		if( sizeof( $parts ) == 2 ) {
-			$resourcer = Resourcer::getInstance( $parts[0], true );
-			if( $resourcer and $resourcer->isPrintable() ) {
-				try {
-					if( !$resourcer->view( $parts[1] ) ) {
-						throw new View\Exception( 404 );
-					}
-					View::$rendered = true;
-					die();
-				} catch( \Difra\Exception $ex ) {
+		if( sizeof( $parts ) != 2 ) {
+			return false;
+		}
+		$resourcer = Resourcer::getInstance( $parts[0], true );
+		if( $resourcer and $resourcer->isPrintable() ) {
+			try {
+				if( !$resourcer->view( $parts[1] ) ) {
 					throw new View\Exception( 404 );
 				}
+				View::$rendered = true;
+				die();
+			} catch( \Difra\Exception $ex ) {
+				throw new View\Exception( 404 );
 			}
 		}
 		return false;
@@ -153,13 +157,13 @@ class Action {
 	 */
 	public static function getController() {
 
-		if( !self::$className ) {
+		if( !self::$controllerClass ) {
 			self::find();
 		}
-		if( !self::$controller ) {
-			self::$controller = new self::$className( self::$parameters );
+		if( !self::$controllerObj ) {
+			self::$controllerObj = new self::$controllerClass( self::$parameters );
 		}
-		return self::$controller;
+		return self::$controllerObj;
 	}
 
 	/**
@@ -212,7 +216,7 @@ class Action {
 			$depth++;
 			$dirs = $newDirs;
 		}
-		self::$className = array_slice( $parts, 0, $depth );
+		self::$controllerClass = array_slice( $parts, 0, $depth );
 		$parts = array_slice( $parts, $depth );
 		return $dirs;
 	}
@@ -250,11 +254,11 @@ class Action {
 		if( $cname != 'index' ) {
 			array_shift( $parts );
 		}
-		self::$className[] = $cname;
-		foreach( self::$className as $k => $v ) {
-			self::$className[$k] = ucFirst( $v );
+		self::$controllerClass[] = $cname;
+		foreach( self::$controllerClass as $k => $v ) {
+			self::$controllerClass[$k] = ucFirst( $v );
 		};
-		self::$className = implode( self::$className ) . 'Controller';
+		self::$controllerClass = implode( self::$controllerClass ) . 'Controller';
 		return $controllerFile;
 	}
 
@@ -269,7 +273,7 @@ class Action {
 		$methodNames = !empty( $parts ) ? array( $parts[0], 'index' ) : array( 'index' );
 		foreach( $methodNames as $methodTmp ) {
 			foreach( self::$methodTypes as $methodType ) {
-				if( method_exists( self::$className, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
+				if( method_exists( self::$controllerClass, $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1] ) ) {
 					$foundMethod = $methodTmp;
 					$methodVar = "method{$methodType[0]}{$methodType[1]}";
 					self::${$methodVar} = $m;
@@ -289,7 +293,7 @@ class Action {
 	 */
 	public static function getControllerClass() {
 
-		return self::$className;
+		return self::$controllerClass;
 	}
 
 	/**
@@ -302,7 +306,7 @@ class Action {
 	 */
 	public static function setCustomAction( $controllerClass, $actionMethod, $parameters = array() ) {
 
-		self::$className = $controllerClass;
+		self::$controllerClass = $controllerClass;
 		self::$method = $actionMethod;
 		self::$parameters = $parameters;
 	}

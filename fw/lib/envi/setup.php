@@ -4,15 +4,22 @@ namespace Difra\Envi;
 
 use Difra\Envi;
 
+/**
+ * Class Setup
+ *
+ * @package Difra\Envi
+ */
 class Setup {
 
+	/**
+	 * Set up environment
+	 */
 	public static function run() {
 
 		// paths
 		if( !defined( 'DIR_ROOT' ) ) {
-			define( 'DIR_ROOT', __DIR__ . '/../../../' );
+			define( 'DIR_ROOT', dirname( dirname( dirname( __DIR__ ) ) ) . '/' );
 		}
-		$_SERVER['DOCUMENT_ROOT'] = DIR_ROOT;
 		define( 'DIR_FW', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'fw/' );
 		define( 'DIR_SITE', DIR_ROOT . 'sites/' . Envi::getSiteDir() . '/' );
 		define( 'DIR_PLUGINS', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'plugins/' );
@@ -46,8 +53,14 @@ class Setup {
 		}
 	}
 
+	/** @var string Default locale */
 	static private $locale = 'ru_RU';
 
+	/**
+	 * Set locale
+	 *
+	 * @param $locale
+	 */
 	public static function setLocale( $locale ) {
 
 		self::$locale = $locale;
@@ -55,6 +68,11 @@ class Setup {
 		setlocale( LC_NUMERIC, array( 'en_US.UTF-8', 'en_US.utf8' ) );
 	}
 
+	/**
+	 * Get locale name
+	 *
+	 * @return string
+	 */
 	public static function getLocale() {
 
 		return self::$locale;

@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins\Catalog;
 
+use Difra\Envi\Session;
+
 class Item {
 
 	// основные данные
@@ -328,7 +330,6 @@ class Item {
 	 */
 	static public function getSort() {
 
-		\Difra\Site::getInstance()->sessionLoad();
 		if( isset( $_SESSION['catalog-sort'] ) ) {
 			self::$sort = $_SESSION['catalog-sort'];
 		}
@@ -342,7 +343,7 @@ class Item {
 	 */
 	static public function setSort( $sort ) {
 
-		\Difra\Site::getInstance()->sessionStart();
+		Session::start();
 		$_SESSION['catalog-sort'] = self::$sort = $sort;
 	}
 
@@ -544,7 +545,7 @@ class Item {
 
 	/**
 	 * Изменяет описание
-	 * @param string $description
+	 * @param string|\Difra\Param\AjaxSafeHTML|\Difra\Param\AjaxHTML $description
 	 */
 	public function setDescription( $description ) {
 
@@ -738,7 +739,7 @@ class Item {
 	/**
 	 * Возвращает данные о товаре в XML
 	 *
-	 * @param \DOMElement $node
+	 * @param \DOMElement|\DOMNode $node
 	 */
 	public function getXML( $node ) {
 
@@ -757,6 +758,7 @@ class Item {
 		$node->setAttribute( 'humanDate', $this->humanDate );
 		if( !empty( $this->images ) ) {
 			foreach( $this->images as $img ) {
+				/** @var \DOMElement $imgNode */
 				$imgNode = $node->appendChild( $node->ownerDocument->createElement( 'image' ) );
 				$imgNode->setAttribute( 'main', $img['main'] ? '1' : '0' );
 				$imgNode->setAttribute( 'id', $img['id'] );
@@ -764,6 +766,7 @@ class Item {
 		}
 		if( $this->loadedExt ) {
 			foreach( $this->ext as $ext ) {
+				/** @var \DOMElement $extNode */
 				$extNode = $node->appendChild( $node->ownerDocument->createElement( 'ext' ) );
 				if( isset( $ext['item'] ) ) {
 					$extNode->setAttribute( 'id', $ext['ext_id'] );
@@ -781,6 +784,7 @@ class Item {
 							$extNode->setAttribute( 'position', $set['ext_position'] );
 							$extInit = true;
 						}
+						/** @var \DOMElement $setNode */
 						$setNode = $extNode->appendChild( $extNode->ownerDocument->createElement( 'set' ) );
 						$setNode->setAttribute( 'id', $set['set_id'] );
 						$setNode->setAttribute( 'value', $set['set_value'] );

@@ -6,12 +6,12 @@ class CController extends \Difra\Controller {
 
 		$catId = 0;
 		$nextCat = null;
-		$linkparts = $this->action->parameters;
+		$linkparts = self::$parameters;
 		$title = array();
-		while( !empty( $this->action->parameters ) ) {
-			$next = rawurldecode( $this->action->parameters[0] );
+		while( !empty( self::$parameters ) ) {
+			$next = rawurldecode( self::$parameters[0] );
 			if( $nextCat = \Difra\Plugins\Catalog\Category::getByLink( $next, $catId ) ) {
-				array_shift( $this->action->parameters );
+				array_shift( self::$parameters );
 				$catId = $nextCat->getId();
 				$title[] = $nextCat->getName();
 				continue;
@@ -21,27 +21,27 @@ class CController extends \Difra\Controller {
 		\Difra\Plugins\Catalog::getInstance()->setSelectedCategory( $catId );
 		// get page
 		if(
-			sizeof( $this->action->parameters ) >= 2
-			and $this->action->parameters[sizeof( $this->action->parameters ) - 2] == 'page'
-			and is_numeric( $this->action->parameters[sizeof( $this->action->parameters ) - 1] )
+			sizeof( self::$parameters ) >= 2
+			and self::$parameters[sizeof( self::$parameters ) - 2] == 'page'
+			and is_numeric( self::$parameters[sizeof( self::$parameters ) - 1] )
 		) {
-			$page = array_pop( $this->action->parameters );
-			array_pop( $this->action->parameters );
+			$page = array_pop( self::$parameters );
+			array_pop( self::$parameters );
 			array_pop( $linkparts );
 			array_pop( $linkparts );
 		} else {
 			$page = 1;
 		}
 		$action = 'view';
-		switch( sizeof( $this->action->parameters ) ) {
+		switch( sizeof( self::$parameters ) ) {
 		case 0:
 			\Difra\Plugins\Catalog\View::getInstance()->viewCategory( $this, $catId, $page, $linkparts, $title );
 			break;
 		case 2:
-			$action = array_pop( $this->action->parameters );
+			$action = array_pop( self::$parameters );
 		case 1:
-			\Difra\Plugins\Catalog\View::getInstance()->viewItem( $this, $this->action->parameters[0], $action, $title );
-			$this->action->parameters = array();
+			\Difra\Plugins\Catalog\View::getInstance()->viewItem( $this, self::$parameters[0], $action, $title );
+			self::$parameters = array();
 			break;
 		}
 	}

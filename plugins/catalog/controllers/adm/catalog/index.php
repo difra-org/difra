@@ -6,7 +6,7 @@ class AdmCatalogIndexController extends Difra\Controller {
 
         public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	/*

@@ -273,6 +273,7 @@ class Controller {
 		$this->realRoot->setAttribute( 'host', $host = Envi::getHost() );
 		$this->realRoot->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
 		$this->realRoot->setAttribute( 'instance', $instance ? $instance : View::$instance );
+		$this->realRoot->setAttribute( 'uri', Envi::getUri() );
 		if( $host != $mainhost ) {
 			$this->realRoot->setAttribute( 'urlprefix', 'http://' . $mainhost );
 		}

@@ -187,16 +187,16 @@ abstract class Common {
 
 		$this->config = \Difra\Config::getInstance()->get( 'db' );
 		if( empty( $this->config['hostname'] ) ) {
-			$config['hostname'] = '';
+			$this->config['hostname'] = '';
 		}
 		if( empty( $this->config['username'] ) ) {
-			$config['username'] = '';
+			$this->config['username'] = '';
 		}
 		if( empty( $this->config['password'] ) ) {
-			$config['password'] = '';
+			$this->config['password'] = '';
 		}
 		if( empty( $this->config['database'] ) ) {
-			$config['database'] = '';
+			$this->config['database'] = '';
 		}
 	}
 

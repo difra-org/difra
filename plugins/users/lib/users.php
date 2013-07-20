@@ -19,9 +19,6 @@ class Users {
 	public function __construct() {
 	}
 
-	public function dispatch() {
-	}
-
 	const REGISTER_EMAIL_EMPTY     = 'email_empty';
 	const REGISTER_BAD_EMAIL       = 'bad_email';
 	const REGISTER_EMAIL_BUSY      = 'email_busy';
@@ -79,16 +76,17 @@ class Users {
 		$query = "INSERT INTO `users` SET `email`='" . $mysql->escape( $data['email'] ) . "', `password`='" . md5( $data['password1'] ) . "'";
 
 		switch( $confirm = $this->getActivationMethod() ) {
+			/** @noinspection PhpMissingBreakStatementInspection */
 		case 'email':
 			do {
 				$key = strtolower( Difra\Libs\Capcha::getInstance()->genKey( 24 ) );
 				$d   = $mysql->fetch( "SELECT `id` FROM `users` WHERE `activation`='$key'" );
 			} while( !empty( $d ) );
 			$data['activation'] = $key;
-			$query .= ", `activation`='$key'";
-			// no break
+			$query .= ", `activation`='$key', `active`=0";
+			break;
 		case 'moderate':
-			$query .= ", `active`=0";
+			$query .= ', `active`=0';
 			break;
 		case 'none':
 		default:
@@ -328,8 +326,12 @@ class Users {
 		return @unserialize( $auth->data['info'] );
 	}
 
+	/**
+	 * @param \DOMElement|\DOMNode $node
+	 */
 	public function getInfoXML( $node ) {
 
+		/** @var \DOMElement|\DOMNode $infoNode */
 		$infoNode = $node->appendChild( $node->ownerDocument->createElement( 'userInfo' ) );
 		$data     = $this->getInfo();
 		if( !empty( $data ) ) {
@@ -342,9 +344,9 @@ class Users {
 	/**
 	 * Возвращает xml со списком всех пользователей
 	 *
-	 * @param \DOMNode $node
-	 * @param int      $page
-	 * @param int      $perPage
+	 * @param \DOMElement|\DOMNode $node
+	 * @param int                  $page
+	 * @param int                  $perPage
 	 */
 	public function getListXML( $node, $page = 1, $perPage = 75 ) {
 
@@ -460,14 +462,14 @@ class Users {
 		\Difra\Libs\Cookies::getInstance()->remove( 'resume' );
 	}
 
-	public function unSetLongSessionBySID( $sessionId ) {
+	public static function unSetLongSessionBySID( $sessionId ) {
 
 		$db = \Difra\MySQL::getInstance();
 		$db->query( "DELETE FROM `users_sessions` WHERE `session_id`='" . $db->escape( $sessionId ) . "'" );
 		\Difra\Libs\Cookies::getInstance()->remove( 'resume' );
 	}
 
-	public function checkLongSession() {
+	public static function checkLongSession() {
 
 		if( \Difra\Auth::getInstance()->isLogged() ) {
 			return;
@@ -482,7 +484,7 @@ class Users {
 					RIGHT JOIN `users` AS `u` ON u.`id` = s.`id` AND u.`active`=1 AND u.`banned`=0
 					WHERE s.`session_id`='" . $db->escape( $_COOKIE['resume'] ) . "'" );
 			if( empty( $data ) ) {
-				$this->unSetLongSessionBySID( $_COOKIE['resume'] );
+				self::unSetLongSessionBySID( $_COOKIE['resume'] );
 				return;
 			}
 
@@ -498,7 +500,7 @@ class Users {
 					return;
 				}
 			}
-			$this->unSetLongSessionBySID( $_COOKIE['resume'] );
+			self::unSetLongSessionBySID( $_COOKIE['resume'] );
 		}
 	}
 
