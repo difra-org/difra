@@ -2,6 +2,7 @@
 
 namespace Difra\MySQL\Abstracts;
 
+use Difra\Envi;
 use Difra\Exception, Difra\Debugger;
 
 /**
@@ -190,13 +191,13 @@ abstract class Common {
 			$this->config['hostname'] = '';
 		}
 		if( empty( $this->config['username'] ) ) {
-			$this->config['username'] = '';
+			$this->config['username'] = Envi::getSite();
 		}
 		if( empty( $this->config['password'] ) ) {
 			$this->config['password'] = '';
 		}
 		if( empty( $this->config['database'] ) ) {
-			$this->config['database'] = '';
+			$this->config['database'] = Envi::getSite();
 		}
 	}
 
