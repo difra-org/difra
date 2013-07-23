@@ -33,6 +33,7 @@ class UserAgent {
 		'iPod' => 'iOS',
 		'iPhone' => 'iOS',
 		'Android' => 'Android',
+		'BlackBerry' => 'BlackBerry',
 		'MeeGo' => 'MeeGo',
 		'Linux' => 'Linux'
 	);
@@ -105,8 +106,12 @@ class UserAgent {
 		}
 		$agentId = self::getAgentId();
 		$ua = self::getUAArray();
-		if( $agentId == 'Safari' and strpos( $ua['Version'], 'Mobile' ) !== false ) {
+		$os = self::getOS();
+		if( $os == 'Android' and $agentId == 'Safari' and strpos( $ua['Version'], 'Mobile' ) !== false ) {
 			return self::$agent = 'Android-Browser';
+		}
+		if( $os == 'BlackBerry' and $agentId == 'Safari' and strpos( $ua['Version'], 'Mobile' ) !== false ) {
+			return self::$agent = 'BlackBerry-Browser';
 		}
 		if( $agentId and isset( self::$agents[$agentId] ) ) {
 			return self::$agent = self::$agents[$agentId];
@@ -169,30 +174,27 @@ class UserAgent {
 			return self::$version;
 		}
 		$ua = self::getUAArray();
+		$agent = self::getAgent();
+		$agentId = self::getAgentId();
 		if( isset( $ua['Version'] ) ) {
 			self::$version = $ua['Version'];
 			if( substr( self::$version, -7 ) == ' Mobile' ) {
 				self::$version = substr( self::$version, 0, -7 );
 			}
-			return self::$version;
-		}
-		$agentId = self::getAgentId();
-		if( isset( $ua[$agentId] ) ) {
+		} elseif( isset( $ua[$agentId] ) ) {
 			if( $agentId == 'Opera' ) {
-				return self::$version = explode( ' ', $ua[$agentId], 2 )[0];
+				self::$version = explode( ' ', $ua[$agentId], 2 )[0];
 			} else {
-				return self::$version = $ua[$agentId];
+				self::$version = $ua[$agentId];
 			}
-		}
-		$agent = self::getAgent();
-		if( $agent == 'IE' ) {
+		} elseif( $agent == 'IE' ) {
 			$version = substr( $ua['Mozilla'], strpos( $ua['Mozilla'], 'MSIE' ) + 4 );
 			if( $p = strpos( $version, ';' ) ) {
 				$version = substr( $version, 0, $p );
 			}
-			return self::$version = trim( $version );
+			self::$version = trim( $version );
 		}
-		return self::$version = false;
+		return ( sizeof( $vv = explode( '.', self::$version, 3 ) ) >= 2 ) ? $vv[0] . '.' . $vv[1] : self::$version;
 	}
 
 	private static $uaString = null;

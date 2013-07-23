@@ -17,7 +17,7 @@ class EnviUserAgentTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( \Difra\Envi\UserAgent::getUserAgent(),
 			array(
 			     'agent' => 'Safari',
-			     'version' => '6.0.5',
+			     'version' => '6.0',
 			     'os' => 'Macintosh',
 			     'engine' => 'WebKit'
 			) );
@@ -44,7 +44,7 @@ class EnviUserAgentTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( \Difra\Envi\UserAgent::getUserAgent(),
 			array(
 			     'agent' => 'Chrome',
-			     'version' => '27.0.1453.110',
+			     'version' => '27.0',
 			     'os' => 'Macintosh',
 			     'engine' => 'WebKit'
 			) );
@@ -98,7 +98,7 @@ class EnviUserAgentTest extends PHPUnit_Framework_TestCase {
 		$this->assertEquals( \Difra\Envi\UserAgent::getUserAgent(),
 			array(
 			     'agent' => 'Chrome',
-			     'version' => '27.0.1453.10',
+			     'version' => '27.0',
 			     'os' => 'iOS',
 			     'engine' => 'WebKit'
 			) );
@@ -175,5 +175,13 @@ class EnviUserAgentTest extends PHPUnit_Framework_TestCase {
 			     'engine' => 'WebKit'
 			) );
 
+		\Difra\Envi\UserAgent::setUAString( 'Mozilla/5.0 (BlackBerry; U; BlackBerry 9900; en) AppleWebKit/534.11+ (KHTML, like Gecko) Version/7.1.0.346 Mobile Safari/534.11+' );
+		$this->assertEquals( \Difra\Envi\UserAgent::getUserAgent(),
+			array(
+			     'agent' => 'BlackBerry-Browser',
+			     'version' => '7.1',
+			     'os' => 'BlackBerry',
+			     'engine' => 'WebKit'
+			) );
 	}
 }
