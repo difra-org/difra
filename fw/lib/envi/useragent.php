@@ -194,7 +194,10 @@ class UserAgent {
 			}
 			self::$version = trim( $version );
 		}
-		return ( sizeof( $vv = explode( '.', self::$version, 3 ) ) >= 2 ) ? $vv[0] . '.' . $vv[1] : self::$version;
+		if( sizeof( $vv = explode( '.', self::$version, 3 ) ) >= 2 ) {
+			self::$version = $vv[0] . '.' . $vv[1];
+		}
+		return self::$version;
 	}
 
 	private static $uaString = null;
