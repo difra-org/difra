@@ -33,6 +33,7 @@ class UserAgent {
 		'iPod' => 'iOS',
 		'iPhone' => 'iOS',
 		'Android' => 'Android',
+		'BlackBerry' => 'BlackBerry',
 		'MeeGo' => 'MeeGo',
 		'Linux' => 'Linux'
 	);
@@ -103,10 +104,18 @@ class UserAgent {
 		if( !is_null( self::$agent ) ) {
 			return self::$agent;
 		}
-		if( $agentId = self::getAgentId() and isset( self::$agents[$agentId] ) ) {
+		$agentId = self::getAgentId();
+		$ua = self::getUAArray();
+		$os = self::getOS();
+		if( $os == 'Android' and $agentId == 'Safari' and strpos( $ua['Version'], 'Mobile' ) !== false ) {
+			return self::$agent = 'Android-Browser';
+		}
+		if( $os == 'BlackBerry' and $agentId == 'Safari' and strpos( $ua['Version'], 'Mobile' ) !== false ) {
+			return self::$agent = 'BlackBerry-Browser';
+		}
+		if( $agentId and isset( self::$agents[$agentId] ) ) {
 			return self::$agent = self::$agents[$agentId];
 		}
-		$ua = self::getUAArray();
 		if( isset( $ua['Mozilla'] ) and strpos( $ua['Mozilla'], 'MSIE' ) ) {
 			return self::$agentId = 'IE';
 		}
@@ -165,26 +174,30 @@ class UserAgent {
 			return self::$version;
 		}
 		$ua = self::getUAArray();
-		if( isset( $ua['Version'] ) ) {
-			return self::$version = $ua['Version'];
-		}
-		$agentId = self::getAgentId();
-		if( isset( $ua[$agentId] ) ) {
-			if( $agentId == 'Opera' ) {
-				return self::$version = explode( ' ', $ua[$agentId], 2 )[0];
-			} else {
-				return self::$version = $ua[$agentId];
-			}
-		}
 		$agent = self::getAgent();
-		if( $agent == 'IE' ) {
+		$agentId = self::getAgentId();
+		if( isset( $ua['Version'] ) ) {
+			self::$version = $ua['Version'];
+			if( substr( self::$version, -7 ) == ' Mobile' ) {
+				self::$version = substr( self::$version, 0, -7 );
+			}
+		} elseif( isset( $ua[$agentId] ) ) {
+			if( $agentId == 'Opera' ) {
+				self::$version = explode( ' ', $ua[$agentId], 2 )[0];
+			} else {
+				self::$version = $ua[$agentId];
+			}
+		} elseif( $agent == 'IE' ) {
 			$version = substr( $ua['Mozilla'], strpos( $ua['Mozilla'], 'MSIE' ) + 4 );
 			if( $p = strpos( $version, ';' ) ) {
 				$version = substr( $version, 0, $p );
 			}
-			return self::$version = trim( $version );
+			self::$version = trim( $version );
 		}
-		return self::$version = false;
+		if( sizeof( $vv = explode( '.', self::$version, 3 ) ) >= 2 ) {
+			self::$version = $vv[0] . '.' . $vv[1];
+		}
+		return self::$version;
 	}
 
 	private static $uaString = null;
