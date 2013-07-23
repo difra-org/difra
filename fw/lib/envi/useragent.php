@@ -103,10 +103,14 @@ class UserAgent {
 		if( !is_null( self::$agent ) ) {
 			return self::$agent;
 		}
-		if( $agentId = self::getAgentId() and isset( self::$agents[$agentId] ) ) {
+		$agentId = self::getAgentId();
+		$ua = self::getUAArray();
+		if( $agentId == 'Safari' and strpos( $ua['Version'], 'Mobile' ) !== false ) {
+			return self::$agent = 'Android-Browser';
+		}
+		if( $agentId and isset( self::$agents[$agentId] ) ) {
 			return self::$agent = self::$agents[$agentId];
 		}
-		$ua = self::getUAArray();
 		if( isset( $ua['Mozilla'] ) and strpos( $ua['Mozilla'], 'MSIE' ) ) {
 			return self::$agentId = 'IE';
 		}
@@ -166,7 +170,11 @@ class UserAgent {
 		}
 		$ua = self::getUAArray();
 		if( isset( $ua['Version'] ) ) {
-			return self::$version = $ua['Version'];
+			self::$version = $ua['Version'];
+			if( substr( self::$version, -7 ) == ' Mobile' ) {
+				self::$version = substr( self::$version, 0, -7 );
+			}
+			return self::$version;
 		}
 		$agentId = self::getAgentId();
 		if( isset( $ua[$agentId] ) ) {
