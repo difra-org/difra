@@ -196,8 +196,7 @@ class Ajax {
 	}
 
 	/**
-	 * Действия с ajaxer
-
+	 * Ajaxer Actions
 	 */
 
 	/**
@@ -218,15 +217,6 @@ class Ajax {
 	public function hasProblem() {
 
 		return $this->problem;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function clearResponse() {
-
-		$this->response = array();
-		$this->problem = false;
 	}
 
 	/**
