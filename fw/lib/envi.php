@@ -66,26 +66,29 @@ class Envi {
 			return $site;
 		}
 
-		$sitesLocation = __DIR__ . '/../../sites/';
-		$site = 'default';
-		// хост передаётся от веб-сервера
+		// default behavior: site is defined by web server
 		if( !empty( $_SERVER['VHOST_NAME'] ) ) {
-			$site = $_SERVER['VHOST_NAME'];
-			// определяем хост по hostname
-		} elseif( $host = self::getHost() ) {
-			while( $host ) {
-				if( is_dir( $sitesLocation . $host ) ) {
-					$site = $host;
-					break;
-				} elseif( is_dir( $sitesLocation . 'www.' . $host ) ) {
-					$site = 'www.' . $host;
-					break;
-				}
-				$host = explode( '.', $host, 2 );
-				$host = !empty( $host[1] ) ? $host[1] : false;
-			}
+			return $site = $_SERVER['VHOST_NAME'];
 		}
-		return $site;
+
+		// no host name is available (most likely environment is not web server)
+		if( !$host = self::getHost() ) {
+			return $site = 'default';
+		}
+
+		// automatic behavior: try to compare host name to existing directories in sites folder
+		$sitesLocation = __DIR__ . '/../../sites/';
+		while( $host ) {
+			if( is_dir( $sitesLocation . $host ) ) {
+				return $site = $host;
+			}
+			if( is_dir( $sitesLocation . 'www.' . $host ) ) {
+				return $site = 'www.' . $host;
+			}
+			$host = explode( '.', $host, 2 );
+			$host = !empty( $host[1] ) ? $host[1] : false;
+		}
+		return $site = 'default';
 	}
 
 	/**
