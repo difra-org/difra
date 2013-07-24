@@ -196,8 +196,7 @@ class Ajax {
 	}
 
 	/**
-	 * Действия с ajaxer
-
+	 * Ajaxer Actions
 	 */
 
 	/**
@@ -218,15 +217,6 @@ class Ajax {
 	public function hasProblem() {
 
 		return $this->problem;
-	}
-
-	/**
-	 * @deprecated
-	 */
-	public function clearResponse() {
-
-		$this->response = array();
-		$this->problem = false;
 	}
 
 	/**
@@ -411,13 +401,12 @@ class Ajax {
 		$this->addAction( array(
 				       'action' => 'display',
 				       'html' =>
-				       '<form action="/' . Envi::getUri() . '" class="ajaxer">' .
+				       '<form action="' . Envi::getUri() . '" class="ajaxer">' .
 				       '<input type="hidden" name="confirm" value="1"/>' .
 				       '<div>' . $text . '</div>' .
-				       '<input type="submit" value="' . Controller::getInstance()->locale->getXPath( 'ajaxer/confirm-yes' )
+				       '<input type="submit" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-yes' )
 				       . '"/>' .
-				       '<input type="button" value="' . Controller::getInstance()->locale->getXPath( 'ajaxer/confirm-no' ) . '"
-						onclick="ajaxer.close(this)"/>' .
+				       '<input type="button" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
 				       '</form>'
 				  ) );
 	}
