@@ -284,11 +284,11 @@ abstract class Common {
 			) );
 		if( !empty( $paths ) ) {
 			foreach( $paths as $dir ) {
-				if( is_dir( $d = "{$dir}/{$this->type}/{$instance}" ) ) {
+				if( is_dir( $d = "{$dir}{$this->type}/{$instance}" ) ) {
 					$found = true;
 					$parents[] = $d;
 				}
-				if( $this->withAll( $instance ) and is_dir( $d = "{$dir}/{$this->type}/all" ) ) {
+				if( $this->withAll( $instance ) and is_dir( $d = "{$dir}{$this->type}/all" ) ) {
 					$parents[] = $d;
 				}
 			}

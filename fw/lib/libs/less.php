@@ -17,7 +17,7 @@ class Less {
 				$less->setFormatter( 'compressed' );
 				$less->setPreserveComments( false );
 			} else {
-				$less->setFormatter( 'lessjs' ); // or 'lessjs' ?
+				$less->setFormatter( 'lessjs' );
 				$less->setPreserveComments( true );
 			}
 		}
