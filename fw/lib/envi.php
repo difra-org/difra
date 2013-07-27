@@ -125,6 +125,7 @@ class Envi {
 			self::$requestedUri = substr( self::$requestedUri, 0, strpos( self::$requestedUri, '?' ) );
 		}
 		self::$requestedUri = '/' . trim( self::$requestedUri, '/' );
+		self::$requestedUri = urldecode( self::$requestedUri );
 		return self::$requestedUri;
 	}
 
