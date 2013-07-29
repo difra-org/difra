@@ -23,6 +23,6 @@ class Controller extends \Difra\Controller {
 		$pageNode = $this->root->appendChild( $this->xml->createElement( 'page' ) );
 		$page = Page::get( $id->val() );
 		$page->getXML( $pageNode );
-		$this->root->setAttribute( 'title', $page->getTitle() );
+		$this->root->setAttribute( 'pageTitle', $page->getTitle() );
 	}
 }
