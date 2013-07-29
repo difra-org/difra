@@ -5,6 +5,11 @@
 		<xsl:choose>
 			<xsl:when test="/root/@ajax=1">
 				<html>
+					<head>
+						<title>
+							<xsl:call-template name="html-head-title"/>
+						</title>
+					</head>
 					<xsl:call-template name="html-body-switcher"/>
 				</html>
 			</xsl:when>
@@ -37,7 +42,7 @@
 	</xsl:template>
 
 	<xsl:template name="content-wrapper">
-		<div id="content" class=".switcher">
+		<div id="content" class="switcher">
 			<xsl:call-template name="content"/>
 		</div>
 		<xsl:apply-templates select="/root/debug"/>

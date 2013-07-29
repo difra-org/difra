@@ -70,11 +70,11 @@
 				</xsl:if>
 			</xsl:when>
 			<xsl:when test="$locale/default/title and not($locale/default/title='')">
-				<xsl:value-of select="/root/content/@title"/>
 				<xsl:if test="/root/content/@pageTitle and not(/root/content/@pageTitle='')">
-					<xsl:text>&#160;—&#160;</xsl:text>
 					<xsl:value-of select="/root/content/@pageTitle"/>
+					<xsl:text>&#160;—&#160;</xsl:text>
 				</xsl:if>
+				<xsl:value-of select="$locale/default/title"/>
 			</xsl:when>
 			<xsl:otherwise>
 				<xsl:if test="/root/content/@pageTitle and not(/root/content/@pageTitle='')">

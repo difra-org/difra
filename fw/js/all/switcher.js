@@ -29,16 +29,14 @@ switcher.ajaxConfig = {
 			switcher.fallback();
 			return;
 		}
-		var a = newdata.filter( '#content,.switcher' ).add( newdata.find( '#content,.switcher' ) );
+		var a = newdata.filter( '.switcher' ).add( newdata.find( '.switcher' ) );
 		if( !a.length ) {
 			switcher.fallback();
 			return;
 		}
+		/*
 		var newPath = '/';
-		var content = newdata.filter( '#content' );
-		if( !content.length ) {
-			content = newdata.find( '#content' );
-		}
+		var content = newdata.find( '#content' );
 		if( content.length && content.attr( 'basepath' ) ) {
 			newPath = content.attr( 'basepath' );
 		}
@@ -46,6 +44,7 @@ switcher.ajaxConfig = {
 			switcher.fallback();
 			return;
 		}
+		*/
 		$( document ).triggerHandler( 'destruct' );
 		if( !switcher.noPush ) {
 			if( typeof history.pushState == 'function' ) {
@@ -63,7 +62,6 @@ switcher.ajaxConfig = {
 		$( document ).triggerHandler( 'switch' );
 
 		a.each( function( k, v ) {
-			//noinspection EmptyCatchBlockJS
 			try {
 				$( '#' + $( v ).attr( 'id' ) ).replaceWith( v ).remove();
 			} catch( ignore ) {
@@ -74,6 +72,11 @@ switcher.ajaxConfig = {
 		var title = newdata.filter( 'title' ).text();
 		if( title.length ) {
 			document.title = title;
+		} else {
+			title = newdata.find( 'title' ).text();
+			if( title.length ) {
+				document.title = title;
+			}
 		}
 		$( document ).triggerHandler( 'construct' );
 		loading.hide();
