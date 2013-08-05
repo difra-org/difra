@@ -341,7 +341,7 @@ class Debugger {
 
 Time:	$date
 Host:	$host
-Uri:	/$uri
+Uri:	$uri
 User:	$user
 
 \$_SERVER:
