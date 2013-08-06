@@ -114,6 +114,12 @@
 	box-sizing: border-box; /* Opera/IE 8+ */
 }
 
+.box-sizing( @props ) {
+	-webkit-box-sizing: @props; /* Safari/Chrome, other WebKit */
+	-moz-box-sizing: @props; /* Firefox, other Gecko */
+	box-sizing: @props; /* Opera/IE 8+ */
+}
+
 .filter( @props ) {
 	filter: @props;
 	-webkit-filter: @props;

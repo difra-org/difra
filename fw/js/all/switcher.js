@@ -1,6 +1,6 @@
 /**
  * Переключает страницы с помощью ajax.
- * В исходной и конечной странице должны присутствовать контейнеры #content,
+ * В исходной и конечной странице должны присутствовать контейнеры .switcher,
  * которые данный скрипт заменяет при переключении.
  *
  * Добавляет события:
@@ -10,10 +10,12 @@
  */
 var switcher = [];
 
+switcher.basePath = '/';
 switcher.hashChanged = false;
 switcher.noPush = false;
 switcher.url = false;
-switcher.basePath = '/';
+switcher.referrer = false;
+
 switcher.ajaxConfig = {
 	async: true,
 	cache: false,
@@ -52,11 +54,6 @@ switcher.ajaxConfig = {
 			} else { // нет pushState — используем хеши
 				switcher.hashChanged = true;
 				window.location = switcher.basePath + '#!' + switcher.url;
-			}
-			//noinspection JSUnresolvedVariable
-			if( typeof _gaq == 'object' && typeof _gaq.push == 'function' ) {
-				//noinspection JSUnresolvedVariable
-				_gaq.push( ['_trackPageview', switcher.url] );
 			}
 		}
 		$( document ).triggerHandler( 'switch' );
@@ -105,9 +102,10 @@ switcher.page = function( url, noPush, data ) {
 		debug.addReq( 'Switching page: ' + url );
 	}
 	switcher.noPush = noPush ? true : false;
+	switcher.referrer = switcher.url;
 	switcher.url = url;
 	if( typeof data == 'undefined' ) {
-		if( $( '#content,.switcher' ).length ) {
+		if( $( '.switcher' ).length ) {
 			$.ajax( url, switcher.ajaxConfig );
 		} else {
 			$( document ).triggerHandler( 'destruct' );
@@ -137,19 +135,21 @@ window.onhashchange = function() {
 
 window.onpopstate = function() {
 
-	if( switcher.url && switcher.url != document.location.pathname && switcher.url != document.location.hash.substring( 2 ) ) {
+	if( switcher.url && switcher.url != decodeURI( document.location.pathname ) && switcher.url != document.location.hash.substring( 2 ) ) {
 		switcher.page( document.location.href, true );
 	}
 };
 
 $( document ).ready( function() {
 
+	/*
 	var content = $( '#content' );
 	if( content.length && content.attr( 'basepath' ) ) {
 		switcher.basePath = content.attr( 'basepath' );
 	} else {
 		switcher.basePath = '/';
 	}
+	*/
 	if( document.location.hash && document.location.hash.substring( 0, 2 ) == '#!' ) {
 		switcher.page( document.location.hash.substring( 2 ), true );
 		if( typeof history.replaceState == 'function' ) {
@@ -160,7 +160,7 @@ $( document ).ready( function() {
 		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
 	} else {
 		if( !switcher.url ) {
-			switcher.url = document.location.pathname;
+			switcher.url = decodeURI( document.location.pathname );
 		}
 	}
 } );
