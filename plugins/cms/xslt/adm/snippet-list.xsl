@@ -5,7 +5,7 @@
 			<xsl:value-of select="$locale/cms/adm/snippet/title"/>
 		</h2>
 		<xsl:if test="/root/@debug=1">
-			<a href="/adm/content/snippets/add" class="button">
+			<a href="/adm/content/snippets/add" class="action add">
 				<xsl:value-of select="$locale/adm/actions/add"/>
 			</a>
 		</xsl:if>
