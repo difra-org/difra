@@ -12,7 +12,7 @@
 				<table>
 					<colgroup>
 						<col/>
-						<col style="width: 120px"/>
+						<col/>
 						<col style="width: 120px"/>
 						<col style="width: 100px"/>
 					</colgroup>
