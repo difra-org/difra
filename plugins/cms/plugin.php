@@ -10,7 +10,7 @@ namespace Difra\Plugins\CMS;
 class Plugin extends \Difra\Plugin {
 
 	/** @var int */
-	protected $version = 4;
+	protected $version = 5;
 	/** @var string */
 	protected $description = 'Content management system';
 	/** @var array */
