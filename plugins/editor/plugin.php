@@ -10,7 +10,7 @@ namespace Difra\Plugins\Editor;
 class Plugin extends \Difra\Plugin {
 
 	/** @var int */
-	protected $version = 4;
+	protected $version = 5;
 	/** @var string */
 	protected $description = 'WYSIWYG Editor';
 
