@@ -29,6 +29,7 @@ class Autoloader {
 	/**
 	 * Возвращает имя файла для заданного класса
 	 * @param string $class
+	 *
 	 * @return string
 	 */
 	public static function class2file( $class ) {
@@ -37,6 +38,10 @@ class Autoloader {
 		$parts = explode( '\\', $class );
 		if( $parts[0] != 'Difra' ) {
 			$path = DIR_ROOT . 'lib/';
+		} elseif( sizeof( $parts ) > 4 and $parts[0] == 'Difra' and $parts[1] == 'Plugins' and $parts[3] == 'Objects' ) {
+			$plugin = strtolower( $parts[2] );
+			$parts = array_slice( $parts, 4 );
+			$path = DIR_PLUGINS . "$plugin/objects/";
 		} elseif( $parts[0] == 'Difra' and $parts[1] == 'Plugins' ) {
 			$name = strtolower( $parts[2] );
 			// классы вида Plugins/Name ищем в plugins/name/lib/name.php
@@ -50,7 +55,6 @@ class Autoloader {
 			array_shift( $parts );
 		}
 		return $path . strtolower( implode( '/', $parts ) ) . '.php';
-
 	}
 
 	/**

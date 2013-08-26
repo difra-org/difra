@@ -34,17 +34,19 @@ abstract class Storage {
 	 * Получение имени класса по objKey
 	 *
 	 * @param $objKey
+	 *
 	 * @return string|null
 	 */
 	final static public function getClass( $objKey ) {
 
-		return isset( self::$classes[$objKey] ) ? self::$classes[$objKey] : null;
+		return isset( self::$classes[$objKey] ) ? '\\' . self::$classes[$objKey] : null;
 	}
 
 	/**
 	 * Получение объекта по $objKey
 	 * @param $objKey
 	 * @param $primary
+	 *
 	 * @return static
 	 * @throws Exception
 	 */
@@ -56,5 +58,22 @@ abstract class Storage {
 		}
 		/** @var $class Item */
 		return $class::get( $primary );
+	}
+
+	/**
+	 * Получение статуса таблиц в базе
+	 * @param \DOMElement|\DOMNode $node
+	 */
+	final public static function getDbStatusXML( $node ) {
+
+		if( empty( self::$classes ) ) {
+			$node->setAttribute( 'empty', 1 );
+			return;
+		}
+		foreach( self::$classes as $objKey => $className ) {
+			$objNode = $node->appendChild( $node->ownerDocument->createElement( $objKey ) );
+			/** @var \Difra\Unify\Item $className */
+			$className::getDbStatus( $objNode );
+		}
 	}
 }

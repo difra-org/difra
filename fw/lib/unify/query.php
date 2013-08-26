@@ -25,7 +25,8 @@ class Query extends Paginator {
 	public $limitNum = null;
 
 	/** @var string|string[] Условия сортировки */
-	public $order = null;
+	private $order = null;
+	private $orderDesc = array();
 
 	/** @var string[]|self[] Имена Unify-объектов или же Query, которые нужно приджойнить к запросу */
 	private $with = array();
@@ -48,8 +49,12 @@ class Query extends Paginator {
 	 */
 	public function doQuery() {
 
-		$db = MySQL::getInstance();
-		$result = $db->fetch( $this->getQuery() );
+		try {
+			$db = MySQL::getInstance();
+			$result = $db->fetch( $this->getQuery() );
+		} catch( Exception $ex ) {
+			return null;
+		}
 		if( $this->page ) {
 			$this->setTotal( $db->getFoundRows() );
 		}
@@ -64,7 +69,6 @@ class Query extends Paginator {
 			$res[] = $o;
 		}
 		return $res;
-
 	}
 
 	/**
@@ -163,8 +167,24 @@ class Query extends Paginator {
 		/** @var Unify $class */
 		$class = Unify::getClass( $this->objKey );
 		$table = $class::getTable();
-		$o = MySQL::getInstance()->escape( $this->order );
-		return ' ORDER BY `' . $table . '`.`' . implode( '`,`' . $table . '`.`', $o ) . '`';
+		$db = MySQL::getInstance();
+		$ord = ' ORDER BY ';
+		$d = '';
+		foreach( $this->order as $column ) {
+			$ord .= "$d`$table`.`" . $db->escape( $column ) . '`' . ( !in_array( $column, $this->orderDesc ) ? : ' DESC' );
+			$d = ', ';
+		}
+		return $ord;
+	}
+
+	public function setOrder( $columns = array(), $desc = array() ) {
+
+		if( !$columns or empty( $columns ) ) {
+			$this->order = null;
+			$this->orderDesc = null;
+		}
+		$this->order = is_array( $columns ) ? $columns : array( $columns );
+		$this->orderDesc = is_array( $desc ) ? $desc : array( $desc );
 	}
 
 	/**
@@ -223,6 +243,7 @@ class Query extends Paginator {
 	 * Добавить имя объекта или Query, которые нужно приджойнить к запросу
 	 *
 	 * @param string|self $query
+	 *
 	 * @throws \Difra\Exception
 	 */
 	public function join( $query ) {
