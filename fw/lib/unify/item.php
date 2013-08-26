@@ -49,6 +49,7 @@ abstract class Item extends Storage {
 	/**
 	 * Получение значения поля
 	 * @param $name
+	 *
 	 * @return mixed
 	 * @throws Exception
 	 */
@@ -81,6 +82,7 @@ abstract class Item extends Storage {
 	/**
 	 * Загружает данные
 	 * @param bool $full        Включать ли поля с autoload=false
+	 *
 	 * @throws Exception
 	 */
 	public function load( $full = false ) {
@@ -94,6 +96,7 @@ abstract class Item extends Storage {
 	 * @param string $field
 	 * @param mixed  $value
 	 * @param bool   $full
+	 *
 	 * @throws \Difra\Exception
 	 */
 	protected function loadByField( $field, $value, $full = false ) {
@@ -170,6 +173,7 @@ abstract class Item extends Storage {
 	 * Возвращает список ключей (обёртка для getKeysArray)
 	 *
 	 * @param bool $full|'only'        Вместе с ключами с autoload=false
+	 *
 	 * @return array
 	 */
 	public static function getKeys( $full = true ) {
@@ -186,6 +190,7 @@ abstract class Item extends Storage {
 	/**
 	 * Возвращает список ключей
 	 * @param bool $full|'only'        Вместе с ключами с autoload=false
+	 *
 	 * @return array
 	 */
 	private static function getKeysArray( $full = true ) {
@@ -280,6 +285,7 @@ abstract class Item extends Storage {
 	 * Возвращает объект с заданным primary
 	 *
 	 * @param $primary
+	 *
 	 * @return static
 	 */
 	public static function get( $primary ) {
@@ -302,6 +308,7 @@ abstract class Item extends Storage {
 	 * Возвращает объект по значению поля (если соответствующих строк в таблице несколько, будет возвращён только первый)
 	 * @param string $field
 	 * @param string $value
+	 *
 	 * @return static
 	 */
 	public static function getByField( $field, $value ) {
@@ -322,5 +329,61 @@ abstract class Item extends Storage {
 			}
 		}
 		return $o;
+	}
+
+	public static function getDbStatus() {
+
+		$table = static::getTable();
+		$db = MySQL::getInstance();
+		try {
+			$db->fetch( "DESC `" . $db->escape( $table ) . "`" );
+		} catch( Exception $ex ) {
+			return array( 'status' => 'missing', 'name' => $table, 'create' => static::getDbCreate() );
+		}
+		return array( 'status' => 'ok' );
+	}
+
+	public static function getDbCreate() {
+
+		$db = MySQL::getInstance();
+		$columns = array();
+		$indexes = array();
+		foreach( static::$propertiesList as $name => $prop ) {
+			// simple columns (name => type)
+			if( !is_array( $prop ) ) {
+				$columns[] = '  `' . $db->escape( $name ) . '` ' . $prop;
+				continue;
+			}
+			// column name
+			$line = '  `' . $db->escape( $name ) . '` ' . $prop['type'];
+			// primary key
+			if( $primary = ( !empty( $prop['primary'] ) and $prop['primary'] ) ) {
+				$indexes[] = '  PRIMARY KEY (`' . $name . '`)';
+			}
+			// length
+			empty( $prop['length'] ) ? : $line .= "({$prop['length']})";
+			// default value
+			if( !empty( $prop['default'] ) ) {
+				$line .= " DEFAULT {$prop['default']}";
+			} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
+				$line .= ' NOT NULL';
+			} else {
+				$line .= ' DEFAULT NULL';
+			}
+			// column options
+			empty( $prop['options'] ) ? : $line .= mb_strtoupper( ' ' . ( is_array( $prop['options'] ) ? implode( ' ',
+															      $prop['options'] ) : $prop['options'] ) );
+			// non-primary indexes
+			if( !$primary and !empty( $prop['unique'] ) and $prop['unique'] ) {
+				$indexes[] = '  UNIQUE KEY `' . $name . '` (`' . $name . '`)';
+			} elseif( !$primary and !empty( $prop['index'] ) and $prop['index'] ) {
+				$indexes[] = '  KEY `' . $name . '` (`' . $name . '`)';
+			}
+
+			$columns[] = $line;
+		}
+		$lines = array_merge( $columns, $indexes );
+		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n)";
+		return $create;
 	}
 }

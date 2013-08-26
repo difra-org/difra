@@ -23,19 +23,20 @@ class Search extends Query {
 
 	/**
 	 * Получение списка
-	 * @param string $objKey
 	 * @return mixed
 	 */
-	public function getList( $objKey ) {
+	public function getList() {
 
-		$this->objKey = $objKey;
 		$result = $this->doQuery();
+		if( empty( $result ) ) {
+			return null;
+		}
 		foreach( $result as $k => $v ) {
 			$primary = $v->getPrimaryValue();
-			if( Unify::$objects[$objKey][$primary] ) {
-				$result[$k] = Unify::$objects[$objKey][$primary];
+			if( Unify::$objects[$this->objKey][$primary] ) {
+				$result[$k] = Unify::$objects[$this->objKey][$primary];
 			} else {
-				Unify::$objects[$objKey][$primary] = $v;
+				Unify::$objects[$this->objKey][$primary] = $v;
 			}
 		}
 		return $result;
@@ -44,19 +45,18 @@ class Search extends Query {
 	/**
 	 * Добавление в XML полученного списка
 	 *
-	 * @param string   $objKey
 	 * @param \DOMNode $toNode
 	 */
-	public function getListXML( $objKey, $toNode ) {
+	public function getListXML( $toNode ) {
 
 		/** @var \DOMElement $node */
-		$node = $toNode->appendChild( $toNode->ownerDocument->createElement( $objKey . 'List' ) );
-		$list = $this->getList( $objKey );
+		$node = $toNode->appendChild( $toNode->ownerDocument->createElement( $this->objKey . 'List' ) );
+		$list = $this->getList();
 		if( empty( $list ) ) {
 			$node->setAttribute( 'empty', 1 );
 		} else {
 			foreach( $list as $item ) {
-				$itemNode = $node->appendChild( $toNode->ownerDocument->createElement( $objKey ) );
+				$itemNode = $node->appendChild( $toNode->ownerDocument->createElement( $this->objKey ) );
 				/** @var $item Item */
 				$item->getXML( $itemNode );
 			}
