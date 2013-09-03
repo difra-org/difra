@@ -331,18 +331,40 @@ abstract class Item extends Storage {
 		return $o;
 	}
 
-	public static function getDbStatus() {
+	/**
+	 * Получение статуса таблицы объекта
+	 * @return array
+	 */
+	public static function getObjDbStatus() {
 
 		$table = static::getTable();
 		$db = MySQL::getInstance();
 		try {
 			$db->fetch( "DESC `" . $db->escape( $table ) . "`" );
 		} catch( Exception $ex ) {
-			return array( 'status' => 'missing', 'name' => $table, 'create' => static::getDbCreate() );
+			return array( 'status' => 'missing', 'name' => $table );
 		}
+		// TODO: таблицы отличаются?
 		return array( 'status' => 'ok' );
 	}
 
+	/**
+	 * Получение статуса таблицы объекта в XML
+	 *
+	 * @param \DOMElement $node
+	 */
+	public static function getObjDbStatusXML( $node ) {
+
+		$status = self::getObjDbStatus();
+		foreach( $status as $ak => $av ) {
+			$node->setAttribute( $ak, $av );
+		}
+	}
+
+	/**
+	 * Получение строки для создания таблицы
+	 * @return string
+	 */
 	public static function getDbCreate() {
 
 		$db = MySQL::getInstance();
@@ -357,7 +379,8 @@ abstract class Item extends Storage {
 			// column name
 			$line = '  `' . $db->escape( $name ) . '` ' . $prop['type'];
 			// primary key
-			if( $primary = ( !empty( $prop['primary'] ) and $prop['primary'] ) ) {
+			$primary = ( !empty( $prop['primary'] ) and $prop['primary'] );
+			if( $primary ) {
 				$indexes[] = '  PRIMARY KEY (`' . $name . '`)';
 			}
 			// length
@@ -371,8 +394,8 @@ abstract class Item extends Storage {
 				$line .= ' DEFAULT NULL';
 			}
 			// column options
-			empty( $prop['options'] ) ? : $line .= mb_strtoupper( ' ' . ( is_array( $prop['options'] ) ? implode( ' ',
-															      $prop['options'] ) : $prop['options'] ) );
+			empty( $prop['options'] ) ? :
+				$line .= mb_strtoupper( ' ' . ( is_array( $prop['options'] ) ? implode( ' ', $prop['options'] ) : $prop['options'] ) );
 			// non-primary indexes
 			if( !$primary and !empty( $prop['unique'] ) and $prop['unique'] ) {
 				$indexes[] = '  UNIQUE KEY `' . $name . '` (`' . $name . '`)';
@@ -385,5 +408,10 @@ abstract class Item extends Storage {
 		$lines = array_merge( $columns, $indexes );
 		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n)";
 		return $create;
+	}
+
+	public static function createDb() {
+
+		MySQL::getInstance()->query( self::getDbCreate() );
 	}
 }

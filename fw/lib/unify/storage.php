@@ -73,7 +73,7 @@ abstract class Storage {
 		foreach( self::$classes as $objKey => $className ) {
 			$objNode = $node->appendChild( $node->ownerDocument->createElement( $objKey ) );
 			/** @var \Difra\Unify\Item $className */
-			$className::getDbStatus( $objNode );
+			$className::getObjDbStatusXML( $objNode );
 		}
 	}
 }

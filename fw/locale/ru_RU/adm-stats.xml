@@ -22,6 +22,9 @@
 				<title>База данных</title>
 				<status-ok>Структура базы данных в порядке.</status-ok>
 			</database>
+			<unify>
+				<title>Объекты Unify</title>
+			</unify>
 			<permissions>Файлы и папки</permissions>
 			<permissions-ok>проблем не обнаружено</permissions-ok>
 		</stats>
