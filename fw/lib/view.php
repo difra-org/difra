@@ -2,8 +2,6 @@
 
 namespace Difra;
 
-use Difra\View\Exception;
-
 /**
  * Class View
  *
@@ -68,7 +66,7 @@ class View {
 		$xslProc = new \XsltProcessor();
 		$xslProc->importStyleSheet( $xslDom );
 
-		if( !Exception::$error ) {
+		if( !\Difra\View\Exception::$error and !Debugger::$shutdown ) {
 			Controller::getInstance()->fillXML( $instance );
 		}
 

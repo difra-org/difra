@@ -9,9 +9,15 @@ namespace Difra;
  */
 class Debugger {
 
-	private static $enabled = false;
-	/** @var int        0 — консоль выключена, 1 — консоль включена, но не активна, 2 — консоль активна */
-	private static $console = 0;
+	private static $enabled = self::DEBUG_DISABLED;
+	const DEBUG_DISABLED = 0;
+	const DEBUG_ENABLED = 1;
+
+	private static $console = self::CONSOLE_NONE;
+	const CONSOLE_NONE = 0; // console disabled
+	const CONSOLE_DISABLED = 1; // console enabled, but not active
+	const CONSOLE_ENABLED = 2; // console enabled and active
+
 	private static $cacheResources = true;
 	private static $output = array();
 	private static $hadError = false;
@@ -37,40 +43,39 @@ class Debugger {
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL );
 			ini_set( 'html_errors',
-				( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
-			self::$enabled = 0;
-			self::$console = 0;
+				 ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+			self::$enabled = self::CONSOLE_DISABLED;
+			self::$console = self::CONSOLE_NONE;
 			return;
 		}
 		if( ( isset( $_GET['debug'] ) and !$_GET['debug'] ) or ( isset( $_COOKIE['debug'] ) and !$_COOKIE['debug'] ) ) {
-			self::$enabled = false;
+			self::$enabled = self::DEBUG_DISABLED;
 		} else {
-			self::$enabled = true;
+			self::$enabled = self::DEBUG_ENABLED;
 		}
 		// консоль отключена?
 		if( !self::$enabled or ( isset( $_COOKIE['debugConsole'] ) and !$_COOKIE['debugConsole'] ) ) {
-			self::$console = 1; // консоль есть, но отлов ошибок отключен
+			self::$console = self::CONSOLE_DISABLED;
 		} else {
-			self::$console = 2; // консоль включена
+			self::$console = self::CONSOLE_ENABLED;
 		}
 
 		self::$cacheResources = false;
 
-		if( self::$console == 2 ) {
-			// консоль активна — перехватываем ошибки
+		if( self::$console == self::CONSOLE_ENABLED ) {
+			// console is active, so we intercept errors
 			ini_set( 'display_errors', 'Off' );
 			ini_set( 'html_errors', 'Off' );
 			ini_set( 'error_reporting', E_ALL );
 			set_error_handler( array( '\Difra\Debugger', 'captureNormal' ) );
 			set_exception_handler( array( '\Difra\Debugger', 'captureException' ) );
 			register_shutdown_function( array( '\Difra\Debugger', 'captureShutdown' ) );
-			self::$console = 2;
 		} else {
-			// консоль не активна — выводим ошибки
+			// console is inactive, so enable errors output
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL );
 			ini_set( 'html_errors',
-				( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+				 ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
 		}
 	}
 
@@ -170,6 +175,7 @@ class Debugger {
 	 *
 	 * @param bool $standalone      Консоль выводится на отдельной странице (если произошла фатальная ошибка и запрошенная страница
 	 *                                 не может быть отрендерена)
+	 *
 	 * @return string
 	 */
 	public static function debugHTML( $standalone = false ) {
@@ -191,6 +197,7 @@ class Debugger {
 	 *
 	 * @param \DOMNode|\DOMElement $node
 	 * @param bool                 $standalone
+	 *
 	 * @return string
 	 */
 	public static function debugXML( $node, $standalone = false ) {
@@ -208,11 +215,15 @@ class Debugger {
 		}
 	}
 
+	private static $handledByException = null;
+
 	/**
 	 * Callback для эксцепшенов
 	 *
 	 * @static
+	 *
 	 * @param \Difra\Exception $exception
+	 *
 	 * @return bool
 	 */
 	public static function captureException( $exception ) {
@@ -220,26 +231,29 @@ class Debugger {
 		$err = array(
 			'class' => 'errors',
 			'stage' => 'exception',
-			'message' => $exception->getMessage(),
-			'file' => $exception->getFile(),
-			'line' => $exception->getLine(),
+			'message' => $msg = $exception->getMessage(),
+			'file' => $file = $exception->getFile(),
+			'line' => $line = $exception->getLine(),
 			'traceback' => $exception->getTrace()
 		);
+		self::$handledByException = "$msg in $file:$line";
 		self::addLineAsArray( $err );
 		return false;
 	}
 
 	/** @var array Текст последней ошибки, пойманной captureNormal, чтобы не поймать её ещё раз в captureShutdown */
-	private static $handledByNormal = array();
+	private static $handledByNormal = null;
 
 	/**
 	 * Callback для ловимых ошибок
 	 *
 	 * @static
+	 *
 	 * @param $type
 	 * @param $message
 	 * @param $file
 	 * @param $line
+	 *
 	 * @return bool
 	 */
 	public static function captureNormal( $type, $message, $file, $line ) {
@@ -263,6 +277,9 @@ class Debugger {
 		return false;
 	}
 
+	/** @var bool */
+	static public $shutdown = false;
+
 	/**
 	 * Callback для фатальных ошибок, которые не ловятся другими методами
 	 */
@@ -272,18 +289,22 @@ class Debugger {
 			return;
 		}
 		// произошла ошибка?
-		$error = error_get_last();
-		if( !$error ) {
+		if( !( $error = error_get_last() ) and !self::$handledByException ) {
 			return;
 		}
-		// сохраняем информацию об ошибке
-		if( self::$handledByNormal != $error['message'] ) {
-			$error['error'] = Libs\Debug\errorConstants::getInstance()->getVerbalError( $error['type'] );
-			$error['class'] = 'errors';
-			$error['traceback'] = debug_backtrace();
-			array_shift( $error['traceback'] );
-			self::addLineAsArray( $error );
+		if( $error ) {
+			// сохраняем информацию об ошибке
+			if( self::$handledByNormal != $error['message'] ) {
+				$error['error'] = Libs\Debug\errorConstants::getInstance()->getVerbalError( $error['type'] );
+				$error['class'] = 'errors';
+				$error['traceback'] = debug_backtrace();
+				array_shift( $error['traceback'] );
+				self::addLineAsArray( $error );
+			}
 		}
+
+		self::$shutdown = true;
+
 		// если по каким-то причинам рендер не случился, отрендерим свою страничку
 		if( !View::$rendered ) {
 			$ajax = Ajax::getInstance();
@@ -317,7 +338,7 @@ class Debugger {
 
 	public static function checkSlow() {
 
-		if( Debugger::$console ) {
+		if( self::$console ) {
 			return;
 		}
 		$time = self::getTimer();
