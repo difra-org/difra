@@ -9,24 +9,9 @@ namespace Difra;
  */
 class View {
 
-	/**
-	 * @var bool
-	 * @deprecated
-	 */
-	public static $error = false;
-	/**
-	 * @var bool|string
-	 * @deprecated
-	 */
-	public static $redirect = false;
-	/** @var bool */
+	/** @var bool Page rendered status */
 	public static $rendered = false;
-	/**
-	 * @var bool|string
-	 * @deprecated
-	 */
-	public static $template = false;
-	/** @var string */
+	/** @var string XSLT Resourcer instance */
 	public static $instance = 'main';
 
 	/**
@@ -40,9 +25,6 @@ class View {
 	 */
 	public static function render( &$xml, $specificInstance = false, $dontEcho = false ) {
 
-		if( self::$error or self::$redirect ) {
-			return false;
-		}
 		if( $specificInstance ) {
 			$instance = $specificInstance;
 		} elseif( self::$instance ) {
@@ -100,7 +82,7 @@ class View {
 	 */
 	public static function redirect( $url ) {
 
-		self::$redirect = true;
+		self::$rendered = true;
 		header( 'Location: ' . $url );
 		die();
 	}
