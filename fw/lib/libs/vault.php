@@ -11,11 +11,10 @@ use Difra\Envi;
  */
 class Vault {
 
-	// TODO: проверить работоспособность, так как Envi\Session::load() были заменены на Envi\Session::start()
-
 	/**
 	 * Добавляет файл во временное хранилище.
 	 * @param $data
+	 *
 	 * @return int
 	 */
 	static function add( $data ) {
@@ -36,6 +35,7 @@ class Vault {
 	/**
 	 * Получает файл из временного хранилища.
 	 * @param $id
+	 *
 	 * @return string|null
 	 */
 	static function get( $id ) {
@@ -80,13 +80,13 @@ class Vault {
 		// when using AjaxSafeHTML, characters inside src= are encoded using ESAPI
 		$html =
 			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . '&#x2f;up&#x2f;tmp&#x2f;',
-				'src="/up/tmp/',
-				$html );
+				     'src="/up/tmp/',
+				     $html );
 		$html = str_replace( 'src="&#x2f;up&#x2f;tmp&#x2f;', 'src="/up/tmp/', $html );
 		$html =
 			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . str_replace( '/', '&#x2f;', "$urlPrefix/" ),
-				'src="' . $urlPrefix . '/',
-				$html );
+				     'src="' . $urlPrefix . '/',
+				     $html );
 		$html = str_replace( 'src="' . str_replace( '/', '&#x2f;', $urlPrefix . '/' ), 'src="' . $urlPrefix . '/', $html );
 
 		preg_match_all( '/src=\"\/up\/tmp\/([0-9]+)\"/', $html, $newImages );
