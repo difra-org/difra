@@ -128,7 +128,7 @@
                                 <xsl:value-of select="$locale/announcements/adm/category/noCategory"/>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="/root/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
+                                <xsl:value-of select="/root/content/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </td>
@@ -236,7 +236,7 @@
                                 <xsl:value-of select="$locale/announcements/adm/category/noCategory"/>
                             </xsl:when>
                             <xsl:otherwise>
-                                <xsl:value-of select="/root/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
+                                <xsl:value-of select="/root/content/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
                             </xsl:otherwise>
                         </xsl:choose>
                     </td>

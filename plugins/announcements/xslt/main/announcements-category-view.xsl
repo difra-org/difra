@@ -1,12 +1,12 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="announcements-category-view">
+	<xsl:template match="content/announcements-category-view">
 
 		<div id="afisha-content">
 
 			<xsl:for-each select="category/category">
 				<xsl:variable name="catId" select="@id"/>
 
-				<xsl:if test="/root/announcements-category-view/events/event[category=$catId]">
+				<xsl:if test="/root/content/announcements-category-view/events/event[category=$catId]">
 
 					<h2>
 						<xsl:value-of select="@name"/>
@@ -19,7 +19,7 @@
 					<div class="clear"/>
 
 					<div class="announcements">
-						<xsl:for-each select="/root/announcements-category-view/events/event[category=$catId]">
+						<xsl:for-each select="/root/content/announcements-category-view/events/event[category=$catId]">
 
 							<span class="thumb">
 								<xsl:if test="status='past'">

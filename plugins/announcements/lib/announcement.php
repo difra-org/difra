@@ -2,6 +2,9 @@
 
 namespace Difra\Plugins\Announcements;
 
+use Difra\Envi;
+use Difra\Plugger;
+
 Class Announcement {
 
 	private $id = null;
@@ -99,7 +102,9 @@ Class Announcement {
 		$db = \Difra\MySQL::getInstance();
 		$groupJoin = $groupSelect = '';
 
-		if( \Difra\Plugger::getInstance()->isEnabled( 'blogs' ) ) {
+		// Plugger::isEnabled( 'blogs' )
+
+		if( Plugger::isEnabled( 'blogs' ) ) {
 			$groupSelect = ", g.`name`, g.`domain` ";
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
@@ -332,7 +337,8 @@ Class Announcement {
 			$where = " WHERE an.`visible`=1 AND an.`beginDate`<=NOW() ";
 		}
 
-		if( \Difra\Plugger::getInstance()->isEnabled( 'blogs' ) ) {
+
+		if( Plugger::isEnabled( 'blogs' ) ) {
 			$groupSelect = ", g.`name`, g.`domain` ";
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
@@ -434,7 +440,7 @@ Class Announcement {
 		$db = \Difra\MySQL::getInstance();
 		$groupJoin = $groupSelect = '';
 
-		if( \Difra\Plugger::getInstance()->isEnabled( 'blogs' ) ) {
+		if( Plugger::isEnabled( 'blogs' ) ) {
 			$groupSelect = ", g.`name`, g.`domain` ";
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
@@ -490,7 +496,7 @@ Class Announcement {
 		$db = \Difra\MySQL::getInstance();
 		$groupJoin = $groupSelect = '';
 
-		if( \Difra\Plugger::getInstance()->isEnabled( 'blogs' ) ) {
+		if( Plugger::isEnabled( 'blogs' ) ) {
 			$groupSelect = ", g.`name`, g.`domain` ";
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
@@ -616,7 +622,7 @@ Class Announcement {
 		$this->getScheduleXML( $eventNode );
 		$this->getLocationXML( $eventNode );
 
-		if( \Difra\Plugger::getInstance()->isEnabled( 'blogs' ) && !empty( $this->groupData ) ) {
+		if( Plugger::isEnabled( 'blogs' ) && !empty( $this->groupData ) ) {
 			$groupNode = $eventNode->appendChild( $node->ownerDocument->createElement( 'groupData' ) );
 			foreach( $this->groupData as $k => $value ) {
 				$groupNode->setAttribute( $k, $value );
@@ -772,8 +778,7 @@ Class Announcement {
 	 */
 	public function getLink() {
 
-		$server = \Difra\Site::getInstance()->getHostname();
-
+		$server = Envi::getHost();
 		return 'http://' . $server . '/events/' . $this->id . '-' . $this->link;
 	}
 
@@ -801,16 +806,24 @@ Class Announcement {
 		if( $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
 
 			$title .= date( 'd', strtotime( $this->fromEventDate ) ) . ' ';
-			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" . date( 'm', strtotime( $this->fromEventDate ) ) . "']" );
+
+			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
+					date( 'm', strtotime( $this->fromEventDate ) ) . "']" );
+
 			$title .= $Locale->getXPath( 'announcements/fromTo' );
 			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
-			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" . date( 'm', strtotime( $this->eventDate ) ) . "']" );
+
+			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
+					date( 'm', strtotime( $this->eventDate ) ) . "']" );
 
 		} else {
 			// j
-			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" . date( 'w', strtotime( $this->eventDate ) ) . "']" ) . ', ';
+			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" .
+					date( 'w', strtotime( $this->eventDate ) ) . "']" ) . ', ';
+
 			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
-			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" . date( 'm', strtotime( $this->eventDate ) ) . "']" );
+			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
+					date( 'm', strtotime( $this->eventDate ) ) . "']" );
 		}
 
 		if( !empty( $this->additionalData ) ) {
@@ -835,15 +848,19 @@ Class Announcement {
 		if( $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
 
 			$title .= date( 'd', strtotime( $this->fromEventDate ) ) . ' ';
-			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" . date( 'm', strtotime( $this->fromEventDate ) ) . "']" );
+			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
+					date( 'm', strtotime( $this->fromEventDate ) ) . "']" );
 			$title .= $Locale->getXPath( 'announcements/fromTo' );
 			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
-			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" . date( 'm', strtotime( $this->eventDate ) ) . "']" );
+			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
+					date( 'm', strtotime( $this->eventDate ) ) . "']" );
 		} else {
 			// j
-			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" . date( 'w', strtotime( $this->eventDate ) ) . "']" ) . ', ';
+			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" .
+					date( 'w', strtotime( $this->eventDate ) ) . "']" ) . ', ';
 			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
-			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" . date( 'm', strtotime( $this->eventDate ) ) . "']" );
+			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
+					date( 'm', strtotime( $this->eventDate ) ) . "']" );
 		}
 
 		if( !empty( $this->additionalData ) ) {

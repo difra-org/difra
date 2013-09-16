@@ -1,5 +1,5 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="announcements-archive-view">
+	<xsl:template match="content/announcements-archive-view">
 
 		<div id="afisha-content">
 			<h2>
@@ -47,13 +47,13 @@
 			<div class="paginator">
 				<xsl:call-template name="paginator">
 					<xsl:with-param name="link">
-						<xsl:value-of select="/root/announcements-archive-view/events/@link"/>
+						<xsl:value-of select="/root/content/announcements-archive-view/events/@link"/>
 					</xsl:with-param>
 					<xsl:with-param name="pages">
-						<xsl:value-of select="/root/announcements-archive-view/events/@pages"/>
+						<xsl:value-of select="/root/content/announcements-archive-view/events/@pages"/>
 					</xsl:with-param>
 					<xsl:with-param name="current">
-						<xsl:value-of select="/root/announcements-archive-view/events/@current"/>
+						<xsl:value-of select="/root/content/announcements-archive-view/events/@current"/>
 					</xsl:with-param>
 				</xsl:call-template>
 			</div>

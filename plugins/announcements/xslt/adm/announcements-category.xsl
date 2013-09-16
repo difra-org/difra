@@ -43,7 +43,7 @@
                         </div>
                     </td>
                     <td>
-                        <input type="submit" value="{$locale/adm/actions/add}"/>
+                        <input type="submit" value="{$locale/adm/save}" />
                     </td>
                 </tr>
             </table>
