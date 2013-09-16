@@ -47,8 +47,8 @@ class CMS {
 			return;
 		}
 
-		$rootNode = \Difra\Controller::getInstance()->root;
-		$snippetNode = $rootNode->appendChild( $rootNode->ownerDocument->createElement( 'snippets' ) );
+		$controller = \Difra\Controller::getInstance();
+		$snippetNode = $controller->realRoot->appendChild( $controller->xml->createElement( 'snippets' ) );
 		\Difra\Plugins\CMS\Snippet::getAllXML( $snippetNode );
 	}
 
@@ -62,6 +62,7 @@ class CMS {
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 * @param bool|int             $visible
+	 *
 	 * @return bool
 	 */
 	public function getListXML( $node, $visible = null ) {
@@ -86,6 +87,7 @@ class CMS {
 	 * Возвращает список меню в XML
 	 *
 	 * @param \DOMNode $node
+	 *
 	 * @return bool
 	 */
 	public function getMenuListXML( $node ) {
@@ -106,6 +108,7 @@ class CMS {
 	 * Возвращает все меню со всеми элементами в XML
 	 *
 	 * @param \DOMElement $node
+	 *
 	 * @return bool
 	 */
 	public static function getMenuXML( $node ) {
@@ -132,6 +135,7 @@ class CMS {
 	/**
 	 * @param \DOMNode $node
 	 * @param          $menuId
+	 *
 	 * @return bool
 	 */
 	public static function getMenuItemsXML( $node, $menuId ) {
