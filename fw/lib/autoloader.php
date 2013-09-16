@@ -27,11 +27,12 @@ class Autoloader {
 			return;
 		}
 		$file = self::class2file( $class );
-		if( Debugger::isConsoleEnabled() == Debugger::CONSOLE_ENABLED ) {
-			if( !file_exists( $file ) ) {
-				throw new Exception( 'File "' . $file . "' for class '" . $class . '" not found.' );
-			}
-		}
+//		if( Debugger::isConsoleEnabled() == Debugger::CONSOLE_ENABLED ) {
+//			if( !file_exists( $file ) ) {
+////				echo 'File "' . $file . "' for class '" . $class . '" not found.';
+//				throw new Exception( 'File "' . $file . "' for class '" . $class . '" not found.' );
+//			}
+//		}
 		/** @noinspection PhpIncludeInspection */
 		@include_once( $file );
 	}
