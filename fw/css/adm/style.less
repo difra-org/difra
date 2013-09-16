@@ -1,13 +1,16 @@
 // базовые цвета
 
 @color-red: #d2360c;
+@color-lightred: lighten(@color-red, 50%);
 @color-orange: #d6380d;
 @color-darkgrey: #2b2b2a;
 @color-whitebg: #f0f0eb;
 @color-white: #fefdfd;
-@color-darkwhite: #e0dfdf;	// цвет шрифта для тёмного фона
+@color-darkwhite: #e0dfdf;
+// цвет шрифта для тёмного фона
 @color-grey: #9a9594;
-@color-lightgrey: #b3b3b3;	// цвет для рамок таблиц и т.п.
+@color-lightgrey: #b3b3b3;
+// цвет для рамок таблиц и т.п.
 @color-links: #1f70bb;
 @color-links-hover: #1f70bb;
 @color-links-visited: #1f70bb;
@@ -62,6 +65,7 @@ h1 {
 	font-size: @font-h1;
 	.headers-style();
 }
+
 h2 {
 	font-size: @font-h2;
 	.headers-style();
@@ -69,18 +73,22 @@ h2 {
 		color: @color-red !important;
 	}
 }
+
 h3 {
 	font-size: @font-h3;
 	.headers-style();
 }
+
 h4 {
 	font-size: @font-h4;
 	.headers-style();
 }
+
 h5 {
 	font-size: @font-h5;
 	.headers-style();
 }
+
 h6 {
 	font-size: @font-h6;
 	.headers-style();
@@ -168,6 +176,7 @@ textarea {
 .form-buttons {
 	margin: 25px 0 0;
 }
+
 /*
 a {
 	color: @color-links;
@@ -357,6 +366,7 @@ a {
 	body {
 		margin-right: 0;
 	}
+
 	#right {
 		display: none;
 	}
