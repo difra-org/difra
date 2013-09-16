@@ -3,6 +3,7 @@
 namespace Difra\Param\Filters;
 
 use Difra\Envi;
+use Difra\Libs\ESAPI;
 
 class HTML {
 
@@ -54,6 +55,7 @@ class HTML {
 	 * @param string $source               Исходный HTML
 	 * @param bool   $clean                Произвести ли чистку от говн
 	 * @param bool   $withHeaders          Вернуть ли полную HTML-страницу (true) или только содержимое (false)
+	 *
 	 * @return string
 	 */
 	public function process( $source, $clean = true, $withHeaders = false ) {
@@ -62,12 +64,11 @@ class HTML {
 			return '';
 		}
 
-		// url decode
-		try {
+		/*try {
 			$source = \Difra\Libs\ESAPI::encoder()->canonicalize( $source );
 		} catch( \Exception $ex ) {
 			return false;
-		}
+		}*/
 
 		// преобразование HTML в DOM
 		$html = new \DOMDocument( '1.0' );
@@ -91,6 +92,8 @@ class HTML {
 						$this->replace( $replaceNode );
 					}
 				}
+			} else {
+				return false;
 			}
 		}
 
@@ -108,32 +111,34 @@ class HTML {
 			}
 			$output = $newDom->saveHTML();
 		}
-		return mb_convert_encoding( $output, 'UTF-8', 'HTML-ENTITIES' );
+		return $output;
+		//return mb_convert_encoding( $output, 'UTF-8', 'HTML-ENTITIES' );
 	}
 
 	/**
 	 * Чистка DOM-документа от недозволенного
 	 *
 	 * @param \DOMElement|\DOMNode $node
+	 *
 	 * @return \DOMElement[]
 	 */
 	private function clean( &$node ) {
 
 		$replaceNodes = array();
 		switch( $node->nodeType ) {
-		case XML_ELEMENT_NODE:
-			if( !isset( $this->allowedTags[$node->nodeName] ) ) {
+			case XML_ELEMENT_NODE:
+				if( !isset( $this->allowedTags[$node->nodeName] ) ) {
+					$replaceNodes[] = $node;
+				}
+				$this->cleanAttributes( $node, isset( $this->allowedTags[$node->nodeName] ) ? $this->allowedTags[$node->nodeName] : array() );
+				break;
+			case XML_TEXT_NODE:
+				break;
+			case XML_COMMENT_NODE:
 				$replaceNodes[] = $node;
-			}
-			$this->cleanAttributes( $node, isset( $this->allowedTags[$node->nodeName] ) ? $this->allowedTags[$node->nodeName] : array() );
-			break;
-		case XML_TEXT_NODE:
-			break;
-		case XML_COMMENT_NODE:
-			$replaceNodes[] = $node;
-			break;
-		default:
-			$replaceNodes[] = $node;
+				break;
+			default:
+				$replaceNodes[] = $node;
 		}
 		if( $node->hasChildNodes() ) {
 			foreach( $node->childNodes as $child ) {
@@ -187,6 +192,7 @@ class HTML {
 	/**
 	 * Фильтр ссылок
 	 * @param string $link
+	 *
 	 * @return string
 	 */
 	/** @noinspection PhpUnusedPrivateMethodInspection */
@@ -207,6 +213,7 @@ class HTML {
 	/**
 	 * Фильтр стилей
 	 * @param string $attr
+	 *
 	 * @return string
 	 */
 	/** @noinspection PhpUnusedPrivateMethodInspection */
@@ -242,6 +249,7 @@ class HTML {
 	/**
 	 * Фильтр ссылок
 	 * @param string $classes
+	 *
 	 * @return string
 	 */
 	/** @noinspection PhpUnusedPrivateMethodInspection */
@@ -261,6 +269,7 @@ class HTML {
 	/**
 	 * Фильтр целых положительных чисел ≥1
 	 * @param $input
+	 *
 	 * @return int|string
 	 */
 	/** @noinspection PhpUnusedPrivateMethodInspection */
