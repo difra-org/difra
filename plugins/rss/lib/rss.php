@@ -2,6 +2,9 @@
 
 namespace Difra\Plugins;
 
+use Difra\Envi;
+use Difra\Locales;
+
 class rss {
 
 	private $settings = array( 'onLine' => 1, 'title' => null, 'link' => null, 'description' => null, 'copyright' => null,
@@ -28,7 +31,7 @@ class rss {
 
 	public function __construct() {
 
-		$this->settings['link'] = 'http://' . \Difra\Site::getInstance()->getMainhost();
+		$this->settings['link'] = 'http://' . Envi::getHost();
 	}
 
 	/**
@@ -58,8 +61,6 @@ class rss {
 			return $rss;
 		}
 
-		$Site = \Difra\Site::getInstance();
-
 		$rss->rssDoc = new \DOMDocument;
 		$rss->rssDoc->formatOutput = true;
 		$rss->rssDoc->encoding = 'utf-8';
@@ -71,7 +72,7 @@ class rss {
 
 		$rss->channel->appendChild( $rss->rssDoc->createElement( 'title', $rss->settings['title'] ) );
 		$rss->channel->appendChild( $rss->rssDoc->createElement( 'link',  $rss->settings['link'] ) );
-		$rss->channel->appendChild( $rss->rssDoc->createElement( 'language', $Site->getLocale() ) );
+		$rss->channel->appendChild( $rss->rssDoc->createElement( 'language', Envi\Setup::getLocale() ) );
 		if( !empty( $rss->settings['description'] ) ) {
 			$rss->channel->appendChild( $rss->rssDoc->createElement( 'description', $rss->settings['description'] ) );
 		}
@@ -95,6 +96,10 @@ class rss {
 	}
 
 	private function rssImage() {
+
+		//TODO: Сделать загрузку логотипа RSS канала!!!!!!!
+		return;
+
 
 		if( $this->settings['image']==0 ) {
 			return;

@@ -1,7 +1,7 @@
 <locale>
 	<rss>
 		<adm>
-			<settingsTitle>настройки</settingsTitle>
+			<settingsTitle>Настройки каналов RSS</settingsTitle>
 			<onLine>RSS включен</onLine>
 			<title>Заголовок канала</title>
 			<link>Ссылка на сайт канала</link>

@@ -1,5 +1,5 @@
 <menu>
-	<rss href="">
-		<settings href="/adm/rss/settings"/>
-	</rss>
+	<settings>
+		<rss/>
+	</settings>
 </menu>

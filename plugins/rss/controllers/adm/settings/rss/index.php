@@ -1,13 +1,13 @@
 <?php
 
-class AdmRssController extends \Difra\Controller {
+class AdmSettingsRssIndexController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
-	public function settingsAction() {
+	public function indexAction() {
 
 		$setNode = $this->root->appendChild( $this->xml->createElement( 'rss_settings' ) );
 		Difra\Plugins\Rss::getSettingsXML( $setNode );
@@ -16,16 +16,16 @@ class AdmRssController extends \Difra\Controller {
 	}
 
 	public function savesettingsAjaxAction(
-						\Difra\Param\AjaxCheckbox $onLine,
-						\Difra\Param\AjaxString $title,
-						\Difra\Param\AjaxString $link,
-						\Difra\Param\AjaxInt $ttl,
-						\Difra\Param\AjaxInt $size,
-						\Difra\Param\AjaxCheckbox $image,
-						\Difra\Param\AjaxCheckbox $cache,
-						\Difra\Param\AjaxString $desc = null,
-						\Difra\Param\AjaxString $copyright = null
-						) {
+		\Difra\Param\AjaxCheckbox $onLine,
+		\Difra\Param\AjaxString $title,
+		\Difra\Param\AjaxString $link,
+		\Difra\Param\AjaxInt $ttl,
+		\Difra\Param\AjaxInt $size,
+		\Difra\Param\AjaxCheckbox $image,
+		\Difra\Param\AjaxCheckbox $cache,
+		\Difra\Param\AjaxString $desc = null,
+		\Difra\Param\AjaxString $copyright = null
+	) {
 
 		$settingsArray = array( 'onLine' => $onLine->val(), 'title' => $title->val(), 'link' => $link->val(),
 					'ttl' => $ttl->val(), 'size' => $size->val(), 'image' => $image->val(), 'cache' => $cache->val() );
