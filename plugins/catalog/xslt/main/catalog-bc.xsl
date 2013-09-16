@@ -3,10 +3,10 @@
 	<xsl:template name="catalog-bc">
 		<xsl:param name="parent" select="0"/>
 		<xsl:param name="withLast" select="0"/>
-		<xsl:if test="$parent &gt; 0 or /root/catalogCategories/category[@parent=$parent and @selected=1]">
-			<xsl:variable name="cat" select="/root/catalogCategories/category[@parent=$parent and @selected=1]"/>
+		<xsl:if test="$parent &gt; 0 or /root/content/catalogCategories/category[@parent=$parent and @selected=1]">
+			<xsl:variable name="cat" select="/root/content/catalogCategories/category[@parent=$parent and @selected=1]"/>
 			<xsl:choose>
-				<xsl:when test="/root/catalogCategories/category[@parent=$cat/@id and @selected=1]">
+				<xsl:when test="/root/content/catalogCategories/category[@parent=$cat/@id and @selected=1]">
 					<a href="{$cat/@link}">
 						<xsl:value-of select="$cat/@name"/>
 					</a>
