@@ -120,7 +120,6 @@ class CMS {
 		foreach( $data as $menu ) {
 			/** @var \DOMElement $menuNode */
 			$menuNode = $node->appendChild( $node->ownerDocument->createElement( 'CMSMenu' ) );
-			$menuNode->setAttribute( 'autorender', '0' );
 			$menu->getXML( $menuNode );
 			self::getMenuItemsXML( $menuNode, $menu->getId() );
 		}
