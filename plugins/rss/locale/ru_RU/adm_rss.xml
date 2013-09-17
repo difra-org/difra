@@ -13,6 +13,9 @@
 			<save>Сохранить настройки</save>
 			<saved>Настройки rss сохранены</saved>
 			<cache>Кэшировать rss</cache>
+			<loadImage>Загрузка логотипа RSS канала</loadImage>
+			<deleteImage>Удалить логотип канала</deleteImage>
+			<noRssLogo>Логотип канала не загружен.</noRssLogo>
 		</adm>
 	</rss>
 </locale>

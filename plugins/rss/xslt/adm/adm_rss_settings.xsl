@@ -42,7 +42,36 @@
 					</td>
 				</tr>
 			</table>
-			<br/><br/>
+
+			<table class="form">
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/rss/adm/loadImage"/>
+						<xsl:choose>
+							<xsl:when test="/root/content/rss_settings/@logo=1">
+								<br/>
+								<img src="/rss/rsslogo.png"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<span class="rssInfo">
+									<xsl:value-of select="$locale/rss/adm/noRssLogo"/>
+								</span>
+							</xsl:otherwise>
+						</xsl:choose>
+
+					</th>
+					<td>
+						<input type="file" name="rsslogo" accept="image/jpeg,image/png,image/gif" />
+						<xsl:if test="/root/content/rss_settings/@logo=1">
+							<br/>
+							<a href="/adm/settings/rss/deletelogo/" class="button ajaxer">
+								<xsl:value-of select="$locale/rss/adm/deleteImage"/>
+							</a>
+						</xsl:if>
+					</td>
+				</tr>
+			</table>
+
 			<table class="form">
 				<tr>
 					<th>
