@@ -34,11 +34,11 @@ class CMS {
 	 */
 	public static function addMenuXML() {
 
-		if( \Difra\View::$instance != 'main' ) {
+		if( \Difra\View::$instance == 'adm' ) {
 			return;
 		}
-		$rootNode = \Difra\Controller::getInstance()->root;
-		self::getMenuXML( $rootNode, true );
+		$controller = \Difra\Controller::getInstance();
+		self::getMenuXML( $controller->realRoot, true );
 	}
 
 	public static function getSnippets() {
