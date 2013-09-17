@@ -18,15 +18,16 @@ abstract class Storage {
 	static public $objects = array();
 
 	/**
-	 * @param string[string] $list Объекты для добавления в список
+	 * @param string[] $list Объекты для добавления в список
 	 */
 	final static public function registerObjects( $list ) {
 
 		if( !$list ) {
 			return;
 		}
-		foreach( $list as $objKey => $class ) {
-			self::$classes[$objKey] = $class;
+		/** @var $class Item */
+		foreach( $list as $class ) {
+			self::$classes[$class::getObjKey()] = $class;
 		}
 	}
 
