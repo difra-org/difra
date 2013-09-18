@@ -56,7 +56,7 @@
 							<select name="group" class="full-width">
 								<xsl:for-each select="newGroups/group">
 									<option value="{@id}">
-										<xsl:if test="@id=/root/announcementsEdit/event/group">
+										<xsl:if test="@id=/root/content/announcementsEdit/event/group">
 											<xsl:attribute name="selected">
 												<xsl:text>selected</xsl:text>
 											</xsl:attribute>
@@ -199,7 +199,7 @@
 								</option>
 								<xsl:for-each select="locations/item">
 									<option value="{@id}">
-										<xsl:if test="/root/announcementsEdit/event/location=@id">
+										<xsl:if test="/root/content/announcementsEdit/event/location=@id">
 											<xsl:attribute name="selected">
 												<xsl:text>selected</xsl:text>
 											</xsl:attribute>
@@ -229,7 +229,7 @@
 							</th>
 							<td>
 								<input type="text" name="additionalField[{@id}]" class="full-width"
-								       value="{/root/announcementsEdit/event/additionals/field[@id=$fId]/@value}"/>
+								       value="{/root/content/announcementsEdit/event/additionals/field[@id=$fId]/@value}"/>
 							</td>
 						</tr>
 					</xsl:for-each>

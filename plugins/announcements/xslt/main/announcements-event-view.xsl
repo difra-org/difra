@@ -23,7 +23,7 @@
 
                         <xsl:if test="event/additionals/field[@alias='ticket-price']">
                             <div class="announce-price">
-                                <xsl:value-of select="/root/announcements-event-view/additionalsFields/item[@alias='ticket-price']/@name"/>
+                                <xsl:value-of select="/root/content/announcements-event-view/additionalsFields/item[@alias='ticket-price']/@name"/>
                                 <xsl:text>:&#160;&#160;</xsl:text>
                                 <xsl:value-of select="event/additionals/field[@alias='ticket-price']/@value"/>
                             </div>
@@ -137,7 +137,7 @@
 
             <xsl:if test="event/additionals/field[@alias='ticket-price']">
                 <div class="announce-price plane">
-                    <xsl:value-of select="/root/announcements-event-view/additionalsFields/item[@alias='ticket-price']/@name"/>
+                    <xsl:value-of select="/root/content/announcements-event-view/additionalsFields/item[@alias='ticket-price']/@name"/>
                     <xsl:text>:&#160;&#160;</xsl:text>
                     <xsl:value-of select="event/additionals/field[@alias='ticket-price']/@value"/>
                 </div>
