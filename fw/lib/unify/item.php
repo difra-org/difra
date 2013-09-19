@@ -391,10 +391,14 @@ abstract class Item extends Storage {
 
 	/**
 	 * Получение строки для создания таблицы
+	 * @throws \Difra\Exception
 	 * @return string
 	 */
 	public static function getDbCreate() {
 
+		if( empty( static::$propertiesList ) ) {
+			throw new \Difra\Exception( 'Can\'t create table for empty object.' );
+		}
 		$db = MySQL::getInstance();
 		$columns = array();
 		$indexes = array();
@@ -409,7 +413,7 @@ abstract class Item extends Storage {
 			// primary key
 			$primary = ( !empty( $prop['primary'] ) and $prop['primary'] );
 			if( $primary ) {
-				$indexes[] = '  PRIMARY KEY (`' . $name . '`)';
+				$indexes[] = ' PRIMARY KEY (`' . $name . '`)';
 			}
 			// length
 			empty( $prop['length'] ) ? : $line .= "({$prop['length']})";
