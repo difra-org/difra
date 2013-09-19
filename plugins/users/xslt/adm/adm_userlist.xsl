@@ -95,14 +95,14 @@
 									<xsl:choose>
 										<xsl:when test="@moderator=1">
 											<a href="/adm/users/list/unmoderator/{@id}"
-											   class="button">
+											   class="button ajaxer">
 												<xsl:value-of
 													select="$locale/auth/adm/unModerator"/>
 											</a>
 										</xsl:when>
 										<xsl:otherwise>
 											<a href="/adm/users/list/moderator/{@id}"
-											   class="button">
+											   class="button ajaxer">
 												<xsl:value-of
 													select="$locale/auth/adm/moderator"/>
 											</a>
@@ -113,14 +113,14 @@
 									<xsl:choose>
 										<xsl:when test="@banned=1">
 											<a href="/adm/users/list/unban/{@id}"
-											   class="button">
+											   class="button ajaxer">
 												<xsl:value-of
 													select="$locale/auth/adm/unban"/>
 											</a>
 										</xsl:when>
 										<xsl:otherwise>
 											<a href="/adm/users/list/ban/{@id}"
-											   class="button">
+											   class="button ajaxer">
 												<xsl:value-of
 													select="$locale/auth/adm/ban"/>
 											</a>

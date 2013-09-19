@@ -157,6 +157,8 @@
 			<moderator>Сделать модератором</moderator>
 			<unModerator>Снять модератора</unModerator>
 			<moderator_flag>модератор</moderator_flag>
+			<userDataSaved>Данные пользователя сохранены.</userDataSaved>
+			<userDataSavedPassChanged>Данные пользователя сохранены, пароль изменен.</userDataSavedPassChanged>
 		</adm>
 		<info>
 			<name>Имя</name>
