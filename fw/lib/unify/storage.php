@@ -22,8 +22,11 @@ abstract class Storage {
 	 */
 	final static public function registerObjects( $list ) {
 
-		if( !$list ) {
+		if( !$list or empty( $list ) ) {
 			return;
+		}
+		if( !is_array( $list ) ) {
+			$list = array( $list );
 		}
 		/** @var $class Item */
 		foreach( $list as $class ) {
