@@ -24,6 +24,9 @@ class Action {
 	private static $controllerObj = null;
 
 	/** @var string */
+	private static $controllerUri = null;
+
+	/** @var string */
 	public static $method = null;
 	/** @var string */
 	public static $methodAuth = null;
@@ -56,10 +59,12 @@ class Action {
 
 		self::getResource( $parts );
 
+		$controllerUriParts = $parts;
 		if( !self::$controllerFile = self::findController( $parts ) ) {
 			self::saveCache( '404' );
 			throw new View\Exception( 404 );
 		}
+		self::$controllerUri = '/' . implode( '/', sizeof( $parts ) ? array_slice( $controllerUriParts, 0, -sizeof( $parts ) ) : $controllerUriParts );
 
 		/** @noinspection PhpIncludeInspection */
 		include_once( self::$controllerFile );
@@ -85,15 +90,15 @@ class Action {
 			return false;
 		}
 		switch( $data['result'] ) {
-		case 'action':
-			/** @noinspection PhpIncludeInspection */
-			foreach( $data['vars'] as $k => $v ) {
-				self::${$k} = $v;
-			}
-			include_once( self::$controllerFile );
-			break;
-		case '404':
-			throw new View\Exception( 404 );
+			case 'action':
+				/** @noinspection PhpIncludeInspection */
+				foreach( $data['vars'] as $k => $v ) {
+					self::${$k} = $v;
+				}
+				include_once( self::$controllerFile );
+				break;
+			case '404':
+				throw new View\Exception( 404 );
 		}
 		return true;
 	}
@@ -129,6 +134,7 @@ class Action {
 	/**
 	 * Обработка запросов к ресурсам
 	 * @param string[] $parts
+	 *
 	 * @throws View\Exception
 	 * @return bool
 	 */
@@ -195,6 +201,7 @@ class Action {
 	/**
 	 * Поиск папок с самой глубокой вложенностью, подходящих для запроса
 	 * @param string[] $parts
+	 *
 	 * @return string[]
 	 */
 	private static function findControllerDirs( &$parts ) {
@@ -224,37 +231,38 @@ class Action {
 	/**
 	 * Поиск подходящего контроллера
 	 * @param $parts
+	 *
 	 * @return null|string
 	 */
 	private static function findController( &$parts ) {
 
 		$dirs = self::findControllerDirs( $parts );
-		$cname = $controllerFile = null;
+		$cName = $controllerFile = null;
 		if( !empty( $parts ) ) {
 			foreach( $dirs as $tmpDir ) {
 				if( is_file( $tmpDir . $parts[0] . '.php' ) ) {
-					$cname = $parts[0];
-					$controllerFile = "{$tmpDir}{$cname}.php";
+					$cName = $parts[0];
+					$controllerFile = "{$tmpDir}{$cName}.php";
 					break;
 				}
 			}
 		}
-		if( !$cname ) {
+		if( !$cName ) {
 			foreach( $dirs as $tmpDir ) {
 				if( is_file( $tmpDir . 'index.php' ) ) {
-					$cname = 'index';
+					$cName = 'index';
 					$controllerFile = "{$tmpDir}index.php";
 					break;
 				}
 			}
 		}
-		if( !$cname ) {
+		if( !$cName ) {
 			return null;
 		}
-		if( $cname != 'index' ) {
+		if( $cName != 'index' ) {
 			array_shift( $parts );
 		}
-		self::$controllerClass[] = $cname;
+		self::$controllerClass[] = $cName;
 		foreach( self::$controllerClass as $k => $v ) {
 			self::$controllerClass[$k] = ucFirst( $v );
 		};
@@ -265,6 +273,7 @@ class Action {
 	/**
 	 * Поиск подходящих экшенов
 	 * @param string[] $parts
+	 *
 	 * @return bool|string
 	 */
 	private static function findAction( &$parts ) {
@@ -309,5 +318,10 @@ class Action {
 		self::$controllerClass = $controllerClass;
 		self::$method = $actionMethod;
 		self::$parameters = $parameters;
+	}
+
+	public static function getControllerUri() {
+
+		return self::$controllerUri;
 	}
 }
