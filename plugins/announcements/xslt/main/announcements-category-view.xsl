@@ -11,6 +11,7 @@
 					<h2>
 						<xsl:value-of select="@name"/>
 					</h2>
+
 					<span class="archiveLink">
 						<xsl:choose>
 							<xsl:when test="/root/auth/unauthorized">
@@ -27,6 +28,9 @@
 						<a href="/archive/{@category}/">
 							<xsl:value-of select="$locale/announcements/archiveLink"/>
 						</a>
+
+						<div class="authForm"/>
+
 					</span>
 					<div class="clear"/>
 
