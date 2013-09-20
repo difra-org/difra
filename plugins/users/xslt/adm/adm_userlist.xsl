@@ -93,24 +93,6 @@
 								</td>
 								<td class="actions">
 									<xsl:choose>
-										<xsl:when test="@moderator=1">
-											<a href="/adm/users/list/unmoderator/{@id}"
-											   class="button ajaxer">
-												<xsl:value-of
-													select="$locale/auth/adm/unModerator"/>
-											</a>
-										</xsl:when>
-										<xsl:otherwise>
-											<a href="/adm/users/list/moderator/{@id}"
-											   class="button ajaxer">
-												<xsl:value-of
-													select="$locale/auth/adm/moderator"/>
-											</a>
-										</xsl:otherwise>
-									</xsl:choose>
-									<a href="/adm/users/list/edit/{@id}"
-									   class="action edit"/>
-									<xsl:choose>
 										<xsl:when test="@banned=1">
 											<a href="/adm/users/list/unban/{@id}"
 											   class="button ajaxer">
@@ -126,6 +108,23 @@
 											</a>
 										</xsl:otherwise>
 									</xsl:choose>
+									<xsl:choose>
+										<xsl:when test="@moderator=1">
+											<a href="/adm/users/list/unmoderator/{@id}"
+											   class="button ajaxer">
+												<xsl:value-of
+													select="$locale/auth/adm/unModerator"/>
+											</a>
+										</xsl:when>
+										<xsl:otherwise>
+											<a href="/adm/users/list/moderator/{@id}"
+											   class="button ajaxer">
+												<xsl:value-of
+													select="$locale/auth/adm/moderator"/>
+											</a>
+										</xsl:otherwise>
+									</xsl:choose>
+									<a href="/adm/users/list/edit/{@id}" class="action edit"/>
 								</td>
 							</tr>
 						</xsl:for-each>
