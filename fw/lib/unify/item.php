@@ -419,6 +419,9 @@ abstract class Item extends Storage {
 		$db = MySQL::getInstance();
 		$columns = array();
 		$indexes = array();
+		if( $createPrimary = static::getCreatePrimary() ) {
+			$indexes[] = $createPrimary;
+		}
 		foreach( static::$propertiesList as $name => $prop ) {
 			// simple columns (name => type)
 			if( !is_array( $prop ) ) {
@@ -426,12 +429,7 @@ abstract class Item extends Storage {
 				continue;
 			}
 			// column name
-			$line = '  `' . $db->escape( $name ) . '` ' . $prop['type'];
-			// primary key
-			$primary = ( !empty( $prop['primary'] ) and $prop['primary'] );
-			if( $primary ) {
-				$indexes[] = ' PRIMARY KEY (`' . $name . '`)';
-			}
+			$line = ' `' . $db->escape( $name ) . '` ' . $prop['type'];
 			// length
 			empty( $prop['length'] ) ? : $line .= "({$prop['length']})";
 			// default value
@@ -446,9 +444,9 @@ abstract class Item extends Storage {
 			empty( $prop['options'] ) ? :
 				$line .= mb_strtoupper( ' ' . ( is_array( $prop['options'] ) ? implode( ' ', $prop['options'] ) : $prop['options'] ) );
 			// non-primary indexes
-			if( !$primary and !empty( $prop['unique'] ) and $prop['unique'] ) {
+			if( !empty( $prop['unique'] ) and $prop['unique'] ) {
 				$indexes[] = '  UNIQUE KEY `' . $name . '` (`' . $name . '`)';
-			} elseif( !$primary and !empty( $prop['index'] ) and $prop['index'] ) {
+			} elseif( !empty( $prop['index'] ) and $prop['index'] ) {
 				$indexes[] = '  KEY `' . $name . '` (`' . $name . '`)';
 			}
 
@@ -457,6 +455,22 @@ abstract class Item extends Storage {
 		$lines = array_merge( $columns, $indexes );
 		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n)";
 		return $create;
+	}
+
+	/**
+	 * Возвращает строку для создания Primary Key
+	 *
+	 * @return bool|string
+	 */
+	private static function getCreatePrimary() {
+
+		if( !$primary = static::getPrimary() ) {
+			return false;
+		}
+		if( !is_array( $primary ) ) {
+			return '  PRIMARY KEY (`' . $primary . '`)';
+		}
+		return '  PRIMARY KEY (`' . implode( '`,`', $primary ) . '`)';
 	}
 
 	/**
