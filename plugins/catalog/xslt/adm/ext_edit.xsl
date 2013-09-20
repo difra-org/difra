@@ -45,12 +45,16 @@
 				<input type="hidden" name="id" value="{@id}"/>
 			</xsl:if>
 			<table class="form">
+				<colgroup>
+					<col style="width: 150px"/>
+					<col/>
+				</colgroup>
 				<tr>
 					<th>
 						<xsl:value-of select="$locale/catalog/adm/ext/name"/>
 					</th>
 					<td>
-						<input type="text" name="name" value="{@name}"/>
+						<input type="text" name="name" value="{@name}" class="full-width"/>
 					</td>
 				</tr>
 				<tr>
@@ -97,7 +101,9 @@
 				}
 			</script>
 			<div id="extWarning" class="warning" style="display:none"/>
-			<input type="submit" class="large_spacing" value="{$locale/catalog/adm/ext/save}"/>
+			<div class="form-buttons">
+				<input type="submit" value="{$locale/catalog/adm/ext/save}"/>
+			</div>
 		</form>
 	</xsl:template>
 </xsl:stylesheet>

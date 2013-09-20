@@ -11,22 +11,23 @@
 			<xsl:value-of select="@name" />
 			<xsl:text>»</xsl:text>
 		</h2>
-		<a href="/adm/catalog/ext/values/add/to/{@id}" class="button">
-			<xsl:value-of select="$locale/catalog/adm/ext/value-new"/>
+		<a href="/adm/catalog/ext/values/add/to/{@id}" class="action add">
 		</a>
-		<h3>
-			<xsl:value-of select="$locale/catalog/adm/ext/title-values-list"/>
-		</h3>
 		<xsl:choose>
 			<xsl:when test="set">
 				<table>
+					<colgroup>
+						<col style="width: 40px"/>
+						<col/>
+						<col style="width: 140px"/>
+					</colgroup>
 					<thead>
 						<tr>
 							<xsl:if test="@setImages=1">
-								<th><xsl:value-of select="$locale/catalog/adm/ext/value-image"/></th>
+								<th></th>
 							</xsl:if>
 							<th><xsl:value-of select="$locale/catalog/adm/ext/value-name"/></th>
-							<th><xsl:value-of select="$locale/adm/actions/title"/></th>
+							<th></th>
 						</tr>
 					</thead>
 					<tbody>
@@ -37,14 +38,12 @@
 									<xsl:value-of select="position()"/>
 								</xsl:attribute>
 								<xsl:if test="../@setImages=1">
-									<td>
-										<img src="/catalog/ext/{@id}.png" alt="{@name}"/>
-									</td>
+									<td><img src="/catalog/ext/{@id}.png" alt="{@name}" style="float: left"/></td>
 								</xsl:if>
 								<td>
 									<xsl:value-of select="@name"/>
 								</td>
-								<td>
+								<td class="actions">
 									<xsl:call-template name="actionEdit">
 										<xsl:with-param name="link">
 											<xsl:text>/adm/catalog/ext/values/edit/</xsl:text>

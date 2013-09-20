@@ -9,26 +9,23 @@
 			<xsl:text> → </xsl:text>
 			<xsl:value-of select="$locale/catalog/adm/title-items"/>
 		</h2>
-		<h3>
-			<xsl:value-of select="$locale/catalog/adm/title-filter-items"/>
-		</h3>
-
-			<select name="parent" onchange="catalog.switchCategory(this)">
-				<xsl:call-template name="CatalogCategorySelect">
-					<xsl:with-param name="selected" select="@selected"/>
-				</xsl:call-template>
-			</select>
-		<h3>
-			<xsl:value-of select="$locale/catalog/adm/title-items-list"/>
-		</h3>
-		<a href="/adm/catalog/items/add/to/{@selected}" class="button">
-			<xsl:value-of select="$locale/catalog/adm/new"/>
-		</a>
-		<br/>
+		<a href="/adm/catalog/items/add/to/{@selected}" class="action add"></a>
+		<br/><br/>
+		<select name="parent" onchange="catalog.switchCategory(this)">
+			<xsl:call-template name="CatalogCategorySelect">
+				<xsl:with-param name="selected" select="@selected"/>
+			</xsl:call-template>
+		</select>
 		<xsl:choose>
 			<xsl:when test="item">
 				<br/>
 				<table>
+					<colgroup>
+						<col/>
+						<col style="width: 150px"/>
+						<col style="width: 150px"/>
+						<col style="width: 90px"/>
+					</colgroup>
 					<tr>
 						<th>
 							<xsl:value-of select="$locale/catalog/adm/item/name"/>
@@ -40,7 +37,6 @@
 							<xsl:value-of select="$locale/catalog/adm/item/flags"/>
 						</th>
 						<th>
-							<xsl:value-of select="$locale/adm/actions/title"/>
 						</th>
 					</tr>
 					<xsl:for-each select="item">
@@ -56,7 +52,7 @@
 									<xsl:value-of select="$locale/catalog/adm/item/invisible"/>
 								</xsl:if>
 							</td>
-							<td>
+							<td class="actions">
 								<xsl:call-template name="actionEdit">
 									<xsl:with-param name="link">
 										<xsl:text>/adm/catalog/items/edit/</xsl:text>

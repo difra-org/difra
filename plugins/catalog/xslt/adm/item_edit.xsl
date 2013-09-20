@@ -19,7 +19,9 @@
 			<xsl:call-template name="CatalogItemForm-Main"/>
 			<xsl:call-template name="CatalogItemForm-Exts"/>
 			<xsl:call-template name="CatalogItemForm-Description"/>
-			<input type="submit" class="large_spacing" value="{$locale/catalog/adm/save}"/>
+			<div class="form-buttons">
+				<input type="submit" value="{$locale/catalog/adm/save}"/>
+			</div>
 		</form>
 	</xsl:template>
 
@@ -42,7 +44,11 @@
 			<xsl:call-template name="CatalogItemForm-Main"/>
 			<xsl:call-template name="CatalogItemForm-Exts"/>
 			<xsl:call-template name="CatalogItemForm-Description"/>
-			<input type="submit" class="large_spacing" value="{$locale/catalog/adm/save}"/>
+			<div class="form-buttons">
+				<input type="submit" value="{$locale/catalog/adm/save}"/>
+			</div>
+
+
 		</form>
 	</xsl:template>
 
@@ -93,6 +99,10 @@
 			<xsl:value-of select="$locale/catalog/adm/images/title"/>
 		</h3>
 		<table class="form">
+			<colgroup>
+				<col style="width: 260px"/>
+				<col/>
+			</colgroup>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/catalog/adm/item/main-image"/>
@@ -120,6 +130,10 @@
 			<xsl:value-of select="$locale/catalog/adm/item/options"/>
 		</h3>
 		<table class="form">
+			<colgroup>
+				<col style="width: 260px"/>
+				<col/>
+			</colgroup>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/catalog/adm/category"/>
@@ -141,7 +155,7 @@
 					<xsl:value-of select="$locale/catalog/adm/item/name"/>
 				</th>
 				<td>
-					<input type="text" name="name" value="{item/@name}"/>
+					<input type="text" name="name" value="{item/@name}" class="full-width"/>
 				</td>
 			</tr>
 			<tr>

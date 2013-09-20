@@ -5,21 +5,20 @@
 		<h2>
 			<xsl:value-of select="$locale/catalog/adm/title-categories"/>
 		</h2>
-		<a href="/adm/catalog/categories/add" class="button">
-			<xsl:value-of select="$locale/catalog/adm/category-add"/>
+		<a href="/adm/catalog/categories/add" class="action add">
 		</a>
-		<h3>
-			<xsl:value-of select="$locale/catalog/adm/title-categories-list"/>
-		</h3>
 		<xsl:choose>
 			<xsl:when test="category">
 				<table>
+					<colgroup>
+						<col/>
+						<col style="width: 170px"/>
+					</colgroup>
 					<tr>
 						<th>
 							<xsl:value-of select="$locale/catalog/adm/name"/>
 						</th>
 						<th>
-							<xsl:value-of select="$locale/catalog/adm/actions"/>
 						</th>
 					</tr>
 					<xsl:call-template name="CatalogSubcategory">
@@ -55,7 +54,7 @@
 						<xsl:value-of select="@name"/>
 					</a>
 				</td>
-				<td>
+				<td class="actions">
 					<xsl:choose>
 						<xsl:when test="$maxdepth>0 and $depth>=$maxdepth - 1">
 							<a href="#" class="action add disabled">
