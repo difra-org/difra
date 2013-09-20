@@ -12,6 +12,18 @@
 						<xsl:value-of select="@name"/>
 					</h2>
 					<span class="archiveLink">
+						<xsl:choose>
+							<xsl:when test="/root/auth/unauthorized">
+								<a href="/registration/">
+									<xsl:value-of select="$locale/announcements/addEvent"/>
+								</a>
+							</xsl:when>
+							<xsl:otherwise>
+								<!-- TODO: в случае если пользователь авторизован будет другая ссылка. -->
+
+
+							</xsl:otherwise>
+						</xsl:choose>
 						<a href="/archive/{@category}/">
 							<xsl:value-of select="$locale/announcements/archiveLink"/>
 						</a>

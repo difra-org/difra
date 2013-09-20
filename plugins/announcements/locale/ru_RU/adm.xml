@@ -1,6 +1,5 @@
 <locale>
 	<announcements>
-
 		<dates>
 			<weekdays>
 				<day_0>Пн</day_0>
@@ -38,21 +37,23 @@
 		<address>Адрес:</address>
 		<phone>Справки по телефону:</phone>
 		<fromTo>—</fromTo>
+		<addEvent>Добавить событие</addEvent>
 		<archiveLink>Архив событий</archiveLink>
 		<archive>Архив</archive>
 
+
+
 		<adm>
 			<announcements>Анонсы</announcements>
-			<settings>Настройки</settings>
-			<main_settings>Основные настройки</main_settings>
+			<settings>настройки</settings>
 			<onoff>Плагин анонсов включен</onoff>
 			<maxPerUser>Максимальное кол-во анонсов для пользователя</maxPerUser>
 			<maxPerGroup>Максимальное кол-во анонсов для группы</maxPerGroup>
 			<imageSize>Максимальный размер превью картинки анонса</imageSize>
 			<imageBigSize>Максимальный размер основной картинки анонса</imageBigSize>
-			<width>Ширина</width>
-			<height>Высота</height>
-			<zeroValueHint>Значение равное «0» будет означать отсутствие ограничений.</zeroValueHint>
+			<width>Ширина:</width>
+			<height>Высота:</height>
+			<zeroValueHint>Значение равное '0' будет означать отсутствие ограничений.</zeroValueHint>
 			<settingsSaved>Настройки сохранены</settingsSaved>
 			<last>последние</last>
 			<addEvent>Добавить анонс события</addEvent>
