@@ -57,8 +57,8 @@
 			<settingsSaved>Настройки сохранены</settingsSaved>
 			<last>Последние анонсы</last>
 			<addEvent>Добавить анонс события</addEvent>
-			<add>добавление нового события</add>
-			<edit>редактирование анонса</edit>
+			<add>Добавление нового события</add>
+			<edit>Редактирование анонса</edit>
 			<nextEvents>Ближайшие события</nextEvents>
 			<eventWillHappen>Событие произойдёт</eventWillHappen>
 			<eventHasPeriod>Событие будет проходить в период</eventHasPeriod>
@@ -98,7 +98,7 @@
 				<eventDate>Дата события</eventDate>
 				<beginDate>Дата начала демонстрации анонса события</beginDate>
 				<endDate>Дата завершения демонстрации анонса события</endDate>
-				<priority>Приоритет показа анонса</priority>
+				<priority>Приоритет</priority>
 				<visibility>Показывать событие?</visibility>
 				<eventDescription>Описания события</eventDescription>
 				<shortDescription>Краткое описание</shortDescription>
@@ -141,7 +141,7 @@
 			</additionals>
 			<schedules>
 				<title>Расписания</title>
-				<scheduleName>Название расписания:</scheduleName>
+				<scheduleName>Название расписания</scheduleName>
 				<add>Добавить поле</add>
 				<sessionLabel>Время сеанса:</sessionLabel>
 				<sessionDop>Доп. информация (например: цена билета на сеанс):</sessionDop>
