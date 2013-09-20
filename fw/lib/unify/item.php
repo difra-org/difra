@@ -382,14 +382,25 @@ abstract class Item extends Storage {
 	 */
 	public static function getObjDbStatus() {
 
+		// handle empty object
+		if( empty( static::$propertiesList ) ) {
+			return array( 'status' => 'error' );
+		}
+
 		$table = static::getTable();
 		$db = MySQL::getInstance();
+		// check if table exists
 		try {
-			$db->fetch( "DESC `" . $db->escape( $table ) . "`" );
+			$current = $db->fetch( "DESC `" . $db->escape( $table ) . "`" );
 		} catch( \Difra\Exception $ex ) {
 			return array( 'status' => 'missing', 'name' => $table );
 		}
-		// TODO: таблицы отличаются?
+		// TODO: compare columns
+
+		// TODO: compare PRIMARY KEY
+		$currentIndexes = $db->fetch( "SHOW INDEXES FROM `" . $db->escape( $table ) . "`" );
+		// TODO: compare other indexes
+
 		return array( 'status' => 'ok' );
 	}
 
@@ -413,6 +424,7 @@ abstract class Item extends Storage {
 	 */
 	public static function getDbCreate() {
 
+		// TODO: переделать с использованием getColumns() и getIndexes()
 		if( empty( static::$propertiesList ) ) {
 			throw new \Difra\Exception( 'Can\'t create table for empty object.' );
 		}
@@ -457,6 +469,66 @@ abstract class Item extends Storage {
 		return $create;
 	}
 
+	static private $keyTypes = array(
+		'index',
+		'primary',
+		'unique',
+		'fulltext',
+		'foreign'
+	);
+
+	/**
+	 * Возвращает список всех записей в self::$propertiesList, которые описывают строки
+	 *
+	 * @return array
+	 */
+	private static function getColumns() {
+
+		static $result = null;
+		if( !is_null( $result ) ) {
+			return $result;
+		}
+		$result = array();
+		foreach( static::$propertiesList as $name => $prop ) {
+			$type = !is_array( $prop ) ? $prop : $prop['type'];
+			if( !in_array( $type, self::$keyTypes ) ) {
+				$result[$name] = $prop;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Возвращает список всех записей в self::$propertiesList, которые описывают индексы
+	 *
+	 * @return array
+	 */
+	private static function getIndexes() {
+
+		$result = null;
+		if( !is_null( $result ) ) {
+			return $result;
+		}
+		$result = array();
+		foreach( static::$propertiesList as $name => $prop ) {
+			$type = !is_array( $prop ) ? $prop : $prop['type'];
+			if( !is_array( static::$primary ) and static::$primary == $name and ( !isset( $prop['primary'] ) or !$prop['primary'] ) ) {
+				$result[$name] = 'primary';
+			}
+			if( in_array( $type, self::$keyTypes ) ) {
+				$result[$name] = $prop;
+				continue;
+			}
+			foreach( self::$keyTypes as $keyType ) {
+				if( isset( $prop[$keyType] ) and $prop[$keyType] ) {
+					$result[$name] = $prop;
+					break;
+				}
+			}
+		}
+		return $result;
+	}
+
 	/**
 	 * Возвращает строку для создания Primary Key
 	 *
@@ -467,10 +539,8 @@ abstract class Item extends Storage {
 		if( !$primary = static::getPrimary() ) {
 			return false;
 		}
-		if( !is_array( $primary ) ) {
-			return '  PRIMARY KEY (`' . $primary . '`)';
-		}
-		return '  PRIMARY KEY (`' . implode( '`,`', $primary ) . '`)';
+
+		return '  PRIMARY KEY (`' . implode( '`,`', (array)$primary ) . '`)';
 	}
 
 	/**
