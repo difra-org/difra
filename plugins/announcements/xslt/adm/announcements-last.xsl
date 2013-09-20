@@ -17,7 +17,7 @@
 				<col/>
 				<col/>
 				<col style="width: 160px"/>
-				<col style="width: 190px"/>
+				<col style="width: 200px"/>
 				<col/>
 				<col/>
 				<col style="width: 115px"/>
@@ -212,7 +212,7 @@
 				<col/>
 				<col/>
 				<col style="width: 160px"/>
-				<col style="width: 190px"/>
+				<col style="width: 200px"/>
 				<col/>
 				<col/>
 				<col style="width: 115px"/>
