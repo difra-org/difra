@@ -4,10 +4,6 @@
 	<xsl:template match="announcementsLocations">
 
 		<h2>
-			<a href="/adm/announcements/">
-				<xsl:value-of select="$locale/announcements/adm/announcements"/>
-			</a>
-			<xsl:text> → </xsl:text>
 			<xsl:value-of select="$locale/announcements/adm/locations/title"/>
 		</h2>
 
@@ -69,12 +65,15 @@
 		</h3>
 
 		<table>
+			<colgroup>
+				<col/>
+				<col style="width: 100px"/>
+			</colgroup>
 			<tr>
 				<th>
 					<xsl:value-of select="$locale/announcements/adm/locations/location"/>
 				</th>
 				<th>
-					<xsl:value-of select="$locale/announcements/adm/actions"/>
 				</th>
 			</tr>
 
@@ -83,7 +82,7 @@
 					<td>
 						<xsl:value-of select="@name"/>
 					</td>
-					<td>
+					<td class="actions">
 						<a href="/adm/announcements/locations/edit/{@id}/" class="action edit"/>
 						<a href="/adm/announcements/locations/delete/{@id}/" class="action delete ajaxer"/>
 					</td>
