@@ -14,7 +14,7 @@
 					<span class="archiveLink">
 						<xsl:choose>
 							<xsl:when test="/root/auth/unauthorized">
-								<a href="/registration/">
+								<a href="/authorization/" class="ajaxer">
 									<xsl:value-of select="$locale/announcements/addEvent"/>
 								</a>
 							</xsl:when>
