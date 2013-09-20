@@ -125,6 +125,11 @@ input, select {
 	margin: 0;
 }
 
+input[type='radio'],
+input[type='checkbox'] {
+	margin: 0 5px;
+}
+
 input[type='button'],
 input[type='submit'],
 .button {
@@ -386,10 +391,12 @@ body {
 
 .small {
 	font-size: @font-small;
+	line-height: normal;
 }
 
 .smallest {
 	font-size: @font-smallest;
+	line-height: normal;
 }
 
 .grey {
