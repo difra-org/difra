@@ -272,13 +272,30 @@ abstract class Item extends Storage {
 	}
 
 	/**
-	 * Возвращает имя столбца с primary key
+	 * Возвращает имя столбца с primary key или массив, если primary key состоит из нескольких столбцов
 	 *
 	 * @return string
 	 */
 	public static function getPrimary() {
 
-		return static::$primary;
+		static $primary = null;
+		if( !is_null( $primary ) ) {
+			return $primary;
+		}
+		if( static::$primary ) {
+			return $primary = static::$primary;
+		}
+		if( !empty( static::$propertiesList ) ) {
+			foreach( static::$propertiesList as $name => $desc ) {
+				if( !is_array( $desc ) ) {
+					continue;
+				}
+				if( isset( $desc['primary'] ) and $desc['primary'] ) {
+					return $primary = $name;
+				}
+			}
+		}
+		return $primary = false;
 	}
 
 	/**

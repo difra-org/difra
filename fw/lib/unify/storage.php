@@ -48,8 +48,8 @@ abstract class Storage {
 
 	/**
 	 * Получение объекта по $objKey
-	 * @param $objKey
-	 * @param $primary
+	 * @param $objKey         Имя объекта
+	 * @param $primary        Значение primary-поля (например, id)
 	 *
 	 * @return static
 	 * @throws Exception
