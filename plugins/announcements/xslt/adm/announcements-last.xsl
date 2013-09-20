@@ -57,76 +57,49 @@
 							<xsl:choose>
 								<xsl:when test="status='inFuture'">
 									<xsl:choose>
-										<xsl:when
-											test="fromEventDate and not(fromEventDate=eventDate)">
-											<xsl:value-of
-												select="$locale/announcements/adm/eventHasPeriod"/>
+										<xsl:when test="fromEventDate and not(fromEventDate=eventDate)">
+											<xsl:value-of select="$locale/announcements/adm/eventHasPeriod"/>
 											<xsl:text>&#160;</xsl:text>
-											<xsl:value-of
-												select="fromEventDate"/>
-											<xsl:value-of
-												select="$locale/announcements/adm/to"/>
-											<xsl:value-of
-												select="eventDate"/>
+											<xsl:value-of select="fromEventDate"/>
+											<xsl:value-of select="$locale/announcements/adm/to"/>
+											<xsl:value-of select="eventDate"/>
 											<xsl:text>. </xsl:text>
-											<xsl:call-template
-												name="declension">
-												<xsl:with-param
-													name="number"
-													select="fromToEventDiff"/>
-												<xsl:with-param
-													name="dec_node_name"
-													select="string('days')"/>
+											<xsl:call-template name="declension">
+												<xsl:with-param name="number" select="fromToEventDiff"/>
+												<xsl:with-param name="dec_node_name" select="string('days')"/>
 											</xsl:call-template>
 											<br/>
-											<xsl:value-of
-												select="$locale/announcements/adm/startIn"/>
+											<xsl:value-of select="$locale/announcements/adm/startIn"/>
 											<xsl:text>&#160;</xsl:text>
-											<xsl:call-template
-												name="declension">
-												<xsl:with-param
-													name="number"
-													select="statusInDays"/>
-												<xsl:with-param
-													name="dec_node_name"
-													select="string('days')"/>
+											<xsl:call-template name="declension">
+												<xsl:with-param name="number" select="statusInDays"/>
+												<xsl:with-param name="dec_node_name" select="string('days')"/>
 											</xsl:call-template>
 											<xsl:text>.</xsl:text>
 										</xsl:when>
 										<xsl:otherwise>
-											<xsl:value-of
-												select="$locale/announcements/adm/eventWillHappen"/>
+											<xsl:value-of select="$locale/announcements/adm/eventWillHappen"/>
 											<xsl:text>&#160;</xsl:text>
-											<xsl:value-of
-												select="$locale/announcements/adm/status/willBeIn"/>
+											<xsl:value-of select="$locale/announcements/adm/status/willBeIn"/>
 											<xsl:text>&#160;</xsl:text>
-											<xsl:call-template
-												name="declension">
-												<xsl:with-param
-													name="number"
-													select="statusInDays"/>
-												<xsl:with-param
-													name="dec_node_name"
-													select="string('days')"/>
+											<xsl:call-template name="declension">
+												<xsl:with-param name="number" select="statusInDays"/>
+												<xsl:with-param name="dec_node_name" select="string('days')"/>
 											</xsl:call-template>
 											<xsl:text>. </xsl:text>
-											<xsl:value-of
-												select="eventDate"/>
+											<xsl:value-of select="eventDate"/>
 										</xsl:otherwise>
 									</xsl:choose>
 								</xsl:when>
 								<xsl:otherwise>
-									<xsl:value-of
-										select="$locale/announcements/adm/eventWillHappen"/>
+									<xsl:value-of select="$locale/announcements/adm/eventWillHappen"/>
 									<xsl:text>&#160;</xsl:text>
-									<xsl:value-of
-										select="$locale/announcements/adm/status/*[name()=$statusText]"/>
+									<xsl:value-of select="$locale/announcements/adm/status/*[name()=$statusText]"/>
 								</xsl:otherwise>
 							</xsl:choose>
 						</div>
 						<div class="small grey">
-							<xsl:value-of select="shortDescription"
-								      disable-output-escaping="yes"/>
+							<xsl:value-of select="shortDescription" disable-output-escaping="yes"/>
 						</div>
 					</td>
 					<td>
@@ -163,12 +136,10 @@
 						<xsl:variable name="catId" select="category"/>
 						<xsl:choose>
 							<xsl:when test="$catId=0">
-								<xsl:value-of
-									select="$locale/announcements/adm/category/noCategory"/>
+								<xsl:value-of select="$locale/announcements/adm/category/noCategory"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of
-									select="/root/content/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
+								<xsl:value-of select="/root/content/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
@@ -179,23 +150,19 @@
 						<input type="hidden" id="priorityValue-{id}" value="{priority}"/>
 						<div id="prioritySlider-{id}"></div>
 						<div class="savePriorityButton" id="savePriorityButton-{id}">
-							<input type="button" value="{$locale/adm/save}"
-							       onclick="announcementsUI.savePriority( {id} );"/>
+							<input type="button" value="{$locale/adm/save}" onclick="announcementsUI.savePriority( {id} );"/>
 						</div>
 
 						<xsl:if test="visible=0">
 							<div style="color: #e9967a;">
-								<xsl:value-of
-									select="$locale/announcements/adm/notVisible"/>
+								<xsl:value-of select="$locale/announcements/adm/notVisible"/>
 							</div>
 						</xsl:if>
 					</td>
 					<td class="actions">
 						<a href="/adm/announcements/edit/{id}/" class="action edit"></a>
-						<a href="#" class="action down"
-						   onclick="announcementsUI.getPrioritySlider({id}, {priority});"></a>
-						<a href="/adm/announcements/delete/{id}/"
-						   class="action delete ajaxer"></a>
+						<a href="#" class="action down" onclick="announcementsUI.getPrioritySlider({id}, {priority});"></a>
+						<a href="/adm/announcements/delete/{id}/" class="action delete ajaxer"></a>
 					</td>
 				</tr>
 			</xsl:for-each>
@@ -248,14 +215,12 @@
 							<xsl:value-of select="title"/>
 						</strong>
 						<div class="eventDate">
-							<xsl:value-of
-								select="$locale/announcements/adm/eventInPastHappen"/>
+							<xsl:value-of select="$locale/announcements/adm/eventInPastHappen"/>
 							<xsl:text> </xsl:text>
 							<xsl:value-of select="eventDate"/>
 						</div>
 						<div class="small grey">
-							<xsl:value-of select="shortDescription"
-								      disable-output-escaping="yes"/>
+							<xsl:value-of select="shortDescription" disable-output-escaping="yes"/>
 						</div>
 					</td>
 					<td>
@@ -292,12 +257,10 @@
 						<xsl:variable name="catId" select="category"/>
 						<xsl:choose>
 							<xsl:when test="$catId=0">
-								<xsl:value-of
-									select="$locale/announcements/adm/category/noCategory"/>
+								<xsl:value-of select="$locale/announcements/adm/category/noCategory"/>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of
-									select="/root/content/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
+								<xsl:value-of select="/root/content/announcementsLast/announceCateroty/category[@id=$catId]/@name"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
@@ -308,20 +271,17 @@
 						<input type="hidden" id="priorityValue-{id}" value="{priority}"/>
 						<div id="prioritySlider-{id}"></div>
 						<div class="savePriorityButton" id="savePriorityButton-{id}">
-							<input type="button" value="{$locale/adm/save}"
-							       onclick="announcementsUI.savePriority( {id} );"/>
+							<input type="button" value="{$locale/adm/save}" onclick="announcementsUI.savePriority( {id} );"/>
 						</div>
 						<xsl:if test="visible=0">
 							<div style="color: #e9967a;">
-								<xsl:value-of
-									select="$locale/announcements/adm/notVisible"/>
+								<xsl:value-of select="$locale/announcements/adm/notVisible"/>
 							</div>
 						</xsl:if>
 					</td>
 					<td class="actions">
 						<a href="/adm/announcements/edit/{id}/" class="action edit"></a>
-						<a href="#" class="action down"
-						   onclick="announcementsUI.getPrioritySlider({id}, {priority});"></a>
+						<a href="#" class="action down" onclick="announcementsUI.getPrioritySlider({id}, {priority});"></a>
 						<a href="/adm/announcements/delete/{id}/" class="action delete"></a>
 					</td>
 				</tr>
