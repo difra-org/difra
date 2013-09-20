@@ -1,0 +1,29 @@
+<locale>
+	<portfolio>
+		<adm>
+			<list>
+				<title>Работы в портфолио</title>
+				<empty>В портфолио не добавлено ни одной работы.</empty>
+			</list>
+			<add>
+				<title>Добавление работы</title>
+			</add>
+			<edit>
+				<title>Редактирование работы</title>
+				<title-name-prefix>«</title-name-prefix>
+				<title-name-postfix>»</title-name-postfix>
+			</edit>
+		</adm>
+		<entry>
+			<name>Название проекта</name>
+			<release>Дата релиза</release>
+			<link>Ссылка</link>
+			<software>Программное обеспечение</software>
+			<authors>Участники проекта</authors>
+			<description>Описание</description>
+			<form-submit>Сохранить</form-submit>
+			<role>Роль</role>
+			<contributors>Участники</contributors>
+		</entry>
+	</portfolio>
+</locale>

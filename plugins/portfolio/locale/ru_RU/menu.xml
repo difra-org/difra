@@ -1,11 +1,7 @@
 <locale>
 	<menu>
 		<adm>
-			<menu_portfolio>Портфолио</menu_portfolio>
-			<menu_portfolio_view>Управление портфолио</menu_portfolio_view>
-			<menu_portfolio_load>Загрузка работы</menu_portfolio_load>
-			<menu_portfolio_contributors>Участники проектов</menu_portfolio_contributors>
-			<menu_portfolio_settings>Настройки</menu_portfolio_settings>
+			<menu_content_portfolio>Портфолио</menu_content_portfolio>
 		</adm>
 	</menu>
 </locale>
