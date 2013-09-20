@@ -43,15 +43,16 @@
 
 		<adm>
 			<announcements>Анонсы</announcements>
-			<settings>настройки</settings>
+			<settings>Настройки</settings>
+			<main_settings>Основные настройки</main_settings>
 			<onoff>Плагин анонсов включен</onoff>
 			<maxPerUser>Максимальное кол-во анонсов для пользователя</maxPerUser>
 			<maxPerGroup>Максимальное кол-во анонсов для группы</maxPerGroup>
 			<imageSize>Максимальный размер превью картинки анонса</imageSize>
 			<imageBigSize>Максимальный размер основной картинки анонса</imageBigSize>
-			<width>Ширина:</width>
-			<height>Высота:</height>
-			<zeroValueHint>Значение равное '0' будет означать отсутствие ограничений.</zeroValueHint>
+			<width>Ширина</width>
+			<height>Высота</height>
+			<zeroValueHint>Значение равное «0» будет означать отсутствие ограничений.</zeroValueHint>
 			<settingsSaved>Настройки сохранены</settingsSaved>
 			<last>последние</last>
 			<addEvent>Добавить анонс события</addEvent>
