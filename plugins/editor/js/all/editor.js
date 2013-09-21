@@ -12,6 +12,8 @@ editor.config = {
 	contentsCss: ['/css/main.css', '/css/editor.css'],
 	fullPage: false,
 	filebrowserUploadUrl: '/up',
+	disableNativeSpellChecker: false,
+	disableReadonlyStyling: true,
 
 	toolbar: 'Default',
 	toolbar_Default: [

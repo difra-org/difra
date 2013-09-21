@@ -168,7 +168,7 @@ class Users {
 		if( $data['banned'] ) {
 			return self::LOGIN_BANNED;
 		}
-		Difra\Auth::getInstance()->login( $email, $data, Difra\Additionals::getAdditionals( 'users', $data['id'] ) );
+		Difra\Auth::getInstance()->login( $email, $data );
 		if( $remember ) {
 			$this->_setLongSession( $data['id'] );
 		}

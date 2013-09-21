@@ -2,8 +2,7 @@
 <locale>
 	<menu>
 		<adm>
-			<menu_rss>RSS</menu_rss>
-			<menu_rss_settings>Настройки канала</menu_rss_settings>
+			<menu_settings_rss>Настройки каналов RSS</menu_settings_rss>
 		</adm>
 	</menu>
 </locale>

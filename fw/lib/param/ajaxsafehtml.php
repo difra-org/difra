@@ -23,6 +23,6 @@ class AjaxSafeHTML extends Common {
 	public function __construct( $value = '' ) {
 
 		$this->raw = $value;
-		$this->value = \Difra\Param\Filters\HTML::getInstance()->process( $value, self::filtered );
+		$this->value = Filters\HTML::getInstance()->process( $value, self::filtered );
 	}
 }

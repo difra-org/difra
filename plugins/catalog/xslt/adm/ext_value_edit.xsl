@@ -52,12 +52,16 @@
 				<input type="hidden" name="id" value="{@id}"/>
 			</xsl:if>
 			<table class="form">
+				<colgroup>
+					<col style="width: 120px"/>
+					<col/>
+				</colgroup>
 				<tr>
 					<th>
 						<xsl:value-of select="$locale/catalog/adm/ext/value-name"/>
 					</th>
 					<td>
-						<input type="text" name="value" value="{@name}"/>
+						<input type="text" name="value" value="{@name}" class="full-width"/>
 					</td>
 				</tr>
 				<xsl:if test="@set=2">
@@ -71,7 +75,9 @@
 					</tr>
 				</xsl:if>
 			</table>
-			<input type="submit" value="{$locale/catalog/adm/ext/save}"/>
+			<div class="form-buttons">
+				<input type="submit" value="{$locale/catalog/adm/ext/save}"/>
+			</div>
 		</form>
 	</xsl:template>
 </xsl:stylesheet>

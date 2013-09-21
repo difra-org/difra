@@ -3,7 +3,7 @@
 
 	<xsl:template match="userEdit">
 		<h2>
-			<a href="/adm/users">
+			<a href="/adm/users/list">
 				<xsl:value-of select="$locale/auth/adm/h2-title"/>
 			</a>
 			<xsl:text> → </xsl:text>
@@ -17,7 +17,7 @@
 				<xsl:value-of select="$locale/auth/adm/user-not-found"/>
 			</xsl:when>
 			<xsl:otherwise>
-				<form method="post" action="/adm/users/list/save/{item/@id}">
+				<form method="post" action="/adm/users/list/save/{item/@id}" class="ajaxer">
 					<table class="form">
 						<colgroup>
 							<col style="width: 250px"/>
@@ -59,36 +59,7 @@
 							</tr>
 						</tbody>
 					</table>
-					<h3>
-						<xsl:value-of select="$locale/auth/adm/additionals"/>
-					</h3>
-					<a href="#" onclick="addAdditionalField();" class="button">Добавить поле</a>
-					<table class="form" id="addedFields">
-						<colgroup>
-							<col style="width: 250px"/>
-							<col/>
-						</colgroup>
-						<tbody>
-							<xsl:if test="additionals/item">
-								<xsl:for-each select="additionals/item">
-									<tr>
-										<th>
-											<input type="text"
-											       class="full-width"
-											       name="additional_name[]"
-											       value="{@name}"/>
-										</th>
-										<td>
-											<input type="text"
-											       class="full-width"
-											       name="additional_value[]"
-											       value="{@value}"/>
-										</td>
-									</tr>
-								</xsl:for-each>
-							</xsl:if>
-						</tbody>
-					</table>
+
 					<div class="form-buttons">
 						<input type="submit" value="{$locale/auth/adm/save}"/>
 					</div>

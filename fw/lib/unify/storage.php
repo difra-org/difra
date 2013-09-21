@@ -18,15 +18,19 @@ abstract class Storage {
 	static public $objects = array();
 
 	/**
-	 * @param string[string] $list Объекты для добавления в список
+	 * @param string[] $list Объекты для добавления в список
 	 */
 	final static public function registerObjects( $list ) {
 
-		if( !$list ) {
+		if( !$list or empty( $list ) ) {
 			return;
 		}
-		foreach( $list as $objKey => $class ) {
-			self::$classes[$objKey] = $class;
+		if( !is_array( $list ) ) {
+			$list = array( $list );
+		}
+		/** @var $class Item */
+		foreach( $list as $class ) {
+			self::$classes[$class::getObjKey()] = $class;
 		}
 	}
 
@@ -44,8 +48,8 @@ abstract class Storage {
 
 	/**
 	 * Получение объекта по $objKey
-	 * @param $objKey
-	 * @param $primary
+	 * @param $objKey         Имя объекта
+	 * @param $primary        Значение primary-поля (например, id)
 	 *
 	 * @return static
 	 * @throws Exception
@@ -73,7 +77,7 @@ abstract class Storage {
 		foreach( self::$classes as $objKey => $className ) {
 			$objNode = $node->appendChild( $node->ownerDocument->createElement( $objKey ) );
 			/** @var \Difra\Unify\Item $className */
-			$className::getDbStatus( $objNode );
+			$className::getObjDbStatusXML( $objNode );
 		}
 	}
 }

@@ -4,15 +4,16 @@
 		<h2>
 			<xsl:value-of select="$locale/catalog/adm/ext/title"/>
 		</h2>
-		<a href="/adm/catalog/ext/add" class="button">
-			<xsl:value-of select="$locale/catalog/adm/ext/new"/>
+		<a href="/adm/catalog/ext/add" class="action add">
 		</a>
-		<h3>
-			<xsl:value-of select="$locale/catalog/adm/ext/title-list"/>
-		</h3>
 		<xsl:choose>
 			<xsl:when test="ext">
 				<table>
+					<colgroup>
+						<col/>
+						<col style="width: 200px"/>
+						<col style="width: 170px"/>
+					</colgroup>
 					<thead>
 						<tr>
 							<th>
@@ -22,7 +23,6 @@
 								<xsl:value-of select="$locale/catalog/adm/ext/flags"/>
 							</th>
 							<th>
-								<xsl:value-of select="$locale/catalog/adm/ext/actions"/>
 							</th>
 						</tr>
 					</thead>
@@ -50,21 +50,21 @@
 										</xsl:when>
 									</xsl:choose>
 								</td>
-								<td>
+								<td class="actions">
 									<a href="/adm/catalog/ext/edit/{@id}" class="action edit">
 										<xsl:value-of select="$locale/actions/edit"/>
 									</a>
 									<a>
 										<xsl:choose>
 											<xsl:when test="@set>0">
-												<xsl:attribute name="class">action</xsl:attribute>
+												<xsl:attribute name="class">action view</xsl:attribute>
 												<xsl:attribute name="href">
 													<xsl:text>/adm/catalog/ext/values/</xsl:text>
 													<xsl:value-of select="@id"/>
 												</xsl:attribute>
 											</xsl:when>
 											<xsl:otherwise>
-												<xsl:attribute name="class">action disabled</xsl:attribute>
+												<xsl:attribute name="class">action view disabled</xsl:attribute>
 												<xsl:attribute name="href">
 													<xsl:text>#</xsl:text>
 												</xsl:attribute>

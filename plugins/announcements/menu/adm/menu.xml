@@ -2,7 +2,7 @@
     <announcements href="">
         <announcements href="/adm/announcements/"/>
         <category href="/adm/announcements/category/"/>
-        <additionalFields href="/adm/announcements/additionals/"/>
+        <additionals href="/adm/announcements/additionals/"/>
         <locations href="/adm/announcements/locations/" />
         <settings href="/adm/announcements/settings/" sup="1"/>
     </announcements>

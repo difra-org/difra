@@ -4,22 +4,25 @@
 	<xsl:template match="announcementsSettings">
 
 		<h2>
-			<a href="/adm/announcements/">
-				<xsl:value-of select="$locale/announcements/adm/announcements"/>
-			</a>
-			<xsl:text> → </xsl:text>
 			<xsl:value-of select="$locale/announcements/adm/settings"/>
 		</h2>
 
 		<form method="post" action="/adm/announcements/settings/save/" class="ajaxer">
+			<h3>
+				<xsl:value-of select="$locale/announcements/adm/main_settings"/>
+			</h3>
 			<table class="form">
+				<colgroup>
+					<col style="width: 420px"/>
+					<col/>
+				</colgroup>
 				<tr>
 					<th>
 						<xsl:value-of select="$locale/announcements/adm/maxPerUser"/>
 					</th>
 					<td>
 						<input name="maxPerUser" type="number" value="{@maxPerUser}"/>
-						<div class="small gray">
+						<div class="small grey">
 							<xsl:value-of select="$locale/announcements/adm/zeroValueHint"/>
 						</div>
 					</td>
@@ -31,35 +34,9 @@
 					</th>
 					<td>
 						<input name="maxPerGroup" type="number" value="{@maxPerGroup}"/>
-						<div class="small gray">
+						<div class="small grey">
 							<xsl:value-of select="$locale/announcements/adm/zeroValueHint"/>
 						</div>
-					</td>
-				</tr>
-
-				<tr>
-					<th>
-						<xsl:value-of select="$locale/announcements/adm/imageSize"/>
-					</th>
-					<td>
-						<xsl:value-of select="$locale/announcements/adm/width"/>
-						<input name="width" type="number" value="{@width}"/>
-						<xsl:text>&#160;&#160;&#160;</xsl:text>
-						<xsl:value-of select="$locale/announcements/adm/height"/>
-						<input name="height" type="number" value="{@height}"/>
-					</td>
-				</tr>
-
-				<tr>
-					<th>
-						<xsl:value-of select="$locale/announcements/adm/imageBigSize"/>
-					</th>
-					<td>
-						<xsl:value-of select="$locale/announcements/adm/width"/>
-						<input name="bigWidth" type="number" value="{@bigWidth}"/>
-						<xsl:text>&#160;&#160;&#160;</xsl:text>
-						<xsl:value-of select="$locale/announcements/adm/height"/>
-						<input name="bigHeight" type="number" value="{@bigHeight}"/>
 					</td>
 				</tr>
 				<tr>
@@ -71,9 +48,61 @@
 					</td>
 				</tr>
 			</table>
+			<h3>
+				<xsl:value-of select="$locale/announcements/adm/imageSize"/>
+			</h3>
+			<table class="form">
+				<colgroup>
+					<col style="width: 420px"/>
+					<col/>
+				</colgroup>
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/announcements/adm/width"/>
+					</th>
+					<td>
+						<input name="width" type="number" value="{@width}"/>
+					</td>
+				</tr>
 
-			<input type="submit" value="{$locale/adm/save}"/>
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/announcements/adm/height"/>
+					</th>
+					<td>
+						<input name="height" type="number" value="{@height}"/>
+					</td>
+				</tr>
+			</table>
+			<h3>
+				<xsl:value-of select="$locale/announcements/adm/imageBigSize"/>
+			</h3>
+			<table class="form">
+				<colgroup>
+					<col style="width: 420px"/>
+					<col/>
+				</colgroup>
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/announcements/adm/width"/>
+					</th>
+					<td>
+						<input name="bigWidth" type="number" value="{@bigWidth}"/>
+					</td>
+				</tr>
 
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/announcements/adm/height"/>
+					</th>
+					<td>
+						<input name="bigHeight" type="number" value="{@bigHeight}"/>
+					</td>
+				</tr>
+			</table>
+			<div class="form-buttons">
+				<input type="submit" value="{$locale/adm/save}"/>
+			</div>
 		</form>
 
 	</xsl:template>

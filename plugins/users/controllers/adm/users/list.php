@@ -9,7 +9,7 @@ class AdmUsersListController extends Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction( \Difra\Param\NamedInt $page = null ) {
@@ -21,72 +21,50 @@ class AdmUsersListController extends Difra\Controller {
 		Plugins\Users::getInstance()->getListXML( $this->node, $page );
 	}
 
-	public function editAction() {
+	public function editAction( Param\AnyInt $id ) {
 
-		if( sizeof( $this->action->parameters ) != 1 ) {
-			return;
-		}
-		$id = array_shift( $this->action->parameters );
 		$this->node = $this->root->appendChild( $this->xml->createElement( 'userEdit' ) );
-		Plugins\Users::getInstance()->getUserXML( $this->node, $id );
+		Plugins\Users::getInstance()->getUserXML( $this->node, $id->val() );
+	}
 
-		$additionals = Difra\Additionals::getAdditionals( 'users', $id );
-		if( $additionals ) {
-			$additionalsNode = $this->node->appendChild( $this->xml->createElement( 'additionals' ) );
-			foreach( $additionals as $key => $value ) {
-				$itemNode = $additionalsNode->appendChild( $this->xml->createElement( 'item' ) );
-				$itemNode->setAttribute( 'name', $key );
-				$itemNode->setAttribute( 'value', $value );
-			}
+	public function saveAjaxAction( Param\AnyInt $id, Param\AjaxEmail $email, Param\AjaxCheckbox $change_pw, Param\AjaxString $new_pw = null ) {
+
+		$userData = array( 'email' => $email->val(), 'change_pw' => $change_pw->val() );
+		$userData['new_pw'] = !is_null( $new_pw ) ? $new_pw->val() : null;
+
+		Plugins\Users::getInstance()->setUserLogin( $id->val(), $userData);
+
+		$this->ajax->refresh();
+
+		if( $userData['change_pw']!=0 && !is_null( $userData['new_pw'] ) ) {
+			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'auth/adm/userDataSavedPassChanged' ) );
+		} else {
+			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'auth/adm/userDataSaved' ) );
 		}
 	}
 
-	public function saveAction() {
-
-		if( sizeof( $this->action->parameters ) != 1 ) {
-			return;
-		}
-		$id = array_shift( $this->action->parameters );
-		Plugins\Users::getInstance()->setUserLogin( $id, $_POST );
-
-		if( isset( $_POST['additional_name'] ) && isset( $_POST['additional_value'] ) &&
-			!empty( $_POST['additional_value'] ) && !empty( $_POST['additional_name'] )
-		) {
-
-			$additionals = array();
-			foreach( $_POST['additional_name'] as $k => $value ) {
-				if( $value != '' && $_POST['additional_value'][$k] != '' ) {
-					$additionals[$value] = $_POST['additional_value'][$k];
-				}
-			}
-
-			Difra\Additionals::saveAllAdditionals( 'users', $id, $additionals );
-		}
-		$this->view->redirect( '/adm/users/list' );
-	}
-
-	public function banAction( Param\AnyInt $id ) {
+	public function banAjaxAction( Param\AnyInt $id ) {
 
 		\Difra\Plugins\Users::getInstance()->ban( $id->val() );
-		$this->view->redirect( '/adm/users/list' );
+		$this->ajax->refresh();
 	}
 
-	public function unbanAction( Param\AnyInt $id ) {
+	public function unbanAjaxAction( Param\AnyInt $id ) {
 
 		\Difra\Plugins\Users::getInstance()->unban( $id->val() );
-		$this->view->redirect( '/adm/users/list' );
+		$this->ajax->refresh();
 	}
 
-	public function moderatorAction( Param\AnyInt $id ) {
+	public function moderatorAjaxAction( Param\AnyInt $id ) {
 
 		\Difra\Plugins\Users::getInstance()->setModerator( $id->val() );
-		$this->view->redirect( '/adm/users/list' );
+		$this->ajax->refresh();
 	}
 
-	public function unmoderatorAction( Param\AnyInt $id ) {
+	public function unmoderatorAjaxAction( Param\AnyInt $id ) {
 
 		\Difra\Plugins\Users::getInstance()->unSetModerator( $id->val() );
-		$this->view->redirect( '/adm/users/list' );
+		$this->ajax->refresh();
 	}
 }
 

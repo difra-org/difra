@@ -34,6 +34,10 @@
 				<input type="hidden" name="id" value="{@id}"/>
 			</xsl:if>
 			<table class="form">
+				<colgroup>
+					<col style="width: 220px"/>
+					<col/>
+				</colgroup>
 				<tr>
 					<th>
 						<xsl:value-of select="$locale/catalog/adm/parent-category"/>
@@ -55,11 +59,13 @@
 						<xsl:value-of select="$locale/catalog/adm/name"/>
 					</th>
 					<td>
-						<input type="text" name="name" value="{@name}"/>
+						<input type="text" name="name" value="{@name}" class="full-width"/>
 					</td>
 				</tr>
 			</table>
-			<input type="submit" class="large_spacing" value="{$locale/catalog/adm/save}"/>
+			<div class="form-buttons">
+				<input type="submit" value="{$locale/catalog/adm/save}"/>
+			</div>
 		</form>
 	</xsl:template>
 

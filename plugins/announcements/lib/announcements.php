@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins;
 
+use Difra\Envi;
+
 class Announcements {
 
 	/**
@@ -158,7 +160,7 @@ class Announcements {
 		$query = "SELECT `id`, `link`, UNIX_TIMESTAMP( `modified` ) AS `mod` FROM `announcements` WHERE " . $where . " ORDER BY `modified`";
 		$res = $db->fetch( $query );
 
-		$mainHost = \Difra\Site::getInstance()->getMainhost();
+		$mainHost = Envi::getHost();
 
 		$returnArray = array();
 		foreach( $res as $k => $data ) {

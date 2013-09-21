@@ -6,6 +6,8 @@ use Difra\Envi;
 
 class Exception extends \Exception {
 
+	public static $error = null;
+
 	public function __construct( $message, $code = 0, \Exception $previous = null ) {
 
 		//parent::__construct( $message, $code, $previous );
@@ -25,6 +27,7 @@ class Exception extends \Exception {
 			$msg = $message;
 		}
 
+		self::$error = $err;
 		header( "HTTP/1.1 $err $error" );
 		/*
 		if( $ttl and is_numeric( $ttl ) and $ttl >= 0 ) {

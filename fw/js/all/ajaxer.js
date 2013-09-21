@@ -357,13 +357,13 @@ ajaxer.overlayShow = function( content ) {
 
 	$( 'body' ).append(
 		'<div class="overlay" id="ajaxer-' + ajaxer.id + '">' +
-			'<div class="overlay-container auto-center">' +
-			'<div class="overlay-inner" style="display:none">' +
-			'<div class="close-button" onclick="ajaxer.close(this)"></div>' +
-			content +
-			'</div>' +
-			'</div>' +
-			'</div>'
+		'<div class="overlay-container auto-center">' +
+		'<div class="overlay-inner" style="display:none">' +
+		'<div class="close-button action close" onclick="ajaxer.close(this)"></div>' +
+		content +
+		'</div>' +
+		'</div>' +
+		'</div>'
 	);
 	$( 'html' ).css( 'overflow', 'hidden' );
 	$( '#ajaxer-' + ajaxer.id ).find( '.overlay-inner' ).fadeIn( 'fast' );
@@ -425,7 +425,7 @@ $( document ).on( 'submit', 'form.ajaxer', function( event ) {
 	var originalAction = form.attr( 'action' );
 	form.attr( 'originalAction', originalAction );
 	form.attr( 'action',
-		form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
+		   form.attr( 'action' ) + ( originalAction.indexOf( '?' ) == -1 ? '?' : '&' ) + 'X-Progress-ID=' + uuid );
 	form.attr( 'target', 'ajaxerFrame' );
 	form.attr( 'uuid', uuid );
 	form.append( '<input type="hidden" name="_method" value="iframe"/>' );

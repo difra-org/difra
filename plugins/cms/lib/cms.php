@@ -34,11 +34,11 @@ class CMS {
 	 */
 	public static function addMenuXML() {
 
-		if( \Difra\View::$instance != 'main' ) {
+		if( \Difra\View::$instance == 'adm' ) {
 			return;
 		}
-		$rootNode = \Difra\Controller::getInstance()->root;
-		self::getMenuXML( $rootNode, true );
+		$controller = \Difra\Controller::getInstance();
+		self::getMenuXML( $controller->realRoot, true );
 	}
 
 	public static function getSnippets() {
@@ -47,8 +47,8 @@ class CMS {
 			return;
 		}
 
-		$rootNode = \Difra\Controller::getInstance()->root;
-		$snippetNode = $rootNode->appendChild( $rootNode->ownerDocument->createElement( 'snippets' ) );
+		$controller = \Difra\Controller::getInstance();
+		$snippetNode = $controller->realRoot->appendChild( $controller->xml->createElement( 'snippets' ) );
 		\Difra\Plugins\CMS\Snippet::getAllXML( $snippetNode );
 	}
 
@@ -62,6 +62,7 @@ class CMS {
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 * @param bool|int             $visible
+	 *
 	 * @return bool
 	 */
 	public function getListXML( $node, $visible = null ) {
@@ -86,6 +87,7 @@ class CMS {
 	 * Возвращает список меню в XML
 	 *
 	 * @param \DOMNode $node
+	 *
 	 * @return bool
 	 */
 	public function getMenuListXML( $node ) {
@@ -106,6 +108,7 @@ class CMS {
 	 * Возвращает все меню со всеми элементами в XML
 	 *
 	 * @param \DOMElement $node
+	 *
 	 * @return bool
 	 */
 	public static function getMenuXML( $node ) {
@@ -117,7 +120,6 @@ class CMS {
 		foreach( $data as $menu ) {
 			/** @var \DOMElement $menuNode */
 			$menuNode = $node->appendChild( $node->ownerDocument->createElement( 'CMSMenu' ) );
-			$menuNode->setAttribute( 'autorender', '0' );
 			$menu->getXML( $menuNode );
 			self::getMenuItemsXML( $menuNode, $menu->getId() );
 		}
@@ -132,6 +134,7 @@ class CMS {
 	/**
 	 * @param \DOMNode $node
 	 * @param          $menuId
+	 *
 	 * @return bool
 	 */
 	public static function getMenuItemsXML( $node, $menuId ) {

@@ -1,6 +1,5 @@
 <locale>
 	<announcements>
-
 		<dates>
 			<weekdays>
 				<day_0>Пн</day_0>
@@ -38,8 +37,11 @@
 		<address>Адрес:</address>
 		<phone>Справки по телефону:</phone>
 		<fromTo>—</fromTo>
+		<addEvent>Добавить событие</addEvent>
 		<archiveLink>Архив событий</archiveLink>
 		<archive>Архив</archive>
+
+
 
 		<adm>
 			<announcements>Анонсы</announcements>
@@ -53,20 +55,19 @@
 			<height>Высота:</height>
 			<zeroValueHint>Значение равное '0' будет означать отсутствие ограничений.</zeroValueHint>
 			<settingsSaved>Настройки сохранены</settingsSaved>
-			<last>последние</last>
+			<last>Последние анонсы</last>
 			<addEvent>Добавить анонс события</addEvent>
-			<add>добавление нового события</add>
-			<edit>редактирование анонса</edit>
-			<nextEvents>Ближайшие события:</nextEvents>
+			<add>Добавление нового события</add>
+			<edit>Редактирование анонса</edit>
+			<nextEvents>Ближайшие события</nextEvents>
 			<eventWillHappen>Событие произойдёт</eventWillHappen>
 			<eventHasPeriod>Событие будет проходить в период</eventHasPeriod>
 			<startIn>Начало через</startIn>
-			<from>с</from>
-			<to>по</to>
+			<to>—</to>
 			<perPage>Кол-во элементов на страницу</perPage>
 			<notify>
 				<createError>Во время создания анонса события возникла ошибка.</createError>
-				<goodCreate>Анонс события создан. Это радость.</goodCreate>
+				<goodCreate>Анонс события создан.</goodCreate>
 				<dataDirError>Директория для хранения картинок не существует или не доступна на запись.</dataDirError>
 				<prioritySet>Приоритет анонса события установлен.</prioritySet>
 				<deleted>Анонс события удалён.</deleted>
@@ -79,14 +80,14 @@
 				<tomorrow>завтра</tomorrow>
 				<willBeIn>через</willBeIn>
 			</status>
-			<event_desc>Анонс события / краткое описание</event_desc>
-			<event_dates>Период демострации анонса</event_dates>
-			<users_groups>Пользователь / группа</users_groups>
+			<event_desc>Событие, краткое описание</event_desc>
+			<event_dates>Демонстрация</event_dates>
+			<users_groups>Пользователь, группа</users_groups>
 			<priority>Приоритет</priority>
 			<actions>Действия</actions>
 			<pastEvents>Архив событий</pastEvents>
 			<eventInPastHappen>Событие уже произошло.</eventInPastHappen>
-			<event_dates_past>Анонс демонстрировался в период</event_dates_past>
+			<event_dates_past>Демонстрация</event_dates_past>
 			<notVisible>Не показывается</notVisible>
 			<forms>
 				<pic>Изображение</pic>
@@ -97,7 +98,7 @@
 				<eventDate>Дата события</eventDate>
 				<beginDate>Дата начала демонстрации анонса события</beginDate>
 				<endDate>Дата завершения демонстрации анонса события</endDate>
-				<priority>Приоритет показа анонса</priority>
+				<priority>Приоритет</priority>
 				<visibility>Показывать событие?</visibility>
 				<eventDescription>Описания события</eventDescription>
 				<shortDescription>Краткое описание</shortDescription>
@@ -140,7 +141,7 @@
 			</additionals>
 			<schedules>
 				<title>Расписания</title>
-				<scheduleName>Название расписания:</scheduleName>
+				<scheduleName>Название расписания</scheduleName>
 				<add>Добавить поле</add>
 				<sessionLabel>Время сеанса:</sessionLabel>
 				<sessionDop>Доп. информация (например: цена билета на сеанс):</sessionDop>

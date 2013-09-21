@@ -2,8 +2,6 @@
 
 namespace Difra;
 
-use Difra\Envi\Action;
-
 /**
  * Реализация абстрактного контроллера
  * Class Controller
@@ -50,7 +48,7 @@ class Controller {
 
 		static $instance = null;
 		if( is_null( $instance ) ) {
-			$instance = Action::getController();
+			$instance = \Difra\Envi\Action::getController();
 		}
 		return $instance;
 	}
@@ -95,7 +93,7 @@ class Controller {
 		if( !$controller->method ) {
 			throw new Exception( 'Controller failed to choose action method' );
 		}
-		Debugger::addLine( 'Selected method ' . Action::$method );
+		Debugger::addLine( 'Selected method ' . \Difra\Envi\Action::$method );
 		$controller->callAction();
 	}
 
@@ -154,17 +152,17 @@ class Controller {
 	private function chooseAction() {
 
 		$method = null;
-		if( $this->ajax->isAjax and Action::$methodAjaxAuth and $this->auth->logged ) {
+		if( $this->ajax->isAjax and \Difra\Envi\Action::$methodAjaxAuth and $this->auth->logged ) {
 			$this->isAjaxAction = true;
 			$method = 'methodAjaxAuth';
-		} elseif( $this->ajax->isAjax and Action::$methodAjax ) {
+		} elseif( $this->ajax->isAjax and \Difra\Envi\Action::$methodAjax ) {
 			$this->isAjaxAction = true;
 			$method = 'methodAjax';
-		} elseif( Action::$methodAuth and $this->auth->logged ) {
+		} elseif( \Difra\Envi\Action::$methodAuth and $this->auth->logged ) {
 			$method = 'methodAuth';
-		} elseif( Action::$method ) {
+		} elseif( \Difra\Envi\Action::$method ) {
 			$method = 'method';
-		} elseif( Action::$methodAuth or Action::$methodAjaxAuth ) {
+		} elseif( \Difra\Envi\Action::$methodAuth or \Difra\Envi\Action::$methodAjaxAuth ) {
 			self::$parameters = array();
 			throw new View\Exception( 401 );
 		} else {
@@ -179,7 +177,7 @@ class Controller {
 	private function callAction() {
 
 		$method = $this->method;
-		$actionMethod = Action::${$method};
+		$actionMethod = \Difra\Envi\Action::${$method};
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
 
@@ -205,54 +203,54 @@ class Controller {
 			$name = $parameter->getName();
 			$class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
 			switch( call_user_func( array( "$class", "getSource" ) ) ) {
-			case 'query':
-				// параметр из query — нужно соблюдать очередность параметров
-				if( call_user_func( array( "$class", "isNamed" ) ) ) {
-					// именованный параметр
-					if( sizeof( self::$parameters ) >= 2 and self::$parameters[0] == $name ) {
-						array_shift( self::$parameters );
-						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
+				case 'query':
+					// параметр из query — нужно соблюдать очередность параметров
+					if( call_user_func( array( "$class", "isNamed" ) ) ) {
+						// именованный параметр
+						if( sizeof( self::$parameters ) >= 2 and self::$parameters[0] == $name ) {
+							array_shift( self::$parameters );
+							if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
+								throw new View\Exception( 404 );
+							}
+							$callParameters[$parameter->getName()] =
+								new $class( array_shift( self::$parameters ) );
+						} elseif( !$parameter->isOptional() ) {
 							throw new View\Exception( 404 );
+						} else {
+							$callParameters[$parameter->getName()] = null;
 						}
-						$callParameters[$parameter->getName()] =
-							new $class( array_shift( self::$parameters ) );
-					} elseif( !$parameter->isOptional() ) {
-						throw new View\Exception( 404 );
+						array_shift( $namedParameters );
 					} else {
-						$callParameters[$parameter->getName()] = null;
-					}
-					array_shift( $namedParameters );
-				} else {
-					if( !empty( self::$parameters ) and ( !$parameter->isOptional() or
-							empty( $namedParameters ) or
-							self::$parameters[0] != $namedParameters[0] )
-					) {
-						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
+						if( !empty( self::$parameters ) and ( !$parameter->isOptional() or
+								empty( $namedParameters ) or
+								self::$parameters[0] != $namedParameters[0] )
+						) {
+							if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
+								throw new View\Exception( 404 );
+							}
+							$callParameters[$name] = new $class( array_shift( self::$parameters ) );
+						} elseif( !$parameter->isOptional() ) {
 							throw new View\Exception( 404 );
+						} else {
+							$callParameters[$parameter->getName()] = null;
 						}
-						$callParameters[$name] = new $class( array_shift( self::$parameters ) );
+					}
+					break;
+				case 'ajax':
+					$value = $this->ajax->getParam( $name );
+					if( !is_null( $value ) and $value !== '' ) {
+						if( !call_user_func( array( "$class", "verify" ), $value ) ) {
+							$this->ajax->invalid( $name );
+							continue;
+						}
+						$callParameters[$name] = new $class( $value );
+					} elseif( call_user_func( array( "$class", 'isAuto' ) ) ) {
+						$callParameters[$name] = new $class;
 					} elseif( !$parameter->isOptional() ) {
-						throw new View\Exception( 404 );
+						$this->ajax->required( $name );
 					} else {
-						$callParameters[$parameter->getName()] = null;
+						$callParameters[$name] = null;
 					}
-				}
-				break;
-			case 'ajax':
-				$value = $this->ajax->getParam( $name );
-				if( !is_null( $value ) and $value !== '' ) {
-					if( !call_user_func( array( "$class", "verify" ), $value ) ) {
-						$this->ajax->invalid( $name );
-						continue;
-					}
-					$callParameters[$name] = new $class( $value );
-				} elseif( call_user_func( array( "$class", 'isAuto' ) ) ) {
-					$callParameters[$name] = new $class;
-				} elseif( !$parameter->isOptional() ) {
-					$this->ajax->required( $name );
-				} else {
-					$callParameters[$name] = null;
-				}
 			}
 		}
 		if( !$this->ajax->hasProblem() ) {
@@ -274,6 +272,7 @@ class Controller {
 		$this->realRoot->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
 		$this->realRoot->setAttribute( 'instance', $instance ? $instance : View::$instance );
 		$this->realRoot->setAttribute( 'uri', Envi::getUri() );
+		$this->realRoot->setAttribute( 'controllerUri', \Difra\Envi\Action::getControllerUri() );
 		if( $host != $mainhost ) {
 			$this->realRoot->setAttribute( 'urlprefix', 'http://' . $mainhost );
 		}
@@ -281,12 +280,12 @@ class Controller {
 		Envi\UserAgent::getUserAgentXML( $this->realRoot );
 		// ajax flag
 		$this->realRoot->setAttribute( 'ajax',
-			( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-					$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
-				: '0' );
+					       ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+							       $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
+						       : '0' );
 		$this->realRoot->setAttribute( 'switcher',
-			( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-				$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
+					       ( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+						       $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
 		// build number
 		$this->realRoot->setAttribute( 'build', \Difra\Envi\Version::getBuild() );
 		// date

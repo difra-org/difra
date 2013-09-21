@@ -28,7 +28,7 @@ class Menu extends Abstracts\XML {
 		} else {
 			$prefix = '/' . $instance;
 		}
-		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance, '/' . Envi::getUri() );
+		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance, Envi::getUri() );
 	}
 
 	/**

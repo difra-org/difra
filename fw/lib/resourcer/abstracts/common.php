@@ -19,6 +19,7 @@ abstract class Common {
 	/**
 	 * Основная функция — сборщик ресурса
 	 * @param string $instance
+	 *
 	 * @return mixed
 	 */
 	abstract protected function processData( $instance );
@@ -40,6 +41,7 @@ abstract class Common {
 	/**
 	 * Проверка допустимости имени инстанса
 	 * @param $instance
+	 *
 	 * @return bool
 	 * @throws \Difra\Exception
 	 */
@@ -54,6 +56,7 @@ abstract class Common {
 	/**
 	 * Вывод ресурса
 	 * @param $instance
+	 *
 	 * @return bool
 	 * @throws \Difra\Exception
 	 */
@@ -130,6 +133,7 @@ abstract class Common {
 	 * Создаёт gz-версию ресурса.
 	 *
 	 * @param $instance
+	 *
 	 * @return string
 	 */
 	public function compileGZ( $instance ) {
@@ -181,6 +185,7 @@ abstract class Common {
 	 * Возвращает собранный ресурс.
 	 * @param      $instance
 	 * @param bool $withSources
+	 *
 	 * @return bool|null
 	 */
 	public function compile( $instance, $withSources = false ) {
@@ -247,6 +252,7 @@ abstract class Common {
 	 * Собирает ресурс.
 	 * @param string $instance
 	 * @param bool   $withSources
+	 *
 	 * @throws \Difra\Exception
 	 * @return string
 	 */
@@ -266,22 +272,28 @@ abstract class Common {
 	/**
 	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов.
 	 * @param string $instance
+	 *
 	 * @return bool
 	 */
 	private function find( $instance ) {
 
-		// TODO: cache this
+		// TODO: кэшировать $found и $parents по $type и $instance
+
+		static $paths = null;
+		if( is_null( $paths ) ) {
+			$paths = Difra\Plugger::getPaths();
+			$paths = array_merge( array(
+						   DIR_SITE,
+						   DIR_ROOT
+					      ),
+					      $paths,
+					      array(
+						   DIR_FW
+					      ) );
+		}
+
 		$found = false;
 		$parents = array();
-		$paths = Difra\Plugger::getPaths();
-		$paths = array_merge( array(
-					   DIR_SITE,
-					   DIR_ROOT
-				      ),
-			$paths,
-			array(
-			     DIR_FW
-			) );
 		if( !empty( $paths ) ) {
 			foreach( $paths as $dir ) {
 				if( is_dir( $d = "{$dir}{$this->type}/{$instance}" ) ) {
@@ -424,6 +436,7 @@ abstract class Common {
 	/**
 	 * Составляет список всех подходящих файлов
 	 * @param string $instance
+	 *
 	 * @return string[]
 	 */
 	public function getFiles( $instance ) {
@@ -446,6 +459,7 @@ abstract class Common {
 	 * Определяет, нужно ли для инстанса включать папки ресурсов all
 	 *
 	 * @param string $instance
+	 *
 	 * @return bool
 	 */
 	private function withAll( $instance ) {
@@ -457,6 +471,7 @@ abstract class Common {
 	/**
 	 * Постпроцессинг ресурса
 	 * @param string $text
+	 *
 	 * @return string
 	 */
 	public function processText( $text ) {

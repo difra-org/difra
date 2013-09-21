@@ -47,12 +47,13 @@ class MySQLi extends Common {
 	/**
 	 * Реализация запроса в базу
 	 * @param string $query
+	 *
 	 * @throws \Difra\Exception
 	 */
 	protected function realQuery( $query ) {
 
 		$this->db->query( $query );
-		if( $err = $this->db->error and self::$errorReporting ) {
+		if( $err = $this->db->error ) {
 			throw new Exception( "MySQL error: [$err] on request [$query]" );
 		}
 	}
@@ -61,6 +62,7 @@ class MySQLi extends Common {
 	 * Реализация получения данных из базы
 	 * @param string $query
 	 * @param bool   $replica
+	 *
 	 * @return array|mixed|null
 	 * @throws \Difra\Exception
 	 */
@@ -68,10 +70,7 @@ class MySQLi extends Common {
 
 		$res = $this->db->query( $query );
 		if( $err = $this->db->error ) {
-			if( self::$errorReporting ) {
-				throw new Exception( 'MySQL: ' . $err );
-			}
-			return null;
+			throw new Exception( 'MySQL: ' . $err );
 		}
 		if( $this->isND() ) {
 			// при наличии mysqlnd
@@ -114,6 +113,7 @@ class MySQLi extends Common {
 	/**
 	 * Реализация обезопасивания строки
 	 * @param $string
+	 *
 	 * @return string
 	 */
 	protected function realEscape( $string ) {
@@ -140,5 +140,4 @@ class MySQLi extends Common {
 
 		return $this->db->affected_rows;
 	}
-
 }

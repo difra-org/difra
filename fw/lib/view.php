@@ -9,39 +9,22 @@ namespace Difra;
  */
 class View {
 
-	/**
-	 * @var bool
-	 * @deprecated
-	 */
-	public static $error = false;
-	/**
-	 * @var bool|string
-	 * @deprecated
-	 */
-	public static $redirect = false;
-	/** @var bool */
+	/** @var bool Page rendered status */
 	public static $rendered = false;
-	/**
-	 * @var bool|string
-	 * @deprecated
-	 */
-	public static $template = false;
-	/** @var string */
+	/** @var string XSLT Resourcer instance */
 	public static $instance = 'main';
 
 	/**
 	 * @param \DOMDocument $xml
 	 * @param bool|string  $specificInstance
 	 * @param bool         $dontEcho
+	 *
 	 * @throws exception
 	 * @internal param bool|string $instance
 	 * @return bool|string
 	 */
 	public static function render( &$xml, $specificInstance = false, $dontEcho = false ) {
 
-		if( self::$error or self::$redirect ) {
-			return false;
-		}
 		if( $specificInstance ) {
 			$instance = $specificInstance;
 		} elseif( self::$instance ) {
@@ -52,20 +35,22 @@ class View {
 		Debugger::addLine( "Render start (instance '$instance')" );
 
 		if( !$resource = Resourcer::getInstance( 'xslt' )->compile( $instance ) ) {
-			throw new exception( "XSLT resource not found" );
+			throw new Exception( "XSLT resource not found" );
 		}
 
 		$xslDom = new \DomDocument;
 		$xslDom->resolveExternals = true;
 		$xslDom->substituteEntities = true;
 		if( !$xslDom->loadXML( $resource ) ) {
-			throw new exception( "XSLT load problem for instance '$instance'" );
+			throw new Exception( "XSLT load problem for instance '$instance'" );
 		}
 
 		$xslProc = new \XsltProcessor();
 		$xslProc->importStyleSheet( $xslDom );
 
-		Controller::getInstance()->fillXML( $instance );
+		if( !\Difra\View\Exception::$error and !Debugger::$shutdown ) {
+			Controller::getInstance()->fillXML( $instance );
+		}
 
 		// transform template
 		if( $html = $xslProc->transformToDoc( $xml ) ) {
@@ -86,7 +71,7 @@ class View {
 			}
 		} else {
 			$errormsg = libxml_get_errors(); //error_get_last();
-			throw new exception( $errormsg ? $errormsg['message'] : "Can't render templates" );
+			throw new Exception( $errormsg ? $errormsg['message'] : "Can't render templates" );
 		}
 		return true;
 	}
@@ -97,7 +82,7 @@ class View {
 	 */
 	public static function redirect( $url ) {
 
-		self::$redirect = true;
+		self::$rendered = true;
 		header( 'Location: ' . $url );
 		die();
 	}

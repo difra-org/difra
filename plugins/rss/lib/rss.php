@@ -2,6 +2,11 @@
 
 namespace Difra\Plugins;
 
+use Difra\Envi;
+use Difra\Libs\Images;
+use Difra\Locales;
+use Difra\Plugins\Catalog\Item\Image;
+
 class rss {
 
 	private $settings = array( 'onLine' => 1, 'title' => null, 'link' => null, 'description' => null, 'copyright' => null,
@@ -28,7 +33,7 @@ class rss {
 
 	public function __construct() {
 
-		$this->settings['link'] = 'http://' . \Difra\Site::getInstance()->getMainhost();
+		$this->settings['link'] = 'http://' . Envi::getHost();
 	}
 
 	/**
@@ -58,8 +63,6 @@ class rss {
 			return $rss;
 		}
 
-		$Site = \Difra\Site::getInstance();
-
 		$rss->rssDoc = new \DOMDocument;
 		$rss->rssDoc->formatOutput = true;
 		$rss->rssDoc->encoding = 'utf-8';
@@ -71,7 +74,7 @@ class rss {
 
 		$rss->channel->appendChild( $rss->rssDoc->createElement( 'title', $rss->settings['title'] ) );
 		$rss->channel->appendChild( $rss->rssDoc->createElement( 'link',  $rss->settings['link'] ) );
-		$rss->channel->appendChild( $rss->rssDoc->createElement( 'language', $Site->getLocale() ) );
+		$rss->channel->appendChild( $rss->rssDoc->createElement( 'language', Envi\Setup::getLocale() ) );
 		if( !empty( $rss->settings['description'] ) ) {
 			$rss->channel->appendChild( $rss->rssDoc->createElement( 'description', $rss->settings['description'] ) );
 		}
@@ -100,21 +103,26 @@ class rss {
 			return;
 		}
 
-		$imagePath = DIR_HTDOCS . 'images/';
-		if( file_exists( $imagePath . 'rssLogo.png' ) ) {
+		$imagePath = DIR_DATA . 'rss/';
+		if( file_exists( $imagePath . 'rsslogo.png' ) ) {
 
 			$Locales = \Difra\Locales::getInstance();
-			$Site = \Difra\Site::getInstance();
+			$mainHost = Envi::getHost();
 
 			$sizes = getimagesize( $imagePath . 'rssLogo.png' );
 
 			$imageNode = $this->channel->appendChild( $this->rssDoc->createElement( 'image' ) );
 			$imageNode->appendChild( $this->rssDoc->createElement( 'title', $Locales->getXPath( 'rss/imageTitle' ) ) );
-			$imageNode->appendChild( $this->rssDoc->createElement( 'link', 'http://' . $Site->getMainhost() ) );
-			$imageNode->appendChild( $this->rssDoc->createElement( 'url', 'http://' . $Site->getMainhost() . '/images/rssLogo.png' ) );
+			$imageNode->appendChild( $this->rssDoc->createElement( 'link', 'http://' . $mainHost ) );
+			$imageNode->appendChild( $this->rssDoc->createElement( 'url', 'http://' . $mainHost . '/rss/rsslogo.png' ) );
 			$imageNode->appendChild( $this->rssDoc->createElement( 'width', $sizes[0] ) );
 			$imageNode->appendChild( $this->rssDoc->createElement( 'height', $sizes[1] ) );
 		}
+	}
+
+
+	public static function deleteLogo() {
+		@unlink( DIR_DATA . 'rss/rsslogo.png' );
 	}
 
 	public function setItem( $itemArray ) {
@@ -157,6 +165,30 @@ class rss {
 	public static function saveSettings( $settings ) {
 
 		if( !empty( $settings ) ) {
+
+			if( isset( $settings['logo'] ) ) {
+
+				$logoImage = $settings['logo']->val();
+				unset( $settings['logo'] );
+
+				$Images = Images::getInstance();
+
+				@mkdir( DIR_DATA . 'rss', 0777, true );
+
+				try {
+					$rawImg = $Images->createThumbnail( $logoImage, 256, 256, 'png' );
+
+				} catch( \Difra\Exception $ex ) {
+					throw new \Difra\Exception( 'Bad image format.' );
+				}
+
+				try {
+					file_put_contents( DIR_DATA . 'rss' . '/rsslogo.png', $rawImg );
+				} catch( \Difra\Exception $ex ) {
+					throw new \Difra\Exception( "Can't save image" );
+				}
+			}
+
 			\Difra\Config::getInstance()->set( 'rss', $settings );
 		}
 	}
@@ -180,6 +212,10 @@ class rss {
 
 		foreach( $Rss->settings as $key=>$value ) {
 			$node->setAttribute( $key, $value );
+		}
+
+		if( file_exists( DIR_DATA . 'rss/rsslogo.png' ) ) {
+			$node->setAttribute( 'logo', true );
 		}
 	}
 

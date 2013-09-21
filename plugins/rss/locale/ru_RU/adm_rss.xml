@@ -1,7 +1,7 @@
 <locale>
 	<rss>
 		<adm>
-			<settingsTitle>настройки</settingsTitle>
+			<settingsTitle>Настройки каналов RSS</settingsTitle>
 			<onLine>RSS включен</onLine>
 			<title>Заголовок канала</title>
 			<link>Ссылка на сайт канала</link>
@@ -13,6 +13,9 @@
 			<save>Сохранить настройки</save>
 			<saved>Настройки rss сохранены</saved>
 			<cache>Кэшировать rss</cache>
+			<loadImage>Загрузка логотипа RSS канала</loadImage>
+			<deleteImage>Удалить логотип канала</deleteImage>
+			<noRssLogo>Логотип канала не загружен.</noRssLogo>
 		</adm>
 	</rss>
 </locale>

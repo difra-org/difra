@@ -2,29 +2,18 @@
 
 namespace Difra\Unify;
 
-use Difra\Exception, Difra\MySQL;
-
 /**
  * Class Item
  *
  * @package Difra\Unify
  */
-abstract class Item extends Storage {
+abstract class Item extends Table {
 
 	/**
 	 * TODO: рассмотреть необходимость добавления свойств и соответствующих методов. Вероятно, это нужно добавлять в Query, но тогда тут должна быть какая-то связка
 	 * Unify::parents[$name] - ???
 	 * Unify::children[$name] - ???
 	 */
-
-	/** @var string Имя класса (post, comment, user, etc.) */
-	static protected $objKey = null;
-	/** @var Имя таблицы */
-	static protected $table = null;
-	/** @var array[string $name] */
-	static protected $propertiesList = null;
-	/** @var Имя Property с Primary Key */
-	static protected $primary = null;
 
 	/** @var null|array Дефолтные условия поиска */
 	static protected $defaultSearch = null;
@@ -51,7 +40,7 @@ abstract class Item extends Storage {
 	 * @param $name
 	 *
 	 * @return mixed
-	 * @throws Exception
+	 * @throws \Difra\Exception
 	 */
 	public function __get( $name ) {
 
@@ -59,7 +48,7 @@ abstract class Item extends Storage {
 			return $this->data[$name];
 		}
 		if( !isset( static::$propertiesList[$name] ) ) {
-			throw new Exception( "Object '" . static::$objKey . "' has no property '$name'." );
+			throw new \Difra\Exception( "Object '" . static::getObjKey() . "' has no property '$name'." );
 		}
 		$this->load( isset( static::$propertiesList[$name]['autoload'] ) ? !static::$propertiesList[$name]['autoload'] : false );
 		return $this->data[$name];
@@ -82,8 +71,6 @@ abstract class Item extends Storage {
 	/**
 	 * Загружает данные
 	 * @param bool $full        Включать ли поля с autoload=false
-	 *
-	 * @throws Exception
 	 */
 	public function load( $full = false ) {
 
@@ -111,13 +98,13 @@ abstract class Item extends Storage {
 				$full = 'only';
 			}
 		}
-		$db = MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetchRow(
 			'SELECT `' . implode( '`,`', $db->escape( static::getKeys( $full ) ) ) . '` FROM `' . $db->escape( static::getTable() ) . '`'
 			. ' WHERE `' . $db->escape( $field ) . "`='" . $db->escape( $value ) . "'"
 		);
 		if( empty( $data ) ) {
-			throw new Exception( "No such object: '" . static::$objKey . "' with `" . $field . "`='" . $value . "'." );
+			throw new \Difra\Exception( "No such object: '" . static::getObjKey() . "' with `" . $field . "`='" . $value . "'." );
 		}
 		$this->full = $full ? true : false;
 		if( is_null( $this->data ) ) {
@@ -135,7 +122,7 @@ abstract class Item extends Storage {
 	public function save() {
 
 		$where = array();
-		$db = MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		if( $primary = $this->getPrimaryValue() ) {
 			if( empty( $this->modified ) ) {
 				return;
@@ -161,7 +148,7 @@ abstract class Item extends Storage {
 			$this->full = true;
 			$this->tempPrimary = $db->getLastId();
 			/** @var $objKey string */
-			self::$objects[static::$objKey][$this->tempPrimary] = $this;
+			self::$objects[static::getObjKey()][$this->tempPrimary] = $this;
 		}
 		$this->modified = array();
 	}
@@ -178,13 +165,14 @@ abstract class Item extends Storage {
 	 */
 	public static function getKeys( $full = true ) {
 
-		if( isset( static::$objKeys[static::$objKey][$full] ) ) {
-			return static::$objKeys[static::$objKey][$full];
+		$objKey = static::getObjKey();
+		if( isset( static::$objKeys[$objKey][$full] ) ) {
+			return static::$objKeys[$objKey][$full];
 		}
-		if( !isset( static::$objKeys[static::$objKey] ) ) {
-			static::$objKeys[static::$objKey] = array();
+		if( !isset( static::$objKeys[$objKey] ) ) {
+			static::$objKeys[$objKey] = array();
 		}
-		return static::$objKeys[static::$objKey][$full] = static::getKeysArray( $full );
+		return static::$objKeys[$objKey][$full] = static::getKeysArray( $full );
 	}
 
 	/**
@@ -235,22 +223,16 @@ abstract class Item extends Storage {
 	}
 
 	/**
-	 * Возвращает имя таблицы
+	 * Возвращает имя объекта
 	 * @return string
 	 */
-	public static function getTable() {
+	public static function getObjKey() {
 
-		return static::$table;
-	}
-
-	/**
-	 * Возвращает имя столбца с primary key
-	 *
-	 * @return string
-	 */
-	public static function getPrimary() {
-
-		return static::$primary;
+		static $objKey = null;
+		if( !is_null( $objKey ) ) {
+			return $objKey;
+		}
+		return $objKey = implode( static::getClassParts() );
 	}
 
 	/**
@@ -290,7 +272,7 @@ abstract class Item extends Storage {
 	 */
 	public static function get( $primary ) {
 
-		$objKey = static::$objKey;
+		$objKey = static::getObjKey();
 		if( isset( self::$objects[$objKey][$primary] ) ) {
 			return self::$objects[$objKey][$primary];
 		}
@@ -313,7 +295,7 @@ abstract class Item extends Storage {
 	 */
 	public static function getByField( $field, $value ) {
 
-		$objKey = static::$objKey;
+		$objKey = static::getObjKey();
 		$o = new static;
 		/** @var $o self */
 		$o->loadByField( $field, $value );
@@ -329,61 +311,5 @@ abstract class Item extends Storage {
 			}
 		}
 		return $o;
-	}
-
-	public static function getDbStatus() {
-
-		$table = static::getTable();
-		$db = MySQL::getInstance();
-		try {
-			$db->fetch( "DESC `" . $db->escape( $table ) . "`" );
-		} catch( Exception $ex ) {
-			return array( 'status' => 'missing', 'name' => $table, 'create' => static::getDbCreate() );
-		}
-		return array( 'status' => 'ok' );
-	}
-
-	public static function getDbCreate() {
-
-		$db = MySQL::getInstance();
-		$columns = array();
-		$indexes = array();
-		foreach( static::$propertiesList as $name => $prop ) {
-			// simple columns (name => type)
-			if( !is_array( $prop ) ) {
-				$columns[] = '  `' . $db->escape( $name ) . '` ' . $prop;
-				continue;
-			}
-			// column name
-			$line = '  `' . $db->escape( $name ) . '` ' . $prop['type'];
-			// primary key
-			if( $primary = ( !empty( $prop['primary'] ) and $prop['primary'] ) ) {
-				$indexes[] = '  PRIMARY KEY (`' . $name . '`)';
-			}
-			// length
-			empty( $prop['length'] ) ? : $line .= "({$prop['length']})";
-			// default value
-			if( !empty( $prop['default'] ) ) {
-				$line .= " DEFAULT {$prop['default']}";
-			} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
-				$line .= ' NOT NULL';
-			} else {
-				$line .= ' DEFAULT NULL';
-			}
-			// column options
-			empty( $prop['options'] ) ? : $line .= mb_strtoupper( ' ' . ( is_array( $prop['options'] ) ? implode( ' ',
-															      $prop['options'] ) : $prop['options'] ) );
-			// non-primary indexes
-			if( !$primary and !empty( $prop['unique'] ) and $prop['unique'] ) {
-				$indexes[] = '  UNIQUE KEY `' . $name . '` (`' . $name . '`)';
-			} elseif( !$primary and !empty( $prop['index'] ) and $prop['index'] ) {
-				$indexes[] = '  KEY `' . $name . '` (`' . $name . '`)';
-			}
-
-			$columns[] = $line;
-		}
-		$lines = array_merge( $columns, $indexes );
-		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n)";
-		return $create;
 	}
 }

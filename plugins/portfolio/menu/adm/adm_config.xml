@@ -1,7 +1,5 @@
 <menu>
-	<portfolio href="">
-		<view href="/adm/portfolio" />
-		<contributors/>
-		<settings sup="1"/>
-	</portfolio>
+	<content>
+		<portfolio/>
+	</content>
 </menu>

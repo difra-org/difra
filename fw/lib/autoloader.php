@@ -2,6 +2,8 @@
 
 namespace Difra;
 
+include_once( __DIR__ . '/debugger.php' );
+
 /**
  * Автоматическая подгрузка классов
  * Class Autoloader
@@ -16,14 +18,23 @@ class Autoloader {
 	/**
 	 * Загрузчик классов
 	 * @param $class
+	 *
+	 * @throws Exception
 	 */
 	public static function load( $class ) {
 
 		if( in_array( strtolower( trim( $class, '\\' ) ), self::$bl ) ) {
 			return;
 		}
+		$file = self::class2file( $class );
+//		if( Debugger::isConsoleEnabled() == Debugger::CONSOLE_ENABLED ) {
+//			if( !file_exists( $file ) ) {
+////				echo 'File "' . $file . "' for class '" . $class . '" not found.';
+//				throw new Exception( 'File "' . $file . "' for class '" . $class . '" not found.' );
+//			}
+//		}
 		/** @noinspection PhpIncludeInspection */
-		@include_once( self::class2file( $class ) );
+		@include_once( $file );
 	}
 
 	/**

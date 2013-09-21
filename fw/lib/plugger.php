@@ -79,7 +79,6 @@ class Plugger {
 	 */
 	public static function smartPluginsEnable() {
 
-		// TODO: cache me!
 		if( !is_null( self::$pluginsData ) ) {
 			return;
 		}
@@ -140,7 +139,7 @@ class Plugger {
 				self::$plugins[$name]->enable();
 				self::$pluginsData[$name]['loaded'] = true;
 				$changed = true;
-				// set plugin's provisions as available
+				// set plugin provisions as available
 				self::$provisions[$name]['available'] = true;
 				foreach( $data['provides'] as $prov ) {
 					self::$provisions[$prov]['available'] = true;
@@ -161,11 +160,11 @@ class Plugger {
 	 */
 	public static function fillMissingReq() {
 
-		static $didit = false;
-		if( $didit ) {
+		static $didIt = false;
+		if( $didIt ) {
 			return;
 		}
-		$didit = true;
+		$didIt = true;
 		foreach( self::$pluginsData as $name => $data ) {
 			if( !$data['loaded'] and !empty( $data['require'] ) ) {
 				foreach( $data['require'] as $req ) {
@@ -218,6 +217,7 @@ class Plugger {
 	/**
 	 * Позволяет узнать, включен ли плагин с таким названием
 	 * @param string $pluginName
+	 *
 	 * @return bool
 	 */
 	public static function isEnabled( $pluginName ) {
@@ -230,6 +230,7 @@ class Plugger {
 
 	/**
 	 * @param string $name
+	 *
 	 * @return bool
 	 */
 	public static function turnOn( $name ) {
@@ -249,6 +250,7 @@ class Plugger {
 
 	/**
 	 * @param string $name
+	 *
 	 * @return bool
 	 */
 	public static function turnOff( $name ) {

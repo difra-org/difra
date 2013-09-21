@@ -3,12 +3,11 @@
 
 	<xsl:template match="rss_settings">
 
-		<h2>RSS
-			<xsl:text> → </xsl:text>
+		<h2>
 			<xsl:value-of select="$locale/rss/adm/settingsTitle"/>
 		</h2>
 
-		<form name="rss_settings_form" method="post" action="/adm/rss/savesettings/" class="ajaxer">
+		<form name="rss_settings_form" method="post" action="/adm/settings/rss/savesettings/" class="ajaxer">
 			<table class="form">
 				<tr>
 					<th>
@@ -43,14 +42,43 @@
 					</td>
 				</tr>
 			</table>
-			<br/><br/>
+
+			<table class="form">
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/rss/adm/loadImage"/>
+						<xsl:choose>
+							<xsl:when test="/root/content/rss_settings/@logo=1">
+								<br/>
+								<img src="/rss/rsslogo.png"/>
+							</xsl:when>
+							<xsl:otherwise>
+								<span class="rssInfo">
+									<xsl:value-of select="$locale/rss/adm/noRssLogo"/>
+								</span>
+							</xsl:otherwise>
+						</xsl:choose>
+
+					</th>
+					<td>
+						<input type="file" name="rsslogo" accept="image/jpeg,image/png,image/gif" />
+						<xsl:if test="/root/content/rss_settings/@logo=1">
+							<br/>
+							<a href="/adm/settings/rss/deletelogo/" class="button ajaxer">
+								<xsl:value-of select="$locale/rss/adm/deleteImage"/>
+							</a>
+						</xsl:if>
+					</td>
+				</tr>
+			</table>
+
 			<table class="form">
 				<tr>
 					<th>
 						<xsl:value-of select="$locale/rss/adm/title"/>
 					</th>
 					<td>
-						<input type="text" name="title" value="{@title}" />
+						<input type="text" name="title" value="{@title}" class="full-width"/>
 					</td>
 				</tr>
 				<tr>
@@ -58,7 +86,7 @@
 						<xsl:value-of select="$locale/rss/adm/link"/>
 					</th>
 					<td>
-						<input type="text" name="link" value="{@link}" />
+						<input type="text" name="link" value="{@link}" class="full-width"/>
 					</td>
 				</tr>
 				<tr>
@@ -66,7 +94,7 @@
 						<xsl:value-of select="$locale/rss/adm/desc"/>
 					</th>
 					<td>
-						<input type="text" name="desc" value="{@description}" />
+						<input type="text" name="desc" value="{@description}" class="full-width"/>
 					</td>
 				</tr>
 				<tr>
@@ -74,7 +102,7 @@
 						<xsl:value-of select="$locale/rss/adm/copyright"/>
 					</th>
 					<td>
-						<input type="text" name="copyright" value="{@copyright}" />
+						<input type="text" name="copyright" value="{@copyright}" class="full-width"/>
 					</td>
 				</tr>
 				<tr>
@@ -82,7 +110,7 @@
 						<xsl:value-of select="$locale/rss/adm/ttl"/>
 					</th>
 					<td>
-						<input type="number" name="ttl" value="{@ttl}" />
+						<input type="number" name="ttl" value="{@ttl}" class="full-width"/>
 					</td>
 				</tr>
 				<tr>
@@ -90,7 +118,7 @@
 						<xsl:value-of select="$locale/rss/adm/size"/>
 					</th>
 					<td>
-						<input type="number" name="size" value="{@size}" />
+						<input type="number" name="size" value="{@size}" class="full-width"/>
 					</td>
 				</tr>
 				<tr>

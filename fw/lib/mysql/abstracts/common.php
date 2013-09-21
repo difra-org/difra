@@ -42,6 +42,7 @@ abstract class Common {
 	 * Получение данных из базы
 	 * @param string $query
 	 * @param bool   $replica
+	 *
 	 * @return array|null
 	 */
 	abstract protected function realFetch( $query, $replica = false );
@@ -50,6 +51,7 @@ abstract class Common {
 	 * Обезопасивает строку для помещения в SQL-запрос
 	 *
 	 * @param $string
+	 *
 	 * @return string
 	 */
 	abstract protected function realEscape( $string );
@@ -70,17 +72,20 @@ abstract class Common {
 	/**
 	 * Начать транзакцию
 	 */
-	protected function transactionStart() { }
+	protected function transactionStart() {
+	}
 
 	/**
 	 * Закончить транзакцию
 	 */
-	protected function transactionCommit() { }
+	protected function transactionCommit() {
+	}
 
 	/**
 	 * Отменить транзакцию
 	 */
-	protected function transactionCancel() { }
+	protected function transactionCancel() {
+	}
 
 	/**
 	 * Функционал
@@ -112,7 +117,9 @@ abstract class Common {
 	/**
 	 * Сделать запрос в базу
 	 * @throws exception
+	 *
 	 * @param string|array $query        SQL-запрос
+	 *
 	 * @return void
 	 */
 	public function query( $query ) {
@@ -131,9 +138,7 @@ abstract class Common {
 				$this->transactionCommit();
 			} catch( Exception $ex ) {
 				$this->transactionCancel();
-				if( self::$errorReporting ) {
-					throw new Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
-				}
+				throw new Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
 			}
 		}
 	}
@@ -141,8 +146,10 @@ abstract class Common {
 	/**
 	 * Возвращает результат запроса
 	 * @throws exception
+	 *
 	 * @param string $query          SQL-запрос
 	 * @param bool   $replica        Позволить читать данные из реплики
+	 *
 	 * @return array
 	 */
 	public function fetch( $query, $replica = false ) {
@@ -157,6 +164,7 @@ abstract class Common {
 	 * Безопасно «обернуть» строку для SQL-запроса
 	 *
 	 * @param string|array $data        Строка или массив строк
+	 *
 	 * @return string|array
 	 */
 	public function escape( $data ) {
@@ -228,8 +236,10 @@ abstract class Common {
 	 * Возвращает результаты запроса в ассоциативном массиве id => row
 	 *
 	 * @throws exception
+	 *
 	 * @param string $query          SQL-запрос
 	 * @param bool   $replica        Позволить читать данные из реплики
+	 *
 	 * @return array
 	 */
 	public function fetchWithId( $query,
@@ -252,6 +262,7 @@ abstract class Common {
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 * @param                      $row
+	 *
 	 * @return bool
 	 */
 	private function getRowAsXML( $node, $row ) {
@@ -275,6 +286,7 @@ abstract class Common {
 	 * Возвращает одну строку результатов запроса
 	 * @param string $query          SQL-запрос
 	 * @param bool   $replica        Позволить читать данные из реплики
+	 *
 	 * @return array|bool
 	 */
 	public function fetchRow( $query, $replica = false ) {
@@ -287,6 +299,7 @@ abstract class Common {
 	 * Возвращает одно значение из результатов запроса
 	 * @param string $query          SQL-запрос
 	 * @param bool   $replica        Позволить читать данные из реплики
+	 *
 	 * @return mixed|null
 	 */
 	public function fetchOne( $query, $replica = false ) {
@@ -301,6 +314,7 @@ abstract class Common {
 	 * @param \DOMNode $node           XML-Нода
 	 * @param string   $query          Запрос
 	 * @param bool     $replica        Позволить читать данные из реплики
+	 *
 	 * @return bool
 	 */
 	public function fetchXML( $node, $query, $replica = false ) {
@@ -322,6 +336,7 @@ abstract class Common {
 	 * @param \DOMElement $node
 	 * @param string      $query
 	 * @param bool        $replica
+	 *
 	 * @return bool
 	 */
 	public function fetchRowXML( $node, $query, $replica = false ) {
@@ -349,22 +364,5 @@ abstract class Common {
 
 		static $nd = null;
 		return $nd ? $nd : $nd = extension_loaded( 'mysqlnd' );
-	}
-
-	/**
-	 * Error handling
-	 * TODO: activate it after init because Difra should work without MySQL
-
-	 */
-
-	/** @var bool Error reporting state */
-	public static $errorReporting = true;
-
-	/**
-	 * Enable exception throwing on errors
-	 */
-	public static function enableErrorReporting() {
-
-		self::$errorReporting = true;
 	}
 }
