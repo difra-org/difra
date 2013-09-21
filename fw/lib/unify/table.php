@@ -89,6 +89,7 @@ class Table extends Storage {
 		} catch( \Difra\Exception $ex ) {
 			return array( 'status' => 'missing', 'name' => $table );
 		}
+
 		// compare columns
 		$currentColumns = array();
 		foreach( $current as $line ) {
@@ -111,7 +112,7 @@ class Table extends Storage {
 				// column does not exist in goal
 				return array(
 					'status' => 'alter',
-					'action' => 'drop',
+					'action' => 'drop column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` DROP COLUMN `' . $db->escape( $currentName ) . '`'
 				);
 			}
@@ -119,7 +120,7 @@ class Table extends Storage {
 				// goal column does not exist in db
 				return array(
 					'status' => 'alter',
-					'action' => 'add',
+					'action' => 'add column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD COLUMN ' . self::getColumnDefinition(
 						$goalName,
 						$goalColumn
@@ -130,7 +131,7 @@ class Table extends Storage {
 				// column exists in wrong place
 				return array(
 					'status' => 'alter',
-					'action' => 'move',
+					'action' => 'move column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY COLUMN ' . self::getColumnDefinition(
 						$goalName,
 						$goalColumn
@@ -141,7 +142,7 @@ class Table extends Storage {
 				// or column exists, but differs from goal
 				return array(
 					'status' => 'alter',
-					'action' => 'modify',
+					'action' => 'modify column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY COLUMN ' . self::getColumnDefinition(
 						$goalName,
 						$goalColumn
@@ -151,9 +152,68 @@ class Table extends Storage {
 
 			$previousColumn = $currentName;
 		};
-		// TODO: compare PRIMARY KEY
-		//$goalIndexes = $db->fetch( "SHOW INDEXES FROM `" . $db->escape( $table ) . "`" );
-		// TODO: compare other indexes
+
+		// compare table keys
+		$currentIndexes = static::getCurrentIndexes();
+		$goalIndexes = static::getIndexes();
+		$previousIndex = null;
+		while( true ) {
+			$goal = each( $goalIndexes );
+			$goalName = $goal ? $goal['key'] : false;
+			$goalIndex = $goal ? $goal['value'] : false;
+			$current = each( $currentIndexes );
+			$currentName = $current ? $current['key'] : false;
+			$currentIndex = $current ? $current['value'] : false;
+
+			if( $goalIndex === false and $currentIndex === false ) {
+				break;
+			}
+			if( $goalIndex === false ) {
+				// index does not exist in goal
+				return array(
+					'status' => 'alter',
+					'action' => 'drop key',
+					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` DROP KEY `' . $db->escape( $currentName ) . '`'
+				);
+			}
+			if( !$currentName or ( $goalName != $currentName and !isset( $currentIndexes[$goalName] ) ) ) {
+				// goal index does not exist in db
+				return array(
+					'status' => 'alter',
+					'action' => 'add key',
+					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD ' . self::getIndexDefinition(
+						$goalName,
+						$goalIndex
+					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
+				);
+			};
+			if( $goalName != $currentName ) {
+				// index exists in wrong place
+				return array(
+					'status' => 'alter',
+					'action' => 'move key',
+					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY INDEX ' . self::getIndexDefinition(
+						$goalName,
+						$goalIndex
+					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
+				);
+			};
+			if( static::getIndexDefinitionFromDesc( $currentIndex ) != static::getIndexDefinition( $goalName, $goalIndex ) ) {
+				// or index exists, but differs from goal
+				echo 'current index: ' . static::getIndexDefinitionFromDesc( $currentIndex ) . "\n";
+				echo 'goal index: ' . static::getIndexDefinition( $goalName, $goalIndex ) . "\n";
+				return array(
+					'status' => 'alter',
+					'action' => 'modify key',
+					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY INDEX ' . self::getColumnDefinition(
+						$goalName,
+						$goalIndex
+					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
+				);
+			};
+
+			$previousIndex = $currentName;
+		}
 
 		return array( 'status' => 'ok' );
 	}
@@ -217,19 +277,59 @@ class Table extends Storage {
 			case 'index':
 				return 'KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
 			case 'primary':
-				return 'PRIMARY KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
+				return 'PRIMARY KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
 			case 'fulltext':
 				return 'FULLTEXT KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
-			case 'foreign':
-				/** @var Item $targetObj */
-				$targetObj = Storage::getClass( $prop['target'] );
-				return 'CONSTRAINT FOREIGN KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)'
-				. ' REFERENCES `' . $targetObj::getTable() . '` (`' . implode( '`,`', $prop['targets'] ) . '`)'
-				. ' ON DELETE ' . ( isset( $prop['ondelete'] ) and $prop['ondelete'] ? $prop['ondelete'] : 'CASCADE' )
-				. ' ON UPDATE ' . ( isset( $prop['onupdate'] ) and $prop['onupdate'] ? $prop['onupdate'] : 'CASCADE' );
+//			case 'foreign':
+//				/** @var Item $targetObj */
+//				$targetObj = Storage::getClass( $prop['target'] );
+//				return 'CONSTRAINT FOREIGN KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)'
+//				. ' REFERENCES `' . $targetObj::getTable() . '` (`' . implode( '`,`', $prop['targets'] ) . '`)'
+//				. ' ON DELETE ' . ( isset( $prop['ondelete'] ) and $prop['ondelete'] ? $prop['ondelete'] : 'CASCADE' )
+//				. ' ON UPDATE ' . ( isset( $prop['onupdate'] ) and $prop['onupdate'] ? $prop['onupdate'] : 'CASCADE' );
 			default:
 				throw new \Difra\Exception( 'I don\'t know how to define key type ' . $prop['type'] . "\n" );
 		}
+	}
+
+	private static function getCurrentIndexes() {
+
+		$db = \Difra\MySQL::getInstance();
+		$escTable = $db->escape( static::getTable() );
+		$dbIndexes = $db->fetch( 'SHOW INDEXES FROM `' . $escTable . '`' );
+//		$foreignKeys = $db->fetch(
+//			'SELECT `constraint_name`,`ordinal_position`,`table_name`,`column_name`,`referenced_table_name`,`referenced_column_name`'
+//			. ' FROM `information_schema`.`key_column_usage`'
+//			. ' WHERE `referenced_table_name` IS NOT NULL AND `table_schema`=DATABASE() AND `table_name`=\'' . $escTable . '\''
+//		);
+
+		if( empty( $dbIndexes ) ) {
+			return array();
+		}
+
+		$result = array();
+		foreach( $dbIndexes as $row ) {
+			if( !isset( $result[$row['Key_name']] ) ) {
+				if( $row['Key_name'] = 'PRIMARY' ) {
+					$type = 'primary';
+				} elseif( $row['Non_unique'] == '0' ) {
+					$type = 'unique';
+				} elseif( $row['Index_type'] == 'FULLTEXT' ) {
+					$type = 'fulltext';
+				} else {
+					$type = 'index';
+				}
+				$result[$row['Key_name']] = array(
+					'type' => $type,
+					'columns' => array(
+						$row['Seq_in_index'] => $row['Column_name']
+					)
+				);
+			} else {
+				$result[$row['Key_name']]['columns'][$row['Seq_in_index']] = $row['Column_name'];
+			}
+		}
+		return $result;
 	}
 
 	private static function getDefaultValueForSqlType( $type ) {
