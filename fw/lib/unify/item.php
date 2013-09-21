@@ -2,25 +2,18 @@
 
 namespace Difra\Unify;
 
-use Difra\MySQL;
-
 /**
  * Class Item
  *
  * @package Difra\Unify
  */
-abstract class Item extends Storage {
+abstract class Item extends Table {
 
 	/**
 	 * TODO: рассмотреть необходимость добавления свойств и соответствующих методов. Вероятно, это нужно добавлять в Query, но тогда тут должна быть какая-то связка
 	 * Unify::parents[$name] - ???
 	 * Unify::children[$name] - ???
 	 */
-
-	/** @var array[string $name] */
-	static protected $propertiesList = null;
-	/** @var Имя Property с Primary Key */
-	static protected $primary = null;
 
 	/** @var null|array Дефолтные условия поиска */
 	static protected $defaultSearch = null;
@@ -105,7 +98,7 @@ abstract class Item extends Storage {
 				$full = 'only';
 			}
 		}
-		$db = MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetchRow(
 			'SELECT `' . implode( '`,`', $db->escape( static::getKeys( $full ) ) ) . '` FROM `' . $db->escape( static::getTable() ) . '`'
 			. ' WHERE `' . $db->escape( $field ) . "`='" . $db->escape( $value ) . "'"
@@ -129,7 +122,7 @@ abstract class Item extends Storage {
 	public function save() {
 
 		$where = array();
-		$db = MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		if( $primary = $this->getPrimaryValue() ) {
 			if( empty( $this->modified ) ) {
 				return;
@@ -229,35 +222,6 @@ abstract class Item extends Storage {
 		}
 	}
 
-	private static function getClassParts() {
-
-		static $parts = null;
-		if( !is_null( $parts ) ) {
-			return $parts;
-		}
-		$parts = explode( '\\', $class = get_called_class() );
-		if( sizeof( $parts ) < 4 or $parts[0] != 'Difra' or $parts[1] != 'Plugins' or $parts[3] != 'Objects' ) {
-			throw new \Difra\Exception( 'Bad object class name: ' . $class );
-		}
-		unset( $parts[3] );
-		unset( $parts[1] );
-		unset( $parts[0] );
-		return $parts;
-	}
-
-	/**
-	 * Возвращает имя таблицы
-	 * @return string
-	 */
-	public static function getTable() {
-
-		static $table = null;
-		if( !is_null( $table ) ) {
-			return $table;
-		}
-		return $table = mb_strtolower( implode( '_', static::getClassParts() ) );
-	}
-
 	/**
 	 * Возвращает имя объекта
 	 * @return string
@@ -269,33 +233,6 @@ abstract class Item extends Storage {
 			return $objKey;
 		}
 		return $objKey = implode( static::getClassParts() );
-	}
-
-	/**
-	 * Возвращает имя столбца с primary key или массив, если primary key состоит из нескольких столбцов
-	 *
-	 * @return string
-	 */
-	public static function getPrimary() {
-
-		static $primary = null;
-		if( !is_null( $primary ) ) {
-			return $primary;
-		}
-		if( static::$primary ) {
-			return $primary = static::$primary;
-		}
-		if( !empty( static::$propertiesList ) ) {
-			foreach( static::$propertiesList as $name => $desc ) {
-				if( !is_array( $desc ) ) {
-					continue;
-				}
-				if( isset( $desc['primary'] ) and $desc['primary'] ) {
-					return $primary = $name;
-				}
-			}
-		}
-		return $primary = false;
 	}
 
 	/**
@@ -374,180 +311,5 @@ abstract class Item extends Storage {
 			}
 		}
 		return $o;
-	}
-
-	/**
-	 * Получение статуса таблицы объекта
-	 * @return array
-	 */
-	public static function getObjDbStatus() {
-
-		// handle empty object
-		if( empty( static::$propertiesList ) ) {
-			return array( 'status' => 'error' );
-		}
-
-		$table = static::getTable();
-		$db = MySQL::getInstance();
-		// check if table exists
-		try {
-			$current = $db->fetch( "DESC `" . $db->escape( $table ) . "`" );
-		} catch( \Difra\Exception $ex ) {
-			return array( 'status' => 'missing', 'name' => $table );
-		}
-		// TODO: compare columns
-
-		// TODO: compare PRIMARY KEY
-		$currentIndexes = $db->fetch( "SHOW INDEXES FROM `" . $db->escape( $table ) . "`" );
-		// TODO: compare other indexes
-
-		return array( 'status' => 'ok' );
-	}
-
-	/**
-	 * Получение статуса таблицы объекта в XML
-	 *
-	 * @param \DOMElement|\DOMNode $node
-	 */
-	public static function getObjDbStatusXML( $node ) {
-
-		$status = self::getObjDbStatus();
-		foreach( $status as $ak => $av ) {
-			$node->setAttribute( $ak, $av );
-		}
-	}
-
-	/**
-	 * Получение строки для создания таблицы
-	 * @throws \Difra\Exception
-	 * @return string
-	 */
-	public static function getDbCreate() {
-
-		// TODO: переделать с использованием getColumns() и getIndexes()
-		if( empty( static::$propertiesList ) ) {
-			throw new \Difra\Exception( 'Can\'t create table for empty object.' );
-		}
-		$db = MySQL::getInstance();
-		$columns = array();
-		$indexes = array();
-		if( $createPrimary = static::getCreatePrimary() ) {
-			$indexes[] = $createPrimary;
-		}
-		foreach( static::$propertiesList as $name => $prop ) {
-			// simple columns (name => type)
-			if( !is_array( $prop ) ) {
-				$columns[] = '  `' . $db->escape( $name ) . '` ' . $prop;
-				continue;
-			}
-			// column name
-			$line = ' `' . $db->escape( $name ) . '` ' . $prop['type'];
-			// length
-			empty( $prop['length'] ) ? : $line .= "({$prop['length']})";
-			// default value
-			if( !empty( $prop['default'] ) ) {
-				$line .= " DEFAULT {$prop['default']}";
-			} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
-				$line .= ' NOT NULL';
-			} else {
-				$line .= ' DEFAULT NULL';
-			}
-			// column options
-			empty( $prop['options'] ) ? :
-				$line .= mb_strtoupper( ' ' . ( is_array( $prop['options'] ) ? implode( ' ', $prop['options'] ) : $prop['options'] ) );
-			// non-primary indexes
-			if( !empty( $prop['unique'] ) and $prop['unique'] ) {
-				$indexes[] = '  UNIQUE KEY `' . $name . '` (`' . $name . '`)';
-			} elseif( !empty( $prop['index'] ) and $prop['index'] ) {
-				$indexes[] = '  KEY `' . $name . '` (`' . $name . '`)';
-			}
-
-			$columns[] = $line;
-		}
-		$lines = array_merge( $columns, $indexes );
-		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n)";
-		return $create;
-	}
-
-	static private $keyTypes = array(
-		'index',
-		'primary',
-		'unique',
-		'fulltext',
-		'foreign'
-	);
-
-	/**
-	 * Возвращает список всех записей в self::$propertiesList, которые описывают строки
-	 *
-	 * @return array
-	 */
-	private static function getColumns() {
-
-		static $result = null;
-		if( !is_null( $result ) ) {
-			return $result;
-		}
-		$result = array();
-		foreach( static::$propertiesList as $name => $prop ) {
-			$type = !is_array( $prop ) ? $prop : $prop['type'];
-			if( !in_array( $type, self::$keyTypes ) ) {
-				$result[$name] = $prop;
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * Возвращает список всех записей в self::$propertiesList, которые описывают индексы
-	 *
-	 * @return array
-	 */
-	private static function getIndexes() {
-
-		$result = null;
-		if( !is_null( $result ) ) {
-			return $result;
-		}
-		$result = array();
-		foreach( static::$propertiesList as $name => $prop ) {
-			$type = !is_array( $prop ) ? $prop : $prop['type'];
-			if( !is_array( static::$primary ) and static::$primary == $name and ( !isset( $prop['primary'] ) or !$prop['primary'] ) ) {
-				$result[$name] = 'primary';
-			}
-			if( in_array( $type, self::$keyTypes ) ) {
-				$result[$name] = $prop;
-				continue;
-			}
-			foreach( self::$keyTypes as $keyType ) {
-				if( isset( $prop[$keyType] ) and $prop[$keyType] ) {
-					$result[$name] = $prop;
-					break;
-				}
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * Возвращает строку для создания Primary Key
-	 *
-	 * @return bool|string
-	 */
-	private static function getCreatePrimary() {
-
-		if( !$primary = static::getPrimary() ) {
-			return false;
-		}
-
-		return '  PRIMARY KEY (`' . implode( '`,`', (array)$primary ) . '`)';
-	}
-
-	/**
-	 * Создание таблицы для объекта
-	 */
-	public static function createDb() {
-
-		MySQL::getInstance()->query( self::getDbCreate() );
 	}
 }

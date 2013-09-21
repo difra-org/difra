@@ -264,6 +264,14 @@
 							<xsl:when test="@status='missing'">
 								<a href="/adm/status/unify/create/{name()}" class="ajaxer">create</a>
 							</xsl:when>
+							<xsl:when test="@status='alter'">
+								<a href="/adm/status/unify/alter/{name()}" class="ajaxer">
+									<xsl:text>alter table (</xsl:text>
+									<xsl:value-of select="@action"/>
+									<xsl:text>): </xsl:text>
+									<xsl:value-of select="@sql"/>
+								</a>
+							</xsl:when>
 							<xsl:otherwise>?</xsl:otherwise>
 						</xsl:choose>
 					</td>
