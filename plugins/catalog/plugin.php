@@ -15,7 +15,7 @@ class Plugin extends \Difra\Plugin {
 	public function getSitemap() {
 
 		$urls = array();
-		$urlPrefix = 'http://' . \Difra\Site::getInstance()->getHostname();
+		$urlPrefix = 'http://' . \Difra\Envi::getHost();
 		$categories = Category::getList( true );
 		if( !empty( $categories ) ) {
 			foreach( $categories as $category ) {
