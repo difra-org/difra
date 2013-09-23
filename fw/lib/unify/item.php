@@ -298,7 +298,7 @@ abstract class Item extends Table {
 		$objKey = static::getObjKey();
 		$o = new static;
 		/** @var $o self */
-		$o->loadByField( $field, $value );
+		$o->loadByField( $field, (string)$value );
 		if( $primary = $o->getPrimaryValue() ) {
 			if( !isset( self::$objects[$objKey] ) ) {
 				self::$objects[$objKey] = array();
