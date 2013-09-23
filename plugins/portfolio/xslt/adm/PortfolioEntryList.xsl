@@ -6,7 +6,7 @@
 		</h2>
 		<a href="/adm/content/portfolio/add" class="action add"/>
 		<xsl:choose>
-			<xsl:when test="not(portfolio_entry)">
+			<xsl:when test="not(PortfolioEntry)">
 				<xsl:value-of select="$locale/portfolio/adm/list/empty"/>
 			</xsl:when>
 			<xsl:otherwise>
