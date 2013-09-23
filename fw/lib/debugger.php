@@ -43,7 +43,7 @@ class Debugger {
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL );
 			ini_set( 'html_errors',
-				 ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+				 ( Envi::getMode() != 'web' or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
 			self::$enabled = self::CONSOLE_DISABLED;
 			self::$console = self::CONSOLE_NONE;
 			return;
@@ -75,7 +75,7 @@ class Debugger {
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL );
 			ini_set( 'html_errors',
-				 ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+				 ( Envi::getMode() != 'web' or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
 		}
 	}
 
