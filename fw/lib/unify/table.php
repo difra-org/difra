@@ -187,17 +187,16 @@ class Table extends Storage {
 						)
 					);
 				};
-				if( static::getIndexDefinition( $goalName, $goalIndex ) != static::getIndexDefinition( $goalName,
-														       $currentIndexes[$goalName] )
+
+				if(
+					static::getIndexDefinition( $goalName, $goalIndex ) !=
+					static::getIndexDefinition( $goalName, $currentIndexes[$goalName] )
 				) {
 					// index exists, but differs from goal
 					return array(
 						'status' => 'alter',
-						'action' => 'modify key',
-						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY INDEX ' . self::getColumnDefinition(
-							$goalName,
-							$goalIndex
-						)
+						'action' => 'drop key',
+						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` DROP KEY `' . $db->escape( $goalName ) . '`'
 					);
 				};
 			}
