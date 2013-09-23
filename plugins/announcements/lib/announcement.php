@@ -576,7 +576,7 @@ Class Announcement {
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'category', $this->category ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'location', $this->location ) );
 
-		$eventNode->appendChild( $node->ownerDocument->createElement( 'title', $this->title ) );
+		$eventNode->appendChild( $node->ownerDocument->createElement( 'title', htmlspecialchars( $this->title ) ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'link', $this->id . '-' . $this->link ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'shortDescription', $this->shortDescription ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'description', $this->description ) );

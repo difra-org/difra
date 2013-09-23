@@ -72,8 +72,8 @@ class Announcements {
 			throw new \Difra\Exception( 'Bad image format.' );
 		}
 
-		$newImg = $Images->createThumbnail( $rawImg, $this->settings['width'], $this->settings['height'], 'png' );
-		$bigImg = $Images->createThumbnail( $rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png' );
+		$newImg = $Images->scaleAndCrop( $rawImg, $this->settings['width'], $this->settings['height'], 'png' );
+		$bigImg = $Images->scaleAndCrop( $rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png' );
 
 		try {
 			file_put_contents( $this->imagePath . '/' . $id . '.png', $newImg );

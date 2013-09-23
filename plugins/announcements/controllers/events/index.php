@@ -43,7 +43,8 @@ class EventsIndexController extends \Difra\Controller {
         $Announcements = \Difra\Plugins\Announcements::getInstance();
         if( !$Announcements->getByLinkXML( $link, $this->eventRoot ) ) {
 
-            return $this->view->httpError( 404 );
+		throw new \Difra\View\Exception(404);
+		return;
         }
         $additionalsFieldsNode = $this->eventRoot->appendChild( $this->eventRoot->ownerDocument->createElement( 'additionalsFields' ) );
         \Difra\Plugins\Announcements\Additionals::getListXML( $additionalsFieldsNode );
