@@ -15,7 +15,7 @@ class Directory extends \Difra\Unify\Item {
 			'type' => 'char',
 			'length' => 250,
 			'required' => true,
-			'index' => true
+			'unique' => true
 		),
 		'value' => array(
 			'type' => 'varchar',
