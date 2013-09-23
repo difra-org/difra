@@ -4,13 +4,14 @@ namespace Difra\Unify;
 
 class Table extends Storage {
 
-	/** @var array[string $name] */
+	/** @var array[string $name] Object properties definitions */
 	static protected $propertiesList = null;
-	/** @var Имя Property с Primary Key */
+	/** @var string|string[] Column or column list for Primary Key */
 	static protected $primary = null;
 
 	/**
-	 * Возвращает имя таблицы
+	 * Returns table name
+	 *
 	 * @return string
 	 */
 	public static function getTable() {
@@ -23,7 +24,8 @@ class Table extends Storage {
 	}
 
 	/**
-	 * Разбивает имя класса с неймспейсом на части и убирает лишнее
+	 * Chops namespace and class into parts without common pieces
+	 *
 	 * @return array
 	 * @throws \Difra\Exception
 	 */
@@ -44,9 +46,9 @@ class Table extends Storage {
 	}
 
 	/**
-	 * Возвращает имя столбца с primary key или массив, если primary key состоит из нескольких столбцов
+	 * Returns column name or list of column names for Primary Key
 	 *
-	 * @return string
+	 * @return string|string[]
 	 */
 	public static function getPrimary() {
 
@@ -71,7 +73,8 @@ class Table extends Storage {
 	}
 
 	/**
-	 * Получение статуса таблицы объекта
+	 * Get status of database table for Unify Object
+	 *
 	 * @return array
 	 */
 	public static function getObjDbStatus() {
@@ -219,7 +222,7 @@ class Table extends Storage {
 	}
 
 	/**
-	 * Получение статуса таблицы объекта в XML
+	 * Get status of database table in XML
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 */
@@ -231,6 +234,13 @@ class Table extends Storage {
 		}
 	}
 
+	/**
+	 * Generates SQL string for column create/alter
+	 *
+	 * @param string       $name        Column name
+	 * @param string|array $prop        Type or properties array
+	 * @return string
+	 */
 	private static function getColumnDefinition( $name, $prop ) {
 
 		$db = \Difra\MySQL::getInstance();
@@ -241,7 +251,7 @@ class Table extends Storage {
 		// column name
 		$line = '`' . $db->escape( $name ) . '` ' . $prop['type'];
 		// length
-		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultValueForSqlType( $prop['type'] );
+		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] );
 		// default value
 		if( !empty( $prop['default'] ) ) {
 			$line .= " DEFAULT {$prop['default']}";
@@ -254,6 +264,12 @@ class Table extends Storage {
 		return $line;
 	}
 
+	/**
+	 * Generates SQL string for column create/alter
+	 *
+	 * @param array $desc Row from DESC `table` answer
+	 * @return string
+	 */
 	private static function getColumnDefinitionFromDesc( $desc ) {
 
 		$db = \Difra\MySQL::getInstance();
@@ -269,17 +285,25 @@ class Table extends Storage {
 		return $line;
 	}
 
+	/**
+	 * Generates SQL string for key create/alter
+	 *
+	 * @param $name
+	 * @param $prop
+	 * @return string
+	 * @throws \Difra\Exception
+	 */
 	private static function getIndexDefinition( $name, $prop ) {
 
 		switch( $prop['type'] ) {
-			case 'unique':
-				return 'UNIQUE KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
-			case 'index':
-				return 'KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
-			case 'primary':
-				return 'PRIMARY KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
-			case 'fulltext':
-				return 'FULLTEXT KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
+		case 'unique':
+			return 'UNIQUE KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
+		case 'index':
+			return 'KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
+		case 'primary':
+			return 'PRIMARY KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
+		case 'fulltext':
+			return 'FULLTEXT KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
 //			case 'foreign':
 //				/** @var Item $targetObj */
 //				$targetObj = Storage::getClass( $prop['target'] );
@@ -287,11 +311,16 @@ class Table extends Storage {
 //				. ' REFERENCES `' . $targetObj::getTable() . '` (`' . implode( '`,`', $prop['targets'] ) . '`)'
 //				. ' ON DELETE ' . ( isset( $prop['ondelete'] ) and $prop['ondelete'] ? $prop['ondelete'] : 'CASCADE' )
 //				. ' ON UPDATE ' . ( isset( $prop['onupdate'] ) and $prop['onupdate'] ? $prop['onupdate'] : 'CASCADE' );
-			default:
-				throw new \Difra\Exception( 'I don\'t know how to define key type ' . $prop['type'] . "\n" );
+		default:
+			throw new \Difra\Exception( 'I don\'t know how to define key type ' . $prop['type'] . "\n" );
 		}
 	}
 
+	/**
+	 * Get keys from current database table
+	 *
+	 * @return array
+	 */
 	private static function getCurrentIndexes() {
 
 		$db = \Difra\MySQL::getInstance();
@@ -332,18 +361,25 @@ class Table extends Storage {
 		return $result;
 	}
 
-	private static function getDefaultValueForSqlType( $type ) {
+	/**
+	 * Returns default size for SQL type, e.g. f('int') == (11)
+	 *
+	 * @param string $type
+	 * @return string
+	 */
+	private static function getDefaultSizeForSqlType( $type ) {
 
 		switch( $type ) {
-			case 'int':
-				return '(11)';
-			default:
-				return '';
+		case 'int':
+			return '(11)';
+		default:
+			return '';
 		}
 	}
 
 	/**
-	 * Получение строки для создания таблицы
+	 * Get string for CREATE TABLE SQL command
+	 *
 	 * @throws \Difra\Exception
 	 * @return string
 	 */
@@ -368,6 +404,7 @@ class Table extends Storage {
 		return $create;
 	}
 
+	/** @var string[] List of supported key types */
 	static private $keyTypes = array(
 		'index',
 		'primary',
@@ -377,7 +414,7 @@ class Table extends Storage {
 	);
 
 	/**
-	 * Возвращает список всех записей в self::$propertiesList, которые описывают строки
+	 * Get list of columns from self::$propertiesList
 	 *
 	 * @return array
 	 */
@@ -398,7 +435,7 @@ class Table extends Storage {
 	}
 
 	/**
-	 * Возвращает список всех записей в self::$propertiesList, которые описывают индексы
+	 * Get list of indexes from self::$propertiesList
 	 *
 	 * @return array
 	 */
@@ -429,7 +466,7 @@ class Table extends Storage {
 	}
 
 	/**
-	 * Возвращает строку для создания Primary Key
+	 * Get string for Primary Key create/alter
 	 *
 	 * @return bool|string
 	 */
@@ -443,7 +480,7 @@ class Table extends Storage {
 	}
 
 	/**
-	 * Создание таблицы для объекта
+	 * Create database table
 	 */
 	public static function createDb() {
 
