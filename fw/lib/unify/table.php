@@ -105,6 +105,7 @@ class Table extends Storage {
 			$goalName = $goal ? $goal['key'] : false;
 			$goalColumn = $goal ? $goal['value'] : false;
 			$current = each( $currentColumns );
+			/** @var array|bool $currentColumn */
 			$currentColumn = $current ? $current['value'] : false;
 			$currentName = $currentColumn ? $currentColumn['Field'] : false;
 
@@ -142,7 +143,7 @@ class Table extends Storage {
 				);
 			};
 			if( static::getColumnDefinitionFromDesc( $currentColumn ) != static::getColumnDefinition( $goalName, $goalColumn ) ) {
-				// or column exists, but differs from goal
+				// column exists, but differs from goal
 				return array(
 					'status' => 'alter',
 					'action' => 'modify column',
@@ -160,62 +161,46 @@ class Table extends Storage {
 		$currentIndexes = static::getCurrentIndexes();
 		$goalIndexes = static::getIndexes();
 		$previousIndex = null;
-		while( true ) {
-			$goal = each( $goalIndexes );
-			$goalName = $goal ? $goal['key'] : false;
-			$goalIndex = $goal ? $goal['value'] : false;
-			$current = each( $currentIndexes );
-			$currentName = $current ? $current['key'] : false;
-			$currentIndex = $current ? $current['value'] : false;
-
-			if( $goalIndex === false and $currentIndex === false ) {
-				break;
+		if( !empty( $currentIndexes ) ) {
+			foreach( $currentIndexes as $currentName => $currentIndex ) {
+				if( !isset( $goalIndexes[$currentName] ) ) {
+					// index does not exist in goal
+					return array(
+						'status' => 'alter',
+						'action' => 'drop key',
+						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` DROP KEY `' . $db->escape( $currentName ) . '`'
+					);
+				}
 			}
-			if( $goalIndex === false ) {
-				// index does not exist in goal
-				return array(
-					'status' => 'alter',
-					'action' => 'drop key',
-					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` DROP KEY `' . $db->escape( $currentName ) . '`'
-				);
-			}
-			if( !$currentName or ( $goalName != $currentName and !isset( $currentIndexes[$goalName] ) ) ) {
-				// goal index does not exist in db
-				return array(
-					'status' => 'alter',
-					'action' => 'add key',
-					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD ' . self::getIndexDefinition(
-						$goalName,
-						$goalIndex
-					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
-				);
-			};
-			if( $goalName != $currentName ) {
-				// index exists in wrong place
-				return array(
-					'status' => 'alter',
-					'action' => 'move key',
-					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY INDEX ' . self::getIndexDefinition(
-						$goalName,
-						$goalIndex
-					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
-				);
-			};
-			if( static::getIndexDefinitionFromDesc( $currentIndex ) != static::getIndexDefinition( $goalName, $goalIndex ) ) {
-				// or index exists, but differs from goal
-				echo 'current index: ' . static::getIndexDefinitionFromDesc( $currentIndex ) . "\n";
-				echo 'goal index: ' . static::getIndexDefinition( $goalName, $goalIndex ) . "\n";
-				return array(
-					'status' => 'alter',
-					'action' => 'modify key',
-					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY INDEX ' . self::getColumnDefinition(
-						$goalName,
-						$goalIndex
-					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
-				);
-			};
+		}
+		if( !empty( $goalIndexes ) ) {
+			foreach( $goalIndexes as $goalName => $goalIndex ) {
 
-			$previousIndex = $currentName;
+				if( !isset( $currentIndexes[$goalName] ) ) {
+					// goal index does not exist in db
+					return array(
+						'status' => 'alter',
+						'action' => 'add key',
+						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD ' . self::getIndexDefinition(
+							$goalName,
+							$goalIndex
+						)
+					);
+				};
+				if( static::getIndexDefinition( $goalName, $goalIndex ) != static::getIndexDefinition( $goalName,
+														       $currentIndexes[$goalName] )
+				) {
+					// index exists, but differs from goal
+					return array(
+						'status' => 'alter',
+						'action' => 'modify key',
+						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY INDEX ' . self::getColumnDefinition(
+							$goalName,
+							$goalIndex
+						)
+					);
+				};
+			}
 		}
 
 		return array( 'status' => 'ok' );
@@ -232,176 +217,6 @@ class Table extends Storage {
 		foreach( $status as $ak => $av ) {
 			$node->setAttribute( $ak, $av );
 		}
-	}
-
-	/**
-	 * Generates SQL string for column create/alter
-	 *
-	 * @param string       $name        Column name
-	 * @param string|array $prop        Type or properties array
-	 * @return string
-	 */
-	private static function getColumnDefinition( $name, $prop ) {
-
-		$db = \Difra\MySQL::getInstance();
-		// simple columns (name => type)
-		if( !is_array( $prop ) ) {
-			return '`' . $db->escape( $name ) . '` ' . $prop;
-		}
-		// column name
-		$line = '`' . $db->escape( $name ) . '` ' . $prop['type'];
-		// length
-		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] );
-		// default value
-		if( !empty( $prop['default'] ) ) {
-			$line .= " DEFAULT {$prop['default']}";
-		} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
-			$line .= ' NOT NULL';
-		}
-		// column options
-		empty( $prop['options'] ) ? :
-			$line .= ' ' . ( is_array( $prop['options'] ) ? implode( ' ', $prop['options'] ) : $prop['options'] );
-		return $line;
-	}
-
-	/**
-	 * Generates SQL string for column create/alter
-	 *
-	 * @param array $desc Row from DESC `table` answer
-	 * @return string
-	 */
-	private static function getColumnDefinitionFromDesc( $desc ) {
-
-		$db = \Difra\MySQL::getInstance();
-		$line = '`' . $db->escape( $desc['Field'] ) . '` ' . $desc['Type'];
-		if( $desc['Default'] ) {
-			$line .= ' DEFAULT ' . $desc['Default'];
-		} elseif( $desc['Null'] == 'NO' and static::getPrimary() != $desc['Field'] ) {
-			$line .= ' NOT NULL';
-		}
-		if( $desc['Extra'] ) {
-			$line .= ' ' . $desc['Extra'];
-		}
-		return $line;
-	}
-
-	/**
-	 * Generates SQL string for key create/alter
-	 *
-	 * @param $name
-	 * @param $prop
-	 * @return string
-	 * @throws \Difra\Exception
-	 */
-	private static function getIndexDefinition( $name, $prop ) {
-
-		switch( $prop['type'] ) {
-		case 'unique':
-			return 'UNIQUE KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
-		case 'index':
-			return 'KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
-		case 'primary':
-			return 'PRIMARY KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
-		case 'fulltext':
-			return 'FULLTEXT KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
-//			case 'foreign':
-//				/** @var Item $targetObj */
-//				$targetObj = Storage::getClass( $prop['target'] );
-//				return 'CONSTRAINT FOREIGN KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)'
-//				. ' REFERENCES `' . $targetObj::getTable() . '` (`' . implode( '`,`', $prop['targets'] ) . '`)'
-//				. ' ON DELETE ' . ( isset( $prop['ondelete'] ) and $prop['ondelete'] ? $prop['ondelete'] : 'CASCADE' )
-//				. ' ON UPDATE ' . ( isset( $prop['onupdate'] ) and $prop['onupdate'] ? $prop['onupdate'] : 'CASCADE' );
-		default:
-			throw new \Difra\Exception( 'I don\'t know how to define key type ' . $prop['type'] . "\n" );
-		}
-	}
-
-	/**
-	 * Get keys from current database table
-	 *
-	 * @return array
-	 */
-	private static function getCurrentIndexes() {
-
-		$db = \Difra\MySQL::getInstance();
-		$escTable = $db->escape( static::getTable() );
-		$dbIndexes = $db->fetch( 'SHOW INDEXES FROM `' . $escTable . '`' );
-//		$foreignKeys = $db->fetch(
-//			'SELECT `constraint_name`,`ordinal_position`,`table_name`,`column_name`,`referenced_table_name`,`referenced_column_name`'
-//			. ' FROM `information_schema`.`key_column_usage`'
-//			. ' WHERE `referenced_table_name` IS NOT NULL AND `table_schema`=DATABASE() AND `table_name`=\'' . $escTable . '\''
-//		);
-
-		if( empty( $dbIndexes ) ) {
-			return array();
-		}
-
-		$result = array();
-		foreach( $dbIndexes as $row ) {
-			if( !isset( $result[$row['Key_name']] ) ) {
-				if( $row['Key_name'] = 'PRIMARY' ) {
-					$type = 'primary';
-				} elseif( $row['Non_unique'] == '0' ) {
-					$type = 'unique';
-				} elseif( $row['Index_type'] == 'FULLTEXT' ) {
-					$type = 'fulltext';
-				} else {
-					$type = 'index';
-				}
-				$result[$row['Key_name']] = array(
-					'type' => $type,
-					'columns' => array(
-						$row['Seq_in_index'] => $row['Column_name']
-					)
-				);
-			} else {
-				$result[$row['Key_name']]['columns'][$row['Seq_in_index']] = $row['Column_name'];
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * Returns default size for SQL type, e.g. f('int') == (11)
-	 *
-	 * @param string $type
-	 * @return string
-	 */
-	private static function getDefaultSizeForSqlType( $type ) {
-
-		switch( $type ) {
-		case 'int':
-			return '(11)';
-		default:
-			return '';
-		}
-	}
-
-	/**
-	 * Get string for CREATE TABLE SQL command
-	 *
-	 * @throws \Difra\Exception
-	 * @return string
-	 */
-	public static function getDbCreate() {
-
-		if( empty( static::$propertiesList ) ) {
-			throw new \Difra\Exception( 'Can\'t create table for empty object.' );
-		}
-		$columns = array();
-		$indexes = array();
-		if( $createPrimary = static::getCreatePrimary() ) {
-			$indexes[] = $createPrimary;
-		}
-		foreach( static::getColumns() as $name => $prop ) {
-			$lines[] = self::getColumnDefinition( $name, $prop );
-		}
-		foreach( static::getIndexes() as $name => $prop ) {
-			$indexes[] = self::getIndexDefinition( $name, $prop );
-		}
-		$lines = array_merge( $columns, $indexes );
-		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-		return $create;
 	}
 
 	/** @var string[] List of supported key types */
@@ -447,14 +262,17 @@ class Table extends Storage {
 		}
 		$result = array();
 		if( $primary = static::getPrimary() ) {
-			$result['primary'] = array( 'type' => 'primary', 'columns' => $primary );
+			$result['PRIMARY'] = array( 'type' => 'primary', 'columns' => $primary );
 		}
 		foreach( static::$propertiesList as $name => $prop ) {
 			if( !is_array( $prop ) ) {
 			} elseif( in_array( $prop['type'], self::$keyTypes ) ) {
-				$result[$name] = $prop;
+				$result[$name] = array( 'type' => $prop['type'], 'columns' => isset( $prop['columns'] ) ? $prop['columns'] : $name );
 			} else {
 				foreach( self::$keyTypes as $keyType ) {
+					if( $keyType == 'primary' ) {
+						continue;
+					}
 					if( isset( $prop[$keyType] ) and $prop[$keyType] ) {
 						$result[$name] = array( 'type' => $keyType, 'columns' => $name );
 						break;
@@ -485,5 +303,179 @@ class Table extends Storage {
 	public static function createDb() {
 
 		\Difra\MySQL::getInstance()->query( self::getDbCreate() );
+	}
+
+	/**
+	 * Generates SQL string for column create/alter
+	 *
+	 * @param string       $name        Column name
+	 * @param string|array $prop        Type or properties array
+	 *
+	 * @return string
+	 */
+	private static function getColumnDefinition( $name, $prop ) {
+
+		$db = \Difra\MySQL::getInstance();
+		// simple columns (name => type)
+		if( !is_array( $prop ) ) {
+			return '`' . $db->escape( $name ) . '` ' . $prop;
+		}
+		// column name
+		$line = '`' . $db->escape( $name ) . '` ' . $prop['type'];
+		// length
+		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] );
+		// default value
+		if( !empty( $prop['default'] ) ) {
+			$line .= " DEFAULT {$prop['default']}";
+		} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
+			$line .= ' NOT NULL';
+		}
+		// column options
+		empty( $prop['options'] ) ? :
+			$line .= ' ' . ( is_array( $prop['options'] ) ? implode( ' ', $prop['options'] ) : $prop['options'] );
+		return $line;
+	}
+
+	/**
+	 * Generates SQL string for column create/alter
+	 *
+	 * @param array $desc Row from DESC `table` answer
+	 *
+	 * @return string
+	 */
+	private static function getColumnDefinitionFromDesc( $desc ) {
+
+		$db = \Difra\MySQL::getInstance();
+		$line = '`' . $db->escape( $desc['Field'] ) . '` ' . $desc['Type'];
+		if( $desc['Default'] ) {
+			$line .= ' DEFAULT ' . $desc['Default'];
+		} elseif( $desc['Null'] == 'NO' and static::getPrimary() != $desc['Field'] ) {
+			$line .= ' NOT NULL';
+		}
+		if( $desc['Extra'] ) {
+			$line .= ' ' . $desc['Extra'];
+		}
+		return $line;
+	}
+
+	/**
+	 * Generates SQL string for key create/alter
+	 *
+	 * @param $name
+	 * @param $prop
+	 *
+	 * @return string
+	 * @throws \Difra\Exception
+	 */
+	private static function getIndexDefinition( $name, $prop ) {
+
+		switch( $prop['type'] ) {
+			case 'unique':
+				return 'UNIQUE KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
+			case 'index':
+				return 'KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
+			case 'primary':
+				return 'PRIMARY KEY (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
+			case 'fulltext':
+				return 'FULLTEXT KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
+//			case 'foreign':
+//				/** @var Item $targetObj */
+//				$targetObj = Storage::getClass( $prop['target'] );
+//				return 'CONSTRAINT FOREIGN KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)'
+//				. ' REFERENCES `' . $targetObj::getTable() . '` (`' . implode( '`,`', $prop['targets'] ) . '`)'
+//				. ' ON DELETE ' . ( isset( $prop['ondelete'] ) and $prop['ondelete'] ? $prop['ondelete'] : 'CASCADE' )
+//				. ' ON UPDATE ' . ( isset( $prop['onupdate'] ) and $prop['onupdate'] ? $prop['onupdate'] : 'CASCADE' );
+			default:
+				throw new \Difra\Exception( 'I don\'t know how to define key type ' . $prop['type'] . "\n" );
+		}
+	}
+
+	/**
+	 * Get keys from current database table
+	 *
+	 * @return array
+	 */
+	private static function getCurrentIndexes() {
+
+		$db = \Difra\MySQL::getInstance();
+		$escTable = $db->escape( static::getTable() );
+		$dbIndexes = $db->fetch( 'SHOW INDEXES FROM `' . $escTable . '`' );
+//		$foreignKeys = $db->fetch(
+//			'SELECT `constraint_name`,`ordinal_position`,`table_name`,`column_name`,`referenced_table_name`,`referenced_column_name`'
+//			. ' FROM `information_schema`.`key_column_usage`'
+//			. ' WHERE `referenced_table_name` IS NOT NULL AND `table_schema`=DATABASE() AND `table_name`=\'' . $escTable . '\''
+//		);
+
+		if( empty( $dbIndexes ) ) {
+			return array();
+		}
+
+		$result = array();
+		foreach( $dbIndexes as $row ) {
+			if( !isset( $result[$row['Key_name']] ) ) {
+				if( $row['Key_name'] == 'PRIMARY' ) {
+					$type = 'primary';
+				} elseif( $row['Non_unique'] == '0' ) {
+					$type = 'unique';
+				} elseif( $row['Index_type'] == 'FULLTEXT' ) {
+					$type = 'fulltext';
+				} else {
+					$type = 'index';
+				}
+				$result[$row['Key_name']] = array(
+					'type' => $type,
+					'columns' => array(
+						$row['Seq_in_index'] => $row['Column_name']
+					)
+				);
+			} else {
+				$result[$row['Key_name']]['columns'][$row['Seq_in_index']] = $row['Column_name'];
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Returns default size for SQL type, e.g. f('int') == (11)
+	 *
+	 * @param string $type
+	 *
+	 * @return string
+	 */
+	private static function getDefaultSizeForSqlType( $type ) {
+
+		switch( $type ) {
+			case 'int':
+				return '(11)';
+			default:
+				return '';
+		}
+	}
+
+	/**
+	 * Get string for CREATE TABLE SQL command
+	 *
+	 * @throws \Difra\Exception
+	 * @return string
+	 */
+	public static function getDbCreate() {
+
+		if( empty( static::$propertiesList ) ) {
+			throw new \Difra\Exception( 'Can\'t create table for empty object.' );
+		}
+		$columns = array();
+		$indexes = array();
+		if( $createPrimary = static::getCreatePrimary() ) {
+			$indexes[] = $createPrimary;
+		}
+		foreach( static::getColumns() as $name => $prop ) {
+			$lines[] = self::getColumnDefinition( $name, $prop );
+		}
+		foreach( static::getIndexes() as $name => $prop ) {
+			$indexes[] = self::getIndexDefinition( $name, $prop );
+		}
+		$lines = array_merge( $columns, $indexes );
+		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8";
+		return $create;
 	}
 }
