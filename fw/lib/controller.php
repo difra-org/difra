@@ -352,6 +352,9 @@ class Controller {
 	 */
 	public function putExpires( $ttl = null ) {
 
+		if( Debugger::isEnabled() ) {
+			return;
+		}
 		if( is_null( $ttl ) ) {
 			$ttl = $this->cache;
 		}
