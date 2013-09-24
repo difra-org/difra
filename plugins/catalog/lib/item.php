@@ -609,8 +609,12 @@ class Item {
 	public function setImages( $main, $more = null ) {
 
 		$this->cleanImages();
-		$img = $main instanceof \Difra\Param\AjaxFile ? $main->val() : false;
-		$this->addImage( $img, true );
+
+		if( !is_null( $main ) ) {
+			$img = $main instanceof \Difra\Param\AjaxFile ? $main->val() : false;
+			$this->addImage( $img, true );
+		}
+
 		if( !$more ) {
 			return;
 		} elseif( $more instanceof \Difra\Param\AjaxFile ) {

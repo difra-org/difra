@@ -38,10 +38,12 @@ class AdmCatalogItemsController extends \Difra\Controller {
 					\Difra\Param\AjaxFiles $images = null ) {
 
 		$ext = $ext ? $ext->val() : null;
+		$allowNoImage = \Difra\Config::getInstance()->getValue( 'catalog', 'allownoimage' );
+
 		if( $id ) {
 			\Difra\Plugins\Catalog::getInstance()->updateItem( $id, $name, $category, $visible, $price, $description, $ext );
 		} else {
-			if( !$mainImage ) {
+			if( !$mainImage && $allowNoImage != 1 ) {
 				$this->ajax->required( 'mainImage' );
 				return;
 			}
