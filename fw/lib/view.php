@@ -49,7 +49,7 @@ class View {
 		$xslProc->importStyleSheet( $xslDom );
 
 		if( !\Difra\View\Exception::$error and !Debugger::$shutdown ) {
-			Controller::getInstance()->fillXML( $instance );
+			Controller::getInstance()->fillXML( $xml, $instance );
 		}
 
 		// transform template
