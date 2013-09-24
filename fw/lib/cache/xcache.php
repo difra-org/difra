@@ -7,11 +7,12 @@ use Difra;
 /**
  * Реализация кэширования через расширение xcache
  * Class XCache
+ *
  * @package Difra\Cache
  */
 class XCache extends Common {
 
-	public $adapter = 'XCache';
+	public $adapter = Difra\Cache::INST_XCACHE;
 
 	/**
 	 * Определяет работоспособность расширения

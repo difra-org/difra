@@ -11,7 +11,7 @@ namespace Difra\Cache;
  */
 class SharedMemory extends Common {
 
-	public $adapter = 'SharedMemory';
+	public $adapter = \Difra\Cache::INST_SHAREDMEM;
 
 	const SHM_BLOCK_ID = 0x2648;
 	const SHM_BLOCK_INDEX_SIZE = 40960;
@@ -31,6 +31,7 @@ class SharedMemory extends Common {
 	 * Получение данных из кэша
 	 * @param string  $id
 	 * @param boolean $doNotTestCacheValidity
+	 *
 	 * @return string
 	 */
 	public function realGet( $id, $doNotTestCacheValidity = false ) {
@@ -66,6 +67,7 @@ class SharedMemory extends Common {
 	/**
 	 * Проверка существования ключа
 	 * @param string $id
+	 *
 	 * @return boolean
 	 */
 	public function test( $id ) {
@@ -79,6 +81,7 @@ class SharedMemory extends Common {
 	 * @param string   $id
 	 * @param string   $data
 	 * @param bool|int $specificLifetime
+	 *
 	 * @return bool
 	 */
 	public function realPut( $id, $data, $specificLifetime = false ) {
@@ -165,6 +168,7 @@ class SharedMemory extends Common {
 	/**
 	 * Удаление данных
 	 * @param string $id
+	 *
 	 * @return boolean
 	 */
 	public function realRemove( $id ) {
@@ -231,6 +235,7 @@ class SharedMemory extends Common {
 	/**
 	 * Очистка кэша
 	 * @param string $mode
+	 *
 	 * @return boolean true if no problem
 	 */
 	public function clean( $mode = '' ) {

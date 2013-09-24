@@ -41,7 +41,7 @@ class Cache {
 			if( $_auto ) {
 				return self::getInstance( $_auto );
 			}
-			if( Debugger::isEnabled() ) {
+			if( !Debugger::isCachesEnabled() ) {
 				return self::getInstance( $_auto = self::INST_NONE );
 			}
 			if( Cache\XCache::isAvailable() ) {

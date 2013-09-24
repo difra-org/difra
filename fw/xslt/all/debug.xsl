@@ -31,6 +31,12 @@
 					</input>
 					<xsl:text> debug console </xsl:text>
 				</xsl:if>
+				<input type="checkbox" name="caches" onclick="debug.toggleCache()">
+					<xsl:if test="/root/@caches=1">
+						<xsl:attribute name="checked">checked</xsl:attribute>
+					</xsl:if>
+				</input>
+				<xsl:text> caches </xsl:text>
 			</div>
 			<xsl:if test="/root/@debugConsole=2">
 				<div id="debug_body">
