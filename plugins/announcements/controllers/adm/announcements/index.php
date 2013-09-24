@@ -80,7 +80,7 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 
 		// записываем картиночку
 
-		$Announcements->saveImage( $eventId, $eventImage->val() );
+		$Announcements->saveImage( $eventId, $eventImage );
 
 		// смотрим есть ли расписание
 		if( !is_null( $scheduleField ) && !is_null( $scheduleValue ) ) {
@@ -167,7 +167,7 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 		}
 
 		if( !is_null( $eventImage ) ) {
-			$Announcements->saveImage( $eventId, $eventImage->val() );
+			$Announcements->saveImage( $eventId, $eventImage );
 		}
 
 		// смотрим есть ли расписание
@@ -176,7 +176,7 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 			$Announcements->saveSchedules( $eventId, $scheduleName, $scheduleField->val(), $scheduleValue->val() );
 		}
 
-		\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodUpdate' ) );
+		$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodUpdate' ) );
 		$this->ajax->redirect( '/adm/announcements/' );
 	}
 }

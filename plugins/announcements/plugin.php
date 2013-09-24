@@ -10,8 +10,7 @@ class Plugin extends \Difra\Plugin {
 	public function init() {
 	}
 
-    public function getSitemap() {
-        return \Difra\Plugins\Announcements::getMap();
-    }
+	public function getSitemap() {
+		return \Difra\Plugins\Announcements::getMap();
+	}
 }
-

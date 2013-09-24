@@ -343,6 +343,9 @@ Class Announcement {
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
 
+		/*
+		 * Старый вариант сортировки
+		 *
 		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . "
                     FROM `announcements` an
                     LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
@@ -351,6 +354,17 @@ Class Announcement {
                     " . $groupJoin . "
                     " . $where . "
                     ORDER BY (an.`endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d 00:00:00')) DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
+			intval( $limit );
+		*/
+
+		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . "
+                    FROM `announcements` an
+                    LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
+                    LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
+                    LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
+                    " . $groupJoin . "
+                    " . $where . "
+                    ORDER BY an.`endDate` DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
 			intval( $limit );
 
 		$res = $db->fetch( $query );
@@ -452,7 +466,7 @@ Class Announcement {
                     LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
                     " . $groupJoin . "
                     WHERE an.`visible`=1 AND an.`beginDate`<=NOW() AND an.`category`='" . intval( $categoryId ) . "'
-                    ORDER BY (an.`endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d 00:00:00')) DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
+                    ORDER BY an.`endDate` DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
 			intval( ( $page - 1 ) * $perPage ) . "," . intval( $perPage );
 
 		$res = $db->fetch( $query );
@@ -744,6 +758,7 @@ Class Announcement {
 		$node->setAttribute( 'm', date( 'm', $date ) );
 		$node->setAttribute( 'y', date( 'y', $date ) );
 		$node->setAttribute( 'w', date( 'w', $date ) );
+		$node->setAttribute( 'Y', date( 'Y', $date ) );
 	}
 
 	/**
