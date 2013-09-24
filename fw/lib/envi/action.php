@@ -86,7 +86,7 @@ class Action {
 	 */
 	private static function loadCache() {
 
-		if( Debugger::isEnabled() or !$data = Cache::getInstance()->get( self::getCacheKey() ) ) {
+		if( !$data = Cache::getInstance()->get( self::getCacheKey() ) ) {
 			return false;
 		}
 		switch( $data['result'] ) {

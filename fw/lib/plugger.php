@@ -37,7 +37,7 @@ class Plugger {
 			return $plugins;
 		}
 		$plugins = array();
-		if( Debugger::isEnabled() or !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
+		if( !$plugins = Cache::getInstance()->get( 'plugger_plugins' ) ) {
 			if( is_dir( DIR_PLUGINS ) and $dir = opendir( DIR_PLUGINS ) ) {
 				while( false !== ( $subdir = readdir( $dir ) ) ) {
 					if( $subdir != '.' and $subdir != '..' and is_dir( DIR_PLUGINS . '/' . $subdir ) ) {
