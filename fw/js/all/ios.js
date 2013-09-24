@@ -1,5 +1,8 @@
 // Fixes page rubber scroll on iOS devices for elements with .scrollable class
 $( document ).on( 'touchstart', '.scrollable', function( event ) {
+	if( ( event.target ).closest( '.scrollable,.unscrollable' ).hasClass( '.unscrollable' ) ) {
+		return;
+	}
 	startY = event.touches[0].pageY;
 	startTopScroll = this.scrollTop;
 
@@ -14,5 +17,7 @@ $( document ).on( 'touchstart', '.scrollable', function( event ) {
 
 // Disable page scrolling on iOS devices for elements with .unscrollable class
 $( document ).on( 'touchmove', '.unscrollable', function( event ) {
-	event.preventDefault();
+	if( ( event.target ).parent().closest( '.scrollable,.unscrollable' ).hasClass( '.unscrollable' ) ) {
+		event.preventDefault();
+	}
 } );
