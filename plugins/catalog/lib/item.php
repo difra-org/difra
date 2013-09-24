@@ -681,6 +681,8 @@ class Item {
 		@mkdir( $path, 0777, true );
 		$this->save();
 		$this->load();
+		$useScaleAndCrop = \Difra\Config::getInstance()->getValue( 'catalog', 'usescale' );
+
 		try {
 			$rawImg = \Difra\Libs\Images::getInstance()->data2image( $image );
 		} catch( \Difra\Exception $ex ) {
@@ -694,7 +696,13 @@ class Item {
 		$imgId = $db->getLastId();
 		foreach( $this->imgSizes as $k => $size ) {
 			if( $size ) {
-				$newImg = \Difra\Libs\Images::getInstance()->createThumbnail( $rawImg, $size[0], $size[1], 'png' );
+
+				if( is_null( $useScaleAndCrop ) || intval( $useScaleAndCrop ) == 0 ) {
+					$newImg = \Difra\Libs\Images::getInstance()->createThumbnail( $rawImg, $size[0], $size[1], 'png' );
+				} else {
+					$newImg = \Difra\Libs\Images::getInstance()->scaleAndCrop( $rawImg, $size[0], $size[1], 'png' );
+				}
+
 			} else {
 				$newImg = \Difra\Libs\Images::getInstance()->convert( $rawImg, 'png' );
 			}
