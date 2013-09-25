@@ -54,7 +54,7 @@ abstract class Item extends Table {
 			throw new \Difra\Exception( "Object '" . static::getObjKey() . "' has no property '$name'." );
 		}
 		$this->load( isset( static::$propertiesList[$name]['autoload'] ) ? !static::$propertiesList[$name]['autoload'] : false );
-		return $this->_data[$name];
+		return isset( $this->_data[$name] ) ? $this->_data[$name] : null;
 	}
 
 	/**
