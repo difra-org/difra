@@ -23,4 +23,6 @@ class Directory extends \Difra\Unify\Item {
 			'required' => true
 		)
 	);
+
+	static protected $defaultOrder = 'name';
 }
