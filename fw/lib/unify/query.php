@@ -65,7 +65,7 @@ class Query extends Paginator {
 		$class = Unify::getClass( $this->objKey );
 		foreach( $result as $newData ) {
 			$o = new $class;
-			$o->data = $newData;
+			$o->_data = $newData;
 			$res[] = $o;
 		}
 		return $res;

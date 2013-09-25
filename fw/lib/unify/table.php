@@ -232,7 +232,7 @@ class Table extends Storage {
 	 *
 	 * @return array
 	 */
-	private static function getColumns() {
+	protected static function getColumns() {
 
 		static $result = null;
 		if( !is_null( $result ) ) {
@@ -253,7 +253,7 @@ class Table extends Storage {
 	 *
 	 * @return array
 	 */
-	private static function getIndexes() {
+	protected static function getIndexes() {
 
 		$result = null;
 		if( !is_null( $result ) ) {

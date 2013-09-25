@@ -22,15 +22,16 @@ abstract class Item extends Table {
 	 * Работа с объектом
 	 */
 
-	protected $data = null; // данные
-	protected $full = false; // данные загружены полностью
-	protected $modified = array();
-	protected $tempPrimary = null;
+	public $_data = null; // данные
+	protected $_full = false; // данные загружены полностью
+	protected $_modified = array();
+	protected $_tempPrimary = null;
+	protected $_new = false; // новая таблица
 
 	/**
 	 * Деструктор
 	 */
-	public function __destruct() {
+	final public function __destruct() {
 
 		$this->save();
 	}
@@ -44,14 +45,14 @@ abstract class Item extends Table {
 	 */
 	public function __get( $name ) {
 
-		if( isset( $this->data[$name] ) ) {
-			return $this->data[$name];
+		if( isset( $this->_data[$name] ) ) {
+			return $this->_data[$name];
 		}
-		if( !isset( static::$propertiesList[$name] ) ) {
+		if( !isset( static::getColumns()[$name] ) ) {
 			throw new \Difra\Exception( "Object '" . static::getObjKey() . "' has no property '$name'." );
 		}
 		$this->load( isset( static::$propertiesList[$name]['autoload'] ) ? !static::$propertiesList[$name]['autoload'] : false );
-		return $this->data[$name];
+		return $this->_data[$name];
 	}
 
 	/**
@@ -64,8 +65,8 @@ abstract class Item extends Table {
 		if( $this->$name === $value ) {
 			return;
 		}
-		$this->data[$name] = $value;
-		$this->modified[$name] = $value;
+		$this->_data[$name] = $value;
+		$this->_modified[$name] = $value;
 	}
 
 	/**
@@ -74,7 +75,10 @@ abstract class Item extends Table {
 	 */
 	public function load( $full = false ) {
 
-		$this->loadByField( static::getPrimary(), $this->getPrimaryValue(), $full );
+		// TODO: добавить поддержку Primary Key по нескольким столбцам
+		if( $primary = $this->getPrimaryValue() ) {
+			$this->loadByField( static::getPrimary(), $primary, $full );
+		}
 	}
 
 	/**
@@ -88,10 +92,10 @@ abstract class Item extends Table {
 	 */
 	protected function loadByField( $field, $value, $full = false ) {
 
-		if( $this->full ) {
+		if( $this->_full ) {
 			return;
 		}
-		if( !is_null( $this->data ) ) {
+		if( !is_null( $this->_data ) ) {
 			if( !$full ) {
 				return;
 			} else {
@@ -106,33 +110,39 @@ abstract class Item extends Table {
 		if( empty( $data ) ) {
 			throw new \Difra\Exception( "No such object: '" . static::getObjKey() . "' with `" . $field . "`='" . $value . "'." );
 		}
-		$this->full = $full ? true : false;
-		if( is_null( $this->data ) ) {
-			$this->data = $data;
+		$this->_full = $full ? true : false;
+		if( is_null( $this->_data ) ) {
+			$this->_data = $data;
 		} else {
 			foreach( $data as $k => $v ) {
-				$this->data[$k] = $v;
+				$this->_data[$k] = $v;
 			}
 		}
 	}
 
 	/**
-	 * Сохранение изменений
+	 * Save object data
 	 */
 	public function save() {
 
+		// TODO: поддержка Primary Key по нескольким полям
 		$where = array();
 		$db = \Difra\MySQL::getInstance();
-		if( $primary = $this->getPrimaryValue() ) {
-			if( empty( $this->modified ) ) {
+		// form request
+		if( !$this->_new ) {
+			if( empty( $this->_modified ) ) {
 				return;
+			}
+			if( !$primary = $this->getPrimaryValue() ) {
+				throw new \Difra\Exception( 'I don\'t know how to update Unify Item without primary value.' );
 			}
 			$query = 'UPDATE `' . $db->escape( $this->getTable() ) . '`';
 			$where[] = '`' . $db->escape( $primary ) . "`='" . $db->escape( $this->getPrimaryValue() ) . "'";
 		} else {
 			$query = 'INSERT INTO `' . $this->getTable() . '`';
 		}
-		$mod = $db->escape( $this->modified );
+		// set
+		$mod = $db->escape( $this->_modified );
 		$set = array();
 		foreach( $mod as $name => $property ) {
 			$set[] = "`$name`='$property'";
@@ -140,21 +150,25 @@ abstract class Item extends Table {
 		if( !empty( $set ) ) {
 			$query .= ' SET ' . implode( ',', $set );
 		}
+		// where
 		if( !empty( $where ) ) {
 			$query .= ' WHERE ' . implode( ' AND ', $where );
 		}
+		// make query
 		$db->query( $query );
-		if( !$primary ) {
-			$this->full = true;
-			$this->tempPrimary = $db->getLastId();
+		// get primary for new object
+		if( $this->_new and $this->getPrimary() ) {
+			$this->_full = true;
+			$this->_tempPrimary = $db->getLastId();
 			/** @var $objKey string */
-			self::$objects[static::getObjKey()][$this->tempPrimary] = $this;
+			self::$objects[static::getObjKey()][$this->_tempPrimary] = $this;
 		}
-		$this->modified = array();
+		$this->_new = false;
+		$this->_modified = array();
 	}
 
 	/** @var string[string $objKey][bool $full][] Список ключей для загрузки */
-	protected static $objKeys = array();
+	protected static $_objKeys = array();
 
 	/**
 	 * Возвращает список ключей (обёртка для getKeysArray)
@@ -166,13 +180,13 @@ abstract class Item extends Table {
 	public static function getKeys( $full = true ) {
 
 		$objKey = static::getObjKey();
-		if( isset( static::$objKeys[$objKey][$full] ) ) {
-			return static::$objKeys[$objKey][$full];
+		if( isset( static::$_objKeys[$objKey][$full] ) ) {
+			return static::$_objKeys[$objKey][$full];
 		}
-		if( !isset( static::$objKeys[$objKey] ) ) {
-			static::$objKeys[$objKey] = array();
+		if( !isset( static::$_objKeys[$objKey] ) ) {
+			static::$_objKeys[$objKey] = array();
 		}
-		return static::$objKeys[$objKey][$full] = static::getKeysArray( $full );
+		return static::$_objKeys[$objKey][$full] = static::getKeysArray( $full );
 	}
 
 	/**
@@ -184,15 +198,7 @@ abstract class Item extends Table {
 	private static function getKeysArray( $full = true ) {
 
 		$keys = array();
-		foreach( static::$propertiesList as $name => $prop ) {
-//			// Пропускаем внешние ключи
-//			if( $prop == 'foreign' or ( isset( $prop['type'] ) and $prop['type'] == 'foreign' ) ) {
-//				continue;
-//			}
-			// Пропускаем составные индексы
-			if( isset( $prop['type'] ) and $prop['type'] == 'index' ) {
-				continue;
-			}
+		foreach( static::getColumns() as $name => $prop ) {
 			// При не полной загрузке пропускаем поля с autoload=false
 			if( !$full and isset( $prop['autoload'] ) and !$prop['autoload'] ) {
 				continue;
@@ -214,10 +220,10 @@ abstract class Item extends Table {
 	public function getXML( $node ) {
 
 		$this->load();
-		if( empty( $this->data ) ) {
+		if( empty( $this->_data ) ) {
 			return;
 		}
-		foreach( $this->data as $k => $v ) {
+		foreach( $this->_data as $k => $v ) {
 			$node->setAttribute( $k, $v );
 		}
 	}
@@ -242,7 +248,7 @@ abstract class Item extends Table {
 	 */
 	public function getPrimaryValue() {
 
-		return isset( $this->data[$pri = static::getPrimary()] ) ? $this->data[$pri] : $this->tempPrimary;
+		return isset( $this->_data[$pri = static::getPrimary()] ) ? $this->_data[$pri] : $this->_tempPrimary;
 	}
 
 	/**
@@ -260,7 +266,9 @@ abstract class Item extends Table {
 	 */
 	public static function create() {
 
-		return new static;
+		$obj = new static( true );
+		$obj->_new = true;
+		return $obj;
 	}
 
 	/**
@@ -268,7 +276,7 @@ abstract class Item extends Table {
 	 *
 	 * @param $primary
 	 *
-	 * @return static
+	 * @return Item
 	 */
 	public static function get( $primary ) {
 
@@ -278,7 +286,7 @@ abstract class Item extends Table {
 		}
 		$o = new static;
 		/** @var $o self */
-		$o->tempPrimary = $primary;
+		$o->_tempPrimary = $primary;
 		if( !isset( self::$objects[$objKey] ) ) {
 			self::$objects[$objKey] = array();
 		}
@@ -298,7 +306,12 @@ abstract class Item extends Table {
 		$objKey = static::getObjKey();
 		$o = new static;
 		/** @var $o self */
-		$o->loadByField( $field, (string)$value );
+		try {
+			$o->loadByField( $field, (string)$value );
+		} catch( \Difra\Exception $e ) {
+			unset( $o );
+			return null;
+		}
 		if( $primary = $o->getPrimaryValue() ) {
 			if( !isset( self::$objects[$objKey] ) ) {
 				self::$objects[$objKey] = array();
@@ -307,9 +320,23 @@ abstract class Item extends Table {
 				return self::$objects[$objKey][$primary] = $o;
 			} else {
 				// такой объект уже есть — вернём его, а полученный оставим сборщику мусора
+				unset( $o );
 				return self::$objects[$objKey][$primary];
 			}
 		}
 		return $o;
+	}
+
+	public function delete() {
+
+		$this->_new = false;
+		$this->_modified = array();
+		if( $primary = $this->getPrimaryValue() ) {
+			$db = \Difra\MySQL::getInstance();
+			$db->query(
+				'DELETE FROM `' . static::getTable()
+				. '` WHERE `' . $db->escape( $this->getPrimary() ) . '`=\'' . $db->escape( $primary ) . '\''
+			);
+		}
 	}
 }
