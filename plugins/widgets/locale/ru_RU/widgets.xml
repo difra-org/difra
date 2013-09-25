@@ -1,0 +1,7 @@
+<locale>
+	<widgets>
+		<directory>
+			<choose-error>Не могу найти такой элемент. Возможно, кто-то его удалил?</choose-error>
+		</directory>
+	</widgets>
+</locale>
