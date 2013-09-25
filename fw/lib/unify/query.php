@@ -41,6 +41,9 @@ class Query extends Paginator {
 	public function __construct( $objKey ) {
 
 		$this->objKey = $objKey;
+		$class = Storage::getClass( $objKey );
+		$this->order = $class::getDefaultOrder();
+		$this->orderDesc = $class::getDefaultOrderDesc();
 	}
 
 	/**
@@ -65,7 +68,7 @@ class Query extends Paginator {
 		$class = Unify::getClass( $this->objKey );
 		foreach( $result as $newData ) {
 			$o = new $class;
-			$o->_data = $newData;
+			$o->setData( $newData );
 			$res[] = $o;
 		}
 		return $res;
@@ -166,11 +169,11 @@ class Query extends Paginator {
 		}
 		/** @var Unify $class */
 		$class = Unify::getClass( $this->objKey );
-		$table = $class::getTable();
 		$db = MySQL::getInstance();
+		$table = $db->escape( $class::getTable() );
 		$ord = ' ORDER BY ';
 		$d = '';
-		foreach( $this->order as $column ) {
+		foreach( (array)$this->order as $column ) {
 			$ord .= "$d`$table`.`" . $db->escape( $column ) . '`' . ( !in_array( $column, $this->orderDesc ) ? '' : ' DESC' );
 			$d = ', ';
 		}

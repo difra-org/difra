@@ -17,12 +17,14 @@ abstract class Item extends Table {
 
 	/** @var null|array Дефолтные условия поиска */
 	static protected $defaultSearch = null;
+	static protected $defaultOrder = array();
+	static protected $defaultOrderDesc = array();
 
 	/**
 	 * Работа с объектом
 	 */
 
-	public $_data = null; // данные
+	protected $_data = null; // данные
 	protected $_full = false; // данные загружены полностью
 	protected $_modified = array();
 	protected $_tempPrimary = null;
@@ -327,6 +329,9 @@ abstract class Item extends Table {
 		return $o;
 	}
 
+	/**
+	 * Delete item
+	 */
 	public function delete() {
 
 		$this->_new = false;
@@ -338,5 +343,35 @@ abstract class Item extends Table {
 				. '` WHERE `' . $db->escape( $this->getPrimary() ) . '`=\'' . $db->escape( $primary ) . '\''
 			);
 		}
+	}
+
+	/**
+	 * Get default sort order
+	 *
+	 * @return array
+	 */
+	public static function getDefaultOrder() {
+
+		return static::$defaultOrder;
+	}
+
+	/**
+	 * Get default descending order fields list
+	 *
+	 * @return array
+	 */
+	public static function getDefaultOrderDesc() {
+
+		return static::$defaultOrderDesc;
+	}
+
+	/**
+	 * Quietly set data (e.g. on item load)
+	 *
+	 * @param $newData
+	 */
+	public function setData( $newData ) {
+
+		$this->_data = $newData;
 	}
 }
