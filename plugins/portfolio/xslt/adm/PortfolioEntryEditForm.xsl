@@ -68,9 +68,9 @@
 					</tr>
 				</thead>
 				<tbody>
-					<tr>
+					<tr id="add-role">
 						<td>
-							<a href="/adm/content/portfolio/roles" class="action add ajaxer"/>
+							<a href="/adm/content/portfolio/roles" class="action add ajaxer widgets-directory"/>
 						</td>
 						<td>
 						</td>
