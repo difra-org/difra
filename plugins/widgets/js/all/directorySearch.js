@@ -8,3 +8,8 @@ function directorySearch( elem ) {
 		}
 	} );
 }
+
+$( document ).on( 'click dblclick', '.widgets-directory', function() {
+	$( '.widgets-directory.last' ).removeClass( 'last' );
+	$( this ).addClass( 'last' );
+} );
