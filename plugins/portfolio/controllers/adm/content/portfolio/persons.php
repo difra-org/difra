@@ -14,11 +14,17 @@ class AdmContentPortfolioPersonsController extends \Difra\Plugins\Widgets\Direct
 		$escapedValue = htmlspecialchars( $value );
 		\Difra\Ajax::getInstance()->exec(
 			<<<SCRIPT
-			if( $( '.widgets-directory.last' ).closest( '.add-person' ).length ) {
-	$( '.widgets-directory.last' ).before(
-		'<tr><td>$escapedValue</td><td class=".add-person"><a href="/adm/content/portfolio/persons" class="action add ajaxer widgets-directory"></a></td></tr>'
-	);
-}
+			var person = $( '.widgets-directory.last' );
+			if( person.length ) {
+				var id = person.closest( 'tr' ).find( '.role' ).attr( 'ts' );
+				person.before(
+					'<div class="person">' +
+					  '$escapedValue' +
+					  '<input type="hidden" name="roles[' + id + '][]" value="$escapedValue">' +
+					  ' &nbsp; <a href="#" class="action delete" onclick="$(this).parent().remove();"></a> &nbsp; ' +
+	        			'</div>'
+	        		);
+	        	}
 SCRIPT
 		);
 	}
