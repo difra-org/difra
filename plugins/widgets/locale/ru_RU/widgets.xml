@@ -2,6 +2,7 @@
 	<widgets>
 		<directory>
 			<choose-error>Не могу найти такой элемент. Возможно, кто-то его удалил?</choose-error>
+			<value-too-long>Слишком длинное значение.</value-too-long>
 		</directory>
 	</widgets>
 </locale>
