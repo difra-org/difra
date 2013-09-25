@@ -496,7 +496,7 @@ class Users {
 				if( ( $data['ip'] & ip2long( self::IP_MASK ) ) == ip2long( $currentNetwork ) ) {
 					// можно залогинить юзера
 					$email = strtolower( $data['email'] );
-					Difra\Auth::getInstance()->login( $email, $data, Difra\Additionals::getAdditionals( 'users', $data['id'] ) );
+					Difra\Auth::getInstance()->login( $email, $data );
 					return;
 				}
 			}
