@@ -174,7 +174,7 @@ abstract class Common {
 			return $this->realEscape( $data );
 		}
 		$t = array();
-		foreach( $t as $k => $v ) {
+		foreach( $data as $k => $v ) {
 			$t[$this->escape( $k )] = $this->escape( $v );
 		}
 		return $t;
