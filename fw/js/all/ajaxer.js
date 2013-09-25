@@ -49,7 +49,10 @@ ajaxer.process = function( data, form ) {
 	this.clean( form );
 	ajaxer.statusInit();
 	try {
-		console.info( 'Server said:', data );
+		if( typeof debug !== 'undefined' ) {
+			//console.info( 'Server said:', data );
+			console.info( 'Got answer, processing.' );
+		}
 		var dataObj = $.parseJSON( data );
 		/** @namespace dataObj.actions */
 		if( typeof dataObj === 'undefined' || typeof dataObj.actions === 'undefined' ) {
