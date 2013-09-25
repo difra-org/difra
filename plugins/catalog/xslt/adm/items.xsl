@@ -9,15 +9,15 @@
 			<xsl:text> → </xsl:text>
 			<xsl:value-of select="$locale/catalog/adm/title-items"/>
 		</h2>
-		<a href="/adm/catalog/items/add/to/{@selected}" class="action add"></a>
-		<br/><br/>
-		<select name="parent" onchange="catalog.switchCategory(this)">
-			<xsl:call-template name="CatalogCategorySelect">
-				<xsl:with-param name="selected" select="@selected"/>
-			</xsl:call-template>
-		</select>
 		<xsl:choose>
 			<xsl:when test="item">
+				<select name="parent" onchange="catalog.switchCategory(this)">
+					<xsl:call-template name="CatalogCategorySelect">
+						<xsl:with-param name="selected" select="@selected"/>
+					</xsl:call-template>
+				</select>
+				<br/><br/>
+				<a href="/adm/catalog/items/add/to/{@selected}" class="action add"></a>
 				<br/>
 				<table>
 					<colgroup>
@@ -72,9 +72,16 @@
 				</table>
 			</xsl:when>
 			<xsl:otherwise>
-				<div class="message middle_spacing">
+				<select name="parent" onchange="catalog.switchCategory(this)">
+					<xsl:call-template name="CatalogCategorySelect">
+						<xsl:with-param name="selected" select="@selected"/>
+					</xsl:call-template>
+				</select>
+				<br/><br/>
+				<a href="/adm/catalog/items/add/to/{@selected}" class="action add"></a>
+				<span class="message">
 					<xsl:value-of select="$locale/catalog/adm/no-items"/>
-				</div>
+				</span>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>

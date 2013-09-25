@@ -71,21 +71,15 @@
 						<xsl:attribute name="class">item-image main-image</xsl:attribute>
 						<div class="img" style="background-image: url('/catalog/items/{@id}m.png')" />
 						<div class="controls">
-							<span>
-								<xsl:value-of select="$locale/catalog/adm/images/main"/>
-							</span>
+							<a class="action done disabled"></a>
 						</div>
 					</xsl:when>
 					<xsl:otherwise>
 						<xsl:attribute name="class">item-image</xsl:attribute>
 						<div class="img" style="background-image: url('/catalog/items/{@id}m.png')"/>
 						<div class="controls">
-							<a href="/adm/catalog/items/setmainimage/{../@id}/{@id}" class="ajaxer action">
-								<xsl:value-of select="$locale/catalog/adm/images/setmain"/>
-							</a>
-							<a href="/adm/catalog/items/deleteimage/{../@id}/{@id}" class="ajaxer action delete">
-								<xsl:value-of select="$locale/catalog/adm/images/delete"/>
-							</a>
+							<a href="/adm/catalog/items/setmainimage/{../@id}/{@id}" class="ajaxer action done"></a>
+							<a href="/adm/catalog/items/deleteimage/{../@id}/{@id}" class="ajaxer action delete"></a>
 						</div>
 					</xsl:otherwise>
 				</xsl:choose>
@@ -198,6 +192,10 @@
 				<xsl:value-of select="$locale/catalog/adm/item/exts"/>
 			</h3>
 			<table class="form">
+				<colgroup>
+					<col style="width: 260px"/>
+					<col/>
+				</colgroup>
 				<xsl:for-each select="ext">
 					<xsl:variable name="extId" select="@id"/>
 					<tr>
@@ -207,7 +205,7 @@
 						<td>
 							<xsl:choose>
 								<xsl:when test="@set=0">
-									<input type="text" name="ext[{$extId}]">
+									<input class="full-width" type="text" name="ext[{$extId}]">
 										<xsl:attribute name="value">
 											<xsl:value-of select="../item/ext[@id=$extId]/@value"/>
 										</xsl:attribute>
