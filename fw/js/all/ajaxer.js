@@ -74,7 +74,7 @@ ajaxer.process = function( data, form ) {
 					this.require( form, action.name );
 					break;
 				case 'invalid':                // не правильное значение поля формы
-					this.invalid( form, action.name, action.message );
+					this.invalid( form, action.name );
 					break;
 				case 'status':                // текстовый статус для поля
 					this.status( form, action.name, action.message, action.classname );
@@ -99,6 +99,9 @@ ajaxer.process = function( data, form ) {
 					break;
 				case 'load':                // заменить содержимое DOM-элемента
 					this.load( action.target, action.html );
+					break;
+				case 'exec':
+					this.exec( action.script );
 					break;
 				default:
 					console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
@@ -129,8 +132,6 @@ ajaxer.triggerHandler = function( action ) {
 
 ajaxer.clean = function( form ) {
 
-	$( form ).find( '.required' ).fadeOut( 'fast' );
-	$( form ).find( '.invalid' ).fadeOut( 'fast' );
 	$( form ).find( '.problem' ).removeClass( 'problem' );
 };
 
@@ -173,21 +174,6 @@ ajaxer.require = function( form, name ) {
 	} else {
 		el.addClass( 'problem' );
 	}
-	var container = el.closest( '.container' );
-	if( !container.length ) {
-		return;
-	}
-	cke = $( form ).find( '#cke_' + name );
-	if( cke.length ) {
-		cke.addClass( 'problem' );
-	} else {
-		container.addClass( 'problem' );
-	}
-	var req = container.find( '.required' );
-	if( !req.length ) {
-		return;
-	}
-	req.fadeIn();
 };
 
 ajaxer.invalid = function( form, name, message ) {
@@ -203,24 +189,6 @@ ajaxer.invalid = function( form, name, message ) {
 	} else {
 		el.addClass( 'problem' );
 	}
-	var container = el.closest( '.container' );
-	if( !container.length ) {
-		return;
-	}
-	cke = $( form ).find( '#cke_' + name );
-	if( cke.length ) {
-		cke.addClass( 'problem' );
-	} else {
-		container.addClass( 'problem' );
-	}
-	var req = container.find( '.invalid' );
-	if( !req.length ) {
-		return;
-	}
-	if( message ) {
-		req.find( '.invalid-text' ).html( message );
-	}
-	req.fadeIn( 'fast' );
 };
 
 ajaxer.redirect = function( url ) {
@@ -261,6 +229,10 @@ ajaxer.load = function( target, html ) {
 		$( target ).html( html );
 	}
 	$( window ).resize();
+};
+
+ajaxer.exec = function( script ) {
+	eval( script );
 };
 
 /**
