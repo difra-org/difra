@@ -69,7 +69,8 @@ class UserAgent {
 			'agent' => self::getAgent(),
 			'version' => self::getVersion(),
 			'os' => self::getOS(),
-			'engine' => self::getEngine()
+			'engine' => self::getEngine(),
+			'device' => self::getDevice()
 		);
 	}
 
@@ -269,6 +270,30 @@ class UserAgent {
 		return self::$uaClass = trim( implode( ' ', $uac ) );
 	}
 
+	private static $device = null;
+
+	public static function getDevice() {
+
+		if( !is_null( self::$device ) ) {
+			return self::$device;
+		}
+		$os = self::getOS();
+		$uaArray = self::getUAArray();
+		if( $os == 'iOS' and isset( $uaArray['Mobile'] ) ) {
+			$uaString = self::getUAString();
+			if( strpos( $uaString, 'iPhone' ) !== false ) {
+				return self::$device = 'iPhone';
+			}
+			if( strpos( $uaString, 'iPad' ) !== false ) {
+				return self::$device = 'iPad';
+			}
+			if( strpos( $uaString, 'iPod' ) !== false ) {
+				return self::$device = 'iPod';
+			}
+		}
+		return self::$device;
+	}
+
 	public static function setUAString( $string ) {
 
 		self::$uaString = $string;
@@ -280,5 +305,6 @@ class UserAgent {
 		self::$os = null;
 		self::$uaArray = null;
 		self::$uaClass = null;
+		self::$device = null;
 	}
 }
