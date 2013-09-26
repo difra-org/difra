@@ -12,6 +12,7 @@ use Difra\Libs\XML\DOM;
 class UserAgent {
 
 	static $agents = array(
+		'OPR' => 'Opera',
 		'Chrome' => 'Chrome',
 		'CriOS' => 'Chrome',
 		'Firefox' => 'Firefox',
