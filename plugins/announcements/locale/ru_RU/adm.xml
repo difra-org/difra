@@ -18,18 +18,18 @@
 				<fullDay_6>Воскресенье</fullDay_6>
 			</weekdays>
 			<months>
-				<month_01>января</month_01>
-				<month_02>февраля</month_02>
-				<month_03>марта</month_03>
-				<month_04>апреля</month_04>
-				<month_05>мая</month_05>
-				<month_06>июня</month_06>
-				<month_07>июля</month_07>
-				<month_08>августа</month_08>
-				<month_09>сентября</month_09>
-				<month_10>октября</month_10>
-				<month_11>ноября</month_11>
-				<month_12>декабря</month_12>
+				<month_01 id="01">января</month_01>
+				<month_02 id="02">февраля</month_02>
+				<month_03 id="03">марта</month_03>
+				<month_04 id="04">апреля</month_04>
+				<month_05 id="05">мая</month_05>
+				<month_06 id="06">июня</month_06>
+				<month_07 id="07">июля</month_07>
+				<month_08 id="08">августа</month_08>
+				<month_09 id="09">сентября</month_09>
+				<month_10 id="10">октября</month_10>
+				<month_11 id="11">ноября</month_11>
+				<month_12 id="12">декабря</month_12>
 			</months>
 		</dates>
 		<in>в</in>
