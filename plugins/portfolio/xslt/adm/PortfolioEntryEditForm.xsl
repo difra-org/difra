@@ -56,7 +56,11 @@
 					<xsl:value-of select="$locale/portfolio/entry/authors"/>
 				</label>
 			</h3>
-			<table>
+			<table class="portfolio-roles">
+				<colgroup>
+					<col style="width:250px"/>
+					<col/>
+				</colgroup>
 				<thead>
 					<tr>
 						<th>

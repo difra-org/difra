@@ -16,12 +16,12 @@ class AdmContentPortfolioPersonsController extends \Difra\Plugins\Widgets\Direct
 			<<<SCRIPT
 			var person = $( '.widgets-directory.last' );
 			if( person.length ) {
-				var id = person.closest( 'tr' ).find( '.role' ).attr( 'ts' );
+				var id = person.closest( 'tr' ).find( '.portfolio-role' ).attr( 'ts' );
 				person.before(
-					'<div class="person">' +
+					'<div class="portfolio-person">' +
 					  '$escapedValue' +
 					  '<input type="hidden" name="roles[' + id + '][]" value="$escapedValue">' +
-					  ' &nbsp; <a href="#" class="action delete" onclick="$(this).parent().remove();"></a> &nbsp; ' +
+					  '<a href="#" class="action delete" onclick="$(this).parent().remove();"></a>' +
 	        			'</div>'
 	        		);
 	        	}
