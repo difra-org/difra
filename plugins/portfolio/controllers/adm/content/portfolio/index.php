@@ -17,4 +17,8 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 
 		$this->root->appendChild( $this->xml->createElement( 'PortfolioEntryAdd' ) );
 	}
+
+	public function saveAjaxAction( \Difra\Param\AjaxString $name, \Difra\Param\AjaxHTML $description, \Difra\Param\AjaxString $release = null,
+					\Difra\Param\AjaxString $link = null, \Difra\Param\AjaxString $software = null ) {
+	}
 }
