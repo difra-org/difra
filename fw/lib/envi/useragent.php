@@ -145,6 +145,7 @@ class UserAgent {
 	}
 
 	private static $os = null;
+	private static $rawOS = null;
 
 	/**
 	 * Возвращает операционную систему пользователя
@@ -158,6 +159,7 @@ class UserAgent {
 		$uaString = self::getUAString();
 		foreach( self::$oses as $os => $osName ) {
 			if( strpos( $uaString, $os ) ) {
+				self::$rawOS = $os;
 				return self::$os = $osName;
 			}
 		}
@@ -278,18 +280,8 @@ class UserAgent {
 			return self::$device;
 		}
 		$os = self::getOS();
-		$uaArray = self::getUAArray();
-		if( $os == 'iOS' and isset( $uaArray['Mobile'] ) ) {
-			$uaString = self::getUAString();
-			if( strpos( $uaString, 'iPhone' ) !== false ) {
-				return self::$device = 'iPhone';
-			}
-			if( strpos( $uaString, 'iPad' ) !== false ) {
-				return self::$device = 'iPad';
-			}
-			if( strpos( $uaString, 'iPod' ) !== false ) {
-				return self::$device = 'iPod';
-			}
+		if( in_array( self::$rawOS, array( 'iPhone', 'iPad', 'iPod' ) ) ) {
+			return self::$device = self::$rawOS;
 		}
 		return self::$device;
 	}
