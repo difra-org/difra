@@ -150,10 +150,11 @@ class Users {
 	const LOGIN_INACTIVE    = 'login_inactive';
 	const LOGIN_BANNED      = 'login_banned';
 
-	public function login( $email, $password, $remember ) {
+	public function login( $email, $password, $remember, $withAdditionals = false ) {
 
 		$mysql = Difra\MySQL::getInstance();
 		$email = strtolower( $email );
+		$additionals = null;
 		$data  = $mysql->fetch( 'SELECT * FROM `users` WHERE `email`=\'' . $mysql->escape( $email ) . "'" );
 		if( empty( $data ) ) {
 			return self::LOGIN_NOTFOUND;
@@ -168,7 +169,18 @@ class Users {
 		if( $data['banned'] ) {
 			return self::LOGIN_BANNED;
 		}
-		Difra\Auth::getInstance()->login( $email, $data );
+
+		if( $withAdditionals == true ) {
+
+			$additionalsData = $mysql->fetch( "SELECT `name`, `value` FROM `users_fields` WHERE `id`='" . intval( $data['id'] ) . "'" );
+			if( !empty( $additionalsData ) ) {
+				foreach( $additionalsData as $k=>$tempData ) {
+					$additionals[$tempData['name']] = $tempData['value'];
+				}
+			}
+		}
+
+		Difra\Auth::getInstance()->login( $email, $data, $additionals );
 		if( $remember ) {
 			$this->_setLongSession( $data['id'] );
 		}
