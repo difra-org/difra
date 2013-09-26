@@ -28,7 +28,7 @@ class Menu extends Abstracts\XML {
 		} else {
 			$prefix = '/' . $instance;
 		}
-		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance, Envi::getUri() );
+		$this->_recursiveProcessor( $xml, $prefix, 'menu', $instance );
 	}
 
 	/**
@@ -36,32 +36,29 @@ class Menu extends Abstracts\XML {
 	 * @param string            $href
 	 * @param string            $prefix
 	 * @param string            $instance
-	 * @param string            $url
+	 *
+	 * @internal param string $url
 	 */
-	private function _recursiveProcessor( $node, $href, $prefix, $instance, $url ) {
+	private function _recursiveProcessor( $node, $href, $prefix, $instance ) {
 
-		if( $url == $href ) {
-			$node->addAttribute( 'selected', 2 );
-		} elseif( mb_substr( $url, 0, mb_strlen( $href ) ) == $href ) {
-			$node->addAttribute( 'selected', 1 );
-		}
-		/** @var \SimpleXMLElement $subnode */
-		foreach( $node as $subname => $subnode ) {
+		/** @var \SimpleXMLElement $subNode */
+		foreach( $node as $subname => $subNode ) {
 			/** @noinspection PhpUndefinedFieldInspection */
-			if( $subnode->attributes()->sup and $subnode->attributes()->sup == '1' ) {
+			if( $subNode->attributes()->sup and $subNode->attributes()->sup == '1' ) {
 				if( !Debugger::isEnabled() ) {
-					$subnode->addAttribute( 'hidden', 1 );
+					$subNode->addAttribute( 'hidden', 1 );
 				}
 			}
 			$newHref = "$href/$subname";
 			$newPrefix = "{$prefix}_{$subname}";
-			$subnode->addAttribute( 'id', $newPrefix );
+			$subNode->addAttribute( 'id', $newPrefix );
 			/** @noinspection PhpUndefinedFieldInspection */
-			if( !isset( $subnode->attributes()->href ) ) {
-				$subnode->addAttribute( 'href', $newHref );
+			if( !isset( $subNode->attributes()->href ) ) {
+				$subNode->addAttribute( 'href', $newHref );
 			};
-			$subnode->addAttribute( 'xpath', 'locale/menu/' . $instance . '/' . $newPrefix );
-			$this->_recursiveProcessor( $subnode, $newHref, $newPrefix, $instance, $url );
+			$subNode->addAttribute( 'pseudoHref', $newHref );
+			$subNode->addAttribute( 'xpath', 'locale/menu/' . $instance . '/' . $newPrefix );
+			$this->_recursiveProcessor( $subNode, $newHref, $newPrefix, $instance );
 		}
 	}
 }
