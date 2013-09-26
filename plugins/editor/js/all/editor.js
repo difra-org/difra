@@ -49,6 +49,15 @@ editor.config = {
 		{ name: 'links', items: ['Link', 'Unlink', 'Anchor'] },
 		{ name: 'insert', items: ['Image', 'Flash', 'Table', 'HorizontalRule', 'SpecialChar'] },
 		{ name: 'tools', items: ['Maximize', 'ShowBlocks', 'Source'] }
+	],
+
+	toolbar_Minimal: [
+		{ name: 'styles', items: ['Format'] },
+		{ name: 'basicstyles', items: ['Bold', 'Strike', '-', 'RemoveFormat'] },
+		{ name: 'clipboard', items: ['PasteText', '-', 'Undo', 'Redo'] },
+		{ name: 'paragraph', items: ['NumberedList', 'BulletedList'] },
+		{ name: 'links', items: ['Link', 'Unlink'] },
+		{ name: 'tools', items: ['Maximize'] }
 	]
 
 	/*
