@@ -798,6 +798,14 @@ Class Announcement {
 	}
 
 	/**
+	 * Вовзращает id владельца анонса
+	 * @return null
+	 */
+	public function getOwner() {
+		return $this->user;
+	}
+
+	/**
 	 * Возвращает короткое описание
 	 * @return string
 	 */

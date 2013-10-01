@@ -290,7 +290,7 @@ class Announcements {
 
 				$Event->getXML( $node );
 				$node->parentNode->setAttribute( 'title', $Event->getHumanizedTitle() );
-				return true;
+				return $Event;
 			}
 		}
 
