@@ -3,9 +3,19 @@
 
 		<div id="event-content">
 
-			<h2>
-				<xsl:value-of select="event/title"/>
-			</h2>
+			<div class="announce-big-title">
+				<h2>
+					<xsl:value-of select="event/title"/>
+				</h2>
+			</div>
+			<div class="announce-control">
+				<xsl:if test="/root/auth/authorized and /root/auth/authorized/@userid=event/user">
+					<a href="/event/edit/{event/link}/">
+						<xsl:value-of select="$locale/announcements/editEvent"/>
+					</a>
+				</xsl:if>
+			</div>
+			<div class="clear"/>
 
 			<table class="announce-description">
 				<tr>

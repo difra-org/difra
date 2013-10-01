@@ -38,10 +38,9 @@
 		<phone>Справки по телефону:</phone>
 		<fromTo>—</fromTo>
 		<addEvent>Добавить событие</addEvent>
+		<editEvent>Редактировать событие</editEvent>
 		<archiveLink>Архив событий</archiveLink>
 		<archive>Архив</archive>
-
-
 
 		<adm>
 			<announcements>Анонсы</announcements>
