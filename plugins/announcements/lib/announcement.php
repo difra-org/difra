@@ -343,28 +343,16 @@ Class Announcement {
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
 
-		/*
-		 * Старый вариант сортировки
-		 *
-		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . "
-                    FROM `announcements` an
-                    LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
-                    LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
-                    LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
-                    " . $groupJoin . "
-                    " . $where . "
-                    ORDER BY (an.`endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d 00:00:00')) DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
-			intval( $limit );
-		*/
-
-		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . "
-                    FROM `announcements` an
-                    LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
-                    LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
-                    LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
-                    " . $groupJoin . "
-                    " . $where . "
-                    ORDER BY an.`endDate` DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
+		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . ",
+				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`
+                    		FROM `announcements` an
+                    			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
+                    			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
+                    			LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
+                    		" . $groupJoin . "
+                    		" . $where . "
+                    			ORDER BY endDate>=CURRENT_TIMESTAMP DESC,
+                    			IF(endDate>=CURRENT_TIMESTAMP,sortDate,''), sortDate DESC, priority DESC LIMIT " .
 			intval( $limit );
 
 		$res = $db->fetch( $query );
@@ -459,15 +447,17 @@ Class Announcement {
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
 
-		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . "
-                    FROM `announcements` an
-                    LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
-                    LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
-                    LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
-                    " . $groupJoin . "
-                    WHERE an.`visible`=1 AND an.`beginDate`<=NOW() AND an.`category`='" . intval( $categoryId ) . "'
-                    ORDER BY an.`endDate` DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
-			intval( ( $page - 1 ) * $perPage ) . "," . intval( $perPage );
+		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . ",
+				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`
+                    		FROM `announcements` an
+                    			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
+                    			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
+                    			LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
+                    		" . $groupJoin . "
+                    		WHERE an.`visible`=1 AND an.`beginDate`<=NOW() AND an.`category`='" . intval( $categoryId ) . "'
+                    		ORDER BY endDate>=CURRENT_TIMESTAMP DESC,
+                    			IF(endDate>=CURRENT_TIMESTAMP,sortDate,''), sortDate DESC, priority DESC LIMIT " .
+					intval( ( $page - 1 ) * $perPage ) . "," . intval( $perPage );
 
 		$res = $db->fetch( $query );
 		$eventsArray = false;
@@ -826,14 +816,14 @@ Class Announcement {
 			$title .= $this->locationData['name'] . '. ';
 		}
 
-		if( $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
+		if( $this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
 
 			$title .= date( 'd', strtotime( $this->fromEventDate ) ) . ' ';
 
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->fromEventDate ) ) . "']" );
+					date( 'm', strtotime( $this->fromEventDate ) ) . "']" ) . ' ';
 
-			$title .= $Locale->getXPath( 'announcements/fromTo' );
+			$title .= $Locale->getXPath( 'announcements/fromTo' ) . ' ';
 			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
 
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
@@ -852,8 +842,8 @@ Class Announcement {
 		if( !empty( $this->additionalData ) ) {
 			foreach( $this->additionalData as $k => $data ) {
 				if( isset( $data['alias'] ) && $data['alias'] == 'eventTime' ) {
-					$title .= $Locale->getXPath( 'announcements/in' );
-					$title .= $data['value'];
+					$title .= ' ' . $Locale->getXPath( 'announcements/in' );
+					$title .= ' ' . $data['value'];
 				}
 			}
 		}

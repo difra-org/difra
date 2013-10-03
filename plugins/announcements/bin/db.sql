@@ -18,8 +18,8 @@ CREATE TABLE `announcements` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `user` int(11) NOT NULL,
   `group` int(11) DEFAULT NULL,
-  `category` int(11) DEFAULT NULL,
   `location` int(11) DEFAULT NULL,
+  `category` int(11) DEFAULT NULL,
   `link` char(255) NOT NULL,
   `title` text NOT NULL,
   `description` text,
@@ -31,18 +31,15 @@ CREATE TABLE `announcements` (
   `visible` tinyint(4) NOT NULL DEFAULT '1',
   `priority` int(11) NOT NULL DEFAULT '50',
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  `exported` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_akey` (`user`),
   KEY `group_key` (`group`),
-  KEY `priority_key` (`priority`),
-  KEY `link_key` (`link`),
   KEY `visible_key` (`visible`),
   KEY `category_key` (`category`),
   KEY `location_key` (`location`),
-  KEY `exported_key` (`exported`),
+  KEY `datesort` (`visible`,`endDate`,`fromEventDate`,`eventDate`,`beginDate`,`priority`),
   CONSTRAINT `user_afkey` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `announcements_additionals_data` (
   `announce_id` int(11) NOT NULL,
