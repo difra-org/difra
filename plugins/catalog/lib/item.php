@@ -468,7 +468,7 @@ class Item {
 			return;
 		}
 		$this->name = $name;
-		$this->link = preg_replace( '/[^A-Za-z0-9А-Яа-я-]+/u', '_', $name );
+		$this->link = \Difra\Locales::getInstance()->makeLink( $name );
 		$this->modified = true;
 	}
 
