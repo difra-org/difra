@@ -169,6 +169,8 @@
 		</table>
 
 		<!-- ==================================================================================================================== -->
+		<!-- \/\/\/\/\/\/\/\/\/\/\/ Архив -->
+
 
 		<h3>
 			<xsl:value-of select="$locale/announcements/adm/pastEvents"/>
@@ -282,7 +284,7 @@
 					<td class="actions">
 						<a href="/adm/announcements/edit/{id}/" class="action edit"></a>
 						<a href="#" class="action down" onclick="announcementsUI.getPrioritySlider({id}, {priority});"></a>
-						<a href="/adm/announcements/delete/{id}/" class="action delete"></a>
+						<a href="/adm/announcements/delete/{id}/" class="action delete ajaxer"></a>
 					</td>
 				</tr>
 			</xsl:for-each>

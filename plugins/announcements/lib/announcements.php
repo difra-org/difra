@@ -274,6 +274,20 @@ class Announcements {
 	}
 
 	/**
+	 * Проверяет является ли пользователь владельцем анонса
+	 * @param $eventId
+	 * @param $userId
+	 */
+	public function checkOnwer( $eventId, $userId ) {
+
+		$db = \Difra\MySQL::getInstance();
+		$query = "SELECT `id` FROM `announcements` WHERE `id`='" . intval( $eventId ) . "' AND `user`='" . intval( $userId ) . "'";
+		$res = $db->fetchOne( $query );
+		return !empty( $res ) ? true : false;
+	}
+
+
+	/**
 	 * Возвращает в xml данные анонса события по его ссылке
 	 *
 	 * @param string   $link

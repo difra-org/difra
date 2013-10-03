@@ -134,7 +134,7 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 					  \Difra\Param\AjaxData $additionalField = null, \Difra\Param\AjaxString $fromEventDate = null,
 					  \Difra\Param\AjaxInt $category = null, \Difra\Param\AjaxString $scheduleName = null,
 					  \Difra\Param\AjaxData $scheduleField = null, \Difra\Param\AjaxData $scheduleValue = null,
-					  \Difra\Param\AjaxInt $location = null ) {
+					  \Difra\Param\AjaxInt $location = null, Param\AjaxInt $userId = null ) {
 
 		$data = array( 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(), 'id' => $id->val(),
 			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'description' => $description );
@@ -150,7 +150,11 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 		}
 
 		// из админки пока ставим так, потом добавим выбор юзера.
-		$data['user'] = 1;
+		if( !is_null( $userId ) ) {
+			$data['user'] = $userId->val();
+		} else {
+			$data['user'] = 1;
+		}
 
 		$Announcements = \Difra\Plugins\Announcements::getInstance();
 
