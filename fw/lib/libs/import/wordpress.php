@@ -149,10 +149,12 @@ class Wordpress {
 				}
 				$post->additionals[$subKey] = $subValue;
 				break;
+			case 'link': // http://blog.com/238-blog-title
+				$post->oldLink = $value;
+				break;
 			case 'wp:post_type': // post
 			case 'wp:post_id': // 238
 			case 'guid': // http://blog.com/?p=238
-			case 'link': // http://blog.com/238-blog-title
 			case 'wp:comment_status': // open
 			case 'wp:ping_status': // open
 			case 'wp:post_name': // encoded post title for URL
