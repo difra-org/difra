@@ -70,7 +70,7 @@ class Announcements {
 
 		$Images = \Difra\Libs\Images::getInstance();
 
-		$img = $fileData instanceof \Difra\Param\AjaxFile ? $fileData->val() : false;
+		$img = $fileData instanceof \Difra\Param\AjaxFile ? $fileData->val() : $fileData;
 
 		try {
 			$rawImg = $Images->data2image( $img );
@@ -79,7 +79,7 @@ class Announcements {
 			$bigImg = $Images->scaleAndCrop( $rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png' );
 
 		} catch( \Difra\Exception $ex ) {
-			throw new \Difra\Exception( 'Bad image format.' );
+			throw new \Difra\Exception( 'Bad image format. ' . $ex->getMessage() );
 		}
 
 		try {
