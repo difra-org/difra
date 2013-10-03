@@ -609,6 +609,9 @@ Class Announcement {
 			$Locale->getDateFromMysql( $this->endDate . ' 00:00:00' ) ) );
 		$this->reFormateDate( $dateNode, $this->endDate );
 
+		$isoDateNode = $eventNode->appendChild( $eventNode->ownerDocument->createElement( 'isoDate' ) );
+		$this->_getIsoDate( $isoDateNode );
+
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'visible', $this->visible ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'priority', $this->priority ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'modified', $Locale->getDateFromMysql( $this->modified, true ) ) );
@@ -886,5 +889,20 @@ Class Announcement {
 		}
 
 		return $title;
+	}
+
+	/**
+	 * Устанавливает дату в формате ISO 8601
+	 * @param \DOMNode $node
+	 */
+	private function _getIsoDate( \DOMNode $node ) {
+
+		if( !is_null( $this->fromEventDate ) && !is_null( $this->eventDate ) && $this->fromEventDate!='0000-00-00 00:00:00' ) {
+			$node->setAttribute( 'fromDate', date( 'c', strtotime( $this->fromEventDate ) ) );
+			$node->setAttribute( 'endDate', date( 'c', strtotime( $this->eventDate ) ) );
+		} else {
+			$node->setAttribute( 'endDate', date( 'c', strtotime( $this->eventDate ) ) );
+		}
+
 	}
 }

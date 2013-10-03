@@ -1,10 +1,10 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 	<xsl:template match="announcements-event-view">
 
-		<div id="event-content">
+		<div id="event-content" itemscope="itemscope" itemtype="http://schema.org/Event">
 
 			<div class="announce-big-title">
-				<h2>
+				<h2 itemprop="name">
 					<xsl:value-of select="event/title"/>
 				</h2>
 			</div>
@@ -20,7 +20,7 @@
 			<table class="announce-description">
 				<tr>
 					<td class="announce-image">
-						<img src="/announcements/{event/id}-big.png" alt="{event/title}"/>
+						<img src="/announcements/{event/id}-big.png" alt="{event/title}" itemprop="image"/>
 					</td>
 					<td class="announce-description">
 						<div class="announce-title">
@@ -28,11 +28,25 @@
 								<xsl:call-template name="announcements-dates">
 									<xsl:with-param name="format" select="string( 'detailed' ) "/>
 								</xsl:call-template>
+
+								<xsl:if test="event/isoDate/@endDate">
+									<xsl:choose>
+										<xsl:when test="event/isoDate/@fromDate">
+											<meta itemprop="startDate" content="{event/isoDate/@fromDate}"/>
+											<meta itemprop="endDate" content="{event/isoDate/@endDate}"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<meta itemprop="endDate" content="{event/isoDate/@endDate}"/>
+										</xsl:otherwise>
+									</xsl:choose>
+								</xsl:if>
 							</h3>
 						</div>
 
 						<xsl:if test="event/additionals/field[@alias='ticket-price']">
-							<div class="announce-price">
+							<div class="announce-price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/AggregateOffer">
+								<meta itemprop="priceCurrency" content="RUB"/>
+								<meta itemprop="price" content="{event/additionals/field[@alias='ticket-price']/@value}"/>
 								<xsl:value-of select="/root/content/announcements-event-view/additionalsFields/item[@alias='ticket-price']/@name"/>
 								<xsl:text>:&#160;&#160;</xsl:text>
 								<xsl:value-of select="event/additionals/field[@alias='ticket-price']/@value"/>
@@ -59,7 +73,9 @@
 									<xsl:if test="not(event/location-data/@address='')">
 										<xsl:value-of select="$locale/announcements/address"/>
 										<xsl:text>&#160;</xsl:text>
-										<xsl:value-of select="event/location-data/@address"/>
+										<span itemprop="location">
+											<xsl:value-of select="event/location-data/@address"/>
+										</span>
 									</xsl:if>
 									<xsl:if test="not(event/location-data/@address='') and not(event/location-data/@phone='')">
 										<br/>
@@ -77,7 +93,7 @@
 							</div>
 						</xsl:if>
 
-						<div class="announce-text">
+						<div class="announce-text" itemprop="description">
 							<xsl:value-of select="event/description" disable-output-escaping="yes"/>
 						</div>
 
