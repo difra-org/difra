@@ -508,7 +508,18 @@ class Users {
 				if( ( $data['ip'] & ip2long( self::IP_MASK ) ) == ip2long( $currentNetwork ) ) {
 					// можно залогинить юзера
 					$email = strtolower( $data['email'] );
-					Difra\Auth::getInstance()->login( $email, $data );
+
+					$additionals = null;
+
+					$additionalsData = $db->fetch( "SELECT `name`, `value` FROM `users_fields` WHERE `id`='" .
+										intval( $data['id'] ) . "'" );
+					if( !empty( $additionalsData ) ) {
+						foreach( $additionalsData as $k=>$tempData ) {
+							$additionals[$tempData['name']] = $tempData['value'];
+						}
+					}
+
+					Difra\Auth::getInstance()->login( $email, $data, $additionals );
 					return;
 				}
 			}
