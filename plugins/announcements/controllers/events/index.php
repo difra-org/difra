@@ -46,11 +46,16 @@ class EventsIndexController extends \Difra\Controller {
 	private function _showEvent( $link ) {
 
 		$Announcements = \Difra\Plugins\Announcements::getInstance();
-		if( !$Announcements->getByLinkXML( $link, $this->eventRoot ) ) {
 
+		$Announce = $Announcements->getByLinkXML( $link, $this->eventRoot );
+
+		// TODO: сделать вывод времени если оно есть
+
+		if( !$Announce ) {
 			throw new \Difra\View\Exception(404);
 			return;
 		}
+
 		$additionalsFieldsNode = $this->eventRoot->appendChild( $this->eventRoot->ownerDocument->createElement( 'additionalsFields' ) );
 		\Difra\Plugins\Announcements\Additionals::getListXML( $additionalsFieldsNode );
 	}

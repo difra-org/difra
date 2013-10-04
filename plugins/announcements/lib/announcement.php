@@ -901,7 +901,21 @@ Class Announcement {
 			$node->setAttribute( 'fromDate', date( 'c', strtotime( $this->fromEventDate ) ) );
 			$node->setAttribute( 'endDate', date( 'c', strtotime( $this->eventDate ) ) );
 		} else {
-			$node->setAttribute( 'endDate', date( 'c', strtotime( $this->eventDate ) ) );
+
+			if( !empty( $this->additionalData ) ) {
+				foreach( $this->additionalData as $k=>$addData ) {
+					if( $addData['alias'] == 'eventTime' ) {
+						$dt = \DateTime::createFromFormat( 'H:i', $addData['value'] );
+						if( $dt && $dt->format( 'H:i' ) == $addData['value'] ) {
+
+							$reformateDate = str_replace( '00:00:00', $addData['value'] . ':00', $this->eventDate );
+							$node->setAttribute( 'endDate', date( 'c', strtotime( $reformateDate ) ) );
+						}
+					}
+				}
+			}
+
+			//$node->setAttribute( 'endDate', date( 'c', strtotime( $this->eventDate ) ) );
 		}
 
 	}

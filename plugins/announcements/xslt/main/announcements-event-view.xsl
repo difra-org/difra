@@ -3,6 +3,8 @@
 
 		<div id="event-content" itemscope="itemscope" itemtype="http://schema.org/Event">
 
+			<meta itemprop="url" content="http://{/root/@mainhost}/events/{event/link}"/>
+
 			<div class="announce-big-title">
 				<h2 itemprop="name">
 					<xsl:value-of select="event/title"/>
@@ -20,7 +22,7 @@
 			<table class="announce-description">
 				<tr>
 					<td class="announce-image">
-						<img src="/announcements/{event/id}-big.png" alt="{event/title}" itemprop="image"/>
+						<img src="http://{/root/@mainhost}/announcements/{event/id}-big.png" alt="{event/title}" itemprop="image"/>
 					</td>
 					<td class="announce-description">
 						<div class="announce-title">
