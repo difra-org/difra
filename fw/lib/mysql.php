@@ -26,38 +26,41 @@ class MySQL {
 
 	/**
 	 * @param string $adapter
+	 * @param bool   $new
+	 *
 	 * @return MySQL\Abstracts\MySQLi|MySQL\Abstracts\None
 	 */
-	public static function getInstance( $adapter = self::INST_DEFAULT ) {
+	public static function getInstance( $adapter = self::INST_DEFAULT, $new = false ) {
 
 		if( $adapter == self::INST_AUTO ) {
 			static $auto = null;
 			if( !is_null( $auto ) ) {
-				return self::getInstance( $auto );
+				return self::getInstance( $auto, $new );
 			}
 
 			if( MySQLi::isAvailable() ) {
 				Debugger::addLine( "MySQL module: MySQLi" );
-				return self::getInstance( $auto = self::INST_MySQLi );
+				return self::getInstance( $auto = self::INST_MySQLi, $new );
 			} else {
 				Debugger::addLine( "No suitable MySQL module detected" );
-				return self::getInstance( $auto = self::INST_NONE );
+				return self::getInstance( $auto = self::INST_NONE, $new );
 			}
 		}
 
-		if( isset( self::$adapters[$adapter] ) ) {
+		if( !$new and isset( self::$adapters[$adapter] ) ) {
 			return self::$adapters[$adapter];
 		}
 
 		switch( $adapter ) {
 		case self::INST_MySQLi:
-			self::$adapters[$adapter] = new MySQLi();
-			return self::$adapters[$adapter];
+			$obj = new MySQLi();
+			break;
 		default:
-			if( !isset( self::$adapters[self::INST_NONE] ) ) {
-				self::$adapters[self::INST_NONE] = new None();
-			}
-			return self::$adapters[self::INST_NONE];
+			$obj = new None();
 		}
+		if( !$new ) {
+			self::$adapters[$adapter] = $obj;
+		}
+		return $obj;
 	}
 }
