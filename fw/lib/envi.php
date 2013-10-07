@@ -100,33 +100,36 @@ class Envi {
 	private static $customUri = null;
 	/** @var string|null Определённый и почищенный URI */
 	private static $requestedUri = null;
+	/** @var string|null Определённый и почищенный URI без urldecode() */
+	private static $requestedUriRaw = null;
 
 	/**
 	 * Возвращает текущий URI
 	 *
-	 * @throws Exception
+	 * @param bool $raw Не делать urldecode
+	 *
 	 * @return string
 	 */
-	public static function getUri() {
+	public static function getUri( $raw = false ) {
 
-		if( !is_null( self::$requestedUri ) ) {
-			return self::$requestedUri;
+		if( is_null( self::$requestedUri ) ) {
+			if( !is_null( self::$customUri ) ) {
+				self::$requestedUri = self::$customUri;
+			} elseif( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
+				self::$requestedUri = $_SERVER['URI'];
+			} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
+				self::$requestedUri = $_SERVER['REQUEST_URI'];
+			} else {
+				return null;
+			}
+			if( false !== strpos( self::$requestedUri, '?' ) ) {
+				self::$requestedUri = substr( self::$requestedUri, 0, strpos( self::$requestedUri, '?' ) );
+			}
+			self::$requestedUriRaw = '/' . trim( self::$requestedUri, '/' );
+
+			self::$requestedUri = urldecode( self::$requestedUriRaw );
 		}
-		if( !is_null( self::$customUri ) ) {
-			self::$requestedUri = self::$customUri;
-		} elseif( !empty( $_SERVER['URI'] ) ) { // это для редиректов запросов из nginx
-			self::$requestedUri = $_SERVER['URI'];
-		} elseif( !empty( $_SERVER['REQUEST_URI'] ) ) {
-			self::$requestedUri = $_SERVER['REQUEST_URI'];
-		} else {
-			return null;
-		}
-		if( false !== strpos( self::$requestedUri, '?' ) ) {
-			self::$requestedUri = substr( self::$requestedUri, 0, strpos( self::$requestedUri, '?' ) );
-		}
-		self::$requestedUri = '/' . trim( self::$requestedUri, '/' );
-		self::$requestedUri = urldecode( self::$requestedUri );
-		return self::$requestedUri;
+		return $raw ? self::$requestedUriRaw : self::$requestedUri;
 	}
 
 	/**
@@ -138,6 +141,7 @@ class Envi {
 
 		self::$customUri = $uri;
 		self::$requestedUri = null;
+		self::$requestedUriRaw = null;
 	}
 
 	/**
