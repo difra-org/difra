@@ -93,7 +93,7 @@ abstract class Common {
 	protected static function fetchData( $url ) {
 
 		$serverList = self::getServerList();
-		$path = self::getDispencerPath() . '&charset=UTF-8';
+		$path = static::getDispencerPath() . '&charset=UTF-8';
 		foreach( $serverList as $server ) {
 			$data = null;
 			try {
@@ -126,6 +126,6 @@ abstract class Common {
 
 	protected static function getUserAgent() {
 
-		return self::SAPE_AGENT . self::SAPE_VERSION;
+		return static::SAPE_AGENT . self::SAPE_VERSION;
 	}
 }
