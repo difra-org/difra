@@ -9,11 +9,14 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 		\Difra\View::$instance = 'adm';
 	}
 
-	public function indexAction( ) {
+	public function indexAction( Param\NamedInt $page = null ) {
+
+		$page = !is_null( $page ) ? $page->val() : 1;
 
 		$indexNode = $this->root->appendChild( $this->xml->createElement( 'announcementsLast' ) );
 		$eventsNode = $indexNode->appendChild( $this->xml->createElement( 'announcements' ) );
-		\Difra\Plugins\Announcements::getInstance()->getAllEventsXML( $eventsNode );
+		\Difra\Plugins\Announcements::getInstance()->getByCategoryWithPagerXML( 1, $eventsNode, $page );
+		$eventsNode->setAttribute( 'link', '/adm/announcements' );
 
 		$categoryNode = $indexNode->appendChild( $this->xml->createElement( 'announceCateroty' ) );
 		\Difra\Plugins\Announcements\Category::getList( $categoryNode );

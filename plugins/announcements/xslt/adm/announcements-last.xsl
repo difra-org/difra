@@ -290,5 +290,19 @@
 			</xsl:for-each>
 		</table>
 
+		<div class="paginator">
+			<xsl:call-template name="paginator">
+				<xsl:with-param name="link">
+					<xsl:value-of select="announcements/@link"/>
+				</xsl:with-param>
+				<xsl:with-param name="pages">
+					<xsl:value-of select="announcements/@pages"/>
+				</xsl:with-param>
+				<xsl:with-param name="current">
+					<xsl:value-of select="announcements/@current"/>
+				</xsl:with-param>
+			</xsl:call-template>
+		</div>
+
 	</xsl:template>
 </xsl:stylesheet>
