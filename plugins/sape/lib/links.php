@@ -53,10 +53,10 @@ class Links extends Common {
 				 "DELETE FROM `sape` WHERE `key`='__difra_ttl__'",
 				 "INSERT INTO `sape` SET `key`='__difra_ttl__',`value`='" . $db->escape( time() + self::SAPE_RETRY ) . "'"
 			    ) );
-		if( pcntl_fork() ) {
+//		if( pcntl_fork() ) {
 			self::save( self::fetchData() );
-			die();
-		}
+//			die();
+//		}
 	}
 
 	protected static function save( $data ) {
@@ -66,19 +66,20 @@ class Links extends Common {
 		}
 		$data['__difra_ttl__'] = time() + self::SAPE_TTL;
 		$db = \Difra\MySQL::getInstance( \Difra\MySQL::INST_AUTO, true );
-		$db->query( 'DELETE FROM `sape`' );
+		$queries = array( 'DELETE FROM `sape`' );
 
 		foreach( $data as $k => $v ) {
 			if( empty( $v ) ) {
 				continue;
 			}
 			if( !is_array( $v ) ) {
-				$db->query( 'INSERT INTO `sape` (`key`,`value`) VALUES (\'' . $db->escape( $k ) . "','" . $db->escape( $v ) . "')" );
+				$queries[] = 'INSERT INTO `sape` (`key`,`value`) VALUES (\'' . $db->escape( $k ) . "','" . $db->escape( $v ) . "')";
 				continue;
 			}
 			foreach( $v as $v1 ) {
-				$db->query( 'INSERT INTO `sape` (`key`,`value`) VALUES (\'' . $db->escape( $k ) . "','" . $db->escape( $v1 ) . "')" );
+				$queries[] = 'INSERT INTO `sape` (`key`,`value`) VALUES (\'' . $db->escape( $k ) . "','" . $db->escape( $v1 ) . "')";
 			}
 		}
+		$db->query( $queries );
 	}
 }
