@@ -77,6 +77,9 @@ class Links extends Common {
 				continue;
 			}
 			foreach( $v as $v1 ) {
+				if( is_array( $v1 ) ) {
+					continue;
+				}
 				$queries[] = 'INSERT INTO `sape` (`key`,`value`) VALUES (\'' . $db->escape( $k ) . "','" . $db->escape( $v1 ) . "')";
 			}
 		}
