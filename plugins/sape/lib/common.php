@@ -93,7 +93,7 @@ abstract class Common {
 	protected static function fetchData( $url ) {
 
 		$serverList = self::getServerList();
-		$path = static::getDispencerPath() . '&charset=UTF-8';
+		$path = static::getDispenserPath() . '&charset=UTF-8';
 		foreach( $serverList as $server ) {
 			$data = null;
 			try {
