@@ -3,7 +3,7 @@
 	<menu>
 		<adm>
 			<menu_catalog>Каталог</menu_catalog>
-			<menu_catalog_items>Содержимое каталога</menu_catalog_items>
+			<menu_catalog_categories>Содержимое каталога</menu_catalog_categories>
 			<menu_catalog_ext>Дополнительные поля</menu_catalog_ext>
 			<menu_catalog_config>Настройки</menu_catalog_config>
 		</adm>
