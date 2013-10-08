@@ -63,7 +63,7 @@ abstract class Common {
 	 */
 	protected static function getUri() {
 
-		return \Difra\Envi::getUri();
+		return \Difra\Envi::getUri( true );
 	}
 
 	/**
@@ -71,6 +71,9 @@ abstract class Common {
 	 * @return mixed
 	 */
 	protected static function getHost() {
+
+		// TODO: remove next line after tests!
+		return 'afisha-dubna.ru';
 
 		static $host = null;
 		if( is_null( $host ) ) {
@@ -90,7 +93,7 @@ abstract class Common {
 		return array( 'dispenser-01.sape.ru', 'dispenser-02.sape.ru' );
 	}
 
-	protected static function fetchData( $url ) {
+	protected static function fetchData() {
 
 		$serverList = self::getServerList();
 		$path = static::getDispenserPath() . '&charset=UTF-8';
@@ -107,10 +110,12 @@ abstract class Common {
 				$data = curl_exec( $ch );
 				curl_close( $ch );
 
+				/*
 				// is error?
 				if( substr( $data, 0, 12 ) == 'FATAL ERROR:') {
 					throw new \Difra\Exception( 'Server returned fatal error' );
 				}
+				*/
 
 				// [псевдо]проверка целостности:
 				$data = @unserialize( $data );
@@ -119,6 +124,7 @@ abstract class Common {
 				}
 				return $data;
 			} catch( \Exception $ex ) {
+
 			}
 		}
 		return null;

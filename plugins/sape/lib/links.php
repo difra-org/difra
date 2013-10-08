@@ -17,7 +17,14 @@ class Links extends Common {
 		$db = \Difra\MySQL::getInstance();
 		$links = $db->fetch( 'SELECT `value` FROM `sape` WHERE `key`=\'' . $db->escape( self::getUri() ) . "'" );
 		if( !empty( $links ) ) {
-			$html = implode( $db->fetchOne( "SELECT `value` FROM `sape` WHERE `key`='__sape_delimiter__'" ) ?: ' ', $links );
+			// TODO: после обновления на 5.5 эту прелесть ($links2) нужно заменить на array_column( $links, 'value' )
+			$links2 = array();
+			foreach( $links as $link ) {
+				$links2[] = $link['value'];
+			}
+			$html = implode(
+				$db->fetchOne( "SELECT `value` FROM `sape` WHERE `key`='__sape_delimiter__'" ) ?: ' ', $links2
+			);
 		} elseif( self::isSapeBot() ) {
 			$html = $db->fetchOne( "SELECT `value` FROM `sape` WHERE `key`='__sape_new_url__'" ) ?: '';
 		} else {
@@ -47,7 +54,7 @@ class Links extends Common {
 				 "INSERT INTO `sape` SET `key`='__difra_ttl__',`value`='" . $db->escape( time() + self::SAPE_RETRY ) . "'"
 			    ) );
 		if( pcntl_fork() ) {
-			self::save( self::fetchData( self::getDispenserPath() ) );
+			self::save( self::fetchData() );
 			die();
 		}
 	}
