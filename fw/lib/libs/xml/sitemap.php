@@ -175,4 +175,25 @@ class Sitemap {
 		\Difra\Cache::getInstance()->put( 'sitemap-html-' . ( $page ?: '0' ), $html );
 		return $html;
 	}
+
+	public static function getXMLforHTML() {
+
+		if( $html = \Difra\Cache::getInstance()->get( 'sitemap-short' ) ) {
+			return $html;
+		}
+		$xml = \Difra\Libs\XML\Sitemap::getXML( null, false );
+		if( !$xml ) {
+			return false;
+		}
+		$sxml = new \SimpleXMLElement( $xml );
+		$sxml->registerXPathNamespace( 'sitemap', 'http://www.sitemaps.org/schemas/sitemap/0.9' );
+		$html = '';
+		$i = 1;
+		foreach( $sxml->xpath( '/sitemap:sitemapindex/sitemap:sitemap/sitemap:loc' ) as $loc ) {
+			$html .= '<a href="' . $loc . '">Sitemap page ' . $i . '</a>';
+			$i++;
+		}
+		\Difra\Cache::getInstance()->put( 'sitemap-short', $html );
+		return $html;
+	}
 }
