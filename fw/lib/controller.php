@@ -301,10 +301,11 @@ class Controller {
 		// date
 		/** @var $dateNode \DOMElement */
 		$dateNode = $node->appendChild( $xml->createElement( 'date' ) );
-		$dateFields = 'deAamBbYycxHMS';
-		$t = time();
-		for( $i = 0; $i < strlen( $dateFields ); $i++ ) {
-			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
+		$dateKeys = array( 'd', 'e', 'A', 'a', 'm', 'B', 'b', 'Y', 'y', 'c', 'x', 'H', 'M', 'S' );
+		$dateValues = explode( '|', strftime( '%' . implode( '|%', $dateKeys ) ) );
+		$dateCombined = array_combine( $dateKeys, $dateValues );
+		foreach( $dateCombined as $k => $v ) {
+			$dateNode->setAttribute( $k, $v );
 		}
 		// debug flag
 		$node->setAttribute( 'debug', Debugger::isEnabled() ? '1' : '0' );
