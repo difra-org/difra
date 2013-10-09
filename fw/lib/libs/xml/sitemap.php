@@ -190,7 +190,8 @@ class Sitemap {
 		$html = '';
 		$i = 1;
 		foreach( $sxml->xpath( '/sitemap:sitemapindex/sitemap:sitemap/sitemap:loc' ) as $loc ) {
-			$html .= '<a href="' . $loc . '">Sitemap page ' . $i . '</a>';
+			$link = preg_replace( '/\.xml$/', '.html', (string) $loc );
+			$html .= '<a href="' . $link . '">Sitemap page ' . $i . '</a>';
 			$i++;
 		}
 		\Difra\Cache::getInstance()->put( 'sitemap-short', $html );
