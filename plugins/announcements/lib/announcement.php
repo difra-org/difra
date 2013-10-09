@@ -746,12 +746,16 @@ Class Announcement {
 	 */
 	private function reFormateDate( $node, $date ) {
 
-		$date = strtotime( $date );
-		$node->setAttribute( 'd', date( 'j', $date ) );
-		$node->setAttribute( 'm', date( 'm', $date ) );
-		$node->setAttribute( 'y', date( 'y', $date ) );
-		$node->setAttribute( 'w', date( 'w', $date ) );
-		$node->setAttribute( 'Y', date( 'Y', $date ) );
+		$timeStamp = strtotime( $date );
+
+		$date = date( 'd|m|y|w|Y', $timeStamp );
+		$expDate = explode( '|', $date );
+
+		$node->setAttribute( 'd', $expDate[0] );
+		$node->setAttribute( 'm', $expDate[1] );
+		$node->setAttribute( 'y', $expDate[2] );
+		$node->setAttribute( 'w', $expDate[3] );
+		$node->setAttribute( 'Y', $expDate[4] );
 	}
 
 	/**
@@ -821,25 +825,34 @@ Class Announcement {
 
 		if( $this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
 
-			$title .= date( 'd', strtotime( $this->fromEventDate ) ) . ' ';
+			$tempDateFrom = date( 'd|m', strtotime( $this->fromEventDate ) );
+			$tempDateEvent = date( 'd|m', strtotime( $this->eventDate ) );
+			$exFromEventDate = explode( '|', $tempDateFrom );
+			$exEventDate = explode( '|', $tempDateEvent );
+
+			$title .= $exFromEventDate[0]. ' ';
 
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->fromEventDate ) ) . "']" ) . ' ';
+					$exFromEventDate[1] . "']" ) . ' ';
 
 			$title .= $Locale->getXPath( 'announcements/fromTo' ) . ' ';
-			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
+			$title .= $exEventDate[0] . ' ';
 
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->eventDate ) ) . "']" );
+					$exEventDate[1] . "']" );
 
 		} else {
-			// j
-			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" .
-					date( 'w', strtotime( $this->eventDate ) ) . "']" ) . ', ';
 
-			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
+			$tempDateEvent = date( 'w|d|m', strtotime( $this->eventDate ) );
+			$exEventDate = explode( '|', $tempDateEvent );
+
+
+			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" .
+					$exEventDate[0] . "']" ) . ', ';
+
+			$title .= $exEventDate[1] . ' ';
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->eventDate ) ) . "']" );
+					$exEventDate[2] . "']" );
 		}
 
 		if( !empty( $this->additionalData ) ) {
@@ -904,6 +917,8 @@ Class Announcement {
 	 * @param \DOMNode $node
 	 */
 	private function _getIsoDate( \DOMNode $node ) {
+
+		//TODO: Переформатирование даты не с помощью date()!
 
 		if( !is_null( $this->fromEventDate ) && !is_null( $this->eventDate ) && $this->fromEventDate!='0000-00-00 00:00:00' ) {
 			$node->setAttribute( 'fromDate', date( 'c', strtotime( $this->fromEventDate ) ) );
