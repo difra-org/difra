@@ -178,7 +178,7 @@ class Announcements {
 		$returnArray = array();
 		foreach( $res as $k => $data ) {
 
-			$link = 'http://' . $mainHost . '/event/' . $data['id'] . '-' . $data['link'];
+			$link = 'http://' . $mainHost . '/events/' . $data['id'] . '-' . $data['link'];
 			$date = date( 'Y-m-d', $data['mod'] );
 			$returnArray[] = array( 'loc' => $link, 'lastmod' => $date );
 		}
