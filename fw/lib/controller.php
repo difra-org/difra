@@ -71,7 +71,9 @@ class Controller {
 		$this->root = $this->realRoot->appendChild( $this->xml->createElement( 'content' ) );
 
 		// запуск диспатчера
+		Debugger::addLine( 'Started controller dispatcher' );
 		$this->dispatch();
+		Debugger::addLine( 'Finished controller dispatcher' );
 	}
 
 	/**
@@ -93,8 +95,9 @@ class Controller {
 		if( !$controller->method ) {
 			throw new Exception( 'Controller failed to choose action method' );
 		}
-		Debugger::addLine( 'Selected method ' . \Difra\Envi\Action::$method );
+		Debugger::addLine( 'Started action ' . \Difra\Envi\Action::$method );
 		$controller->callAction();
+		Debugger::addLine( 'Finished action ' . \Difra\Envi\Action::$method );
 	}
 
 	/**
