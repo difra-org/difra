@@ -19,5 +19,6 @@ class Plugin extends \Difra\Plugin {
 	public function init() {
 
 		\Difra\Events::register( 'dispatch', '\Difra\Plugins\SAPE', 'addXML' );
+		\Difra\Events::register( 'dispatch', '\Difra\Plugins\SAPE', 'addSitemapHTML' );
 	}
 }
