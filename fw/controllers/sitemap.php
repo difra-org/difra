@@ -19,15 +19,16 @@ class SitemapController extends \Difra\Controller {
 	 */
 	public function indexAction( \Difra\Param\AnyInt $page = null ) {
 
-		$this->outputType = 'text/xml';
 		$this->cache = self::CACHE_TTL;
 		if( !$page ) {
+			$this->outputType = 'text/xml';
 			$this->output = \Difra\Libs\XML\Sitemap::getXML();
 		} else {
 			$res = \Difra\Libs\XML\Sitemap::getXML( $page->val() );
 			if( !$res ) {
 				throw new \Difra\View\Exception( 404 );
 			}
+			$this->outputType = 'text/xml';
 			$this->output = $res;
 		}
 	}

@@ -158,6 +158,9 @@ class Sitemap {
 
 	public static function getHTML( $page = null ) {
 
+		if( $html = \Difra\Cache::getInstance()->get( 'sitemap-html-' . ( $page ?: '0' ) ) ) {
+			return $html;
+		}
 		if( !$page ) {
 			$xml = \Difra\Libs\XML\Sitemap::getXML( null, false );
 		} else {
@@ -168,6 +171,8 @@ class Sitemap {
 		}
 		$dom = new \DOMDocument();
 		$dom->loadXML( $xml );
-		return \Difra\View::render( $dom, 'sitemap', true, true );
+		$html = \Difra\View::render( $dom, 'sitemap', true, true );
+		\Difra\Cache::getInstance()->put( 'sitemap-html-' . ( $page ?: '0' ), $html );
+		return $html;
 	}
 }
