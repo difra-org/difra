@@ -892,6 +892,14 @@ Class Announcement {
 	}
 
 	/**
+	 * Возвращает значение даты ивента
+	 * @return null
+	 */
+	public function getEventDate() {
+		return $this->eventDate;
+	}
+
+	/**
 	 * Устанавливает дату в формате ISO 8601
 	 * @param \DOMNode $node
 	 */
