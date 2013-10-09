@@ -31,4 +31,14 @@ class SitemapController extends \Difra\Controller {
 			$this->output = $res;
 		}
 	}
+
+	public function htmlAction( \Difra\Param\AnyInt $page = null ) {
+
+		$this->cache = self::CACHE_TTL;
+		if( !$html = \Difra\Libs\XML\Sitemap::getHTML( $page ) ) {
+			throw new \Difra\View\Exception( 404 );
+		}
+		$this->outputType = 'text/html';
+		$this->output = $html;
+	}
 }

@@ -18,12 +18,13 @@ class View {
 	 * @param \DOMDocument $xml
 	 * @param bool|string  $specificInstance
 	 * @param bool         $dontEcho
+	 * @param bool         $dontFillXML
 	 *
-	 * @throws exception
+	 * @throws Exception
 	 * @internal param bool|string $instance
 	 * @return bool|string
 	 */
-	public static function render( &$xml, $specificInstance = false, $dontEcho = false ) {
+	public static function render( &$xml, $specificInstance = false, $dontEcho = false, $dontFillXML = false ) {
 
 		if( $specificInstance ) {
 			$instance = $specificInstance;
@@ -48,7 +49,7 @@ class View {
 		$xslProc = new \XsltProcessor();
 		$xslProc->importStyleSheet( $xslDom );
 
-		if( !\Difra\View\Exception::$error and !Debugger::$shutdown ) {
+		if( !$dontFillXML and !\Difra\View\Exception::$error and !Debugger::$shutdown ) {
 			Controller::getInstance()->fillXML( $xml, $instance );
 		}
 

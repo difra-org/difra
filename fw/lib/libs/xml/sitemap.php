@@ -15,13 +15,35 @@ class Sitemap {
 	const PERPAGE = 150;
 
 	/**
+	 * Собирает данные для Sitemap из плагинов
+	 * @return array
+	 */
+	public static function getSitemap() {
+
+		$sitemap = array();
+		$plugins = \Difra\Plugger::getAllPlugins();
+		if( !empty( $plugins ) ) {
+			foreach( $plugins as $plugin ) {
+				if( $plugin->isEnabled() ) {
+					if( $sm = $plugin->getSitemap() ) {
+						$sitemap = array_merge( $sitemap, $sm );
+					}
+				}
+			}
+		}
+		return $sitemap;
+	}
+
+	/**
 	 * Возвращает sitemap.xml
 	 * Если не задан параметр $page, будет возвращен индексный sitemap.xml
 	 *
 	 * @param int|null $page
+	 * @param bool     $autoIndex
+	 *
 	 * @return bool|string
 	 */
-	public static function getXML( $page = null ) {
+	public static function getXML( $page = null, $autoIndex = true ) {
 
 		// Получаем данные из кэша
 		$cache = \Difra\Cache::getInstance();
@@ -34,33 +56,23 @@ class Sitemap {
 				return $res;
 			}
 			if( $pages = $cache->get( 'sitemap_pages' ) ) {
-				if( $pages == 1 or $pages < $page ) {
+				if( ( $autoIndex and $pages == 1 ) or $pages < $page ) {
 					return false;
 				}
 			}
 		}
 		// Собираем новый sitemap
-		$sitemap = array();
-		$plugins = \Difra\Plugger::getAllPlugins();
-		if( !empty( $plugins ) ) {
-			foreach( $plugins as $plugin ) {
-				if( $plugin->isEnabled() ) {
-					if( $sm = $plugin->getSitemap() ) {
-						$sitemap = array_merge( $sitemap, $sm );
-					}
-				}
-			}
-		}
+		$sitemap = self::getSitemap();
 		// Если кэш отключен, возвращаем результат
 		if( $cache->adapter == 'None' ) {
 			if( is_null( $page ) ) {
-				if( sizeof( $sitemap ) <= self::PERPAGE ) {
+				if( $autoIndex and sizeof( $sitemap ) <= self::PERPAGE ) {
 					return self::makeSitemapXML( $sitemap );
 				} else {
 					return self::makeIndexXML( floor( ( sizeof( $sitemap ) - 1 ) / self::PERPAGE ) + 1 );
 				}
 			} else {
-				if( sizeof( $sitemap ) <= self::PERPAGE ) {
+				if( $autoIndex and sizeof( $sitemap ) <= self::PERPAGE ) {
 					return false;
 				}
 				$urls = array_slice( $sitemap, ( $page - 1 ) * self::PERPAGE, self::PERPAGE );
@@ -75,7 +87,7 @@ class Sitemap {
 		$pagesNum = floor( ( sizeof( $sitemap ) - 1 ) / self::PERPAGE ) + 1;
 		$cache->put( 'sitemap_pages', $pagesNum );
 		// Получается одна страница
-		if( sizeof( $sitemap ) <= self::PERPAGE ) {
+		if( $autoIndex and sizeof( $sitemap ) <= self::PERPAGE ) {
 			$xml = self::makeSitemapXML( $sitemap );
 			$cache->put( 'sitemap_index', $xml );
 			if( $page ) {
@@ -142,5 +154,20 @@ class Sitemap {
 			}
 		}
 		return $indexXML->saveXML();
+	}
+
+	public static function getHTML( $page = null ) {
+
+		if( !$page ) {
+			$xml = \Difra\Libs\XML\Sitemap::getXML( null, false );
+		} else {
+			$xml = \Difra\Libs\XML\Sitemap::getXML( (string)$page, false );
+		}
+		if( !$xml ) {
+			return false;
+		}
+		$dom = new \DOMDocument();
+		$dom->loadXML( $xml );
+		return \Difra\View::render( $dom, 'sitemap', true, true );
 	}
 }
