@@ -874,7 +874,7 @@ Class Announcement {
 
 		$title = '';
 		$Locale = \Difra\Locales::getInstance();
-		if( $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
+		if( $this->fromEventDate != '' && $this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != $this->eventDate ) {
 
 			$fromEventDate = date( 'd|m', strtotime( $this->fromEventDate ) );
 			$exFromEventDate = explode( '|', $fromEventDate );
