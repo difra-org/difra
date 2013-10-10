@@ -2,20 +2,20 @@
 	<announcements>
 		<dates>
 			<weekdays>
-				<day_0>Пн</day_0>
-				<day_1>Вт</day_1>
-				<day_2>Ср</day_2>
-				<day_3>Чт</day_3>
-				<day_4>Пт</day_4>
-				<day_5>Сб</day_5>
-				<day_6>Вс</day_6>
-				<fullDay_0>Понедельник</fullDay_0>
-				<fullDay_1>Вторник</fullDay_1>
-				<fullDay_2>Среда</fullDay_2>
-				<fullDay_3>Четверг</fullDay_3>
-				<fullDay_4>Пятница</fullDay_4>
-				<fullDay_5>Суббота</fullDay_5>
-				<fullDay_6>Воскресенье</fullDay_6>
+				<day_0>Вс</day_0>
+				<day_1>Пн</day_1>
+				<day_2>Вт</day_2>
+				<day_3>Ср</day_3>
+				<day_4>Чт</day_4>
+				<day_5>Пт</day_5>
+				<day_6>Сб</day_6>
+				<fullDay_0>Воскресенье</fullDay_0>
+				<fullDay_1>Понедельник</fullDay_1>
+				<fullDay_2>Вторник</fullDay_2>
+				<fullDay_3>Среда</fullDay_3>
+				<fullDay_4>Четверг</fullDay_4>
+				<fullDay_5>Пятница</fullDay_5>
+				<fullDay_6>Суббота</fullDay_6>
 			</weekdays>
 			<months>
 				<month_01 id="01">января</month_01>
