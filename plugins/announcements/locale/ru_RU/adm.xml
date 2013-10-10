@@ -36,7 +36,7 @@
 		<price>Стоимость билетов:</price>
 		<address>Адрес:</address>
 		<phone>Справки по телефону:</phone>
-		<fromTo>—</fromTo>
+		<fromTo> — </fromTo>
 		<addEvent>Добавить событие</addEvent>
 		<editEvent>Редактировать событие</editEvent>
 		<archiveLink>Архив событий</archiveLink>

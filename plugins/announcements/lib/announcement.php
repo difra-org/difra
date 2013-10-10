@@ -876,27 +876,36 @@ Class Announcement {
 		$Locale = \Difra\Locales::getInstance();
 		if( $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
 
-			$title .= date( 'd', strtotime( $this->fromEventDate ) ) . ' ';
+			$fromEventDate = date( 'd|m', strtotime( $this->fromEventDate ) );
+			$exFromEventDate = explode( '|', $fromEventDate );
+
+			$eventDate = date( 'd|m', strtotime( $this->eventDate ) );
+			$exEventDate = explode( '|', $eventDate );
+
+			$title .= $exFromEventDate[0] . '&#160;';
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->fromEventDate ) ) . "']" );
+					$exFromEventDate[1] . "']" );
 			$title .= $Locale->getXPath( 'announcements/fromTo' );
-			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
+			$title .= $exEventDate[0] . '&#160;';
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->eventDate ) ) . "']" );
+					$exEventDate[1] . "']" );
 		} else {
-			// j
+
+			$eventDate = date( 'w|m', strtotime( $this->eventDate ) );
+			$exEventDate = explode( '|', $eventDate );
+
 			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" .
-					date( 'w', strtotime( $this->eventDate ) ) . "']" ) . ', ';
-			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
+					$exEventDate[0] . "']" ) . ',&#160;';
+			$title .= date( 'd', strtotime( $this->eventDate ) ) . '&#160;';
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->eventDate ) ) . "']" );
+					$exEventDate[1] . "']" );
 		}
 
 		if( !empty( $this->additionalData ) ) {
 			foreach( $this->additionalData as $k => $data ) {
 				if( isset( $data['alias'] ) && $data['alias'] == 'eventTime' ) {
-					$title .= $Locale->getXPath( 'announcements/in' );
-					$title .= $data['value'];
+					$title .= '&#160;' . $Locale->getXPath( 'announcements/in' );
+					$title .= '&#160;' . $data['value'];
 				}
 			}
 		}
