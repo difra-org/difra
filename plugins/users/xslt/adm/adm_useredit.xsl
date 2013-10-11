@@ -10,7 +10,7 @@
 			<xsl:value-of select="$locale/auth/adm/h3-useredit-common"/>
 		</h2>
 		<h3>
-			Основные параметры
+			<xsl:value-of select="$locale/auth/adm/mainParams"/>
 		</h3>
 		<xsl:choose>
 			<xsl:when test="not(item)">
@@ -23,7 +23,7 @@
 							<col style="width: 250px"/>
 							<col/>
 						</colgroup>
-						<tbody>
+					<tbody>
 							<tr>
 								<th>
 									<xsl:value-of select="$locale/auth/adm/email"/>
@@ -59,6 +59,36 @@
 							</tr>
 						</tbody>
 					</table>
+
+					<xsl:if test="addon_fields">
+
+						<h3>
+							<xsl:value-of select="$locale/auth/adm/addonFields"/>
+						</h3>
+
+						<table class="form">
+							<colgroup>
+								<col style="width: 350px"/>
+								<col/>
+							</colgroup>
+							<tr>
+								<th><xsl:value-of select="$locale/auth/adm/fieldName"/></th>
+								<th><xsl:value-of select="$locale/auth/adm/fieldValue"/></th>
+							</tr>
+
+							<xsl:for-each select="addon_fields/field">
+								<tr>
+									<td>
+										<input type="text" name="fieldName[]" value="{@name}"/>
+									</td>
+									<td>
+										<input type="text" name="fieldValue[]" value="{@value}"/>
+									</td>
+								</tr>
+							</xsl:for-each>
+						</table>
+					</xsl:if>
+
 
 					<div class="form-buttons">
 						<input type="submit" value="{$locale/auth/adm/save}"/>
