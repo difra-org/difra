@@ -11,7 +11,7 @@
 				</h2>
 			</div>
 			<div class="announce-control">
-				<xsl:if test="/root/auth/authorized and /root/auth/authorized/@userid=event/user">
+				<xsl:if test="/root/auth/authorized and (/root/auth/authorized/@userid=event/user or /root/auth/authorized/@moderator=1)">
 					<a href="/event/edit/{event/link}/">
 						<xsl:value-of select="$locale/announcements/editEvent"/>
 					</a>

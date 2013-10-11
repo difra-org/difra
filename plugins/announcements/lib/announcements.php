@@ -280,6 +280,10 @@ class Announcements {
 	 */
 	public function checkOnwer( $eventId, $userId ) {
 
+		if( \Difra\Auth::getInstance()->isModerator() ) {
+			return true;
+		}
+
 		$db = \Difra\MySQL::getInstance();
 		$query = "SELECT `id` FROM `announcements` WHERE `id`='" . intval( $eventId ) . "' AND `user`='" . intval( $userId ) . "'";
 		$res = $db->fetchOne( $query );
@@ -496,6 +500,17 @@ class Announcements {
 				$node->setAttribute( $k, $value );
 			}
 		}
+	}
+
+	/**
+	 * Возвращает владельца ивента из базы данных
+	 * @param $eventId
+	 */
+	public function getOwner( $eventId ) {
+		$db = \Difra\MySQL::getInstance();
+		$query = "SELECT `user` FROM `announcements` WHERE `id`='" . intval( $eventId ) . "'";
+		$res = $db->fetchOne( $query );
+		return !empty( $res ) ? $res : false;
 	}
 
 }
