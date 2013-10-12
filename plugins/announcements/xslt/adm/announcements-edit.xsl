@@ -17,6 +17,7 @@
 			<xsl:variable name="cId" select="event/category"/>
 
 			<input type="hidden" name="id" value="{event/id}"/>
+			<input type="hidden" name="userId" value="{event/user}"/>
 
 			<h3><xsl:value-of select="$locale/announcements/adm/forms/pic"/></h3>
 

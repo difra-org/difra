@@ -1,0 +1,22 @@
+
+.paginator {
+	padding: 20px 0 40px 0;
+
+	.pagerItem {
+		border-radius: 3px;
+		margin: 2px;
+		padding: 5px;
+		float: left;
+		color: darken( @color-darkwhite, 10% );
+		background-color: @color-darkgrey;
+
+		a {
+			color: @color-darkwhite;
+		}
+
+		&.pagerSelected {
+			background-color: lighten( @color-darkgrey, 10% );
+		}
+	}
+
+}

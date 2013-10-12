@@ -71,7 +71,9 @@ class Controller {
 		$this->root = $this->realRoot->appendChild( $this->xml->createElement( 'content' ) );
 
 		// запуск диспатчера
+		Debugger::addLine( 'Started controller dispatcher' );
 		$this->dispatch();
+		Debugger::addLine( 'Finished controller dispatcher' );
 	}
 
 	/**
@@ -93,8 +95,9 @@ class Controller {
 		if( !$controller->method ) {
 			throw new Exception( 'Controller failed to choose action method' );
 		}
-		Debugger::addLine( 'Selected method ' . \Difra\Envi\Action::$method );
+		Debugger::addLine( 'Started action ' . \Difra\Envi\Action::$method );
 		$controller->callAction();
+		Debugger::addLine( 'Finished action ' . \Difra\Envi\Action::$method );
 	}
 
 	/**
@@ -261,65 +264,73 @@ class Controller {
 	/**
 	 * Заполнение XML всевозможными данными для дальнейшего рендера шаблона
 	 *
-	 * @param null $instance
+	 * @param \DOMDocument|null $xml
+	 * @param null              $instance
 	 */
-	public function fillXML( $instance = null ) {
+	public function fillXML( &$xml = null, $instance = null ) {
 
+		if( is_null( $xml ) ) {
+			$xml = $this->xml;
+			$node = $this->realRoot;
+		} else {
+			$node = $xml->documentElement;
+		}
 		Debugger::addLine( 'Filling XML data for render: Started' );
-		$this->realRoot->setAttribute( 'lang', $this->locale->locale );
-		$this->realRoot->setAttribute( 'site', Envi::getSite() );
-		$this->realRoot->setAttribute( 'host', $host = Envi::getHost() );
-		$this->realRoot->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
-		$this->realRoot->setAttribute( 'instance', $instance ? $instance : View::$instance );
-		$this->realRoot->setAttribute( 'uri', Envi::getUri() );
-		$this->realRoot->setAttribute( 'controllerUri', \Difra\Envi\Action::getControllerUri() );
+		$node->setAttribute( 'lang', $this->locale->locale );
+		$node->setAttribute( 'site', Envi::getSite() );
+		$node->setAttribute( 'host', $host = Envi::getHost() );
+		$node->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
+		$node->setAttribute( 'instance', $instance ? $instance : View::$instance );
+		$node->setAttribute( 'uri', Envi::getUri() );
+		$node->setAttribute( 'controllerUri', \Difra\Envi\Action::getControllerUri() );
 		if( $host != $mainhost ) {
-			$this->realRoot->setAttribute( 'urlprefix', 'http://' . $mainhost );
+			$node->setAttribute( 'urlprefix', 'http://' . $mainhost );
 		}
 		// get user agent
-		Envi\UserAgent::getUserAgentXML( $this->realRoot );
+		Envi\UserAgent::getUserAgentXML( $node );
 		// ajax flag
-		$this->realRoot->setAttribute( 'ajax',
-					       ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-							       $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
-						       : '0' );
-		$this->realRoot->setAttribute( 'switcher',
-					       ( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-						       $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
+		$node->setAttribute( 'ajax',
+				     ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+						     $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
+					     : '0' );
+		$node->setAttribute( 'switcher',
+				     ( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
+					     $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
 		// build number
-		$this->realRoot->setAttribute( 'build', \Difra\Envi\Version::getBuild() );
+		$node->setAttribute( 'build', \Difra\Envi\Version::getBuild() );
 		// date
 		/** @var $dateNode \DOMElement */
-		$dateNode = $this->realRoot->appendChild( $this->xml->createElement( 'date' ) );
-		$dateFields = 'deAamBbYycxHMS';
-		$t = time();
-		for( $i = 0; $i < strlen( $dateFields ); $i++ ) {
-			$dateNode->setAttribute( $dateFields{$i}, strftime( '%' . $dateFields{$i}, $t ) );
+		$dateNode = $node->appendChild( $xml->createElement( 'date' ) );
+		$dateKeys = array( 'd', 'e', 'A', 'a', 'm', 'B', 'b', 'Y', 'y', 'c', 'x', 'H', 'M', 'S' );
+		$dateValues = explode( '|', strftime( '%' . implode( '|%', $dateKeys ) ) );
+		$dateCombined = array_combine( $dateKeys, $dateValues );
+		foreach( $dateCombined as $k => $v ) {
+			$dateNode->setAttribute( $k, $v );
 		}
 		// debug flag
-		$this->realRoot->setAttribute( 'debug', Debugger::isEnabled() ? '1' : '0' );
+		$node->setAttribute( 'debug', Debugger::isEnabled() ? '1' : '0' );
 		// config values (for js variable)
-		$configNode = $this->realRoot->appendChild( $this->xml->createElement( 'config' ) );
+		$configNode = $node->appendChild( $xml->createElement( 'config' ) );
 		Envi::getConfigXML( $configNode );
 		// menu
 		if( $menuResource = Resourcer::getInstance( 'menu' )->compile( View::$instance ) ) {
 			$menuXML = new \DOMDocument();
 			$menuXML->loadXML( $menuResource );
-			$this->realRoot->appendChild( $this->xml->importNode( $menuXML->documentElement, true ) );
+			$node->appendChild( $xml->importNode( $menuXML->documentElement, true ) );
 		}
 		// auth
-		$this->auth->getAuthXML( $this->realRoot );
+		$this->auth->getAuthXML( $node );
 		// locale
-		$this->locale->getLocaleXML( $this->realRoot );
+		$this->locale->getLocaleXML( $node );
 		// Добавление объекта config для js
 		$config = Envi::getConfig();
 		$confJS = '';
 		foreach( $config as $k => $v ) {
 			$confJS .= "config.{$k}='" . addslashes( $v ) . "';";
 		}
-		$this->realRoot->setAttribute( 'jsConfig', $confJS );
+		$node->setAttribute( 'jsConfig', $confJS );
 		Debugger::addLine( 'Filling XML data for render: Done' );
-		Debugger::debugXML( $this->realRoot );
+		Debugger::debugXML( $node );
 	}
 
 	/**
@@ -352,6 +363,9 @@ class Controller {
 	 */
 	public function putExpires( $ttl = null ) {
 
+		if( Debugger::isEnabled() ) {
+			return;
+		}
 		if( is_null( $ttl ) ) {
 			$ttl = $this->cache;
 		}

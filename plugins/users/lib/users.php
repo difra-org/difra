@@ -150,10 +150,11 @@ class Users {
 	const LOGIN_INACTIVE    = 'login_inactive';
 	const LOGIN_BANNED      = 'login_banned';
 
-	public function login( $email, $password, $remember ) {
+	public function login( $email, $password, $remember, $withAdditionals = false ) {
 
 		$mysql = Difra\MySQL::getInstance();
 		$email = strtolower( $email );
+		$additionals = null;
 		$data  = $mysql->fetch( 'SELECT * FROM `users` WHERE `email`=\'' . $mysql->escape( $email ) . "'" );
 		if( empty( $data ) ) {
 			return self::LOGIN_NOTFOUND;
@@ -168,7 +169,18 @@ class Users {
 		if( $data['banned'] ) {
 			return self::LOGIN_BANNED;
 		}
-		Difra\Auth::getInstance()->login( $email, $data );
+
+		if( $withAdditionals == true ) {
+
+			$additionalsData = $mysql->fetch( "SELECT `name`, `value` FROM `users_fields` WHERE `id`='" . intval( $data['id'] ) . "'" );
+			if( !empty( $additionalsData ) ) {
+				foreach( $additionalsData as $k=>$tempData ) {
+					$additionals[$tempData['name']] = $tempData['value'];
+				}
+			}
+		}
+
+		Difra\Auth::getInstance()->login( $email, $data, $additionals );
 		if( $remember ) {
 			$this->_setLongSession( $data['id'] );
 		}
@@ -364,11 +376,26 @@ class Users {
 			       "SELECT `id`,`email`,`active`,`banned`,`registered`,`logged`,`info`, `moderator` FROM `users` LIMIT {$first}, {$perPage}" );
 	}
 
-	public function getUserXML( $node, $id ) {
+	public function getUserXML( \DOMNode $node, $id ) {
 
 		$mysql = Difra\MySQL::getInstance();
 		$mysql->fetchXML( $node, 'SELECT `id`,`email`,`active`,`banned`,`registered`,`logged`,`info`,`moderator` FROM `users` WHERE `id`=' .
 					 $mysql->escape( $id ) );
+
+		// вывод дополнительных полей
+		$query = "SELECT * FROM `users_fields` WHERE `id`='" . intval( $id ) . "'";
+		$res = $mysql->fetch( $query );
+		if( !empty( $res ) ) {
+			$addonNode = $node->appendChild( $node->ownerDocument->createElement( 'addon_fields' ) );
+
+			foreach( $res as $k=>$data ) {
+				$fieldItem = $addonNode->appendChild( $node->ownerDocument->createElement( 'field' ) );
+				$fieldItem->setAttribute( 'name', $data['name'] );
+				$fieldItem->setAttribute( 'value', $data['value'] );
+			}
+
+		}
+
 	}
 
 	public function setUserLogin( $id, $data ) {
@@ -388,6 +415,28 @@ class Users {
 			"UPDATE `users` SET `email`='$email'" . ( $passwd ? ",`password`='" . md5( $passwd ) . "'" : '' ) . ' WHERE `id`='
 			. $mysql->escape( $id )
 		);
+
+		if( isset( $data['addonFields'] ) && isset( $data['addonValues'] )
+			&& !is_null( $data['addonFields'] ) && !is_null( $data['addonValues'] ) ) {
+
+			// сохранение дополнительных полей пользоватея
+
+			$query[] = "DELETE FROM `users_fields` WHERE `id`='" . intval( $id ) . "'";
+			$values = array();
+			foreach( $data['addonFields'] as $k=>$fieldName ) {
+
+				if( isset( $data['addonValues'][$k] ) && $data['addonValues'][$k] !='' ) {
+					$values[] = "( '" . intval( $id ) . "', '" . $mysql->escape( $fieldName ) .
+						"', '" . $mysql->escape( $data['addonValues'][$k] ) . "' )";
+				}
+
+			}
+			if( !empty( $values ) ) {
+				$query[] = "INSERT INTO `users_fields` (`id`, `name`, `value`) VALUES " . implode( ', ', $values );
+				$mysql->query( $query );
+			}
+		}
+
 		return true;
 	}
 
@@ -496,7 +545,18 @@ class Users {
 				if( ( $data['ip'] & ip2long( self::IP_MASK ) ) == ip2long( $currentNetwork ) ) {
 					// можно залогинить юзера
 					$email = strtolower( $data['email'] );
-					Difra\Auth::getInstance()->login( $email, $data, Difra\Additionals::getAdditionals( 'users', $data['id'] ) );
+
+					$additionals = null;
+
+					$additionalsData = $db->fetch( "SELECT `name`, `value` FROM `users_fields` WHERE `id`='" .
+										intval( $data['id'] ) . "'" );
+					if( !empty( $additionalsData ) ) {
+						foreach( $additionalsData as $k=>$tempData ) {
+							$additionals[$tempData['name']] = $tempData['value'];
+						}
+					}
+
+					Difra\Auth::getInstance()->login( $email, $data, $additionals );
 					return;
 				}
 			}
@@ -517,5 +577,16 @@ class Users {
 		$r  = $db->fetchRow( "SELECT `id` FROM `users` WHERE `activation`='" . $db->escape( $code ) . "' AND `active`=1" );
 		return isset( $r['id'] ) ? $r['id'] : false;
 	}
+
+	/**
+	 * Активирует пользоватля. Для ручной активации из админки
+	 * @param $id
+	 */
+	public function manualActivation( $id ) {
+
+		$db = Difra\MySQL::getInstance();
+		$db->query( "UPDATE `users` SET `active`=1 WHERE `id`='" . intval( $id ) . "'" );
+	}
+
 }
 

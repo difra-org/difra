@@ -20,9 +20,9 @@
 								</a>
 							</xsl:when>
 							<xsl:otherwise>
-								<!-- TODO: в случае если пользователь авторизован будет другая ссылка. -->
-
-
+								<a href="/event/create/">
+									<xsl:value-of select="$locale/announcements/addEvent"/>
+								</a>
 							</xsl:otherwise>
 						</xsl:choose>
 						<a href="/archive/{@category}/">

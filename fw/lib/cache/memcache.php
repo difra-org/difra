@@ -5,11 +5,12 @@ namespace Difra\Cache;
 /**
  * Реализация кэширования в Memcached через модуль memcache
  * Class MemCache
+ *
  * @package Difra\Cache
  */
 class MemCache extends Common {
 
-	public $adapter = 'MemCache';
+	public $adapter = \Difra\Cache::INST_MEMCACHE;
 
 	/** @var \Memcache */
 	private static $_memcache = null;
@@ -20,6 +21,7 @@ class MemCache extends Common {
 
 	/**
 	 * Возвращает true, если кэширование через данную реализацию возможно.
+	 *
 	 * @return bool
 	 */
 	public static function isAvailable() {
@@ -69,9 +71,9 @@ class MemCache extends Common {
 	public function realPut( $id, $data, $specificLifetime = false ) {
 
 		return self::$_memcache->set( $id,
-			self::$_serialize ? serialize( $data ) : $data,
-			MEMCACHE_COMPRESSED,
-			$specificLifetime !== false ? $specificLifetime : self::$_lifetime );
+					      self::$_serialize ? serialize( $data ) : $data,
+					      MEMCACHE_COMPRESSED,
+					      $specificLifetime !== false ? $specificLifetime : self::$_lifetime );
 	}
 
 	/**
@@ -102,5 +104,4 @@ class MemCache extends Common {
 
 		return true;
 	}
-
 }

@@ -41,6 +41,9 @@ class Query extends Paginator {
 	public function __construct( $objKey ) {
 
 		$this->objKey = $objKey;
+		$class = Storage::getClass( $objKey );
+		$this->order = $class::getDefaultOrder();
+		$this->orderDesc = $class::getDefaultOrderDesc();
 	}
 
 	/**
@@ -64,8 +67,9 @@ class Query extends Paginator {
 		$res = array();
 		$class = Unify::getClass( $this->objKey );
 		foreach( $result as $newData ) {
+			/** @var Item $o */
 			$o = new $class;
-			$o->data = $newData;
+			$o->setData( $newData );
 			$res[] = $o;
 		}
 		return $res;
@@ -128,28 +132,17 @@ class Query extends Paginator {
 		$db = MySQL::getInstance();
 		/** @var Unify $class */
 		$class = Unify::getClass( $this->objKey );
-		$c = array();
-		$defCond = $class::getDefaultSearchConditions();
-		if( !empty( $defCond ) ) {
-			foreach( $this->conditions as $k => $v ) {
-				if( !is_numeric( $k ) ) {
-					$c[] = '`' . $db->escape( $k ) . "`='" . $db->escape( $v ) . "'";
-				} else {
-					$c[] = $v;
-				}
-			}
-		}
-		if( !empty( $this->conditions ) ) {
-			foreach( $this->conditions as $k => $v ) {
-				if( !is_numeric( $k ) ) {
-					$c[] = '`' . $db->escape( $k ) . "`='" . $db->escape( $v ) . "'";
-				} else {
-					$c[] = $v;
-				}
-			}
-		}
-		if( empty( $c ) ) {
+		$conditions = !empty( $this->conditions ) ? $this->conditions : $class::getDefaultSearchConditions();
+		if( empty( $conditions ) ) {
 			return '';
+		}
+		$c = array();
+		foreach( $conditions as $k => $v ) {
+			if( !is_numeric( $k ) ) {
+				$c[] = '`' . $db->escape( $k ) . "`='" . $db->escape( $v ) . "'";
+			} else {
+				$c[] = $v;
+			}
 		}
 		return ' WHERE ' . implode( ' AND ', $c );
 	}
@@ -166,12 +159,12 @@ class Query extends Paginator {
 		}
 		/** @var Unify $class */
 		$class = Unify::getClass( $this->objKey );
-		$table = $class::getTable();
 		$db = MySQL::getInstance();
+		$table = $db->escape( $class::getTable() );
 		$ord = ' ORDER BY ';
 		$d = '';
-		foreach( $this->order as $column ) {
-			$ord .= "$d`$table`.`" . $db->escape( $column ) . '`' . ( !in_array( $column, $this->orderDesc ) ? : ' DESC' );
+		foreach( (array)$this->order as $column ) {
+			$ord .= "$d`$table`.`" . $db->escape( $column ) . '`' . ( !in_array( $column, $this->orderDesc ) ? '' : ' DESC' );
 			$d = ', ';
 		}
 		return $ord;
@@ -219,23 +212,29 @@ class Query extends Paginator {
 	 * В формате ключ = значение или строка.
 	 * В строке можно передавать более сложные условия, но тогда должна быть подготовлена (MySQL->escape и т.п.)
 	 *
-	 * @param string|array $conditions
+	 * @param array $conditions
+	 *
+	 * @throws \Difra\Exception
 	 */
 	public function addConditions( $conditions ) {
 
-		if( !$conditions or empty( $conditions ) ) {
-			return;
-		}
 		if( !is_array( $conditions ) ) {
-			$this->conditions[] = $conditions;
+			throw new Exception( 'Difra\Unify\Query->addConditions() accepts only array as parameter.' );
+		}
+		if( empty( $conditions ) ) {
 			return;
 		}
 		foreach( $conditions as $k => $cond ) {
-			if( !is_numeric( $k ) ) {
-				$this->conditions[$k] = $cond;
-			} else {
-				$this->conditions[] = $cond;
-			}
+			$this->addCondition( $k, $cond );
+		}
+	}
+
+	public function addCondition( $condition, $value = null ) {
+
+		if( is_null( $value ) ) {
+			$this->conditions[] = $condition;
+		} else {
+			$this->conditions[$condition] = $value;
 		}
 	}
 

@@ -4,12 +4,6 @@ namespace Difra;
 
 use Difra\Envi\Action;
 
-/**
- * Получение ajax-запросов, отправка ответов, отправка экшенов для Ajaxer.js
- * Class Ajax
- *
- * @package Difra
- */
 class Ajax {
 
 	public $isAjax = false;
@@ -20,11 +14,12 @@ class Ajax {
 	private $problem = false;
 
 	/**
-	 * Конструктор
+	 * Constructor
 	 */
 	public function __construct() {
 
 		if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) {
+			// Ajaxer request
 			$this->isAjax = true;
 			$parameters = $this->getRequest();
 			if( empty( $parameters ) ) {
@@ -40,6 +35,7 @@ class Ajax {
 				}
 			}
 		} elseif( isset( $_POST['_method'] ) and $_POST['_method'] == 'iframe' ) {
+			// Form came via IFrame
 			$this->isAjax = true;
 			$this->isIframe = true;
 			$this->parameters = $_POST;
@@ -81,12 +77,13 @@ class Ajax {
 	}
 
 	/**
-	 * Парсит параметр и складывает его в $arr.
-	 * Поддерживает добавление параметров с ключем вида name[abc][]
+	 * Parses parameter and puts it into $arr.
+	 * Subroutine for constructor.
+	 * Supports parameters like name[abc][]
 	 *
-	 * @param array  $arr
-	 * @param string $k
-	 * @param mixed  $v
+	 * @param array  $arr Working array
+	 * @param string $k   Parameter key
+	 * @param mixed  $v   Parameter value
 	 */
 	private function parseParam( &$arr, $k, $v ) {
 
@@ -104,7 +101,9 @@ class Ajax {
 	}
 
 	/**
-	 * Рекурсивная функция для складывания элементов в массив.
+	 * Recursively put parameters to array.
+	 * Subroutine for parseParam().
+	 *
 	 * @param array $arr
 	 * @param array $keys
 	 * @param mixed $v
@@ -129,8 +128,8 @@ class Ajax {
 	}
 
 	/**
-	 * Синглтон
-	 * @static
+	 * Singleton
+	 *
 	 * @return Ajax
 	 */
 	static function getInstance() {
@@ -140,7 +139,7 @@ class Ajax {
 	}
 
 	/**
-	 * Получает данные от ajaxer
+	 * Get data from ajaxer
 	 *
 	 * @return array
 	 */
@@ -154,10 +153,11 @@ class Ajax {
 	}
 
 	/**
-	 * Возвращает значение параметра или null, если параметр не найден
+	 * Get parameter value
 	 *
-	 * @param string $name                Имя параметра
-	 * @return string|array|null
+	 * @param string $name Parameter name
+	 *
+	 * @return mixed
 	 */
 	public function getParam( $name ) {
 
@@ -165,10 +165,11 @@ class Ajax {
 	}
 
 	/**
-	 * Добавляет ajax-ответ
+	 * Adds ajax reply.
 	 *
-	 * @param string $param                Имя параметра
-	 * @param mixed  $value                Значение параметра
+	 * @param string $param Parameter name
+	 * @param mixed  $value Parameter value
+	 *
 	 * @return void
 	 */
 	public function setResponse( $param, $value ) {
@@ -177,7 +178,7 @@ class Ajax {
 	}
 
 	/**
-	 * Возвращает ответ в json для обработки на стороне клиента
+	 * Returns ajaxer actions for execution on browser side.
 	 *
 	 * @return string
 	 */
@@ -200,8 +201,10 @@ class Ajax {
 	 */
 
 	/**
-	 * Добавляет специальный ответ
-	 * @param array $action                Массив с action (типом ответа) и нужными данными
+	 * Adds ajaxer action to ajax reply data.
+	 *
+	 * @param array $action Ajaxer actions array.
+	 *
 	 * @return void
 	 */
 	private function addAction( $action ) {
@@ -210,7 +213,7 @@ class Ajax {
 	}
 
 	/**
-	 * Возвращает true, если в action'ах есть действия с ошибками обработки формы
+	 * Returns true if answer contains 'required' or 'invalid' answers.
 	 *
 	 * @return bool
 	 */
@@ -220,7 +223,7 @@ class Ajax {
 	}
 
 	/**
-	 * Очистка данных ajax-ответа
+	 * Clean ajax answer data
 	 *
 	 * @param bool $problem
 	 */
@@ -232,8 +235,10 @@ class Ajax {
 	}
 
 	/**
-	 * Показать сообщение
-	 * @param string $message        Текст сообщения
+	 * Display notification message.
+	 *
+	 * @param string $message Message text
+	 *
 	 * @return void
 	 */
 	public function notify( $message ) {
@@ -248,8 +253,10 @@ class Ajax {
 	}
 
 	/**
-	 * Показать ошибку
-	 * @param string $message        Текст ошибки
+	 * Display error message.
+	 *
+	 * @param string $message Error message text.
+	 *
 	 * @return void
 	 */
 	public function error( $message ) {
@@ -264,8 +271,11 @@ class Ajax {
 	}
 
 	/**
-	 * Не заполнено необходимое поле
-	 * @param string $name                Имя (name) элемента формы, который нужно заполнить
+	 * Required field is not filled.
+	 * Adds .problem class.
+	 *
+	 * @param string $name Form field name
+	 *
 	 * @return void
 	 */
 	public function required( $name ) {
@@ -278,26 +288,32 @@ class Ajax {
 	}
 
 	/**
-	 * Не корректные данные формы
-	 * @param string $name                Имя (name) элемента формы, заполненного не верно
-	 * @param string $message             Текст ошибки
+	 * Set incorrect field status for form element
+	 *
+	 * @param string $name    Form element name
+	 *
 	 * @return void
 	 */
-	public function invalid( $name, $message = null ) {
+	public function invalid( $name ) {
 
 		$this->problem = true;
 		$action = array( 'action' => 'invalid', 'name' => $name );
-		if( $message ) {
-			$action['message'] = $message;
-		}
 		$this->addAction( $action );
 	}
 
 	/**
-	 * Сообщение рядом с элементом формы
-	 * @param $name
-	 * @param $message
-	 * @param $class
+	 * Show status for form element
+	 * Element should be enclosed in .container element with .status element.
+	 * HTML sample:
+	 * <div class="container">
+	 *        <input name="SomeName" placeholder="Field">
+	 *        <span class="status">Please fill this field</span>
+	 * </div>
+	 *
+	 * @param string $name    Form element name
+	 * @param string $message Message to display in .status element
+	 * @param string $class   Class name to add to element
+	 *
 	 * @return void
 	 */
 	public function status( $name, $message, $class ) {
@@ -311,8 +327,10 @@ class Ajax {
 	}
 
 	/**
-	 * Перенаправление
-	 * @param string $url                URL, по которому будет сделано перенаправление
+	 * Redirect
+	 *
+	 * @param string $url
+	 *
 	 * @return void
 	 */
 	public function redirect( $url ) {
@@ -324,7 +342,7 @@ class Ajax {
 	}
 
 	/**
-	 * Мягко обновить текущую страницу
+	 * Soft refresh current page
 	 */
 	public function refresh() {
 
@@ -332,7 +350,8 @@ class Ajax {
 	}
 
 	/**
-	 * Перегрузить текущую страницу
+	 * Reload current page
+	 *
 	 * @return void
 	 */
 	public function reload() {
@@ -343,9 +362,10 @@ class Ajax {
 	}
 
 	/**
-	 * Создать оверлей со следующим html-содержимым
+	 * Show html content in overlay
 	 *
-	 * @param string $html                Содержимое innerHTML оверлея
+	 * @param string $html innerHTML content
+	 *
 	 * @return void
 	 */
 	public function display( $html ) {
@@ -357,9 +377,11 @@ class Ajax {
 	}
 
 	/**
-	 * Записать содержимое $html в элемент $target
-	 * @param string $target              Селектор элемента в формате jQuery, например '#targetId'
-	 * @param string $html                Содержимое для innerHTML
+	 * Write $html contents to element $target
+	 *
+	 * @param string $target jQuery element selector (e.g. '#targetId')
+	 * @param string $html   Content for innerHTML
+	 *
 	 * @return void
 	 */
 	public function load( $target, $html ) {
@@ -372,7 +394,7 @@ class Ajax {
 	}
 
 	/**
-	 * Закрывает аякс-попап
+	 * Close overlay
 	 */
 	public function close() {
 
@@ -382,7 +404,7 @@ class Ajax {
 	}
 
 	/**
-	 * Очистка формы
+	 * Clean form
 	 */
 	public function reset() {
 
@@ -392,7 +414,7 @@ class Ajax {
 	}
 
 	/**
-	 * Вывод окошка «вы уверены? да/нет»
+	 * Display confirmation window (Are you sure? [Yes] [No])
 	 *
 	 * @param $text
 	 */
@@ -406,8 +428,20 @@ class Ajax {
 				       '<div>' . $text . '</div>' .
 				       '<input type="submit" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-yes' )
 				       . '"/>' .
-				       '<input type="button" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
+				       '<input type="button" value="' . Locales::getInstance()
+									->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
 				       '</form>'
+				  ) );
+	}
+
+	/**
+	 * @param $script
+	 */
+	public function exec( $script ) {
+
+		$this->addAction( array(
+				       'action' => 'exec',
+				       'script' => $script
 				  ) );
 	}
 }

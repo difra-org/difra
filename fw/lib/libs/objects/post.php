@@ -18,4 +18,5 @@ class Post {
 	public $additionals = array();
 	/** @var Comment[] */
 	public $comments = array();
+	public $oldLink = null;
 }

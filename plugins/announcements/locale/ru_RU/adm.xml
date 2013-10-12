@@ -2,46 +2,45 @@
 	<announcements>
 		<dates>
 			<weekdays>
-				<day_0>Пн</day_0>
-				<day_1>Вт</day_1>
-				<day_2>Ср</day_2>
-				<day_3>Чт</day_3>
-				<day_4>Пт</day_4>
-				<day_5>Сб</day_5>
-				<day_6>Вс</day_6>
-				<fullDay_0>Понедельник</fullDay_0>
-				<fullDay_1>Вторник</fullDay_1>
-				<fullDay_2>Среда</fullDay_2>
-				<fullDay_3>Четверг</fullDay_3>
-				<fullDay_4>Пятница</fullDay_4>
-				<fullDay_5>Суббота</fullDay_5>
-				<fullDay_6>Воскресенье</fullDay_6>
+				<day_0>Вс</day_0>
+				<day_1>Пн</day_1>
+				<day_2>Вт</day_2>
+				<day_3>Ср</day_3>
+				<day_4>Чт</day_4>
+				<day_5>Пт</day_5>
+				<day_6>Сб</day_6>
+				<fullDay_0>Воскресенье</fullDay_0>
+				<fullDay_1>Понедельник</fullDay_1>
+				<fullDay_2>Вторник</fullDay_2>
+				<fullDay_3>Среда</fullDay_3>
+				<fullDay_4>Четверг</fullDay_4>
+				<fullDay_5>Пятница</fullDay_5>
+				<fullDay_6>Суббота</fullDay_6>
 			</weekdays>
 			<months>
-				<month_01>января</month_01>
-				<month_02>февраля</month_02>
-				<month_03>марта</month_03>
-				<month_04>апреля</month_04>
-				<month_05>мая</month_05>
-				<month_06>июня</month_06>
-				<month_07>июля</month_07>
-				<month_08>августа</month_08>
-				<month_09>сентября</month_09>
-				<month_10>октября</month_10>
-				<month_11>ноября</month_11>
-				<month_12>декабря</month_12>
+				<month_01 id="01">января</month_01>
+				<month_02 id="02">февраля</month_02>
+				<month_03 id="03">марта</month_03>
+				<month_04 id="04">апреля</month_04>
+				<month_05 id="05">мая</month_05>
+				<month_06 id="06">июня</month_06>
+				<month_07 id="07">июля</month_07>
+				<month_08 id="08">августа</month_08>
+				<month_09 id="09">сентября</month_09>
+				<month_10 id="10">октября</month_10>
+				<month_11 id="11">ноября</month_11>
+				<month_12 id="12">декабря</month_12>
 			</months>
 		</dates>
 		<in>в</in>
 		<price>Стоимость билетов:</price>
 		<address>Адрес:</address>
 		<phone>Справки по телефону:</phone>
-		<fromTo>—</fromTo>
+		<fromTo> — </fromTo>
 		<addEvent>Добавить событие</addEvent>
+		<editEvent>Редактировать событие</editEvent>
 		<archiveLink>Архив событий</archiveLink>
 		<archive>Архив</archive>
-
-
 
 		<adm>
 			<announcements>Анонсы</announcements>

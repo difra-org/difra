@@ -343,14 +343,16 @@ Class Announcement {
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
 
-		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . "
-                    FROM `announcements` an
-                    LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
-                    LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
-                    LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
-                    " . $groupJoin . "
-                    " . $where . "
-                    ORDER BY (an.`endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d 00:00:00')) DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
+		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . ",
+				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`
+                    		FROM `announcements` an
+                    			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
+                    			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
+                    			LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
+                    		" . $groupJoin . "
+                    		" . $where . "
+                    			ORDER BY endDate>=CURRENT_TIMESTAMP DESC,
+                    			IF(endDate>=CURRENT_TIMESTAMP,sortDate,''), sortDate DESC, priority DESC LIMIT " .
 			intval( $limit );
 
 		$res = $db->fetch( $query );
@@ -445,15 +447,17 @@ Class Announcement {
 			$groupJoin = " LEFT JOIN `groups` AS `g` ON g.`id`=an.`group` ";
 		}
 
-		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . "
-                    FROM `announcements` an
-                    LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
-                    LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
-                    LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
-                    " . $groupJoin . "
-                    WHERE an.`visible`=1 AND an.`beginDate`<=NOW() AND an.`category`='" . intval( $categoryId ) . "'
-                    ORDER BY (an.`endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d 00:00:00')) DESC, an.`fromEventDate` ASC, an.`priority` DESC LIMIT " .
-			intval( ( $page - 1 ) * $perPage ) . "," . intval( $perPage );
+		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . ",
+				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`
+                    		FROM `announcements` an
+                    			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
+                    			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
+                    			LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
+                    		" . $groupJoin . "
+                    		WHERE an.`visible`=1 AND an.`beginDate`<=NOW() AND an.`category`='" . intval( $categoryId ) . "'
+                    		ORDER BY endDate>=CURRENT_TIMESTAMP DESC,
+                    			IF(endDate>=CURRENT_TIMESTAMP,sortDate,''), sortDate DESC, priority DESC LIMIT " .
+					intval( ( $page - 1 ) * $perPage ) . "," . intval( $perPage );
 
 		$res = $db->fetch( $query );
 		$eventsArray = false;
@@ -576,7 +580,7 @@ Class Announcement {
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'category', $this->category ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'location', $this->location ) );
 
-		$eventNode->appendChild( $node->ownerDocument->createElement( 'title', $this->title ) );
+		$eventNode->appendChild( $node->ownerDocument->createElement( 'title', htmlspecialchars( $this->title ) ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'link', $this->id . '-' . $this->link ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'shortDescription', $this->shortDescription ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'description', $this->description ) );
@@ -604,6 +608,9 @@ Class Announcement {
 		$dateNode = $eventNode->appendChild( $node->ownerDocument->createElement( 'endDate',
 			$Locale->getDateFromMysql( $this->endDate . ' 00:00:00' ) ) );
 		$this->reFormateDate( $dateNode, $this->endDate );
+
+		$isoDateNode = $eventNode->appendChild( $eventNode->ownerDocument->createElement( 'isoDate' ) );
+		$this->_getIsoDate( $isoDateNode );
 
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'visible', $this->visible ) );
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'priority', $this->priority ) );
@@ -739,11 +746,16 @@ Class Announcement {
 	 */
 	private function reFormateDate( $node, $date ) {
 
-		$date = strtotime( $date );
-		$node->setAttribute( 'd', date( 'j', $date ) );
-		$node->setAttribute( 'm', date( 'm', $date ) );
-		$node->setAttribute( 'y', date( 'y', $date ) );
-		$node->setAttribute( 'w', date( 'w', $date ) );
+		$timeStamp = strtotime( $date );
+
+		$date = date( 'd|m|y|w|Y', $timeStamp );
+		$expDate = explode( '|', $date );
+
+		$node->setAttribute( 'd', $expDate[0] );
+		$node->setAttribute( 'm', $expDate[1] );
+		$node->setAttribute( 'y', $expDate[2] );
+		$node->setAttribute( 'w', $expDate[3] );
+		$node->setAttribute( 'Y', $expDate[4] );
 	}
 
 	/**
@@ -783,6 +795,14 @@ Class Announcement {
 	}
 
 	/**
+	 * Вовзращает id владельца анонса
+	 * @return null
+	 */
+	public function getOwner() {
+		return $this->user;
+	}
+
+	/**
 	 * Возвращает короткое описание
 	 * @return string
 	 */
@@ -803,34 +823,43 @@ Class Announcement {
 			$title .= $this->locationData['name'] . '. ';
 		}
 
-		if( $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
+		if( $this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
 
-			$title .= date( 'd', strtotime( $this->fromEventDate ) ) . ' ';
+			$tempDateFrom = date( 'd|m', strtotime( $this->fromEventDate ) );
+			$tempDateEvent = date( 'd|m', strtotime( $this->eventDate ) );
+			$exFromEventDate = explode( '|', $tempDateFrom );
+			$exEventDate = explode( '|', $tempDateEvent );
+
+			$title .= $exFromEventDate[0]. ' ';
 
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->fromEventDate ) ) . "']" );
+					$exFromEventDate[1] . "']" ) . ' ';
 
-			$title .= $Locale->getXPath( 'announcements/fromTo' );
-			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
+			$title .= $Locale->getXPath( 'announcements/fromTo' ) . ' ';
+			$title .= $exEventDate[0] . ' ';
 
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->eventDate ) ) . "']" );
+					$exEventDate[1] . "']" );
 
 		} else {
-			// j
-			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" .
-					date( 'w', strtotime( $this->eventDate ) ) . "']" ) . ', ';
 
-			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
+			$tempDateEvent = date( 'w|d|m', strtotime( $this->eventDate ) );
+			$exEventDate = explode( '|', $tempDateEvent );
+
+
+			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" .
+					$exEventDate[0] . "']" ) . ', ';
+
+			$title .= $exEventDate[1] . ' ';
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->eventDate ) ) . "']" );
+					$exEventDate[2] . "']" );
 		}
 
 		if( !empty( $this->additionalData ) ) {
 			foreach( $this->additionalData as $k => $data ) {
 				if( isset( $data['alias'] ) && $data['alias'] == 'eventTime' ) {
-					$title .= $Locale->getXPath( 'announcements/in' );
-					$title .= $data['value'];
+					$title .= ' ' . $Locale->getXPath( 'announcements/in' );
+					$title .= ' ' . $data['value'];
 				}
 			}
 		}
@@ -845,33 +874,81 @@ Class Announcement {
 
 		$title = '';
 		$Locale = \Difra\Locales::getInstance();
-		if( $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
+		if( $this->fromEventDate != '' && $this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != $this->eventDate ) {
 
-			$title .= date( 'd', strtotime( $this->fromEventDate ) ) . ' ';
+			$fromEventDate = date( 'd|m', strtotime( $this->fromEventDate ) );
+			$exFromEventDate = explode( '|', $fromEventDate );
+
+			$eventDate = date( 'd|m', strtotime( $this->eventDate ) );
+			$exEventDate = explode( '|', $eventDate );
+
+			$title .= $exFromEventDate[0] . '&#160;';
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->fromEventDate ) ) . "']" );
+					$exFromEventDate[1] . "']" );
 			$title .= $Locale->getXPath( 'announcements/fromTo' );
-			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
+			$title .= $exEventDate[0] . '&#160;';
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->eventDate ) ) . "']" );
+					$exEventDate[1] . "']" );
 		} else {
-			// j
+
+			$eventDate = date( 'w|m', strtotime( $this->eventDate ) );
+			$exEventDate = explode( '|', $eventDate );
+
 			$title .= $Locale->getXPath( "announcements/dates/weekdays/*[name()='day_" .
-					date( 'w', strtotime( $this->eventDate ) ) . "']" ) . ', ';
-			$title .= date( 'd', strtotime( $this->eventDate ) ) . ' ';
+					$exEventDate[0] . "']" ) . ',&#160;';
+			$title .= date( 'd', strtotime( $this->eventDate ) ) . '&#160;';
 			$title .= $Locale->getXPath( "announcements/dates/months/*[name()='month_" .
-					date( 'm', strtotime( $this->eventDate ) ) . "']" );
+					$exEventDate[1] . "']" );
 		}
 
 		if( !empty( $this->additionalData ) ) {
 			foreach( $this->additionalData as $k => $data ) {
 				if( isset( $data['alias'] ) && $data['alias'] == 'eventTime' ) {
-					$title .= $Locale->getXPath( 'announcements/in' );
-					$title .= $data['value'];
+					$title .= '&#160;' . $Locale->getXPath( 'announcements/in' );
+					$title .= '&#160;' . $data['value'];
 				}
 			}
 		}
 
 		return $title;
+	}
+
+	/**
+	 * Возвращает значение даты ивента
+	 * @return null
+	 */
+	public function getEventDate() {
+		return $this->eventDate;
+	}
+
+	/**
+	 * Устанавливает дату в формате ISO 8601
+	 * @param \DOMNode $node
+	 */
+	private function _getIsoDate( \DOMNode $node ) {
+
+		//TODO: Переформатирование даты не с помощью date()!
+
+		if( !is_null( $this->fromEventDate ) && !is_null( $this->eventDate ) && $this->fromEventDate!='0000-00-00 00:00:00' ) {
+			$node->setAttribute( 'fromDate', date( 'c', strtotime( $this->fromEventDate ) ) );
+			$node->setAttribute( 'endDate', date( 'c', strtotime( $this->eventDate ) ) );
+		} else {
+
+			if( !empty( $this->additionalData ) ) {
+				foreach( $this->additionalData as $k=>$addData ) {
+					if( $addData['alias'] == 'eventTime' ) {
+						$dt = \DateTime::createFromFormat( 'H:i', $addData['value'] );
+						if( $dt && $dt->format( 'H:i' ) == $addData['value'] ) {
+
+							$reformateDate = str_replace( '00:00:00', $addData['value'] . ':00', $this->eventDate );
+							$node->setAttribute( 'endDate', date( 'c', strtotime( $reformateDate ) ) );
+						}
+					}
+				}
+			}
+
+			//$node->setAttribute( 'endDate', date( 'c', strtotime( $this->eventDate ) ) );
+		}
+
 	}
 }

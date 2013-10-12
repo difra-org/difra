@@ -92,6 +92,12 @@
 									</xsl:choose>
 								</td>
 								<td class="actions">
+									<xsl:if test="@active=0">
+										<a href="/adm/users/list/activate/{@id}" class="button ajaxer">
+											<xsl:value-of select="$locale/auth/adm/activate"/>
+										</a>
+									</xsl:if>
+
 									<xsl:choose>
 										<xsl:when test="@banned=1">
 											<a href="/adm/users/list/unban/{@id}"

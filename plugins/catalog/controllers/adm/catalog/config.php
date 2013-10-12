@@ -15,6 +15,8 @@ class AdmCatalogConfigController extends \Difra\Controller {
 		$configNode->setAttribute( 'maxdepth', $conf->getValue( 'catalog', 'maxdepth' ) );
 		$configNode->setAttribute( 'perpage', $conf->getValue( 'catalog', 'perpage' ) );
 		$configNode->setAttribute( 'hideempty', $conf->getValue( 'catalog', 'hideempty' ) );
+		$configNode->setAttribute( 'allownoimage', $conf->getValue( 'catalog', 'allownoimage' ) );
+		$configNode->setAttribute( 'usescale', $conf->getValue( 'catalog', 'usescale' ) );
 		$imgSizes = \Difra\Plugins\Catalog\Item::getSizes();
 		$imgSizes2 = array();
 		foreach( $imgSizes as $k => $arr ) {
@@ -28,7 +30,8 @@ class AdmCatalogConfigController extends \Difra\Controller {
 	}
 
 	public function saveAjaxAction( \Difra\Param\AjaxInt $maxdepth, \Difra\Param\AjaxInt $perpage, \Difra\Param\AjaxString $imgSizes,
-					\Difra\Param\AjaxCheckbox $hideempty ) {
+					\Difra\Param\AjaxCheckbox $hideempty, \Difra\Param\AjaxCheckbox $allownoimage,
+					\Difra\Param\AjaxCheckbox $usescale ) {
 
 		$imgSizes2 = explode( "\n", str_replace( "\r", '', $imgSizes ) );
 		$imgSizes3 = array();
@@ -47,6 +50,8 @@ class AdmCatalogConfigController extends \Difra\Controller {
 		$conf->setValue( 'catalog', 'perpage', $perpage->val() );
 		$conf->setValue( 'catalog', 'hideempty', $hideempty->val() );
 		$conf->setValue( 'catalog', 'imgSizes', $imgSizes3 );
+		$conf->setValue( 'catalog', 'allownoimage', $allownoimage->val() );
+		$conf->setValue( 'catalog', 'usescale', $usescale->val() );
 		$this->ajax->notify( $this->locale->getXPath( 'catalog/adm/config/saved' ) );
 	}
 }

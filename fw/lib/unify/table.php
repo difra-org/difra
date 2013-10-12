@@ -105,6 +105,7 @@ class Table extends Storage {
 			$goalName = $goal ? $goal['key'] : false;
 			$goalColumn = $goal ? $goal['value'] : false;
 			$current = each( $currentColumns );
+			/** @var array|bool $currentColumn */
 			$currentColumn = $current ? $current['value'] : false;
 			$currentName = $currentColumn ? $currentColumn['Field'] : false;
 
@@ -142,7 +143,7 @@ class Table extends Storage {
 				);
 			};
 			if( static::getColumnDefinitionFromDesc( $currentColumn ) != static::getColumnDefinition( $goalName, $goalColumn ) ) {
-				// or column exists, but differs from goal
+				// column exists, but differs from goal
 				return array(
 					'status' => 'alter',
 					'action' => 'modify column',
@@ -160,62 +161,45 @@ class Table extends Storage {
 		$currentIndexes = static::getCurrentIndexes();
 		$goalIndexes = static::getIndexes();
 		$previousIndex = null;
-		while( true ) {
-			$goal = each( $goalIndexes );
-			$goalName = $goal ? $goal['key'] : false;
-			$goalIndex = $goal ? $goal['value'] : false;
-			$current = each( $currentIndexes );
-			$currentName = $current ? $current['key'] : false;
-			$currentIndex = $current ? $current['value'] : false;
-
-			if( $goalIndex === false and $currentIndex === false ) {
-				break;
+		if( !empty( $currentIndexes ) ) {
+			foreach( $currentIndexes as $currentName => $currentIndex ) {
+				if( !isset( $goalIndexes[$currentName] ) ) {
+					// index does not exist in goal
+					return array(
+						'status' => 'alter',
+						'action' => 'drop key',
+						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` DROP KEY `' . $db->escape( $currentName ) . '`'
+					);
+				}
 			}
-			if( $goalIndex === false ) {
-				// index does not exist in goal
-				return array(
-					'status' => 'alter',
-					'action' => 'drop key',
-					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` DROP KEY `' . $db->escape( $currentName ) . '`'
-				);
-			}
-			if( !$currentName or ( $goalName != $currentName and !isset( $currentIndexes[$goalName] ) ) ) {
-				// goal index does not exist in db
-				return array(
-					'status' => 'alter',
-					'action' => 'add key',
-					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD ' . self::getIndexDefinition(
-						$goalName,
-						$goalIndex
-					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
-				);
-			};
-			if( $goalName != $currentName ) {
-				// index exists in wrong place
-				return array(
-					'status' => 'alter',
-					'action' => 'move key',
-					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY INDEX ' . self::getIndexDefinition(
-						$goalName,
-						$goalIndex
-					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
-				);
-			};
-			if( static::getIndexDefinitionFromDesc( $currentIndex ) != static::getIndexDefinition( $goalName, $goalIndex ) ) {
-				// or index exists, but differs from goal
-				echo 'current index: ' . static::getIndexDefinitionFromDesc( $currentIndex ) . "\n";
-				echo 'goal index: ' . static::getIndexDefinition( $goalName, $goalIndex ) . "\n";
-				return array(
-					'status' => 'alter',
-					'action' => 'modify key',
-					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY INDEX ' . self::getColumnDefinition(
-						$goalName,
-						$goalIndex
-					) . ( $previousIndex ? ' AFTER `' . $db->escape( $previousIndex ) . '`' : ' FIRST' )
-				);
-			};
+		}
+		if( !empty( $goalIndexes ) ) {
+			foreach( $goalIndexes as $goalName => $goalIndex ) {
 
-			$previousIndex = $currentName;
+				if( !isset( $currentIndexes[$goalName] ) ) {
+					// goal index does not exist in db
+					return array(
+						'status' => 'alter',
+						'action' => 'add key',
+						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD ' . self::getIndexDefinition(
+							$goalName,
+							$goalIndex
+						)
+					);
+				};
+
+				if(
+					static::getIndexDefinition( $goalName, $goalIndex ) !=
+					static::getIndexDefinition( $goalName, $currentIndexes[$goalName] )
+				) {
+					// index exists, but differs from goal
+					return array(
+						'status' => 'alter',
+						'action' => 'drop key',
+						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` DROP KEY `' . $db->escape( $goalName ) . '`'
+					);
+				};
+			}
 		}
 
 		return array( 'status' => 'ok' );
@@ -234,11 +218,98 @@ class Table extends Storage {
 		}
 	}
 
+	/** @var string[] List of supported key types */
+	static private $keyTypes = array(
+		'index',
+		'primary',
+		'unique',
+		'fulltext',
+		'foreign'
+	);
+
+	/**
+	 * Get list of columns from self::$propertiesList
+	 *
+	 * @return array
+	 */
+	protected static function getColumns() {
+
+		static $result = null;
+		if( !is_null( $result ) ) {
+			return $result;
+		}
+		$result = array();
+		foreach( static::$propertiesList as $name => $prop ) {
+			$type = !is_array( $prop ) ? $prop : $prop['type'];
+			if( !in_array( $type, self::$keyTypes ) ) {
+				$result[$name] = $prop;
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Get list of indexes from self::$propertiesList
+	 *
+	 * @return array
+	 */
+	protected static function getIndexes() {
+
+		$result = null;
+		if( !is_null( $result ) ) {
+			return $result;
+		}
+		$result = array();
+		if( $primary = static::getPrimary() ) {
+			$result['PRIMARY'] = array( 'type' => 'primary', 'columns' => $primary );
+		}
+		foreach( static::$propertiesList as $name => $prop ) {
+			if( !is_array( $prop ) ) {
+			} elseif( in_array( $prop['type'], self::$keyTypes ) ) {
+				$result[$name] = array( 'type' => $prop['type'], 'columns' => isset( $prop['columns'] ) ? $prop['columns'] : $name );
+			} else {
+				foreach( self::$keyTypes as $keyType ) {
+					if( $keyType == 'primary' ) {
+						continue;
+					}
+					if( isset( $prop[$keyType] ) and $prop[$keyType] ) {
+						$result[$name] = array( 'type' => $keyType, 'columns' => $name );
+						break;
+					}
+				}
+			}
+		}
+		return $result;
+	}
+
+	/**
+	 * Get string for Primary Key create/alter
+	 *
+	 * @return bool|string
+	 */
+	private static function getCreatePrimary() {
+
+		if( !$primary = static::getPrimary() ) {
+			return false;
+		}
+
+		return '  PRIMARY KEY (`' . implode( '`,`', (array)$primary ) . '`)';
+	}
+
+	/**
+	 * Create database table
+	 */
+	public static function createDb() {
+
+		\Difra\MySQL::getInstance()->query( self::getDbCreate() );
+	}
+
 	/**
 	 * Generates SQL string for column create/alter
 	 *
 	 * @param string       $name        Column name
 	 * @param string|array $prop        Type or properties array
+	 *
 	 * @return string
 	 */
 	private static function getColumnDefinition( $name, $prop ) {
@@ -268,6 +339,7 @@ class Table extends Storage {
 	 * Generates SQL string for column create/alter
 	 *
 	 * @param array $desc Row from DESC `table` answer
+	 *
 	 * @return string
 	 */
 	private static function getColumnDefinitionFromDesc( $desc ) {
@@ -290,20 +362,21 @@ class Table extends Storage {
 	 *
 	 * @param $name
 	 * @param $prop
+	 *
 	 * @return string
 	 * @throws \Difra\Exception
 	 */
 	private static function getIndexDefinition( $name, $prop ) {
 
 		switch( $prop['type'] ) {
-		case 'unique':
-			return 'UNIQUE KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
-		case 'index':
-			return 'KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
-		case 'primary':
-			return 'PRIMARY KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
-		case 'fulltext':
-			return 'FULLTEXT KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)';
+			case 'unique':
+				return 'UNIQUE KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
+			case 'index':
+				return 'KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
+			case 'primary':
+				return 'PRIMARY KEY (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
+			case 'fulltext':
+				return 'FULLTEXT KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
 //			case 'foreign':
 //				/** @var Item $targetObj */
 //				$targetObj = Storage::getClass( $prop['target'] );
@@ -339,7 +412,7 @@ class Table extends Storage {
 		$result = array();
 		foreach( $dbIndexes as $row ) {
 			if( !isset( $result[$row['Key_name']] ) ) {
-				if( $row['Key_name'] = 'PRIMARY' ) {
+				if( $row['Key_name'] == 'PRIMARY' ) {
 					$type = 'primary';
 				} elseif( $row['Non_unique'] == '0' ) {
 					$type = 'unique';
@@ -365,6 +438,7 @@ class Table extends Storage {
 	 * Returns default size for SQL type, e.g. f('int') == (11)
 	 *
 	 * @param string $type
+	 *
 	 * @return string
 	 */
 	private static function getDefaultSizeForSqlType( $type ) {
@@ -402,88 +476,5 @@ class Table extends Storage {
 		$lines = array_merge( $columns, $indexes );
 		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		return $create;
-	}
-
-	/** @var string[] List of supported key types */
-	static private $keyTypes = array(
-		'index',
-		'primary',
-		'unique',
-		'fulltext',
-		'foreign'
-	);
-
-	/**
-	 * Get list of columns from self::$propertiesList
-	 *
-	 * @return array
-	 */
-	private static function getColumns() {
-
-		static $result = null;
-		if( !is_null( $result ) ) {
-			return $result;
-		}
-		$result = array();
-		foreach( static::$propertiesList as $name => $prop ) {
-			$type = !is_array( $prop ) ? $prop : $prop['type'];
-			if( !in_array( $type, self::$keyTypes ) ) {
-				$result[$name] = $prop;
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * Get list of indexes from self::$propertiesList
-	 *
-	 * @return array
-	 */
-	private static function getIndexes() {
-
-		$result = null;
-		if( !is_null( $result ) ) {
-			return $result;
-		}
-		$result = array();
-		if( $primary = static::getPrimary() ) {
-			$result['primary'] = array( 'type' => 'primary', 'columns' => $primary );
-		}
-		foreach( static::$propertiesList as $name => $prop ) {
-			if( !is_array( $prop ) ) {
-			} elseif( in_array( $prop['type'], self::$keyTypes ) ) {
-				$result[$name] = $prop;
-			} else {
-				foreach( self::$keyTypes as $keyType ) {
-					if( isset( $prop[$keyType] ) and $prop[$keyType] ) {
-						$result[$name] = array( 'type' => $keyType, 'columns' => $name );
-						break;
-					}
-				}
-			}
-		}
-		return $result;
-	}
-
-	/**
-	 * Get string for Primary Key create/alter
-	 *
-	 * @return bool|string
-	 */
-	private static function getCreatePrimary() {
-
-		if( !$primary = static::getPrimary() ) {
-			return false;
-		}
-
-		return '  PRIMARY KEY (`' . implode( '`,`', (array)$primary ) . '`)';
-	}
-
-	/**
-	 * Create database table
-	 */
-	public static function createDb() {
-
-		\Difra\MySQL::getInstance()->query( self::getDbCreate() );
 	}
 }

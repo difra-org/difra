@@ -54,14 +54,17 @@ class View {
 		$itemNode = $controller->root->appendChild( $controller->xml->createElement( 'CatalogItem' ) );
 		$link     = explode( '-', $link, 2 );
 		if( sizeof( $link ) < 2 or !is_numeric( $link[0] ) ) {
-			$controller->view->httpError( 404 );
+			throw new \Difra\View\Exception(404);
+			return;
 		}
 		$item = \Difra\Plugins\Catalog\Item::get( $link[0] );
 		if( !$item->load() ) {
-			$controller->view->httpError( 404 );
+			throw new \Difra\View\Exception(404);
+			return;
 		}
 		if( rawurldecode( $link[1] ) != $item->getLink() ) {
-			$controller->view->httpError( 404 );
+			throw new \Difra\View\Exception(404);
+			return;
 		}
 		$item->loadExt();
 		$item->getXML( $itemNode );

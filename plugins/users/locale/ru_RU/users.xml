@@ -159,6 +159,11 @@
 			<moderator_flag>модератор</moderator_flag>
 			<userDataSaved>Данные пользователя сохранены.</userDataSaved>
 			<userDataSavedPassChanged>Данные пользователя сохранены, пароль изменен.</userDataSavedPassChanged>
+			<activate>Активировать</activate>
+			<mainParams>Основные параметры</mainParams>
+			<addonFields>Дополнительные поля</addonFields>
+			<fieldName>Название дополнительного поля</fieldName>
+			<fieldValue>Значение</fieldValue>
 		</adm>
 		<info>
 			<name>Имя</name>

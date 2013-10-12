@@ -12,6 +12,7 @@ use Difra\Libs\XML\DOM;
 class UserAgent {
 
 	static $agents = array(
+		'OPR' => 'Opera',
 		'Chrome' => 'Chrome',
 		'CriOS' => 'Chrome',
 		'Firefox' => 'Firefox',
@@ -68,7 +69,8 @@ class UserAgent {
 			'agent' => self::getAgent(),
 			'version' => self::getVersion(),
 			'os' => self::getOS(),
-			'engine' => self::getEngine()
+			'engine' => self::getEngine(),
+			'device' => self::getDevice()
 		);
 	}
 
@@ -143,6 +145,7 @@ class UserAgent {
 	}
 
 	private static $os = null;
+	private static $rawOS = null;
 
 	/**
 	 * Возвращает операционную систему пользователя
@@ -156,6 +159,7 @@ class UserAgent {
 		$uaString = self::getUAString();
 		foreach( self::$oses as $os => $osName ) {
 			if( strpos( $uaString, $os ) ) {
+				self::$rawOS = $os;
 				return self::$os = $osName;
 			}
 		}
@@ -268,6 +272,20 @@ class UserAgent {
 		return self::$uaClass = trim( implode( ' ', $uac ) );
 	}
 
+	private static $device = null;
+
+	public static function getDevice() {
+
+		if( !is_null( self::$device ) ) {
+			return self::$device;
+		}
+		$os = self::getOS();
+		if( in_array( self::$rawOS, array( 'iPhone', 'iPad', 'iPod' ) ) ) {
+			return self::$device = self::$rawOS;
+		}
+		return self::$device;
+	}
+
 	public static function setUAString( $string ) {
 
 		self::$uaString = $string;
@@ -279,5 +297,6 @@ class UserAgent {
 		self::$os = null;
 		self::$uaArray = null;
 		self::$uaClass = null;
+		self::$device = null;
 	}
 }

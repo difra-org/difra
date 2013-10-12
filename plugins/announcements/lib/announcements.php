@@ -64,16 +64,23 @@ class Announcements {
 
 		@mkdir( $this->imagePath, 0777, true );
 
-		$Images = \Difra\Libs\Images::getInstance();
-
-		try {
-			$rawImg = $Images->data2image( $fileData );
-		} catch( \Difra\Exception $ex ) {
-			throw new \Difra\Exception( 'Bad image format.' );
+		if( !is_writeable( $this->imagePath ) ) {
+			throw new \Difra\Exception( 'Directory is no writeable!' );
 		}
 
-		$newImg = $Images->createThumbnail( $rawImg, $this->settings['width'], $this->settings['height'], 'png' );
-		$bigImg = $Images->createThumbnail( $rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png' );
+		$Images = \Difra\Libs\Images::getInstance();
+
+		$img = $fileData instanceof \Difra\Param\AjaxFile ? $fileData->val() : $fileData;
+
+		try {
+			$rawImg = $Images->data2image( $img );
+
+			$newImg = $Images->scaleAndCrop( $rawImg, $this->settings['width'], $this->settings['height'], 'png' );
+			$bigImg = $Images->scaleAndCrop( $rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png' );
+
+		} catch( \Difra\Exception $ex ) {
+			throw new \Difra\Exception( 'Bad image format. ' . $ex->getMessage() );
+		}
 
 		try {
 			file_put_contents( $this->imagePath . '/' . $id . '.png', $newImg );
@@ -127,9 +134,15 @@ class Announcements {
 	 * @param \DOMNode $node
 	 * @param bool     $onlyVisible
 	 */
-	public function getAllEventsXML( $node, $onlyVisible = false, $withArchive = false, $limit = 40 ) {
+	public function getAllEventsXML( $node, $onlyVisible = false, $withArchive = false ) {
 
-		$events = \Difra\Plugins\Announcements\Announcement::getAll( $onlyVisible, $withArchive, $limit );
+		$perPageLimit = \Difra\Config::getInstance()->getValue( 'announcements', 'perPage' );
+
+		if( empty( $perPageLimit ) || $perPageLimit == 0 ) {
+			throw new \Difra\Exception( 'No page limit! Reconfigure Announcements plugin.' );
+		}
+
+		$events = \Difra\Plugins\Announcements\Announcement::getAll( $onlyVisible, $withArchive, $perPageLimit );
 		if( !empty( $events ) ) {
 
 			foreach( $events as $k => $object ) {
@@ -156,7 +169,7 @@ class Announcements {
 	public static function getMap() {
 
 		$db = \Difra\MySQL::getInstance();
-		$where = " `visible`=1 AND `beginDate` <= NOW() AND `endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d 00:00:00') ";
+		$where = " `visible`=1 ";
 		$query = "SELECT `id`, `link`, UNIX_TIMESTAMP( `modified` ) AS `mod` FROM `announcements` WHERE " . $where . " ORDER BY `modified`";
 		$res = $db->fetch( $query );
 
@@ -165,7 +178,7 @@ class Announcements {
 		$returnArray = array();
 		foreach( $res as $k => $data ) {
 
-			$link = 'http://' . $mainHost . '/event/' . $data['id'] . '-' . $data['link'];
+			$link = 'http://' . $mainHost . '/events/' . $data['id'] . '-' . $data['link'];
 			$date = date( 'Y-m-d', $data['mod'] );
 			$returnArray[] = array( 'loc' => $link, 'lastmod' => $date );
 		}
@@ -261,6 +274,24 @@ class Announcements {
 	}
 
 	/**
+	 * Проверяет является ли пользователь владельцем анонса
+	 * @param $eventId
+	 * @param $userId
+	 */
+	public function checkOnwer( $eventId, $userId ) {
+
+		if( \Difra\Auth::getInstance()->isModerator() ) {
+			return true;
+		}
+
+		$db = \Difra\MySQL::getInstance();
+		$query = "SELECT `id` FROM `announcements` WHERE `id`='" . intval( $eventId ) . "' AND `user`='" . intval( $userId ) . "'";
+		$res = $db->fetchOne( $query );
+		return !empty( $res ) ? true : false;
+	}
+
+
+	/**
 	 * Возвращает в xml данные анонса события по его ссылке
 	 *
 	 * @param string   $link
@@ -277,7 +308,7 @@ class Announcements {
 
 				$Event->getXML( $node );
 				$node->parentNode->setAttribute( 'title', $Event->getHumanizedTitle() );
-				return true;
+				return $Event;
 			}
 		}
 
@@ -469,6 +500,17 @@ class Announcements {
 				$node->setAttribute( $k, $value );
 			}
 		}
+	}
+
+	/**
+	 * Возвращает владельца ивента из базы данных
+	 * @param $eventId
+	 */
+	public function getOwner( $eventId ) {
+		$db = \Difra\MySQL::getInstance();
+		$query = "SELECT `user` FROM `announcements` WHERE `id`='" . intval( $eventId ) . "'";
+		$res = $db->fetchOne( $query );
+		return !empty( $res ) ? $res : false;
 	}
 
 }

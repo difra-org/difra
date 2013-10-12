@@ -33,10 +33,13 @@ class Search extends Query {
 		}
 		foreach( $result as $k => $v ) {
 			$primary = $v->getPrimaryValue();
-			if( Unify::$objects[$this->objKey][$primary] ) {
+			if( !isset( Unify::$objects[$this->objKey] ) ) {
+				Unify::$objects[$this->objKey] = array();
+			}
+			if( isset( Unify::$objects[$this->objKey][$primary] ) ) {
 				$result[$k] = Unify::$objects[$this->objKey][$primary];
 			} else {
-				Unify::$objects[$this->objKey][$primary] = $v;
+				$result[$k] = Unify::$objects[$this->objKey][$primary] = $v;
 			}
 		}
 		return $result;

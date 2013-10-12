@@ -468,7 +468,7 @@ class Item {
 			return;
 		}
 		$this->name = $name;
-		$this->link = preg_replace( '/[^A-Za-z0-9А-Яа-я-]+/u', '_', $name );
+		$this->link = \Difra\Locales::getInstance()->makeLink( $name );
 		$this->modified = true;
 	}
 
@@ -609,8 +609,12 @@ class Item {
 	public function setImages( $main, $more = null ) {
 
 		$this->cleanImages();
-		$img = $main instanceof \Difra\Param\AjaxFile ? $main->val() : false;
-		$this->addImage( $img, true );
+
+		if( !is_null( $main ) ) {
+			$img = $main instanceof \Difra\Param\AjaxFile ? $main->val() : false;
+			$this->addImage( $img, true );
+		}
+
 		if( !$more ) {
 			return;
 		} elseif( $more instanceof \Difra\Param\AjaxFile ) {
@@ -677,6 +681,8 @@ class Item {
 		@mkdir( $path, 0777, true );
 		$this->save();
 		$this->load();
+		$useScaleAndCrop = \Difra\Config::getInstance()->getValue( 'catalog', 'usescale' );
+
 		try {
 			$rawImg = \Difra\Libs\Images::getInstance()->data2image( $image );
 		} catch( \Difra\Exception $ex ) {
@@ -690,7 +696,13 @@ class Item {
 		$imgId = $db->getLastId();
 		foreach( $this->imgSizes as $k => $size ) {
 			if( $size ) {
-				$newImg = \Difra\Libs\Images::getInstance()->createThumbnail( $rawImg, $size[0], $size[1], 'png' );
+
+				if( is_null( $useScaleAndCrop ) || intval( $useScaleAndCrop ) == 0 ) {
+					$newImg = \Difra\Libs\Images::getInstance()->createThumbnail( $rawImg, $size[0], $size[1], 'png' );
+				} else {
+					$newImg = \Difra\Libs\Images::getInstance()->scaleAndCrop( $rawImg, $size[0], $size[1], 'png' );
+				}
+
 			} else {
 				$newImg = \Difra\Libs\Images::getInstance()->convert( $rawImg, 'png' );
 			}

@@ -171,11 +171,11 @@ abstract class Common {
 
 		$this->connect();
 		if( !is_array( $data ) ) {
-			return $this->realEscape( $data );
+			return $this->realEscape( (string)$data );
 		}
 		$t = array();
-		foreach( $t as $k => $v ) {
-			$t[$this->escape( $k )] = $this->escape( $v );
+		foreach( $data as $k => $v ) {
+			$t[$this->escape( $k )] = $this->escape( (string)$v );
 		}
 		return $t;
 	}

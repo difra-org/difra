@@ -20,73 +20,81 @@
 		<xsl:if test="*">
 			<xsl:variable name="instance" select="/root/menu/@instance"/>
 			<ul>
-				<xsl:for-each select="*[not(@href='') or ./*]">
+				<xsl:for-each select="*[not(@hidden=1) and (not(@href='') or ./*)]">
 					<xsl:sort select="@priority" order="descending"/>
-					<xsl:if test="not(@hidden=1)">
-						<xsl:if test="not(@href='') or */*">
-
-						</xsl:if>
-						<li id="{@id}">
-							<xsl:attribute name="class">
-								<xsl:if test="@sup=1">
-									<xsl:text>sup</xsl:text>
-									<xsl:if test="@selected>0">
-										<xsl:text> </xsl:text>
-									</xsl:if>
+					<xsl:variable name="selected">
+						<xsl:choose>
+							<xsl:when test="@pseudoHref=''">
+								<xsl:text>0</xsl:text>
+							</xsl:when>
+							<xsl:when test="@pseudoHref=/root/@controllerUri">
+								<text>2</text>
+							</xsl:when>
+							<xsl:when test="substring(/root/@controllerUri,1,string-length(@pseudoHref))=@pseudoHref">
+								<text>1</text>
+							</xsl:when>
+							<xsl:otherwise>
+								<xsl:text>0</xsl:text>
+							</xsl:otherwise>
+						</xsl:choose>
+					</xsl:variable>
+					<li id="{@id}">
+						<xsl:copy-of select="@pseudoHref"/>
+						<xsl:copy-of select="/root/@controllerUri"/>
+						<xsl:attribute name="class">
+							<xsl:if test="@sup=1">
+								<xsl:text>sup</xsl:text>
+								<xsl:if test="$selected>0">
+									<xsl:text> </xsl:text>
 								</xsl:if>
-								<xsl:choose>
-									<xsl:when test="@selected=1">
-										<xsl:text>selected</xsl:text>
-									</xsl:when>
-									<xsl:when test="@selected=2">
-										<xsl:text>selected match</xsl:text>
-									</xsl:when>
-								</xsl:choose>
-							</xsl:attribute>
-							<!-- получаем название пункта меню -->
-							<xsl:variable name="title">
-								<xsl:choose>
-									<xsl:when test="@title">
-										<xsl:value-of select="@title"/>
-									</xsl:when>
-									<xsl:otherwise>
-										<xsl:variable name="id" select="@id"/>
-										<xsl:choose>
-											<xsl:when test="$locale/menu/*[name()=$instance]/*[name()=$id]">
-												<xsl:value-of select="$locale/menu/*[name()=$instance]/*[name()=$id]"/>
-											</xsl:when>
-											<xsl:otherwise>
-												<xsl:value-of select="name()"/>
-											</xsl:otherwise>
-										</xsl:choose>
-									</xsl:otherwise>
-								</xsl:choose>
-							</xsl:variable>
+							</xsl:if>
 							<xsl:choose>
-								<xsl:when test="@href=''">
-									<span class="menu_nolink">
-										<xsl:value-of select="$title"/>
-									</span>
+								<xsl:when test="$selected=1">
+									<xsl:text>selected</xsl:text>
 								</xsl:when>
-								<xsl:when test="@href and not(@href=/root/@menuitem)">
-									<a href="{@href}">
-										<xsl:value-of select="$title"/>
-									</a>
+								<xsl:when test="$selected=2">
+									<xsl:text>selected match</xsl:text>
 								</xsl:when>
-								<xsl:when test="@href=''">
-									<span class="menu_nolink">
-										<xsl:value-of select="$title"/>
-									</span>
+							</xsl:choose>
+						</xsl:attribute>
+						<!-- получаем название пункта меню -->
+						<xsl:variable name="title">
+							<xsl:choose>
+								<xsl:when test="@title">
+									<xsl:value-of select="@title"/>
 								</xsl:when>
 								<xsl:otherwise>
-									<span class="menu_active">
-										<xsl:value-of select="$title"/>
-									</span>
+									<xsl:variable name="id" select="@id"/>
+									<xsl:choose>
+										<xsl:when test="$locale/menu/*[name()=$instance]/*[name()=$id]">
+											<xsl:value-of select="$locale/menu/*[name()=$instance]/*[name()=$id]"/>
+										</xsl:when>
+										<xsl:otherwise>
+											<xsl:value-of select="name()"/>
+										</xsl:otherwise>
+									</xsl:choose>
 								</xsl:otherwise>
 							</xsl:choose>
-							<xsl:call-template name="common_menu"/>
-						</li>
-					</xsl:if>
+						</xsl:variable>
+						<xsl:choose>
+							<xsl:when test="@href=''">
+								<span class="menu_nolink">
+									<xsl:value-of select="$title"/>
+								</span>
+							</xsl:when>
+							<xsl:when test="@href and not(@href=/root/@menuitem)">
+								<a href="{@href}">
+									<xsl:value-of select="$title"/>
+								</a>
+							</xsl:when>
+							<xsl:otherwise>
+								<span class="menu_active">
+									<xsl:value-of select="$title"/>
+								</span>
+							</xsl:otherwise>
+						</xsl:choose>
+						<xsl:call-template name="common_menu"/>
+					</li>
 				</xsl:for-each>
 			</ul>
 		</xsl:if>

@@ -18,7 +18,10 @@ class Debugger {
 	const CONSOLE_DISABLED = 1; // console enabled, but not active
 	const CONSOLE_ENABLED = 2; // console enabled and active
 
-	private static $cacheResources = true;
+	private static $caches = self::CACHES_ENABLED;
+	const CACHES_DISABLED = 0;
+	const CACHES_ENABLED = 1;
+
 	private static $output = array();
 	private static $hadError = false;
 
@@ -31,6 +34,7 @@ class Debugger {
 		$initDone = true;
 
 		if( Envi::getMode() != 'web' ) {
+			self::$caches = self::CACHES_DISABLED;
 			return;
 		}
 		if( !isset( $_SERVER['VHOST_DEVMODE'] ) or strtolower( $_SERVER['VHOST_DEVMODE'] ) != 'on' ) {
@@ -43,7 +47,7 @@ class Debugger {
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL );
 			ini_set( 'html_errors',
-				 ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+				 ( Envi::getMode() != 'web' or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
 			self::$enabled = self::CONSOLE_DISABLED;
 			self::$console = self::CONSOLE_NONE;
 			return;
@@ -59,8 +63,10 @@ class Debugger {
 		} else {
 			self::$console = self::CONSOLE_ENABLED;
 		}
-
-		self::$cacheResources = false;
+		// кэши включены?
+		if( !isset( $_COOKIE['cachesEnabled'] ) or !$_COOKIE['cachesEnabled'] ) {
+			self::$caches = self::CACHES_DISABLED;
+		}
 
 		if( self::$console == self::CONSOLE_ENABLED ) {
 			// console is active, so we intercept errors
@@ -74,8 +80,7 @@ class Debugger {
 			// console is inactive, so enable errors output
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL );
-			ini_set( 'html_errors',
-				 ( empty( $_SERVER['REQUEST_METHOD'] ) or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+			ini_set( 'html_errors', Ajax::getInstance()->isAjax ? 'Off' : 'On' );
 		}
 	}
 
@@ -85,7 +90,7 @@ class Debugger {
 	 */
 	public static function isEnabled() {
 
-		return self::$enabled;
+		return (bool)self::$enabled;
 	}
 
 	/**
@@ -101,13 +106,12 @@ class Debugger {
 	}
 
 	/**
-	 * Нужно ли кэшировать ресурсы? (js, css, xslt и т.д.)
-	 *
+	 * Включены ли кэши?
 	 * @return bool
 	 */
-	public static function isResourceCache() {
+	public static function isCachesEnabled() {
 
-		return self::$cacheResources;
+		return (bool)self::$caches;
 	}
 
 	/**
@@ -204,6 +208,7 @@ class Debugger {
 
 		$node->setAttribute( 'debug', self::$enabled ? '1' : '0' );
 		$node->setAttribute( 'debugConsole', self::$console );
+		$node->setAttribute( 'caches', self::$caches ? '1' : '0' );
 		if( !self::$console ) {
 			return;
 		}

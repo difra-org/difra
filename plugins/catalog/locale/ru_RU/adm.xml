@@ -94,6 +94,8 @@
 				<maxdepth>Максимальная вложенность категорий каталога</maxdepth>
 				<perpage>Количество элементов на страницу</perpage>
 				<hide-empty-categories>Скрывать пустые категории</hide-empty-categories>
+				<allow-no-main-image>Позволять создавать итемы без основного изображения</allow-no-main-image>
+				<use-scaleandcrop>Использовать scale and crop при сохранении изображений</use-scaleandcrop>
 				<image-settings>Параметры изображений</image-settings>
 				<image-sizes>Размеры изображений</image-sizes>
 				<image-sizes-info>По одному размеру на строку в формате «суффикс ширина высота», например: «s 200 150». Суффикс «f» зарезервирован.</image-sizes-info>

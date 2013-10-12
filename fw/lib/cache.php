@@ -9,6 +9,7 @@ namespace Difra;
  * @package Difra
  */
 class Cache {
+
 	const INST_AUTO = 'auto';
 	const INST_MEMCACHED = 'memcached';
 	const INST_MEMCACHE = 'memcache';
@@ -29,6 +30,7 @@ class Cache {
 	 * existing one.
 	 *
 	 * @param string $configName
+	 *
 	 * @return \Difra\Cache\Common
 	 */
 	public static function getInstance( $configName = self::INST_DEFAULT ) {
@@ -38,6 +40,9 @@ class Cache {
 			static $_auto = null;
 			if( $_auto ) {
 				return self::getInstance( $_auto );
+			}
+			if( !Debugger::isCachesEnabled() ) {
+				return self::getInstance( $_auto = self::INST_NONE );
 			}
 			if( Cache\XCache::isAvailable() ) {
 				Debugger::addLine( "Auto-detected cache type: XCache" );
@@ -64,23 +69,23 @@ class Cache {
 
 		// create new adapter
 		switch( $configName ) {
-		case self::INST_XCACHE:
-			self::$_adapters[$configName] = new Cache\XCache();
-			return self::$_adapters[$configName];
-		case self::INST_SHAREDMEM:
-			self::$_adapters[$configName] = new Cache\SharedMemory();
-			return self::$_adapters[$configName];
-		case self::INST_MEMCACHED:
-			self::$_adapters[$configName] = new Cache\MemCached();
-			return self::$_adapters[$configName];
-		case self::INST_MEMCACHE:
-			self::$_adapters[$configName] = new Cache\MemCache();
-			return self::$_adapters[$configName];
-		default:
-			if( !isset( self::$_adapters[self::INST_NONE] ) ) {
-				self::$_adapters[self::INST_NONE] = new Cache\None();
-			}
-			return self::$_adapters[self::INST_NONE];
+			case self::INST_XCACHE:
+				self::$_adapters[$configName] = new Cache\XCache();
+				return self::$_adapters[$configName];
+			case self::INST_SHAREDMEM:
+				self::$_adapters[$configName] = new Cache\SharedMemory();
+				return self::$_adapters[$configName];
+			case self::INST_MEMCACHED:
+				self::$_adapters[$configName] = new Cache\MemCached();
+				return self::$_adapters[$configName];
+			case self::INST_MEMCACHE:
+				self::$_adapters[$configName] = new Cache\MemCache();
+				return self::$_adapters[$configName];
+			default:
+				if( !isset( self::$_adapters[self::INST_NONE] ) ) {
+					self::$_adapters[self::INST_NONE] = new Cache\None();
+				}
+				return self::$_adapters[self::INST_NONE];
 		}
 	}
 }

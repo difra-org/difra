@@ -29,6 +29,13 @@ debug.toggleConsole = function() {
 	ajaxer.reload();
 };
 
+debug.toggleCache = function() {
+
+	var caches = $.cookie( 'cachesEnabled' ) != '1';
+	$.cookie( 'cachesEnabled', caches ? '1' : '0' );
+	ajaxer.reload();
+};
+
 debug.reqData = '';
 debug.addReq = function( message ) {
 	if( message ) {

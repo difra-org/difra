@@ -55,7 +55,7 @@ class Config {
 			return;
 		}
 		$cache = Cache::getInstance();
-		if( $c = $cache->get( 'config' ) and !Debugger::isEnabled() ) {
+		if( $c = $cache->get( 'config' ) ) {
 			$this->config = $c;
 			return;
 		}
@@ -68,7 +68,6 @@ class Config {
 				$this->config = $this->merge( $this->config, $dbconf );
 			}
 			$cache->put( 'config', $this->config );
-
 		} catch( Exception $ex ) {
 		}
 	}
@@ -77,6 +76,7 @@ class Config {
 	 * Слияние двух массивов конфигураций
 	 * @param array $a1
 	 * @param array $a2
+	 *
 	 * @return mixed
 	 */
 	function merge( $a1, $a2 ) {
@@ -125,6 +125,7 @@ class Config {
 	 *
 	 * @param array $a1
 	 * @param array $a2
+	 *
 	 * @return array
 	 */
 	private function subDiff( $a1, $a2 ) {
@@ -179,6 +180,7 @@ class Config {
 	/**
 	 * Получение значение настройки
 	 * @param string $key
+	 *
 	 * @return mixed
 	 */
 	public function get( $key ) {
@@ -203,6 +205,7 @@ class Config {
 	 * Получение значения элемента массива настроек
 	 * @param string $key
 	 * @param string $arrayKey
+	 *
 	 * @return mixed
 	 */
 	public function getValue( $key, $arrayKey ) {

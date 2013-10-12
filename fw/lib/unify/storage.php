@@ -39,7 +39,7 @@ abstract class Storage {
 	 *
 	 * @param $objKey
 	 *
-	 * @return string|null
+	 * @return string|Item|null
 	 */
 	final static public function getClass( $objKey ) {
 

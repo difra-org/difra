@@ -5,11 +5,12 @@ namespace Difra\Cache;
 /**
  * Реализация отсутствия кэша
  * Class None
+ *
  * @package Difra\Cache
  */
 class None extends Common {
 
-	public $adapter = 'None';
+	public $adapter = \Difra\Cache::INST_NONE;
 
 	/**
 	 * Constructor

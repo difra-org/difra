@@ -233,7 +233,7 @@ class Locales {
 		if( $link == '' ) {
 			$link = '-';
 		}
-		return $link;
+		return mb_strtolower( $link );
 	}
 }
 

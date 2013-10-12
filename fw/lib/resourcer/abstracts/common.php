@@ -139,7 +139,7 @@ abstract class Common {
 	public function compileGZ( $instance ) {
 
 		$cache = Difra\Cache::getInstance();
-		if( $cache->adapter == 'None' or !Difra\Debugger::isResourceCache() ) {
+		if( $cache->adapter == Difra\Cache::INST_NONE ) {
 			return false;
 		}
 
@@ -197,7 +197,7 @@ abstract class Common {
 		// get compiled from cache if available
 		$cache = Difra\Cache::getInstance();
 
-		if( $cache->adapter != 'None' and Difra\Debugger::isResourceCache() ) {
+		if( $cache->adapter != Difra\Cache::INST_NONE ) {
 
 			$cacheKey = "{$instance}_{$this->type}";
 			if( !is_null( $cached = $cache->get( $cacheKey ) ) ) {

@@ -9,11 +9,14 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 		\Difra\View::$instance = 'adm';
 	}
 
-	public function indexAction( ) {
+	public function indexAction( Param\NamedInt $page = null ) {
+
+		$page = !is_null( $page ) ? $page->val() : 1;
 
 		$indexNode = $this->root->appendChild( $this->xml->createElement( 'announcementsLast' ) );
 		$eventsNode = $indexNode->appendChild( $this->xml->createElement( 'announcements' ) );
-		\Difra\Plugins\Announcements::getInstance()->getAllEventsXML( $eventsNode );
+		\Difra\Plugins\Announcements::getInstance()->getByCategoryWithPagerXML( 1, $eventsNode, $page );
+		$eventsNode->setAttribute( 'link', '/adm/announcements' );
 
 		$categoryNode = $indexNode->appendChild( $this->xml->createElement( 'announceCateroty' ) );
 		\Difra\Plugins\Announcements\Category::getList( $categoryNode );
@@ -80,7 +83,7 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 
 		// записываем картиночку
 
-		$Announcements->saveImage( $eventId, $eventImage->val() );
+		$Announcements->saveImage( $eventId, $eventImage );
 
 		// смотрим есть ли расписание
 		if( !is_null( $scheduleField ) && !is_null( $scheduleValue ) ) {
@@ -134,7 +137,7 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 					  \Difra\Param\AjaxData $additionalField = null, \Difra\Param\AjaxString $fromEventDate = null,
 					  \Difra\Param\AjaxInt $category = null, \Difra\Param\AjaxString $scheduleName = null,
 					  \Difra\Param\AjaxData $scheduleField = null, \Difra\Param\AjaxData $scheduleValue = null,
-					  \Difra\Param\AjaxInt $location = null ) {
+					  \Difra\Param\AjaxInt $location = null, Param\AjaxInt $userId = null ) {
 
 		$data = array( 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(), 'id' => $id->val(),
 			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'description' => $description );
@@ -150,7 +153,11 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 		}
 
 		// из админки пока ставим так, потом добавим выбор юзера.
-		$data['user'] = 1;
+		if( !is_null( $userId ) ) {
+			$data['user'] = $userId->val();
+		} else {
+			$data['user'] = 1;
+		}
 
 		$Announcements = \Difra\Plugins\Announcements::getInstance();
 
@@ -167,7 +174,7 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 		}
 
 		if( !is_null( $eventImage ) ) {
-			$Announcements->saveImage( $eventId, $eventImage->val() );
+			$Announcements->saveImage( $eventId, $eventImage );
 		}
 
 		// смотрим есть ли расписание
@@ -176,7 +183,7 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 			$Announcements->saveSchedules( $eventId, $scheduleName, $scheduleField->val(), $scheduleValue->val() );
 		}
 
-		\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodUpdate' ) );
+		$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodUpdate' ) );
 		$this->ajax->redirect( '/adm/announcements/' );
 	}
 }

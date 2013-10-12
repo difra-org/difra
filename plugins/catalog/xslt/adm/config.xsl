@@ -41,6 +41,30 @@
 						</input>
 					</td>
 				</tr>
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/catalog/adm/config/allow-no-main-image"/>
+					</th>
+					<td>
+						<input type="checkbox" name="allownoimage" value="1">
+							<xsl:if test="@allownoimage=1">
+								<xsl:attribute name="checked">checked</xsl:attribute>
+							</xsl:if>
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/catalog/adm/config/use-scaleandcrop"/>
+					</th>
+					<td>
+						<input type="checkbox" name="usescale" value="1">
+							<xsl:if test="@usescale=1">
+								<xsl:attribute name="checked">checked</xsl:attribute>
+							</xsl:if>
+						</input>
+					</td>
+				</tr>
 			</table>
 			<h3>
 				<xsl:value-of select="$locale/catalog/adm/config/image-settings"/>
