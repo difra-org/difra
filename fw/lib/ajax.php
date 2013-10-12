@@ -428,8 +428,7 @@ class Ajax {
 				       '<div>' . $text . '</div>' .
 				       '<input type="submit" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-yes' )
 				       . '"/>' .
-				       '<input type="button" value="' . Locales::getInstance()
-									->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
+				       '<input type="button" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
 				       '</form>'
 				  ) );
 	}
