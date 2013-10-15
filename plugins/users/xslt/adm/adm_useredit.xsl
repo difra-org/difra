@@ -68,7 +68,7 @@
 
 						<table class="form">
 							<colgroup>
-								<col style="width: 350px"/>
+								<col style="width: 250px"/>
 								<col/>
 							</colgroup>
 							<tr>
@@ -79,10 +79,10 @@
 							<xsl:for-each select="addon_fields/field">
 								<tr>
 									<td>
-										<input type="text" name="fieldName[]" value="{@name}"/>
+										<input type="text" name="fieldName[]" value="{@name}" class="full-width"/>
 									</td>
 									<td>
-										<input type="text" name="fieldValue[]" value="{@value}"/>
+										<input type="text" name="fieldValue[]" value="{@value}" class="full-width"/>
 									</td>
 								</tr>
 							</xsl:for-each>
