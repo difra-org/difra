@@ -134,9 +134,13 @@ class Announcements {
 	 * @param \DOMNode $node
 	 * @param bool     $onlyVisible
 	 */
-	public function getAllEventsXML( $node, $onlyVisible = false, $withArchive = false ) {
+	public function getAllEventsXML( $node, $onlyVisible = false, $withArchive = false, $perPage = null ) {
 
-		$perPageLimit = \Difra\Config::getInstance()->getValue( 'announcements', 'perPage' );
+		if( !is_null( $perPage ) ) {
+			$perPageLimit = intval( $perPage );
+		} else {
+			$perPageLimit = \Difra\Config::getInstance()->getValue( 'announcements', 'perPage' );
+		}
 
 		if( empty( $perPageLimit ) || $perPageLimit == 0 ) {
 			throw new \Difra\Exception( 'No page limit! Reconfigure Announcements plugin.' );
