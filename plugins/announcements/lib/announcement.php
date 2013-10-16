@@ -373,8 +373,13 @@ Class Announcement {
 			foreach( $res as $k => $data ) {
 
 				$event = new self;
-				if( !empty( $addData ) && isset( $addData[$data['id']] ) ) {
-					$data['additionalData'][] = $addData[$data['id']];
+				if( !empty( $addData ) && isset( $addData[$data['id']] ) && !empty( $addData[$data['id']] ) ) {
+
+					foreach( $addData[$data['id']] as $k => $tmpaddData ) {
+						$data['additionalData'][] = $tmpaddData;
+					}
+
+					//$data['additionalData'][] = $addData[$data['id']];
 				}
 				if( isset( $data['locationData'] ) && $data['locationData'] != '' ) {
 					$data['locationData'] = unserialize( $data['locationData'] );
@@ -478,8 +483,11 @@ Class Announcement {
 			foreach( $res as $k => $data ) {
 
 				$event = new self;
-				if( !empty( $addData ) && isset( $addData[$data['id']] ) ) {
-					$data['additionalData'][] = $addData[$data['id']];
+				if( !empty( $addData ) && isset( $addData[$data['id']] ) && !empty( $addData[$data['id']] ) ) {
+
+					foreach( $addData[$data['id']] as $k => $tmpAddData ) {
+						$data['additionalData'][] = $tmpAddData;
+					}
 				}
 				if( isset( $data['locationData'] ) && $data['locationData'] != '' ) {
 					$data['locationData'] = unserialize( $data['locationData'] );
@@ -656,6 +664,21 @@ Class Announcement {
 				$addItemNode->setAttribute( 'alias', $value['alias'] );
 			}
 		}
+	}
+
+	/**
+	 * Вовзращает массив с дополнительными полями ивента
+	 * @return null
+	 */
+	public function getAdditionalData() {
+
+		$returnArray = null;
+		if( !empty( $this->additionalData ) ) {
+			foreach( $this->additionalData as $k=>$data ) {
+				$returnArray[$data['alias']] = $data;
+			}
+		}
+		return $returnArray;
 	}
 
 	/**
