@@ -21,6 +21,8 @@ class Snippet {
 	/** @var bool */
 	private $isModified = false;
 
+	const CACHE_KEY = 'snippets';
+
 	/**
 	 * @static
 	 * @param int $id
@@ -54,13 +56,12 @@ class Snippet {
 	static public function getAllXML( $node ) {
 
 		$cache = \Difra\Cache::getInstance();
-		$cacheKey = 'snippets';
-		$res = $cache->get( $cacheKey );
+		$res = $cache->get( self::CACHE_KEY );
 		if( !is_array( $res ) ) {
 			try {
 				$db = \Difra\MySQL::getInstance();
 				$res = $db->fetch( "SELECT `id`, `name`, `text` FROM `cms_snippets`" );
-				$cache->put( $cacheKey, $res ? $res : array() );
+				$cache->put( self::CACHE_KEY, $res ? $res : array() );
 			} catch( \Difra\Exception $ex ) {
 			}
 		}
@@ -75,7 +76,7 @@ class Snippet {
 
 	static public function cleanCache() {
 
-		\Difra\Cache::getInstance()->remove( 'snpippets' );
+		\Difra\Cache::getInstance()->remove( self::CACHE_KEY );
 	}
 
 	/**
