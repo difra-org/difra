@@ -7,13 +7,7 @@ namespace Difra\Unify;
  *
  * @package Difra\Unify
  */
-abstract class Item extends Table {
-
-	/**
-	 * TODO: рассмотреть необходимость добавления свойств и соответствующих методов. Вероятно, это нужно добавлять в Query, но тогда тут должна быть какая-то связка
-	 * Unify::parents[$name] - ???
-	 * Unify::children[$name] - ???
-	 */
+abstract class Item extends DBAPI {
 
 	/** @var null|array Дефолтные условия поиска */
 	static protected $defaultSearch = null;
@@ -64,7 +58,8 @@ abstract class Item extends Table {
 	 */
 	public function __set( $name, $value ) {
 
-		if( $this->$name === $value ) {
+//		if( (string) $this->$name === ( is_object( $value ) and $value::type != 'html' ? (string) $value : $value->val( true ) ) ) {
+		if( $this->$name == $value ) {
 			return;
 		}
 		$this->_data[$name] = $value;
@@ -144,10 +139,13 @@ abstract class Item extends Table {
 			$query = 'INSERT INTO `' . $this->getTable() . '`';
 		}
 		// set
-		$mod = $db->escape( $this->_modified );
+//		$mod = $db->escape( $this->_modified );
 		$set = array();
-		foreach( $mod as $name => $property ) {
-			$set[] = "`$name`='$property'";
+		foreach( $this->_modified as $name => $property ) {
+			if( is_object( $property ) and $property::type == 'html' ) {
+				die( '123' );
+			}
+			$set[] = '`' . $db->escape( $name ) . "`='" . $db->escape( $property ) . "'";
 		}
 		if( !empty( $set ) ) {
 			$query .= ' SET ' . implode( ',', $set );
@@ -373,5 +371,27 @@ abstract class Item extends Table {
 	public function setData( $newData ) {
 
 		$this->_data = $newData;
+	}
+
+	/**
+	 * Chops namespace and class into parts without common pieces
+	 *
+	 * @return array
+	 * @throws \Difra\Exception
+	 */
+	protected static function getClassParts() {
+
+		static $parts = null;
+		if( !is_null( $parts ) ) {
+			return $parts;
+		}
+		$parts = explode( '\\', $class = get_called_class() );
+		if( sizeof( $parts ) < 4 or $parts[0] != 'Difra' or $parts[1] != 'Plugins' or $parts[3] != 'Objects' ) {
+			throw new \Difra\Exception( 'Bad object class name: ' . $class );
+		}
+		unset( $parts[3] );
+		unset( $parts[1] );
+		unset( $parts[0] );
+		return $parts;
 	}
 }
