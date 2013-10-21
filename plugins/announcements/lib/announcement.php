@@ -344,15 +344,17 @@ Class Announcement {
 		}
 
 		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . ",
-				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`
+				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`,
+				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d 00:00:00' ) as `curStamp`
+
                     		FROM `announcements` an
                     			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
                     			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
                     			LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
                     		" . $groupJoin . "
                     		" . $where . "
-                    			ORDER BY endDate>=CURRENT_TIMESTAMP DESC,
-                    			IF(endDate>=CURRENT_TIMESTAMP,sortDate,''), sortDate DESC, priority DESC LIMIT " .
+                    			ORDER BY eventDate>=curStamp DESC,
+                    			IF(eventDate>=curStamp,sortDate,''), sortDate DESC, priority DESC LIMIT " .
 			intval( $limit );
 
 		$res = $db->fetch( $query );
@@ -371,8 +373,13 @@ Class Announcement {
 			foreach( $res as $k => $data ) {
 
 				$event = new self;
-				if( !empty( $addData ) && isset( $addData[$data['id']] ) ) {
-					$data['additionalData'][] = $addData[$data['id']];
+				if( !empty( $addData ) && isset( $addData[$data['id']] ) && !empty( $addData[$data['id']] ) ) {
+
+					foreach( $addData[$data['id']] as $k => $tmpaddData ) {
+						$data['additionalData'][] = $tmpaddData;
+					}
+
+					//$data['additionalData'][] = $addData[$data['id']];
 				}
 				if( isset( $data['locationData'] ) && $data['locationData'] != '' ) {
 					$data['locationData'] = unserialize( $data['locationData'] );
@@ -448,15 +455,16 @@ Class Announcement {
 		}
 
 		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . ",
-				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`
+				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`,
+				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d 00:00:00' ) as `curStamp`
                     		FROM `announcements` an
                     			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
                     			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
                     			LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
                     		" . $groupJoin . "
                     		WHERE an.`visible`=1 AND an.`beginDate`<=NOW() AND an.`category`='" . intval( $categoryId ) . "'
-                    		ORDER BY endDate>=CURRENT_TIMESTAMP DESC,
-                    			IF(endDate>=CURRENT_TIMESTAMP,sortDate,''), sortDate DESC, priority DESC LIMIT " .
+                    		ORDER BY eventDate>=curStamp DESC,
+                    			IF(eventDate>=curStamp,sortDate,''), sortDate DESC, priority DESC LIMIT " .
 					intval( ( $page - 1 ) * $perPage ) . "," . intval( $perPage );
 
 		$res = $db->fetch( $query );
@@ -475,8 +483,11 @@ Class Announcement {
 			foreach( $res as $k => $data ) {
 
 				$event = new self;
-				if( !empty( $addData ) && isset( $addData[$data['id']] ) ) {
-					$data['additionalData'][] = $addData[$data['id']];
+				if( !empty( $addData ) && isset( $addData[$data['id']] ) && !empty( $addData[$data['id']] ) ) {
+
+					foreach( $addData[$data['id']] as $k => $tmpAddData ) {
+						$data['additionalData'][] = $tmpAddData;
+					}
 				}
 				if( isset( $data['locationData'] ) && $data['locationData'] != '' ) {
 					$data['locationData'] = unserialize( $data['locationData'] );
@@ -653,6 +664,21 @@ Class Announcement {
 				$addItemNode->setAttribute( 'alias', $value['alias'] );
 			}
 		}
+	}
+
+	/**
+	 * Вовзращает массив с дополнительными полями ивента
+	 * @return null
+	 */
+	public function getAdditionalData() {
+
+		$returnArray = null;
+		if( !empty( $this->additionalData ) ) {
+			foreach( $this->additionalData as $k=>$data ) {
+				$returnArray[$data['alias']] = $data;
+			}
+		}
+		return $returnArray;
 	}
 
 	/**

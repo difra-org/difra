@@ -162,7 +162,7 @@
 			<activate>Активировать</activate>
 			<mainParams>Основные параметры</mainParams>
 			<addonFields>Дополнительные поля</addonFields>
-			<fieldName>Название дополнительного поля</fieldName>
+			<fieldName>Дополнительное поле</fieldName>
 			<fieldValue>Значение</fieldValue>
 		</adm>
 		<info>

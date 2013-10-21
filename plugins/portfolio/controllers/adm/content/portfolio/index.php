@@ -18,7 +18,24 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 		$this->root->appendChild( $this->xml->createElement( 'PortfolioEntryAdd' ) );
 	}
 
-	public function saveAjaxAction( \Difra\Param\AjaxString $name, \Difra\Param\AjaxHTML $description, \Difra\Param\AjaxString $release = null,
-					\Difra\Param\AjaxString $link = null, \Difra\Param\AjaxString $software = null ) {
+	public function saveAjaxAction(
+		\Difra\Param\AjaxString $name,
+		\Difra\Param\AjaxHTML $description,
+		\Difra\Param\AjaxString $release = null,
+		\Difra\Param\AjaxString $link = null,
+		\Difra\Param\AjaxString $software = null,
+		\Difra\Param\AjaxInt $id = null
+	) {
+
+		if( $id ) {
+			$entry = \Difra\Unify::getObj( 'PortfolioEntry', (string)$id );
+		} else {
+			$entry = \Difra\Unify::createObj( 'PortfolioEntry' );
+		}
+		$entry->name = $name;
+		$entry->description = $description;
+		$entry->release = $release;
+		$entry->link = $link;
+		$entry->software = $software;
 	}
 }

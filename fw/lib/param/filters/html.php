@@ -111,8 +111,7 @@ class HTML {
 			}
 			$output = $newDom->saveHTML();
 		}
-		return $output;
-		//return mb_convert_encoding( $output, 'UTF-8', 'HTML-ENTITIES' );
+		return mb_convert_encoding( $output, 'UTF-8', 'HTML-ENTITIES' );
 	}
 
 	/**

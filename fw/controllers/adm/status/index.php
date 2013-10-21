@@ -42,7 +42,7 @@ class AdmStatusIndexController extends Difra\Controller {
 
 		// stats of Unify tables
 		$unifyNode = $statusNode->appendChild( $this->xml->createElement( 'unify' ) );
-		\Difra\Unify\Storage::getDbStatusXML( $unifyNode );
+		\Difra\Unify\DBAPI::getDbStatusXML( $unifyNode );
 
 		// stats/extensions
 		/** @var $extensionsNode \DOMElement */

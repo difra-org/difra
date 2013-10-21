@@ -161,6 +161,15 @@ ajaxer.smartFind = function( container, name ) {
 	return el;
 };
 
+ajaxer.scroll = function( element ) {
+	if( $( window ).scrollTop() > element.offset().top - 32 ) {
+		//$( window ).scrollTop( element.offset().top - 32 );
+		$( 'body' ).animate( {
+					     scrollTop: element.offset().top - 32
+				     }, 400 );
+	}
+};
+
 ajaxer.require = function( form, name ) {
 
 	var el = ajaxer.smartFind( form, name );
@@ -171,8 +180,10 @@ ajaxer.require = function( form, name ) {
 	var cke = $( form ).find( '#cke_' + name );
 	if( cke.length ) {
 		cke.addClass( 'problem' );
+		ajaxer.scroll( cke );
 	} else {
 		el.addClass( 'problem' );
+		ajaxer.scroll( el );
 	}
 };
 
@@ -186,8 +197,10 @@ ajaxer.invalid = function( form, name, message ) {
 	var cke = $( form ).find( '#cke_' + name );
 	if( cke.length ) {
 		cke.addClass( 'problem' );
+		ajaxer.scroll( cke );
 	} else {
 		el.addClass( 'problem' );
+		ajaxer.scroll( el );
 	}
 };
 

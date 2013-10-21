@@ -41,6 +41,7 @@
 		<editEvent>Редактировать событие</editEvent>
 		<archiveLink>Архив событий</archiveLink>
 		<archive>Архив</archive>
+		<freeEvent>Вход свободный</freeEvent>
 
 		<adm>
 			<announcements>Анонсы</announcements>

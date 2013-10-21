@@ -41,7 +41,7 @@
 						<xsl:value-of select="$locale/announcements/adm/locations/www"/>
 					</th>
 					<td>
-						<input type="text" name="url" value="{@url}"/>
+						<input type="text" name="url" value="{@url}" class="full-width"/>
 					</td>
 				</tr>
 				<tr>

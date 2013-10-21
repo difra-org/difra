@@ -44,16 +44,25 @@
 								</xsl:if>
 							</h3>
 						</div>
-
-						<xsl:if test="event/additionals/field[@alias='ticket-price']">
-							<div class="announce-price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/AggregateOffer">
-								<meta itemprop="priceCurrency" content="RUB"/>
-								<meta itemprop="price" content="{event/additionals/field[@alias='ticket-price']/@value}"/>
-								<xsl:value-of select="/root/content/announcements-event-view/additionalsFields/item[@alias='ticket-price']/@name"/>
-								<xsl:text>:&#160;&#160;</xsl:text>
-								<xsl:value-of select="event/additionals/field[@alias='ticket-price']/@value"/>
-							</div>
-						</xsl:if>
+						
+						
+						<xsl:choose>
+							<xsl:when test="event/additionals/field[@alias='ticket-price']
+									and event/additionals/field[@alias='ticket-price']/@value='0'">
+								<div class="announce-price noRubles">
+									<xsl:value-of select="$locale/announcements/freeEvent"/>
+								</div>
+							</xsl:when>
+							<xsl:when test="event/additionals/field[@alias='ticket-price']">
+								<div class="announce-price" itemprop="offers" itemscope="itemscope" itemtype="http://schema.org/AggregateOffer">
+									<meta itemprop="priceCurrency" content="RUB"/>
+									<meta itemprop="price" content="{event/additionals/field[@alias='ticket-price']/@value}"/>
+									<xsl:value-of select="/root/content/announcements-event-view/additionalsFields/item[@alias='ticket-price']/@name"/>
+									<xsl:text>:&#160;&#160;</xsl:text>
+									<xsl:value-of select="event/additionals/field[@alias='ticket-price']/@value"/>
+								</div>
+							</xsl:when>
+						</xsl:choose>
 
 						<div class="clear"/>
 

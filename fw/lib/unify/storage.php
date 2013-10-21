@@ -48,8 +48,8 @@ abstract class Storage {
 
 	/**
 	 * Получение объекта по $objKey
-	 * @param $objKey         Имя объекта
-	 * @param $primary        Значение primary-поля (например, id)
+	 * @param string $objKey         Имя объекта
+	 * @param mixed  $primary        Значение primary-поля (например, id)
 	 *
 	 * @return static
 	 * @throws Exception
@@ -60,24 +60,28 @@ abstract class Storage {
 		if( !$class ) {
 			throw new Exception( "Can't find class for object '{$objKey}''" );
 		}
-		/** @var $class Item */
 		return $class::get( $primary );
 	}
 
 	/**
-	 * Получение статуса таблиц в базе
-	 * @param \DOMElement|\DOMNode $node
+	 * Create new item object by $objKey
+	 *
+	 * @param string $objKey
+	 *
+	 * @return static
+	 * @throws \Difra\Exception
 	 */
-	final public static function getDbStatusXML( $node ) {
+	final public static function createObj( $objKey ) {
 
-		if( empty( self::$classes ) ) {
-			$node->setAttribute( 'empty', 1 );
-			return;
+		$class = self::getClass( $objKey );
+		if( !$class ) {
+			throw new Exception( "Can't find class for object '{$objKey}''" );
 		}
-		foreach( self::$classes as $objKey => $className ) {
-			$objNode = $node->appendChild( $node->ownerDocument->createElement( $objKey ) );
-			/** @var \Difra\Unify\Item $className */
-			$className::getObjDbStatusXML( $objNode );
-		}
+		return $class::create();
+	}
+
+	final public static function getAllClasses() {
+
+		return self::$classes;
 	}
 }
