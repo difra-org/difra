@@ -148,11 +148,11 @@ ajaxer.error = function( lang, message ) {
 // поиск элемента формы
 ajaxer.smartFind = function( container, name ) {
 
-	var el = $( container ).find( '[name="' + name.replace( /"/g, "&quot;" ) + '"]' );
+	var el = $( container ).find( '[name="' + name.replace( /"/g, "&quot;" ) + '"]:enabled' );
 	if( !el.length ) {
 		var nameChop = /^(.*)\[(\d+)]$/.exec( name );
 		if( nameChop !== null && nameChop.length == 3 ) {
-			var els = $( container ).find( '[name="' + (nameChop[1] + '[]').replace( /"/g, "&quot;" ) + '"]' );
+			var els = $( container ).find( '[name="' + ( nameChop[1] + '[]' ).replace( /"/g, "&quot;" ) + '"]:enabled' );
 			if( typeof els[nameChop[2]] != 'undefined' ) {
 				el = $( els[nameChop[2]] );
 			}
