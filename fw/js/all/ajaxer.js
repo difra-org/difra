@@ -129,6 +129,7 @@ ajaxer.clean = function( form ) {
 	$( form ).find( '.required' ).fadeOut( 'fast' );
 	$( form ).find( '.invalid' ).fadeOut( 'fast' );
 	$( form ).find( '.problem' ).removeClass( 'problem' );
+	ajaxer.topScroll = -1;
 };
 
 ajaxer.notify = function( lang, message ) {
@@ -157,12 +158,17 @@ ajaxer.smartFind = function( container, name ) {
 	return el;
 };
 
+ajaxer.topScroll = -1;
 ajaxer.scroll = function( element ) {
-	if( $( window ).scrollTop() > element.offset().top - 32 ) {
-		//$( window ).scrollTop( element.offset().top - 32 );
-		$( 'body' ).animate( {
-			scrollTop: element.offset().top - 32
-		}, 400 );
+	var top = element.offset().top - 32;
+	if( top < 0 ) {
+		top = 0;
+	}
+	if( $( window ).scrollTop() > top ) {
+		if( ajaxer.topScroll == -1 || ajaxer.topScroll > top ) {
+			ajaxer.topScroll = top;
+			$( 'body' ).animate( { scrollTop: top }, 400 );
+		}
 	}
 };
 
