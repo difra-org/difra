@@ -22,7 +22,7 @@ class Ajax {
 
 		$this->jsonFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
 		if( Debugger::isEnabled() ) {
-			$this->jsonFlags = $this->jsonFlags | JSON_PRETTY_PRINT;
+			$this->jsonFlags |= JSON_PRETTY_PRINT;
 		}
 		if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) {
 			// Ajaxer request
