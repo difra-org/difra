@@ -25,6 +25,23 @@ abstract class Item extends DBAPI {
 	protected $_new = false; // новая таблица
 
 	/**
+	 * Methods to override
+	 */
+
+	/**
+	 * This method is called before save().
+	 * Please note it might be called twice.
+	 */
+	protected function beforeSave() {
+	}
+
+	/**
+	 * This method is called after load().
+	 */
+	protected function afterLoad() {
+	}
+
+	/**
 	 * Деструктор
 	 */
 	final public function __destruct() {
@@ -72,10 +89,10 @@ abstract class Item extends DBAPI {
 	 */
 	public function load( $full = false ) {
 
-		// TODO: добавить поддержку Primary Key по нескольким столбцам
 		if( $primary = $this->getPrimaryValue() ) {
 			$this->loadByField( static::getPrimary(), $primary, $full );
 		}
+		$this->afterLoad();
 	}
 
 	/**
@@ -117,24 +134,27 @@ abstract class Item extends DBAPI {
 		}
 	}
 
+	private $_saveImages = array();
+
 	/**
 	 * Save object data
 	 */
 	public function save() {
 
-		// TODO: поддержка Primary Key по нескольким полям
+		if( !$this->_new and empty( $this->_modified ) ) {
+			return;
+		}
+		$this->beforeSave();
+		$this->_saveImages = array();
 		$where = array();
 		$db = \Difra\MySQL::getInstance();
 		// form request
 		if( !$this->_new ) {
-			if( empty( $this->_modified ) ) {
-				return;
-			}
 			if( !$primary = $this->getPrimaryValue() ) {
 				throw new \Difra\Exception( 'I don\'t know how to update Unify Item without primary value.' );
 			}
 			$query = 'UPDATE `' . $db->escape( $this->getTable() ) . '`';
-			$where[] = '`' . $db->escape( $primary ) . "`='" . $db->escape( $this->getPrimaryValue() ) . "'";
+			$where[] = '`' . $db->escape( $this->getPrimary() ) . "`='" . $db->escape( $primary ) . "'";
 		} else {
 			$query = 'INSERT INTO `' . $this->getTable() . '`';
 		}
@@ -142,10 +162,24 @@ abstract class Item extends DBAPI {
 //		$mod = $db->escape( $this->_modified );
 		$set = array();
 		foreach( $this->_modified as $name => $property ) {
-			if( is_object( $property ) and $property::type == 'html' ) {
-				die( '123' );
+			// remember properties that need images to be saved
+			if( is_object( $property ) and method_exists( $property, 'saveImages' ) ) {
+				/** @var $property \Difra\Param\AjaxHTML */
+				if( $this->_new ) {
+					$set[] = '`' . $db->escape( $name ) . "`='" . $db->escape( $property->val( true ) ) . "'";
+					$this->_saveImages[$name] = $property;
+				} else {
+					$property->saveImages(
+						DIR_DATA . '/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue(),
+						'/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue()
+					);
+					$set[] = '`' . $db->escape( $name ) . "`='" . $db->escape( $property ) . "'";
+				}
+			} elseif( is_array( $property ) ) {
+				$set[] = '`' . $db->escape( $name ) . "`='" . $db->escape( serialize( $property ) ) . "'";
+			} else {
+				$set[] = '`' . $db->escape( $name ) . "`='" . $db->escape( $property ) . "'";
 			}
-			$set[] = '`' . $db->escape( $name ) . "`='" . $db->escape( $property ) . "'";
 		}
 		if( !empty( $set ) ) {
 			$query .= ' SET ' . implode( ',', $set );
@@ -164,7 +198,14 @@ abstract class Item extends DBAPI {
 			self::$objects[static::getObjKey()][$this->_tempPrimary] = $this;
 		}
 		$this->_new = false;
-		$this->_modified = array();
+		if( !empty( $this->_saveImages ) ) {
+			// we have images to save
+			$this->_modified = $this->_saveImages;
+			$this->_saveImages = array();
+			$this->save();
+		} else {
+			$this->_modified = array();
+		}
 	}
 
 	/** @var string[string $objKey][bool $full][] Список ключей для загрузки */
