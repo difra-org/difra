@@ -41,4 +41,15 @@ class Entry extends \Difra\Unify {
 		),
 		'authors' => 'text'
 	);
+
+	protected function afterLoad() {
+		/*
+		$authors = $this->authors;
+		if( $authors and !is_array( $authors ) ) {
+			if( $unserializedAuthors = @unserialize( $authors ) ) {
+				$this->_data['authors'] = $unserializedAuthors;
+			}
+		}
+		*/
+	}
 }
