@@ -37,6 +37,7 @@ class Envi {
 	/**
 	 * Получить имя хоста (домена)
 	 * @param bool $main        Получить имя «главного» хоста (нужно в случае, если у сайта есть поддомены)
+	 *
 	 * @return string
 	 */
 	public static function getHost( $main = false ) {
@@ -77,7 +78,7 @@ class Envi {
 		}
 
 		// automatic behavior: try to compare host name to existing directories in sites folder
-		$sitesLocation = __DIR__ . '/../../sites/';
+		$sitesLocation = DIR_ROOT . 'sites/';
 		while( $host ) {
 			if( is_dir( $sitesLocation . $host ) ) {
 				return $site = $host;

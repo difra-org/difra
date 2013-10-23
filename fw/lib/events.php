@@ -57,7 +57,7 @@ class Events {
 			self::register( 'action-run', 'Difra\\Controller', 'run' );
 			self::register( 'render-run', 'Difra\\Controller', 'render' );
 		}
-		if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
+		if( file_exists( $initPHP = ( DIR_ROOT . '/lib/init.php' ) ) ) {
 			/** @noinspection PhpIncludeInspection */
 			include_once( $initPHP );
 		}
@@ -68,6 +68,7 @@ class Events {
 	 * @param             $type          Имя события
 	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
 	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
+	 *
 	 * @throws Exception
 	 */
 	public static function register( $type, $class, $method = false ) {

@@ -4,7 +4,7 @@ namespace Difra\Libs;
 
 use Difra\Debugger;
 
-include_once( __DIR__ . '/less/lessc.inc.php' );
+include_once( DIR_FW . 'lib/libs/less/lessc.inc.php' );
 
 class Less {
 

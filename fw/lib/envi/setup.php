@@ -16,15 +16,6 @@ class Setup {
 	 */
 	public static function run() {
 
-		// paths
-		if( !defined( 'DIR_ROOT' ) ) {
-			define( 'DIR_ROOT', dirname( dirname( dirname( __DIR__ ) ) ) . '/' );
-		}
-		define( 'DIR_FW', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'fw/' );
-		define( 'DIR_SITE', DIR_ROOT . 'sites/' . Envi::getSite() . '/' );
-		define( 'DIR_PLUGINS', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'plugins/' );
-		define( 'DIR_DATA', !empty( $_SERVER['VHOST_DATA'] ) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/' );
-
 		// other
 		mb_internal_encoding( 'UTF-8' );
 		ini_set( 'short_open_tag', false );
