@@ -8,6 +8,8 @@ require_once( __DIR__ . '/events.php' );
 if( isset( $_ ) ) {
 	define( 'DIR_ROOT', dirname( $_ ) . '/' );
 	define( 'DIR_PHAR', __DIR__ . '/../../' );
+} else {
+	define( 'DIR_ROOT', __DIR__ . '/../../' );
 }
 
 if( !empty( $_SERVER['REQUEST_METHOD'] ) ) {
