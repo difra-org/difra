@@ -297,21 +297,42 @@ class Announcements {
 
 	/**
 	 * Возвращает в xml данные анонса события по его ссылке
-	 *
+	 * @deprecated
 	 * @param string   $link
 	 * @param \DOMNode $node
 	 */
 	public function getByLinkXML( $link, $node ) {
 
 		// ищем в ссылке idшник
-		preg_match( '/\\A(\\d+)-(?:.*)/', $link, $regs );
-		if( isset( $regs[1] ) && intval( $regs[1] ) != 0 ) {
+		$regs = explode( '-', $link );
 
-			$Event = \Difra\Plugins\Announcements\Announcement::getById( intval( $regs[1] ) );
+		if( isset( $regs[0] ) && intval( $regs[0] ) != 0 ) {
+
+			$Event = \Difra\Plugins\Announcements\Announcement::getById( intval( $regs[0] ) );
 			if( $Event ) {
 
 				$Event->getXML( $node );
 				$node->parentNode->setAttribute( 'title', $Event->getHumanizedTitle() );
+				return $Event;
+			}
+		}
+
+		return false;
+	}
+
+	/**
+	 * Возвращает объект анонса по ссылке
+	 * @param $link
+	 */
+	public function getByLink( $link ) {
+
+		// ищем в ссылке idшник
+		$regs = explode( '-', $link );
+
+		if( isset( $regs[0] ) && intval( $regs[0] ) != 0 ) {
+
+			$Event = \Difra\Plugins\Announcements\Announcement::getById( intval( $regs[0] ) );
+			if( $Event ) {
 				return $Event;
 			}
 		}
@@ -515,6 +536,45 @@ class Announcements {
 		$query = "SELECT `user` FROM `announcements` WHERE `id`='" . intval( $eventId ) . "'";
 		$res = $db->fetchOne( $query );
 		return !empty( $res ) ? $res : false;
+	}
+
+	/**
+	 * Возвращает заголовки и ссылки на анонсы для экспорта в сторонние социалочки
+	 */
+	public function getForExport() {
+
+		$returnArray = array();
+		$eventsArray = \Difra\Plugins\Announcements\Announcement::getForExport();
+		if( !is_null( $eventsArray ) ) {
+
+			foreach( $eventsArray as $key=>$Event ) {
+
+				$title = $Event->getTitle();
+
+				$link = 'http://' . Envi::getHost() . '/events/' . $Event->getId();
+
+				if( mb_strlen( $title )>=130 ) {
+					$title = mb_substr( $title, 0, 130 ) . '...';
+				}
+
+				$returnArray[$Event->getId()] = $title . ' ' . $link;
+			}
+		}
+
+		return $returnArray;
+	}
+
+	/**
+	 * Устанавливает флаг экспорта для массива id анонсов
+	 * @param array $exportIds
+	 */
+	public function setExported( array $exportIds ) {
+
+		$exportIds = array_map( 'intval', $exportIds );
+
+		$db = \Difra\MySQL::getInstance();
+		$query = "UPDATE `announcements` SET `exported`=1 WHERE `id` IN (" . implode( ', ', $exportIds ) . ")";
+		$db->query( $query );
 	}
 
 }

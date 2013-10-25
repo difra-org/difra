@@ -574,6 +574,54 @@ Class Announcement {
 		return $eventsArray;
 	}
 
+
+	public static function getForExport( $limit = 3 ) {
+
+		$db = \Difra\MySQL::getInstance();
+		$eventsArray = null;
+
+		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData`,
+				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`,
+				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d 00:00:00' ) as `curStamp`
+                    		FROM `announcements` an
+                    			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
+                    			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
+                    			LEFT JOIN `anouncements_locations` AS `aloc` ON an.`location`=aloc.`id`
+                    		WHERE an.`exported`=0 AND an.`visible`=1 AND an.`beginDate`<=NOW()
+                    		ORDER BY eventDate>=curStamp DESC,
+                    			IF(eventDate>=curStamp,sortDate,''), sortDate DESC, priority DESC LIMIT " . intval( $limit );
+
+		$res = $db->fetch( $query );
+		if( !empty( $res ) ) {
+
+			// массивчик id'шников
+			$idArray = array();
+			foreach( $res as $k=>$data ) {
+				$idArray[] = $data['id'];
+			}
+
+			$addData = Additionals::getByIdArray( $idArray );
+
+			foreach( $res as $k => $data ) {
+				$Event = new self;
+
+				if( !empty( $addData ) && isset( $addData[$data['id']] ) && !empty( $addData[$data['id']] ) ) {
+
+					foreach( $addData[$data['id']] as $k => $tmpaddData ) {
+						$data['additionalData'][] = $tmpaddData;
+					}
+				}
+				if( isset( $data['locationData'] ) && $data['locationData'] != '' ) {
+					$data['locationData'] = unserialize( $data['locationData'] );
+				}
+
+				$Event->setObject( $data );
+				$eventsArray[$data['id']] = $Event;
+			}
+		}
+		return $eventsArray;
+	}
+
 	/**
 	 * Возвращает объект анонса события в xml
 	 *
@@ -818,6 +866,15 @@ Class Announcement {
 
 		$server = Envi::getHost();
 		return 'http://' . $server . '/events/' . $this->id . '-' . $this->link;
+	}
+
+	/**
+	 * Возвращает короткий вариант ссылки на анонс
+	 * @return string
+	 */
+	public function getShortLink() {
+
+		return $this->id . '-' . $this->link;
 	}
 
 	/**
