@@ -1,10 +1,10 @@
 <?php
 
-class AdmGalleryIndexController extends \Difra\Controller {
+class AdmGalleryAlbumsController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction() {
@@ -25,31 +25,31 @@ class AdmGalleryIndexController extends \Difra\Controller {
 	}
 
 	public function saveAjaxAction( \Difra\Param\AjaxString $name, \Difra\Param\AjaxString $description, \Difra\Param\AjaxCheckbox $hidden,
-				    \Difra\Param\AjaxInt $id = null ) {
+					\Difra\Param\AjaxInt $id = null ) {
 
 		if( $id ) {
 			\Difra\Plugins\Gallery::getInstance()->albumUpdate( $id->val(), $name->val(), $description->val(), !$hidden->val() );
 		} else {
 			\Difra\Plugins\Gallery::getInstance()->albumAdd( $name->val(), $description->val(), !$hidden->val() );
 		}
-		$this->ajax->redirect( '/adm/gallery' );
+		$this->ajax->redirect( '/adm/gallery/albums/' );
 	}
 
 	public function deleteAjaxAction( \Difra\Param\AnyInt $id ) {
 
 		\Difra\Plugins\Gallery::getInstance()->albumDelete( $id->val() );
-		$this->ajax->redirect( '/adm/gallery' );
+		$this->ajax->redirect( '/adm/gallery/albums/' );
 	}
 
 	public function upAjaxAction( \Difra\Param\AnyInt $id ) {
 
 		\Difra\Plugins\Gallery::getInstance()->albumUp( $id->val() );
-		$this->ajax->redirect( '/adm/gallery' );
+		$this->ajax->redirect( '/adm/gallery/albums/' );
 	}
 
 	public function downAjaxAction( \Difra\Param\AnyInt $id ) {
 
 		\Difra\Plugins\Gallery::getInstance()->albumDown( $id->val() );
-		$this->ajax->redirect( '/adm/gallery' );
+		$this->ajax->redirect( '/adm/gallery/albums/' );
 	}
 }

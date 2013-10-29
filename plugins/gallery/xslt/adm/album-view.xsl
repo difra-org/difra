@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 	<xsl:template match="GalleryAlbumView">
 		<h2>
-			<a href="/adm/gallery">
+			<a href="/adm/gallery/albums/">
 				<xsl:value-of select="$locale/gallery/title"/>
 			</a>
 			<xsl:text> → </xsl:text>
@@ -20,8 +19,9 @@
                 <xsl:variable name="height" select="sizes/m/@height"/>
 
 				<xsl:for-each select="image">
-					<div class="item-image">
-						<div class="img" style="background-image: url('/gallery/{@id}m.{@format}'); width: {$width}px; height: {$height}px;" />
+					<div class="gallery-image">
+						<div class="img"
+						     style="background-image: url('/gallery/{@id}m.{@format}'); width: {$width}px; height: {$height}px;" />
 						<div class="controls">
 							<xsl:call-template name="actionLeft">
 								<xsl:with-param name="link">
