@@ -48,9 +48,9 @@ class Events {
 			self::$events[$type] = array();
 		}
 
+		self::register( 'core-init', 'Difra\\Debugger', 'init' );
 		self::register( 'core-init', 'Difra\\Envi\\Setup', 'run' );
 		self::register( 'core-init', 'Difra\\Envi\\Session', 'init' );
-		self::register( 'core-init', 'Difra\\Debugger', 'init' );
 		self::register( 'plugins-load', 'Difra\\Plugger', 'init' );
 		if( Envi::getMode() == 'web' ) {
 			self::register( 'action-find', 'Difra\\Controller', 'init' );

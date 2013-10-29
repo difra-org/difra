@@ -42,6 +42,7 @@ class Cache {
 				return self::getInstance( $_auto );
 			}
 			if( !Debugger::isCachesEnabled() ) {
+				Debugger::addLine( "Caching disabled by Debug Mode settings" );
 				return self::getInstance( $_auto = self::INST_NONE );
 			}
 			if( Cache\XCache::isAvailable() ) {
