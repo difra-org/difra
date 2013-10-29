@@ -57,13 +57,11 @@ class Setup {
 	public static function setLocale( $locale = false ) {
 
 		if( !$locale ) {
-			if( $configLocale = \Difra\Config::getInstance()->get( $locale ) ) {
+			if( $configLocale = \Difra\Config::getInstance()->get( 'locale' ) ) {
 				$locale = $configLocale;
-			} else {
-				$locale = 'ru_RU';
 			}
 		}
-		self::$locale = $locale;
+		self::$locale = $locale ? : 'ru_RU';
 		setlocale( LC_ALL, array( self::$locale . '.UTF-8', self::$locale . '.utf8' ) );
 		setlocale( LC_NUMERIC, array( 'en_US.UTF-8', 'en_US.utf8' ) );
 	}
