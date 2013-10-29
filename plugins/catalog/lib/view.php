@@ -44,7 +44,7 @@ class View {
 		}
 		if( $title ) {
 			$title = implode( ' → ', $title );
-			$controller->root->setAttribute( 'title', $title );
+			$controller->root->setAttribute( 'pageTitle', $title );
 		}
 		return $list;
 	}
@@ -70,6 +70,6 @@ class View {
 		$item->getXML( $itemNode );
 		$title[] = $item->getName();
 		$title   = implode( ' → ', $title );
-		$controller->root->setAttribute( 'title', $title );
+		$controller->root->setAttribute( 'pageTitle', $title );
 	}
 }
