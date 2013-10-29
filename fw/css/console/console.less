@@ -148,51 +148,76 @@
 }
 
 @-webkit-keyframes switcherFadeout {
-	from {
+	0% {
 		opacity: 1;
+		width: 100%;
+		height: 100%;
 	}
-	to {
+	100% {
 		opacity: 0;
+		width: 100%;
+		height: 100%;
 	}
 }
 
 @-moz-keyframes switcherFadeout {
-	from {
+	0% {
 		opacity: 1;
+		width: 100%;
+		height: 100%;
 	}
-	to {
+	100% {
 		opacity: 0;
+		width: 100%;
+		height: 100%;
 	}
 }
 
 @-o-keyframes switcherFadeout {
-	from {
+	0% {
 		opacity: 1;
+		width: 100%;
+		height: 100%;
 	}
-	to {
+	100% {
 		opacity: 0;
+		width: 100%;
+		height: 100%;
 	}
 }
 
 @keyframes switcherFadeout {
-	from {
+	0% {
 		opacity: 1;
+		width: 100%;
+		height: 100%;
 	}
-	to {
+	100% {
 		opacity: 0;
+		width: 100%;
+		height: 100%;
 	}
 }
 
+.switcher {
+	position: relative;
+}
 .switcher:after {
+	pointer-events: none;
 	position: absolute;
 	top: 0;
 	right: 0;
-	color: rgb(255, 0, 0);
+	display: block;
+	color: red;
+	background: rgba( 255, 0, 0, 0.3 );
+	text-align: right;
 	font-size: 24px;
+	width: 0;
+	height: 0;
 	content: '.switcher';
-	-webkit-animation: switcherFadeout 5s;
-	-moz-animation: switcherFadeout 5s;
-	-o-animation: switcherFadeout 5s;
-	animation: switcherFadeout 5s;
+	-webkit-animation: switcherFadeout 2s;
+	-moz-animation: switcherFadeout 2s;
+	-o-animation: switcherFadeout 2s;
+	animation: switcherFadeout 2s;
 	opacity: 0;
 }
