@@ -118,7 +118,6 @@
 						<xsl:value-of select="$link"/>
 					</xsl:attribute>
 					<xsl:attribute name="class">action right ajaxer</xsl:attribute>
-					=
 				</xsl:otherwise>
 			</xsl:choose>
 		</a>
