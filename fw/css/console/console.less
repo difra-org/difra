@@ -145,5 +145,54 @@
 		padding: 0 5px;
 		vertical-align: top;
 	}
+}
 
+@-webkit-keyframes switcherFadeout {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@-moz-keyframes switcherFadeout {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@-o-keyframes switcherFadeout {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+@keyframes switcherFadeout {
+	from {
+		opacity: 1;
+	}
+	to {
+		opacity: 0;
+	}
+}
+
+.switcher:after {
+	position: absolute;
+	top: 0;
+	right: 0;
+	color: rgb(255, 0, 0);
+	font-size: 24px;
+	content: '.switcher';
+	-webkit-animation: switcherFadeout 5s;
+	-moz-animation: switcherFadeout 5s;
+	-o-animation: switcherFadeout 5s;
+	animation: switcherFadeout 5s;
+	opacity: 0;
 }
