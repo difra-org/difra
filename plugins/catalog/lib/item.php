@@ -202,6 +202,7 @@ class Item {
 					$withSubcategories = false,
 					$ids = null ) {
 
+
 		if( $withSubcategories and !is_null( $category ) ) {
 			return self::getList( Category::getSubtree( $category ),
 				$withExt === true,
@@ -282,12 +283,14 @@ class Item {
 			$k++;
 		}
 		$keys = array_flip( $ids );
+
 		// изображения
-		if( $withExt == -1 ) {
+		if( $withExt === -1 ) {
 			return $res;
 		}
 		$imgData =
 			$db->fetch( "SELECT `id`,`item`,`main` FROM `catalog_images` WHERE `item` IN ('" . implode( "','", $ids ) . "')" );
+
 		foreach( $imgData as $i ) {
 			$res[$keys[$i['item']]]->images[] = array(
 				'main' => $i['main'] ? true : false,
