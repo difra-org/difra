@@ -42,6 +42,12 @@ abstract class Item extends DBAPI {
 	}
 
 	/**
+	 * This method is called after getXML is done
+	 */
+	protected function postprocessXML( $node ) {
+	}
+
+	/**
 	 * Деструктор
 	 */
 	final public function __destruct() {
@@ -267,6 +273,7 @@ abstract class Item extends DBAPI {
 		foreach( $this->_data as $k => $v ) {
 			$node->setAttribute( $k, $v );
 		}
+		$this->postprocessXML( $node );
 	}
 
 	/**
