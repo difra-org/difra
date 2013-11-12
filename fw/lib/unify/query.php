@@ -42,8 +42,8 @@ class Query extends Paginator {
 
 		$this->objKey = $objKey;
 		$class = Storage::getClass( $objKey );
-		$this->order = $class::getDefaultOrder();
-		$this->orderDesc = $class::getDefaultOrderDesc();
+		$this->order = $class::getDefaultOrder() ? (array)$class::getDefaultOrder() : null;
+		$this->orderDesc = $class::getDefaultOrderDesc() ? (array)$class::getDefaultOrderDesc() : null;
 	}
 
 	/**
