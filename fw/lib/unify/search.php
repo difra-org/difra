@@ -23,7 +23,7 @@ class Search extends Query {
 
 	/**
 	 * Получение списка
-	 * @return mixed
+	 * @return \Difra\Unify[]
 	 */
 	public function getList() {
 
@@ -60,7 +60,7 @@ class Search extends Query {
 		} else {
 			foreach( $list as $item ) {
 				$itemNode = $node->appendChild( $toNode->ownerDocument->createElement( $this->objKey ) );
-				/** @var $item Item */
+				/** @var $item \Difra\Unify */
 				$item->getXML( $itemNode );
 			}
 		}
