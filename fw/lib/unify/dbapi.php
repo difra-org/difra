@@ -172,6 +172,8 @@ class DBAPI extends Table {
 		\Difra\MySQL::getInstance()->query( self::getDbCreate() );
 	}
 
+	static $defaultKeywords = array( 'CURRENT_TIMESTAMP' );
+
 	/**
 	 * Generates SQL string for column create/alter
 	 *
@@ -193,7 +195,11 @@ class DBAPI extends Table {
 		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] );
 		// default value
 		if( !empty( $prop['default'] ) ) {
-			$line .= " DEFAULT {$prop['default']}";
+			if( in_array( mb_strtoupper( $prop['default'] ), self::$defaultKeywords ) ) {
+				$line .= " DEFAULT {$prop['default']}";
+			} else {
+				$line .= " DEFAULT '{$prop['default']}'";
+			}
 		} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
 			$line .= ' NOT NULL';
 		}
@@ -215,7 +221,11 @@ class DBAPI extends Table {
 		$db = \Difra\MySQL::getInstance();
 		$line = '`' . $db->escape( $desc['Field'] ) . '` ' . $desc['Type'];
 		if( $desc['Default'] ) {
-			$line .= ' DEFAULT ' . $desc['Default'];
+			if( in_array( mb_strtoupper( $desc['Default'] ), self::$defaultKeywords ) ) {
+				$line .= ' DEFAULT ' . $desc['Default'];
+			} else {
+				$line .= " DEFAULT '{$desc['Default']}'";
+			}
 		} elseif( $desc['Null'] == 'NO' and static::getPrimary() != $desc['Field'] ) {
 			$line .= ' NOT NULL';
 		}
@@ -332,16 +342,16 @@ class DBAPI extends Table {
 		}
 		$columns = array();
 		$indexes = array();
-		if( $createPrimary = static::getCreatePrimary() ) {
-			$indexes[] = $createPrimary;
-		}
+//		if( $createPrimary = static::getCreatePrimary() ) {
+//			$indexes[] = $createPrimary;
+//		}
 		foreach( static::getColumns() as $name => $prop ) {
 			$lines[] = self::getColumnDefinition( $name, $prop );
 		}
 		foreach( static::getIndexes() as $name => $prop ) {
 			$indexes[] = self::getIndexDefinition( $name, $prop );
 		}
-		$lines = array_merge( $columns, $indexes );
+		$lines = array_merge( $lines, $indexes );
 		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		return $create;
 	}
