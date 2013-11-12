@@ -172,8 +172,6 @@ class DBAPI extends Table {
 		\Difra\MySQL::getInstance()->query( self::getDbCreate() );
 	}
 
-	static $defaultKeywords = array( 'CURRENT_TIMESTAMP' );
-
 	/**
 	 * Generates SQL string for column create/alter
 	 *
@@ -195,11 +193,7 @@ class DBAPI extends Table {
 		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] );
 		// default value
 		if( !empty( $prop['default'] ) ) {
-			if( in_array( mb_strtoupper( $prop['default'] ), self::$defaultKeywords ) ) {
-				$line .= " DEFAULT {$prop['default']}";
-			} else {
-				$line .= " DEFAULT '{$prop['default']}'";
-			}
+			$line .= self::getDefault( $prop['default'] );
 		} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
 			$line .= ' NOT NULL';
 		}
@@ -221,11 +215,7 @@ class DBAPI extends Table {
 		$db = \Difra\MySQL::getInstance();
 		$line = '`' . $db->escape( $desc['Field'] ) . '` ' . $desc['Type'];
 		if( $desc['Default'] ) {
-			if( in_array( mb_strtoupper( $desc['Default'] ), self::$defaultKeywords ) ) {
-				$line .= ' DEFAULT ' . $desc['Default'];
-			} else {
-				$line .= " DEFAULT '{$desc['Default']}'";
-			}
+			$line .= self::getDefault( $desc['Default'] );
 		} elseif( $desc['Null'] == 'NO' and static::getPrimary() != $desc['Field'] ) {
 			$line .= ' NOT NULL';
 		}
@@ -233,6 +223,16 @@ class DBAPI extends Table {
 			$line .= ' ' . $desc['Extra'];
 		}
 		return $line;
+	}
+
+	private static function getDefault( $value ) {
+
+		static $defaultKeywords = array( 'CURRENT_TIMESTAMP' );
+		if( in_array( mb_strtoupper( $value ), $defaultKeywords ) ) {
+			return ' DEFAULT ' . $value;
+		} else {
+			return " DEFAULT '{$value}'";
+		}
 	}
 
 	/**
