@@ -125,7 +125,7 @@ class Table extends Storage {
 		foreach( static::$propertiesList as $name => $prop ) {
 			if( !is_array( $prop ) ) {
 			} elseif( in_array( $prop['type'], self::$keyTypes ) ) {
-				$result[$name] = array( 'type' => $prop['type'], 'columns' => isset( $prop['columns'] ) ? $prop['columns'] : $name );
+				$result[$name] = $prop;
 			} else {
 				foreach( self::$keyTypes as $keyType ) {
 					if( $keyType == 'primary' ) {
