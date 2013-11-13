@@ -225,11 +225,20 @@ class Query extends Paginator {
 			return;
 		}
 		foreach( $conditions as $k => $cond ) {
-			$this->addCondition( $k, $cond );
+			$this->addCustomCondition( $k, $cond );
 		}
 	}
 
-	public function addCondition( $condition, $value = null ) {
+	/**
+	 * Добавить условие поиска
+	 * В строке можно передавать более сложные условия, чем в addConditions() но тогда должна быть подготовлена (MySQL->escape и т.п.)
+	 *
+	 * @param string $condition
+	 * @param null   $value
+	 *
+	 * @internal param string $conditions
+	 */
+	public function addCustomCondition( $condition, $value = null ) {
 
 		if( is_null( $value ) ) {
 			$this->conditions[] = $condition;
