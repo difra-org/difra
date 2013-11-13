@@ -52,12 +52,12 @@ class Query extends Paginator {
 	 */
 	public function doQuery() {
 
-		try {
-			$db = MySQL::getInstance();
-			$result = $db->fetch( $this->getQuery() );
-		} catch( Exception $ex ) {
-			return null;
-		}
+//		try {
+		$db = MySQL::getInstance();
+		$result = $db->fetch( $this->getQuery() );
+//		} catch( Exception $ex ) {
+//			return null;
+//		}
 		if( $this->page ) {
 			$this->setTotal( $db->getFoundRows() );
 		}
