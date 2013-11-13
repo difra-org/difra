@@ -234,15 +234,15 @@ class Query extends Paginator {
 	 * В строке можно передавать более сложные условия, чем в addConditions() но тогда должна быть подготовлена (MySQL->escape и т.п.).
 	 * Также умеет воспринимать массив строк.
 	 *
-*@param string|string[] $condition
+	 * @param string|string[] $condition
 	 */
-	public function addCustomCondition( $condition ) {
+	public function addCustomConditions( $condition ) {
 
 		if( !is_array( $condition ) ) {
 			$this->conditions[] = $condition;
 		} else {
 			foreach( $condition as $cond ) {
-				$this->addCustomCondition( $cond );
+				$this->addCustomConditions( $cond );
 			}
 		}
 	}
