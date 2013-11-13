@@ -188,7 +188,7 @@ class Query extends Paginator {
 	public function getLimit() {
 
 		if( $this->page ) {
-			list( $this->limitFrom, $this->limitNum ) = $this->getLimit();
+			list( $this->limitFrom, $this->limitNum ) = $this->getPaginatorLimit();
 		}
 
 		if( !$this->limitFrom and !$this->limitNum ) {
