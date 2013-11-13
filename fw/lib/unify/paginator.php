@@ -69,7 +69,7 @@ class Paginator {
 
 		/** @var \DOMElement $pNode */
 		$pNode = $node->appendChild( $node->ownerDocument->createElement( 'paginator' ) );
-		$pNode->setAttribute( 'current', $this->page );
+		$pNode->setAttribute( 'page', $this->page );
 		$pNode->setAttribute( 'pages', $this->pages );
 		$pNode->setAttribute( 'link', $this->linkPrefix );
 		$pNode->setAttribute( 'get', $this->get );
