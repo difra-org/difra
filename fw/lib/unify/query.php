@@ -195,12 +195,11 @@ class Query extends Paginator {
 			return '';
 		}
 		$q = ' LIMIT ';
-		$db = MySQL::getInstance();
 		if( $this->limitFrom ) {
-			$q .= "'" . $db->escape( $this->limitFrom ) . "',";
+			$q .= intval( $this->limitFrom ) . ",";
 		}
 		if( $this->limitNum ) {
-			$q .= "'" . $db->escape( $this->limitNum ) . "'";
+			$q .= intval( $this->limitNum );
 		} else {
 			$q .= '999999'; // чтобы задать только отступ в LIMIT, считаем это отсутсвтием лимита :)
 		}
