@@ -209,8 +209,7 @@ class Query extends Paginator {
 
 	/**
 	 * Добавить условие поиска
-	 * В формате ключ = значение или строка.
-	 * В строке можно передавать более сложные условия, но тогда должна быть подготовлена (MySQL->escape и т.п.)
+	 * В формате ключ = значение.
 	 *
 	 * @param array $conditions
 	 *
@@ -231,10 +230,9 @@ class Query extends Paginator {
 
 	/**
 	 * Добавить условие поиска
-	 * В строке можно передавать более сложные условия, чем в addConditions() но тогда должна быть подготовлена (MySQL->escape и т.п.).
-	 * Также умеет воспринимать массив строк.
+	 * В строке можно передавать более сложные условия, чем в addConditions() но тогда она должна быть подготовлена (MySQL->escape и т.п.).
 	 *
-	 * @param string|string[] $condition
+*@param string|string[] $condition
 	 */
 	public function addCustomConditions( $condition ) {
 
