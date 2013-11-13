@@ -30,6 +30,11 @@ class Paginator {
 	/** @var string|bool Символ для формирования get-параметра, например '?' -> $linkPrefix?page=$page, иначе ссылка будет вида $linkPrefix/page/$page */
 	protected $get = false;
 
+	public function __construct() {
+
+		$this->linkPrefix = \Difra\Envi\Action::getControllerUri();
+	}
+
 	/**
 	 * Возвращает строку для LIMIT
 	 *

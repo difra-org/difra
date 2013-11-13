@@ -40,6 +40,7 @@ class Query extends Paginator {
 	 */
 	public function __construct( $objKey ) {
 
+		parent::__construct();
 		$this->objKey = $objKey;
 		$class = Storage::getClass( $objKey );
 		$this->order = $class::getDefaultOrder() ? (array)$class::getDefaultOrder() : null;
