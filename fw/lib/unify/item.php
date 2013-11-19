@@ -144,8 +144,12 @@ abstract class Item extends DBAPI {
 
 	/**
 	 * Save object data
+	 *
+	 * @param bool $replace Make replace instead of insert
+	 *
+	 * @throws \Difra\Exception
 	 */
-	public function save() {
+	public function save( $replace = false ) {
 
 		if( !$this->_new and empty( $this->_modified ) ) {
 			return;
@@ -162,7 +166,7 @@ abstract class Item extends DBAPI {
 			$query = 'UPDATE `' . $db->escape( $this->getTable() ) . '`';
 			$where[] = '`' . $db->escape( $this->getPrimary() ) . "`='" . $db->escape( $primary ) . "'";
 		} else {
-			$query = 'INSERT INTO `' . $this->getTable() . '`';
+			$query = ( $replace ? 'REPLACE INTO `' : 'INSERT INTO `' ) . $this->getTable() . '`';
 		}
 		// set
 //		$mod = $db->escape( $this->_modified );
@@ -172,6 +176,9 @@ abstract class Item extends DBAPI {
 			if( is_object( $property ) and method_exists( $property, 'saveImages' ) ) {
 				/** @var $property \Difra\Param\AjaxHTML */
 				if( $this->_new ) {
+					if( $replace ) {
+						throw new \Difra\Exception( 'Replace is prohibited for objects with images' );
+					}
 					$set[] = '`' . $db->escape( $name ) . "`='" . $db->escape( $property->val( true ) ) . "'";
 					$this->_saveImages[$name] = $property;
 				} else {
