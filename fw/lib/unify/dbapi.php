@@ -58,9 +58,9 @@ class DBAPI extends Table {
 					'status' => 'alter',
 					'action' => 'add column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD COLUMN ' . self::getColumnDefinition(
-						$goalName,
-						$goalColumn
-					) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
+														 $goalName,
+														 $goalColumn
+						) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
 				);
 			};
 			if( $goalName != $currentName ) {
@@ -69,22 +69,20 @@ class DBAPI extends Table {
 					'status' => 'alter',
 					'action' => 'move column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY COLUMN ' . self::getColumnDefinition(
-						$goalName,
-						$goalColumn
-					) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
+														    $goalName,
+														    $goalColumn
+						) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
 				);
 			};
 			if( static::getColumnDefinitionFromDesc( $currentColumn ) != static::getColumnDefinition( $goalName, $goalColumn ) ) {
 				// column exists, but differs from goal
-				echo "[" . static::getColumnDefinitionFromDesc( $currentColumn ) . '/' . static::getColumnDefinition( $goalName,
-																      $goalColumn ) . ']';
 				return array(
 					'status' => 'alter',
 					'action' => 'modify column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY COLUMN ' . self::getColumnDefinition(
-						$goalName,
-						$goalColumn
-					) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
+														    $goalName,
+														    $goalColumn
+						) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
 				);
 			};
 
@@ -116,9 +114,9 @@ class DBAPI extends Table {
 						'status' => 'alter',
 						'action' => 'add key',
 						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD ' . self::getIndexDefinition(
-							$goalName,
-							$goalIndex
-						)
+														  $goalName,
+														  $goalIndex
+							)
 					);
 				};
 
@@ -177,8 +175,8 @@ class DBAPI extends Table {
 	/**
 	 * Generates SQL string for column create/alter
 	 *
-	 * @param string       $name        Column name
-	 * @param string|array $prop        Type or properties array
+	 * @param string       $name Column name
+	 * @param string|array $prop Type or properties array
 	 *
 	 * @return string
 	 */
