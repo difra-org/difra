@@ -169,7 +169,7 @@ abstract class Item extends DBAPI {
 			$query = ( $replace ? 'REPLACE INTO `' : 'INSERT INTO `' ) . $this->getTable() . '`';
 		}
 		// set
-//		$mod = $db->escape( $this->_modified );
+		//$mod = $db->escape( $this->_modified );
 		$set = array();
 		foreach( $this->_modified as $name => $property ) {
 			// remember properties that need images to be saved
@@ -303,9 +303,6 @@ abstract class Item extends DBAPI {
 	 */
 	public function getPrimaryValue() {
 
-		if( $this->_new ) {
-			$this->save();
-		}
 		return isset( $this->_data[$pri = static::getPrimary()] ) ? $this->_data[$pri] : $this->_tempPrimary;
 	}
 
