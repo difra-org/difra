@@ -303,6 +303,9 @@ abstract class Item extends DBAPI {
 	 */
 	public function getPrimaryValue() {
 
+		if( $this->_new ) {
+			$this->save();
+		}
 		return isset( $this->_data[$pri = static::getPrimary()] ) ? $this->_data[$pri] : $this->_tempPrimary;
 	}
 
