@@ -131,4 +131,58 @@ abstract class Common {
 
 		$this->remove( $key );
 	}
+
+	const SESS_PREFIX = 'session:';
+
+	/**
+	 * Set session handler in current cache, if available
+	 */
+	public function setSessionsInCache() {
+
+		static $set = false;
+		if( $set ) {
+			return;
+		}
+		if( \Difra\Cache::getInstance()->adapter == \Difra\Cache::INST_NONE ) {
+			return;
+		}
+
+		session_set_save_handler(
+		// open
+			function ( $s, $n ) {
+
+				return true;
+			},
+			// close
+			function () {
+
+				return true;
+			},
+			// read
+			function ( $id ) {
+
+				return \Difra\Cache::getInstance()->get( self::SESS_PREFIX . $id ) ? : '';
+			},
+			// write
+			function ( $id, $data ) {
+
+				if( !$data ) {
+					return false;
+				}
+				\Difra\Cache::getInstance()->put( self::SESS_PREFIX . $id, $data, 86400 ); // 24h
+				return true;
+			},
+			// destroy
+			function ( $id ) {
+
+				\Difra\Cache::getInstance()->remove( self::SESS_PREFIX . $id );
+			},
+			// garbage collector
+			function ( $expire ) {
+
+				return true;
+			}
+		);
+		$set = true;
+	}
 }

@@ -104,6 +104,12 @@ class Cookies {
 		return setrawcookie( $name, '', time() - 108000, $this->path, $this->domain );
 	}
 
+	/**
+	 * Sets cookie that makes Ajaxer show notification popup.
+	 *
+	 * @param      $message
+	 * @param bool $error
+	 */
 	public function notify( $message, $error = false ) {
 
 		$this->set( 'notify',
@@ -117,10 +123,11 @@ class Cookies {
 	}
 
 	/**
-	 * Устанавливает куку, которая указывает Ajaxer'у обратиться по указанному URL
+	 * Sets cookie that makes Ajaxer request some URL.
 	 *
-	 * @param $url
-	 * @return void
+*@param $url
+	 *
+*@return void
 	 */
 	public function query( $url ) {
 

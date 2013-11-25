@@ -36,7 +36,7 @@ class Query extends Paginator {
 
 	/**
 	 * Конструктор
-	 * @param $objKey        Имя объектов для запроса
+	 * @param $objKey Имя объектов для запроса
 	 */
 	public function __construct( $objKey ) {
 
@@ -210,7 +210,6 @@ class Query extends Paginator {
 	/**
 	 * Добавить условие поиска
 	 * В формате ключ = значение.
-	 *
 	 * @param array $conditions
 	 *
 	 * @throws \Difra\Exception
@@ -232,7 +231,7 @@ class Query extends Paginator {
 	 * Добавить условие поиска
 	 * В строке можно передавать более сложные условия, чем в addConditions() но тогда она должна быть подготовлена (MySQL->escape и т.п.).
 	 *
-*@param string|string[] $condition
+	 * @param string|string[] $condition
 	 */
 	public function addCustomConditions( $condition ) {
 
