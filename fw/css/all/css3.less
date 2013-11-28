@@ -284,3 +284,25 @@
 	-ms-align-self: @align;
 	align-self: @align;
 }
+
+.display-box() {
+	display: -moz-box;
+	display: -webkit-box;
+	display: -ms-flexbox;
+	display: box;
+}
+
+.box-pack-align( @align: auto ) {
+
+	-moz-box-pack: @align;
+	-moz-box-align: @align;
+
+	-webkit-box-pack: @align;
+	-webkit-box-align: @align;
+
+	-ms-flex-pack: @align;
+	-ms-flex-align: @align;
+
+	box-pack: @align;
+	box-align: @align;
+}
