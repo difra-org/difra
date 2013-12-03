@@ -9,7 +9,8 @@ class Plugin extends \Difra\Plugin {
 	protected $description = 'Portfolio';
 
 	protected $objects = array(
-		'Difra\\Plugins\\Portfolio\\Objects\\Entry'
+		'Difra\\Plugins\\Portfolio\\Objects\\Entry',
+		'Difra\\Plugins\\Portfolio\\Objects\\Portfolio'
 	);
 
 	public function init() {

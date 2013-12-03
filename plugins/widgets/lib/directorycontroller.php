@@ -21,7 +21,7 @@ abstract class DirectoryController extends \Difra\Controller {
 		$class = \Difra\Unify\Storage::getClass( 'WidgetsDirectory' );
 		if( strlen( $search ) > $class::DIRECTORY_LENGTH ) {
 			\Difra\Ajax::getInstance()->notify(
-				\Difra\Locales::getInstance()->getXPath( 'widgets/directory/value-too-long' )
+				   \Difra\Locales::getInstance()->getXPath( 'widgets/directory/value-too-long' )
 			);
 		}
 		$searchObj = new \Difra\Unify\Search( 'WidgetsDirectory' );
@@ -72,7 +72,7 @@ abstract class DirectoryController extends \Difra\Controller {
 		$xml = new \DOMDocument();
 		$node = $xml->appendChild( $xml->createElement( 'DirectoryWindow' ) );
 		$search = new \Difra\Unify\Search( 'WidgetsDirectory' );
-		$search->addCondition( 'directory', static::directory );
+		$search->addCustomConditions( 'directory', static::directory );
 		$search->getListXML( $node );
 		return \Difra\View::render( $xml, 'widget_directory', true );
 	}

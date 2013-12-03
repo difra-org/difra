@@ -39,7 +39,17 @@ class Entry extends \Difra\Unify {
 			'type' => 'char',
 			'length' => 250
 		),
-		'authors' => 'text'
+		'authors' => 'text',
+		'portfolio' => array(
+			'type' => 'int',
+			'index' => true
+		),
+		'portfolio_ext' => array(
+			'type' => 'foreign',
+			'source' => 'portfolio',
+			'target' => 'PortfolioPortfolio',
+			'keys' => 'id'
+		)
 	);
 
 	protected function afterLoad() {
