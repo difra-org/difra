@@ -209,6 +209,69 @@
 				</tr>
 			</table>
 
+			<h3>
+				<xsl:value-of select="$locale/users/adm/settings/afterAuth"/>
+			</h3>
+			<table class="form">
+				<colgroup>
+					<col style="width: 380px"/>
+					<col/>
+				</colgroup>
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/users/adm/settings/behavior"/>
+					</th>
+					<td>
+						<label for="refresh">
+							Refresh
+							<input type="radio" value="refresh" name="behavior" id="refresh"
+							       onchange="changeBehaviorEnabler( this );">
+								<xsl:if test="@behavior='refresh'">
+									<xsl:attribute name="checked">
+										<xsl:text>checked</xsl:text>
+									</xsl:attribute>
+								</xsl:if>
+							</input>
+						</label>
+						<label for="redirect">
+							Redirect
+							<input type="radio" value="redirect" name="behavior"
+							       id="redirect" onchange="changeBehaviorEnabler( this );">
+								<xsl:if test="@behavior='redirect'">
+									<xsl:attribute name="checked">
+										<xsl:text>checked</xsl:text>
+									</xsl:attribute>
+								</xsl:if>
+							</input>
+						</label>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<xsl:value-of select="$locale/users/adm/settings/afterAddress"/>
+					</th>
+					<td>
+						<input type="text" id="redirectURI" name="redirectURI" class="full-width">
+							<xsl:if test="@behavior='refresh'">
+								<xsl:attribute name="disabled">
+									<xsl:text>disabled</xsl:text>
+								</xsl:attribute>
+							</xsl:if>
+							<xsl:attribute name="value">
+								<xsl:choose>
+									<xsl:when test="@redirectURI=''">
+										<xsl:text>/</xsl:text>
+									</xsl:when>
+									<xsl:otherwise>
+										<xsl:value-of select="@redirectURI"/>
+									</xsl:otherwise>
+								</xsl:choose>
+							</xsl:attribute>
+						</input>
+					</td>
+				</tr>
+			</table>
+
 			<div class="form-buttons">
 				<input type="submit" value="{$locale/adm/save}"/>
 			</div>

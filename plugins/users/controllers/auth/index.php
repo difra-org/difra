@@ -112,7 +112,25 @@ class AuthIndexController extends Difra\Controller {
 		}
 
 		$this->ajax->close();
-		$this->ajax->reload();
+
+		$Settings = Plugins\Users::getSettings();
+		if( isset( $Settings['behavior'] ) && $Settings['behavior'] == 'redirect' ) {
+
+			if( isset( $Settings['redirectURI'] ) && $Settings['redirectURI'] !='' ) {
+
+				if( substr( $Settings['redirectURI'], 0, 1 ) == '/' ) {
+					$this->ajax->redirect( $Settings['redirectURI'] );
+				} else {
+					$this->ajax->redirect( '/' . $Settings['redirectURI'] );
+				}
+
+			} else {
+				$this->ajax->redirect( '/' );
+			}
+
+		} else {
+			$this->ajax->reload();
+		}
 	}
 
 

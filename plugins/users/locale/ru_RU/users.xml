@@ -168,6 +168,9 @@
 				<recoverTTL>Время жизни ссылки восстановления (в часах)</recoverTTL>
 				<notify>Оповещение о новых пользователях для администрации</notify>
 				<notifyList>Список email'ов для оповещения (через запятую)</notifyList>
+				<afterAuth>После авторизации</afterAuth>
+				<behavior>Поведение</behavior>
+				<afterAddress>Адрес редиректа после авторизации</afterAddress>
 			</settings>
 			<additionals>
 				<title>Дополнительные поля</title>

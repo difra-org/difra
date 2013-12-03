@@ -17,14 +17,16 @@ class AdmUsersSettingsController extends Difra\Controller {
 
 	public function saveAjaxAction( Param\AjaxInt $length, Param\AjaxInt $attempts,
 					Param\AjaxCheckbox $strong, Param\AjaxInt $passwordExpire,
-					Param\AjaxString $activeType, Param\AjaxInt $recoverTTL,
-					Param\AjaxCheckbox $sendNotify, Param\AjaxString $notifyMails = null ) {
+					Param\AjaxString $activeType, Param\AjaxInt $recoverTTL, Param\AjaxString $behavior,
+					Param\AjaxCheckbox $sendNotify, Param\AjaxString $notifyMails = null,
+					Param\AjaxString $redirectURI = null ) {
 
 		$settingsArray = array( 'length' => $length->val(), 'attempts' => $attempts->val(),
 					'strong' => $strong->val(), 'passwordExpire' => $passwordExpire->val(),
 					'activeType' => $activeType->val(), 'recoverTTL' => $recoverTTL->val(),
-					'sendNotify' => $sendNotify->val(),
-					'notifyMails' => !is_null( $notifyMails ) ? $notifyMails->val() : null );
+					'sendNotify' => $sendNotify->val(), 'behavior' => $behavior->val(),
+					'notifyMails' => !is_null( $notifyMails ) ? $notifyMails->val() : null,
+					'redirectURI' => !is_null( $redirectURI ) ? $redirectURI->val() : null );
 
 		Plugins\Users::saveSettings( $settingsArray );
 

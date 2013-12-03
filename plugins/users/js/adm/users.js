@@ -18,6 +18,16 @@ function changeNotifyEnabler() {
 	}
 };
 
+function changeBehaviorEnabler( el ) {
+
+	var dis = $( el ).val();
+	if( dis == 'redirect' ) {
+		$( '#redirectURI' ).removeAttr( 'disabled' );
+	} else {
+		$( '#redirectURI' ).attr( 'disabled', 'disabled' );
+	}
+};
+
 function deleteAddtitionalField( delObj ) {
 	$( delObj ).parent().parent().remove();
 };
