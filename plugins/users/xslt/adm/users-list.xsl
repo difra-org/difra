@@ -6,9 +6,7 @@
 		</h2>
 
 		<xsl:call-template name="users-filter"/>
-
 		<xsl:call-template name="users-sort"/>
-
 
 		<xsl:choose>
 			<xsl:when test="UsersUserList/UsersUser">
@@ -132,6 +130,11 @@
 				<h3>
 					<xsl:value-of select="$locale/users/adm/noUsers"/>
 				</h3>
+
+				<a href="/adm/users/list/add">
+					<xsl:value-of select="$locale/users/adm/addUserLink"/>
+				</a>
+
 			</xsl:otherwise>
 		</xsl:choose>
 
