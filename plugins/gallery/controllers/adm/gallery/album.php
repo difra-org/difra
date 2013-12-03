@@ -4,7 +4,7 @@ class AdmGalleryAlbumController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction( \Difra\Param\AnyInt $id ) {

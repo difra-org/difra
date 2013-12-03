@@ -32,9 +32,10 @@
 			<no-images>В этом альбоме нет изображений.</no-images>
 		</adm>
 
-		<title>Содержимое фотогалереи</title>
+		<title>Фотогалерея</title>
 		<title-add>Добавление альбома</title-add>
 		<title-edit>Редактирование альбома</title-edit>
 		<title-album>Альбом</title-album>
+		<arrow> → </arrow>
 	</gallery>
 </locale>

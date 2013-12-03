@@ -36,14 +36,15 @@ class Query extends Paginator {
 
 	/**
 	 * Конструктор
-	 * @param $objKey        Имя объектов для запроса
+	 * @param $objKey Имя объектов для запроса
 	 */
 	public function __construct( $objKey ) {
 
+		parent::__construct();
 		$this->objKey = $objKey;
 		$class = Storage::getClass( $objKey );
-		$this->order = $class::getDefaultOrder();
-		$this->orderDesc = $class::getDefaultOrderDesc();
+		$this->order = $class::getDefaultOrder() ? (array)$class::getDefaultOrder() : null;
+		$this->orderDesc = $class::getDefaultOrderDesc() ? (array)$class::getDefaultOrderDesc() : null;
 	}
 
 	/**
@@ -52,12 +53,12 @@ class Query extends Paginator {
 	 */
 	public function doQuery() {
 
-		try {
-			$db = MySQL::getInstance();
-			$result = $db->fetch( $this->getQuery() );
-		} catch( Exception $ex ) {
-			return null;
-		}
+//		try {
+		$db = MySQL::getInstance();
+		$result = $db->fetch( $this->getQuery() );
+//		} catch( Exception $ex ) {
+//			return null;
+//		}
 		if( $this->page ) {
 			$this->setTotal( $db->getFoundRows() );
 		}
@@ -188,19 +189,18 @@ class Query extends Paginator {
 	public function getLimit() {
 
 		if( $this->page ) {
-			list( $this->limitFrom, $this->limitNum ) = $this->getLimit();
+			list( $this->limitFrom, $this->limitNum ) = $this->getPaginatorLimit();
 		}
 
 		if( !$this->limitFrom and !$this->limitNum ) {
 			return '';
 		}
 		$q = ' LIMIT ';
-		$db = MySQL::getInstance();
 		if( $this->limitFrom ) {
-			$q .= "'" . $db->escape( $this->limitFrom ) . "',";
+			$q .= intval( $this->limitFrom ) . ",";
 		}
 		if( $this->limitNum ) {
-			$q .= "'" . $db->escape( $this->limitNum ) . "'";
+			$q .= intval( $this->limitNum );
 		} else {
 			$q .= '999999'; // чтобы задать только отступ в LIMIT, считаем это отсутсвтием лимита :)
 		}
@@ -209,9 +209,7 @@ class Query extends Paginator {
 
 	/**
 	 * Добавить условие поиска
-	 * В формате ключ = значение или строка.
-	 * В строке можно передавать более сложные условия, но тогда должна быть подготовлена (MySQL->escape и т.п.)
-	 *
+	 * В формате ключ = значение.
 	 * @param array $conditions
 	 *
 	 * @throws \Difra\Exception
@@ -225,16 +223,24 @@ class Query extends Paginator {
 			return;
 		}
 		foreach( $conditions as $k => $cond ) {
-			$this->addCondition( $k, $cond );
+			$this->conditions[$k] = $cond;
 		}
 	}
 
-	public function addCondition( $condition, $value = null ) {
+	/**
+	 * Добавить условие поиска
+	 * В строке можно передавать более сложные условия, чем в addConditions() но тогда она должна быть подготовлена (MySQL->escape и т.п.).
+	 *
+	 * @param string|string[] $condition
+	 */
+	public function addCustomConditions( $condition ) {
 
-		if( is_null( $value ) ) {
+		if( !is_array( $condition ) ) {
 			$this->conditions[] = $condition;
 		} else {
-			$this->conditions[$condition] = $value;
+			foreach( $condition as $cond ) {
+				$this->addCustomConditions( $cond );
+			}
 		}
 	}
 

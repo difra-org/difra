@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 	<xsl:template match="GalleryAlbumList">
 		<h2><xsl:value-of select="$locale/gallery/title"/></h2>
-		<a href="/adm/gallery/add" class="button">
+		<a href="/adm/gallery/albums/add" class="button">
 			<xsl:value-of select="$locale/gallery/adm/list/add-album"/>
 		</a>
 		<h3>
@@ -32,7 +31,7 @@
 							<td>
 								<xsl:call-template name="actionEdit">
 									<xsl:with-param name="link">
-										<xsl:text>/adm/gallery/edit/</xsl:text>
+										<xsl:text>/adm/gallery/albums/edit/</xsl:text>
 										<xsl:value-of select="@id"/>
 									</xsl:with-param>
 								</xsl:call-template>
@@ -44,19 +43,19 @@
 								</xsl:call-template>
 								<xsl:call-template name="actionUp">
 									<xsl:with-param name="link">
-										<xsl:text>/adm/gallery/up/</xsl:text>
+										<xsl:text>/adm/gallery/albums/up/</xsl:text>
 										<xsl:value-of select="@id"/>
 									</xsl:with-param>
 								</xsl:call-template>
 								<xsl:call-template name="actionDown">
 									<xsl:with-param name="link">
-										<xsl:text>/adm/gallery/down/</xsl:text>
+										<xsl:text>/adm/gallery/albums/down/</xsl:text>
 										<xsl:value-of select="@id"/>
 									</xsl:with-param>
 								</xsl:call-template>
 								<xsl:call-template name="actionDelete">
 									<xsl:with-param name="link">
-										<xsl:text>/adm/gallery/delete/</xsl:text>
+										<xsl:text>/adm/gallery/albums/delete/</xsl:text>
 										<xsl:value-of select="@id"/>
 									</xsl:with-param>
 								</xsl:call-template>

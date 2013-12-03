@@ -16,6 +16,7 @@ class Session {
 	 */
 	public function __construct() {
 
+		\Difra\Cache::getInstance()->setSessionsInCache();
 		self::load();
 	}
 

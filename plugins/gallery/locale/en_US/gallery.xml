@@ -37,5 +37,6 @@
 		<title-add>Add album</title-add>
 		<title-edit>Edit album</title-edit>
 		<title-album>Album</title-album>
+		<arrow> → </arrow>
 	</gallery>
 </locale>

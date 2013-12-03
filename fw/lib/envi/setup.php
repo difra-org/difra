@@ -16,15 +16,6 @@ class Setup {
 	 */
 	public static function run() {
 
-		// paths
-		if( !defined( 'DIR_ROOT' ) ) {
-			define( 'DIR_ROOT', dirname( dirname( dirname( __DIR__ ) ) ) . '/' );
-		}
-		define( 'DIR_FW', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'fw/' );
-		define( 'DIR_SITE', DIR_ROOT . 'sites/' . Envi::getSite() . '/' );
-		define( 'DIR_PLUGINS', ( defined( 'DIR_PHAR' ) ? DIR_PHAR : DIR_ROOT ) . 'plugins/' );
-		define( 'DIR_DATA', !empty( $_SERVER['VHOST_DATA'] ) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/' );
-
 		// other
 		mb_internal_encoding( 'UTF-8' );
 		ini_set( 'short_open_tag', false );
@@ -51,19 +42,26 @@ class Setup {
 			$_POST = array_map( $strip_slashes_deep, $_POST );
 			$_COOKIE = array_map( $strip_slashes_deep, $_COOKIE );
 		}
+
+		self::setLocale();
 	}
 
 	/** @var string Default locale */
-	static private $locale = 'ru_RU';
+	static private $locale = false;
 
 	/**
 	 * Set locale
 	 *
 	 * @param $locale
 	 */
-	public static function setLocale( $locale ) {
+	public static function setLocale( $locale = false ) {
 
-		self::$locale = $locale;
+		if( !$locale ) {
+			if( $configLocale = \Difra\Config::getInstance()->get( 'locale' ) ) {
+				$locale = $configLocale;
+			}
+		}
+		self::$locale = $locale ? : 'ru_RU';
 		setlocale( LC_ALL, array( self::$locale . '.UTF-8', self::$locale . '.utf8' ) );
 		setlocale( LC_NUMERIC, array( 'en_US.UTF-8', 'en_US.utf8' ) );
 	}

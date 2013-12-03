@@ -31,6 +31,7 @@ CREATE TABLE `announcements` (
   `visible` tinyint(4) NOT NULL DEFAULT '1',
   `priority` int(11) NOT NULL DEFAULT '50',
   `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `exported` tinyint(4) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
   KEY `user_akey` (`user`),
   KEY `group_key` (`group`),
@@ -38,8 +39,9 @@ CREATE TABLE `announcements` (
   KEY `category_key` (`category`),
   KEY `location_key` (`location`),
   KEY `datesort` (`visible`,`endDate`,`fromEventDate`,`eventDate`,`beginDate`,`priority`),
+  KEY `announce_exported_key` (`exported`),
   CONSTRAINT `user_afkey` FOREIGN KEY (`user`) REFERENCES `users` (`id`) ON DELETE CASCADE
-) ENGINE=InnoDB AUTO_INCREMENT=401 DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
 
 CREATE TABLE `announcements_additionals_data` (
   `announce_id` int(11) NOT NULL,

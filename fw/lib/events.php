@@ -48,16 +48,16 @@ class Events {
 			self::$events[$type] = array();
 		}
 
+		self::register( 'core-init', 'Difra\\Debugger', 'init' );
 		self::register( 'core-init', 'Difra\\Envi\\Setup', 'run' );
 		self::register( 'core-init', 'Difra\\Envi\\Session', 'init' );
-		self::register( 'core-init', 'Difra\\Debugger', 'init' );
 		self::register( 'plugins-load', 'Difra\\Plugger', 'init' );
 		if( Envi::getMode() == 'web' ) {
 			self::register( 'action-find', 'Difra\\Controller', 'init' );
 			self::register( 'action-run', 'Difra\\Controller', 'run' );
 			self::register( 'render-run', 'Difra\\Controller', 'render' );
 		}
-		if( file_exists( $initPHP = ( __DIR__ . '/../../lib/init.php' ) ) ) {
+		if( file_exists( $initPHP = ( DIR_ROOT . '/lib/init.php' ) ) ) {
 			/** @noinspection PhpIncludeInspection */
 			include_once( $initPHP );
 		}
@@ -68,6 +68,7 @@ class Events {
 	 * @param             $type          Имя события
 	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
 	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
+	 *
 	 * @throws Exception
 	 */
 	public static function register( $type, $class, $method = false ) {

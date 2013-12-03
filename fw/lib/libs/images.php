@@ -90,8 +90,8 @@ final class Images {
 	public function createThumbnail( $data, $maxWidth, $maxHeight, $type = 'png' ) {
 
 		$img = $this->data2image( $data );
-		$w   = $img->getimagewidth();
-		$h   = $img->getimageheight();
+		$w = $img->getimagewidth();
+		$h = $img->getimageheight();
 		if( $maxWidth < $w or $maxHeight < $h ) {
 			if( $w / $maxWidth > $h / $maxHeight ) {
 				$nw = $maxWidth;
@@ -150,7 +150,7 @@ final class Images {
 			$watermarkImage = new \Imagick();
 
 			$draw = new \ImagickDraw();
-			$draw->setFont( __DIR__ . '/capcha/DejaVuSans.ttf' );
+			$draw->setFont( DIR_FW . 'lib/libs/capcha/DejaVuSans.ttf' );
 			$draw->setFontSize( 10 );
 			$draw->setGravity( \imagick::GRAVITY_CENTER );
 
@@ -163,9 +163,9 @@ final class Images {
 
 		// создаём ватермарку
 
-		$image_width      = $originalImage->getImageWidth();
-		$image_height     = $originalImage->getImageHeight();
-		$watermark_width  = $watermarkImage->getImageWidth();
+		$image_width = $originalImage->getImageWidth();
+		$image_height = $originalImage->getImageHeight();
+		$watermark_width = $watermarkImage->getImageWidth();
 		$watermark_height = $watermarkImage->getImageHeight();
 
 		// проверяем на влезание в размеры
@@ -174,29 +174,29 @@ final class Images {
 		}
 
 		// предефайн позиций знака
-		$positions   = array();
+		$positions = array();
 		$positions[] = array( 0 + $padding, 0 + $padding );
 		$positions[] = array( $image_width - $watermark_width - $padding, 0 + $padding );
 		$positions[] = array( $image_width - $watermark_width - $padding, $image_height - $watermark_height - $padding );
 		$positions[] = array( 0 + $padding, $image_height - $watermark_height - $padding );
 
-		$min        = null;
+		$min = null;
 		$min_colors = 0;
-		$textColor  = 'black';
+		$textColor = 'black';
 
 		foreach( $positions as $position ) {
 			$colors =
 				$originalImage->getImageRegion( $watermark_width, $watermark_height, $position[0], $position[1] )
-					->getImageColors();
+				->getImageColors();
 
 			if( $min === null || $colors <= $min_colors ) {
-				$min        = $position;
+				$min = $position;
 				$min_colors = $colors;
 			}
 		}
 		$region = $originalImage->getImageRegion( $watermark_width, $watermark_height, $min[0], $min[1] );
 		$region->scaleImage( 1, 1 );
-		$aColor   = $region->getImagePixelColor( 1, 1 )->getColor();
+		$aColor = $region->getImagePixelColor( 1, 1 )->getColor();
 		$colorSum = $aColor['r'] + $aColor['g'] + $aColor['b'];
 		if( $colorSum < 390 ) {
 			$textColor = 'white';

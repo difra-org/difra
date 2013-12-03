@@ -40,6 +40,7 @@ class Capcha {
 	 * Verify entered key
 	 *
 	 * @param string $inKey
+	 *
 	 * @return bool
 	 */
 	public function verifyKey( $inKey ) {
@@ -67,6 +68,7 @@ class Capcha {
 	 * @param int    $sizeY
 	 * @param string $text
 	 * @param string $generator
+	 *
 	 * @return \Imagick
 	 */
 	public function mkCapcha( $sizeX, $sizeY, $text, $generator = self::METHOD_DEFAULT ) {
@@ -100,18 +102,18 @@ class Capcha {
 				$image->gaussianBlurImage( 15, 3 );
 				for( $n = 0; $n < strlen( $text ); $n++ ) {
 					$i = $order[$n];
-					$draw->setFont( __DIR__ . '/capcha/DejaVuSans.ttf' );
+					$draw->setFont( DIR_FW . 'lib/libs/capcha/DejaVuSans.ttf' );
 					$draw->setFontSize( $j
-						? rand( $sizeY * 3 / 5, $sizeY * 5 / 6 )
-						: rand( $sizeY * 4 / 6,
-							$sizeY * 5 / 6 ) );
+								    ? rand( $sizeY * 3 / 5, $sizeY * 5 / 6 )
+								    : rand( $sizeY * 4 / 6,
+									    $sizeY * 5 / 6 ) );
 					$draw->setFontWeight( rand( 100, 900 ) );
 					$draw->setGravity( \imagick::GRAVITY_CENTER );
 					$image->annotateImage( $draw,
-						( $i - strlen( $text ) / 2 ) * $sizeX / ( strlen( $text ) + 2.3 ),
-						0,
-						rand( -25, 25 ),
-						$text{$i} );
+							       ( $i - strlen( $text ) / 2 ) * $sizeX / ( strlen( $text ) + 2.3 ),
+							       0,
+							       rand( -25, 25 ),
+							       $text{$i} );
 					$image->gaussianBlurImage( 1, 1 );
 				}
 			}
@@ -124,6 +126,7 @@ class Capcha {
 	 * Generates random key
 	 *
 	 * @param int $len
+	 *
 	 * @return string
 	 */
 	public function genKey( $len ) {

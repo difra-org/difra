@@ -2,7 +2,7 @@
 
 namespace Difra;
 
-include_once( __DIR__ . '/debugger.php' );
+include_once( DIR_FW . 'lib/debugger.php' );
 
 /**
  * Автоматическая подгрузка классов
@@ -62,7 +62,7 @@ class Autoloader {
 			$parts = array_slice( $parts, 3 );
 			$path = DIR_PLUGINS . "$name/lib/";
 		} else {
-			$path = defined( 'DIR_FW' ) ? DIR_FW . 'lib/' : __DIR__ . '/';
+			$path = defined( 'DIR_FW' ) ? DIR_FW . 'lib/' : DIR_ROOT . '/fw/lib/';
 			array_shift( $parts );
 		}
 		return $path . strtolower( implode( '/', $parts ) ) . '.php';

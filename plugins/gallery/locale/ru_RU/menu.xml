@@ -3,7 +3,7 @@
 		<adm>
 			<menu_gallery>Фотогалерея</menu_gallery>
 			<menu_gallery_gallery>Содержимое фотогалереи</menu_gallery_gallery>
-			<menu_gallery_gallery-settings>Настройки фотогалереи</menu_gallery_gallery-settings>
+			<menu_gallery_config>Настройки фотогалереи</menu_gallery_config>
 		</adm>
 	</menu>
 </locale>

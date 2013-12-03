@@ -2,8 +2,9 @@
 	<menu>
 		<adm>
 			<menu_gallery>Photo galleries</menu_gallery>
-			<menu_gallery_gallery>Albums</menu_gallery_gallery>
-			<menu_gallery_gallery-settings>Settings</menu_gallery_gallery-settings>
+			<menu_gallery_albums>Albums</menu_gallery_albums>
+			<menu_gallery_config>Settings</menu_gallery_config>
+
 		</adm>
 	</menu>
 </locale>

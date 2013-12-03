@@ -58,9 +58,9 @@ class DBAPI extends Table {
 					'status' => 'alter',
 					'action' => 'add column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD COLUMN ' . self::getColumnDefinition(
-						$goalName,
-						$goalColumn
-					) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
+														 $goalName,
+														 $goalColumn
+						) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
 				);
 			};
 			if( $goalName != $currentName ) {
@@ -69,9 +69,9 @@ class DBAPI extends Table {
 					'status' => 'alter',
 					'action' => 'move column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY COLUMN ' . self::getColumnDefinition(
-						$goalName,
-						$goalColumn
-					) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
+														    $goalName,
+														    $goalColumn
+						) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
 				);
 			};
 			if( static::getColumnDefinitionFromDesc( $currentColumn ) != static::getColumnDefinition( $goalName, $goalColumn ) ) {
@@ -80,9 +80,9 @@ class DBAPI extends Table {
 					'status' => 'alter',
 					'action' => 'modify column',
 					'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` MODIFY COLUMN ' . self::getColumnDefinition(
-						$goalName,
-						$goalColumn
-					) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
+														    $goalName,
+														    $goalColumn
+						) . ( $previousColumn ? ' AFTER `' . $db->escape( $previousColumn ) . '`' : ' FIRST' )
 				);
 			};
 
@@ -114,9 +114,9 @@ class DBAPI extends Table {
 						'status' => 'alter',
 						'action' => 'add key',
 						'sql' => 'ALTER TABLE `' . $db->escape( $table ) . '` ADD ' . self::getIndexDefinition(
-							$goalName,
-							$goalIndex
-						)
+														  $goalName,
+														  $goalIndex
+							)
 					);
 				};
 
@@ -175,8 +175,8 @@ class DBAPI extends Table {
 	/**
 	 * Generates SQL string for column create/alter
 	 *
-	 * @param string       $name        Column name
-	 * @param string|array $prop        Type or properties array
+	 * @param string       $name Column name
+	 * @param string|array $prop Type or properties array
 	 *
 	 * @return string
 	 */
@@ -185,7 +185,8 @@ class DBAPI extends Table {
 		$db = \Difra\MySQL::getInstance();
 		// simple columns (name => type)
 		if( !is_array( $prop ) ) {
-			return '`' . $db->escape( $name ) . '` ' . $prop;
+			$prop = array( 'type' => $prop );
+//			return '`' . $db->escape( $name ) . '` ' . $prop;
 		}
 		// column name
 		$line = '`' . $db->escape( $name ) . '` ' . $prop['type'];
@@ -193,7 +194,7 @@ class DBAPI extends Table {
 		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] );
 		// default value
 		if( !empty( $prop['default'] ) ) {
-			$line .= " DEFAULT {$prop['default']}";
+			$line .= self::getDefault( $prop['default'] );
 		} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
 			$line .= ' NOT NULL';
 		}
@@ -215,7 +216,7 @@ class DBAPI extends Table {
 		$db = \Difra\MySQL::getInstance();
 		$line = '`' . $db->escape( $desc['Field'] ) . '` ' . $desc['Type'];
 		if( $desc['Default'] ) {
-			$line .= ' DEFAULT ' . $desc['Default'];
+			$line .= self::getDefault( $desc['Default'] );
 		} elseif( $desc['Null'] == 'NO' and static::getPrimary() != $desc['Field'] ) {
 			$line .= ' NOT NULL';
 		}
@@ -223,6 +224,16 @@ class DBAPI extends Table {
 			$line .= ' ' . $desc['Extra'];
 		}
 		return $line;
+	}
+
+	private static function getDefault( $value ) {
+
+		static $defaultKeywords = array( 'CURRENT_TIMESTAMP' );
+		if( in_array( mb_strtoupper( $value ), $defaultKeywords ) ) {
+			return ' DEFAULT ' . $value;
+		} else {
+			return " DEFAULT '{$value}'";
+		}
 	}
 
 	/**
@@ -245,13 +256,14 @@ class DBAPI extends Table {
 			return 'PRIMARY KEY (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
 		case 'fulltext':
 			return 'FULLTEXT KEY `' . $name . '` (`' . implode( '`,`', (array)$prop['columns'] ) . '`)';
-//			case 'foreign':
-//				/** @var Item $targetObj */
-//				$targetObj = Storage::getClass( $prop['target'] );
-//				return 'CONSTRAINT FOREIGN KEY `' . $name . '` (`' . implode( '`,`', $prop['columns'] ) . '`)'
-//				. ' REFERENCES `' . $targetObj::getTable() . '` (`' . implode( '`,`', $prop['targets'] ) . '`)'
-//				. ' ON DELETE ' . ( isset( $prop['ondelete'] ) and $prop['ondelete'] ? $prop['ondelete'] : 'CASCADE' )
-//				. ' ON UPDATE ' . ( isset( $prop['onupdate'] ) and $prop['onupdate'] ? $prop['onupdate'] : 'CASCADE' );
+		case 'foreign':
+			/** @var Item $targetObj */
+			$targetTable = ( $targetObj = Storage::getClass( $prop['target'] ) ) ? $targetObj::getTable() : $prop['target'];
+			return 'CONSTRAINT `' . $name . '`'
+			. ' FOREIGN KEY (`' . implode( '`,`', (array)$prop['source'] ) . '`)'
+			. ' REFERENCES `' . $targetTable . '` (`' . implode( '`,`', (array)$prop['keys'] ) . '`)'
+			. ' ON DELETE ' . ( ( isset( $prop['ondelete'] ) and $prop['ondelete'] ) ? $prop['ondelete'] : 'CASCADE' )
+			. ' ON UPDATE ' . ( ( isset( $prop['onupdate'] ) and $prop['onupdate'] ) ? $prop['onupdate'] : 'CASCADE' );
 		default:
 			throw new \Difra\Exception( 'I don\'t know how to define key type ' . $prop['type'] . "\n" );
 		}
@@ -267,36 +279,53 @@ class DBAPI extends Table {
 		$db = \Difra\MySQL::getInstance();
 		$escTable = $db->escape( static::getTable() );
 		$dbIndexes = $db->fetch( 'SHOW INDEXES FROM `' . $escTable . '`' );
-//		$foreignKeys = $db->fetch(
-//			'SELECT `constraint_name`,`ordinal_position`,`table_name`,`column_name`,`referenced_table_name`,`referenced_column_name`'
-//			. ' FROM `information_schema`.`key_column_usage`'
-//			. ' WHERE `referenced_table_name` IS NOT NULL AND `table_schema`=DATABASE() AND `table_name`=\'' . $escTable . '\''
-//		);
+		$foreignKeys = $db->fetch(
+				  'SELECT `constraint_name`,`column_name`,`referenced_table_name`,`referenced_column_name`'
+				  . ' FROM `information_schema`.`key_column_usage`'
+				  . ' WHERE `referenced_table_name` IS NOT NULL AND `table_schema`=DATABASE() AND `table_name`=\'' . $escTable . '\''
+				  . ' ORDER BY `ordinal_position`'
+		);
+		$result = array();
 
-		if( empty( $dbIndexes ) ) {
-			return array();
+		// regular indexes
+		if( !empty( $dbIndexes ) ) {
+			foreach( $dbIndexes as $row ) {
+				if( !isset( $result[$row['Key_name']] ) ) {
+					if( $row['Key_name'] == 'PRIMARY' ) {
+						$type = 'primary';
+					} elseif( $row['Non_unique'] == '0' ) {
+						$type = 'unique';
+					} elseif( $row['Index_type'] == 'FULLTEXT' ) {
+						$type = 'fulltext';
+					} else {
+						$type = 'index';
+					}
+					$result[$row['Key_name']] = array(
+						'type' => $type,
+						'columns' => array(
+							$row['Seq_in_index'] => $row['Column_name']
+						)
+					);
+				} else {
+					$result[$row['Key_name']]['columns'][$row['Seq_in_index']] = $row['Column_name'];
+				}
+			}
 		}
 
-		$result = array();
-		foreach( $dbIndexes as $row ) {
-			if( !isset( $result[$row['Key_name']] ) ) {
-				if( $row['Key_name'] == 'PRIMARY' ) {
-					$type = 'primary';
-				} elseif( $row['Non_unique'] == '0' ) {
-					$type = 'unique';
-				} elseif( $row['Index_type'] == 'FULLTEXT' ) {
-					$type = 'fulltext';
+		// foreign keys
+		if( !empty( $foreignKeys ) ) {
+			foreach( $foreignKeys as $foreign ) {
+				if( !isset( $result[$foreign['constraint_name']] ) ) {
+					$result[$foreign['constraint_name']] = array(
+						'type' => 'foreign',
+						'source' => (array)$foreign['column_name'],
+						'target' => $foreign['referenced_table_name'],
+						'keys' => (array)$foreign['referenced_column_name']
+					);
 				} else {
-					$type = 'index';
+					$result[$foreign['constraint_name']]['column_name'][] = $foreign['column_name'];
+					$result[$foreign['constraint_name']]['referenced_column_name'][] = $foreign['referenced_column_name'];
 				}
-				$result[$row['Key_name']] = array(
-					'type' => $type,
-					'columns' => array(
-						$row['Seq_in_index'] => $row['Column_name']
-					)
-				);
-			} else {
-				$result[$row['Key_name']]['columns'][$row['Seq_in_index']] = $row['Column_name'];
 			}
 		}
 		return $result;
@@ -330,18 +359,18 @@ class DBAPI extends Table {
 		if( empty( static::$propertiesList ) ) {
 			throw new \Difra\Exception( 'Can\'t create table for empty object.' );
 		}
-		$columns = array();
+		$lines = array();
 		$indexes = array();
-		if( $createPrimary = static::getCreatePrimary() ) {
-			$indexes[] = $createPrimary;
-		}
+//		if( $createPrimary = static::getCreatePrimary() ) {
+//			$indexes[] = $createPrimary;
+//		}
 		foreach( static::getColumns() as $name => $prop ) {
 			$lines[] = self::getColumnDefinition( $name, $prop );
 		}
 		foreach( static::getIndexes() as $name => $prop ) {
 			$indexes[] = self::getIndexDefinition( $name, $prop );
 		}
-		$lines = array_merge( $columns, $indexes );
+		$lines = array_merge( $lines, $indexes );
 		$create = 'CREATE TABLE `' . static::getTable() . "` (\n" . implode( ",\n", $lines ) . "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8";
 		return $create;
 	}

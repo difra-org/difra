@@ -1,0 +1,16 @@
+<locale>
+	<twitter>
+		<adm>
+			<oAuth>
+				<settingsTitle>Настройки авторизации OAuth</settingsTitle>
+				<consumerKey>Consumer key</consumerKey>
+				<consumerSecret>Consumer secret</consumerSecret>
+				<oAuthtoken>OAuth access token</oAuthtoken>
+				<oAuthsecret>OAuth access token secret</oAuthsecret>
+
+				<settingsSaved>Настройки OAuth сохранены.</settingsSaved>
+			</oAuth>
+		</adm>
+	</twitter>
+
+</locale>

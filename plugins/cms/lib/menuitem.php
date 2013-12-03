@@ -58,7 +58,9 @@ class Menuitem {
 	 * Получение элемента по id
 	 *
 	 * @static
+	 *
 	 * @param int $id
+	 *
 	 * @return Menuitem
 	 */
 	public static function get( $id ) {
@@ -72,7 +74,9 @@ class Menuitem {
 	/**
 	 * Получение списка элементов меню $menuId
 	 * @static
+	 *
 	 * @param int $menuId
+	 *
 	 * @return Menuitem[]|bool
 	 */
 	public static function getList( $menuId ) {
@@ -82,11 +86,11 @@ class Menuitem {
 			$cache = \Difra\Cache::getInstance();
 			if( !$data = $cache->get( $cacheKey ) ) {
 				$db = \Difra\MySQL::getInstance();
-				$data =
-					$db->fetch(
-						'SELECT `cms_menu_items`.*,`cms`.`id` as `page_id`,`cms`.`tag`,`cms`.`hidden`,
-					`cms`.`title` FROM `cms_menu_items` LEFT JOIN `cms` ON `cms_menu_items`.`page`=`cms`.`id` WHERE
-					`menu`=\'' . $db->escape( $menuId ) . "' ORDER BY `position`" );
+				$data = $db->fetch(
+					   'SELECT `cms_menu_items`.*,`cms`.`id` as `page_id`,`cms`.`tag`,`cms`.`hidden`,`cms`.`title`'
+					   . ' FROM `cms_menu_items` LEFT JOIN `cms` ON `cms_menu_items`.`page`=`cms`.`id`'
+					   . ' WHERE `menu`=\'' . $db->escape( $menuId )
+					   . "' ORDER BY `position`" );
 				$cache->put( $cacheKey, $data );
 			}
 			if( !is_array( $data ) or empty( $data ) ) {
@@ -168,24 +172,24 @@ class Menuitem {
 		if( !$this->id ) {
 			$pos = $db->fetchOne( 'SELECT MAX(`position`) FROM `cms_menu_items`' );
 			$db->query( 'INSERT INTO `cms_menu_items` SET '
-				. "`menu`='" . $db->escape( $this->menu ) . "',"
-				. "`position`=" . $db->escape( intval( $pos ) + 1 ) . ","
-				. ( $this->parent ? "`parent`='" . $db->escape( $this->parent ) . "'," : '`parent`=NULL,' )
-				. "`visible`='" . $db->escape( $this->visible ) . "',"
-				. ( $this->page ? "`page`='" . $db->escape( $this->page ) . "'," : '`page`=NULL,' )
-				. ( $this->link ? "`link`='" . $db->escape( $this->link ) . "'," : '`link`=NULL,' )
-				. "`link_label`='" . $db->escape( $this->linkLabel ) . "'"
+				    . "`menu`='" . $db->escape( $this->menu ) . "',"
+				    . "`position`=" . $db->escape( intval( $pos ) + 1 ) . ","
+				    . ( $this->parent ? "`parent`='" . $db->escape( $this->parent ) . "'," : '`parent`=NULL,' )
+				    . "`visible`='" . $db->escape( $this->visible ) . "',"
+				    . ( $this->page ? "`page`='" . $db->escape( $this->page ) . "'," : '`page`=NULL,' )
+				    . ( $this->link ? "`link`='" . $db->escape( $this->link ) . "'," : '`link`=NULL,' )
+				    . "`link_label`='" . $db->escape( $this->linkLabel ) . "'"
 			);
 			$this->id = $db->getLastId();
 		} else {
 			$db->query( 'UPDATE `cms_menu_items` SET '
-				. "`menu`='" . $db->escape( $this->menu ) . "',"
-				. ( $this->parent ? "`parent`='" . $db->escape( $this->parent ) . "'," : '`parent`=NULL,' )
-				. "`visible`='" . $db->escape( $this->visible ) . "',"
-				. ( $this->page ? "`page`='" . $db->escape( $this->page ) . "'," : '`page`=NULL,' )
-				. ( $this->link ? "`link`='" . $db->escape( $this->link ) . "'," : '`link`=NULL,' )
-				. "`link_label`='" . $db->escape( $this->linkLabel ) . "'"
-				. " WHERE `id`='" . $db->escape( $this->id ) . "'"
+				    . "`menu`='" . $db->escape( $this->menu ) . "',"
+				    . ( $this->parent ? "`parent`='" . $db->escape( $this->parent ) . "'," : '`parent`=NULL,' )
+				    . "`visible`='" . $db->escape( $this->visible ) . "',"
+				    . ( $this->page ? "`page`='" . $db->escape( $this->page ) . "'," : '`page`=NULL,' )
+				    . ( $this->link ? "`link`='" . $db->escape( $this->link ) . "'," : '`link`=NULL,' )
+				    . "`link_label`='" . $db->escape( $this->linkLabel ) . "'"
+				    . " WHERE `id`='" . $db->escape( $this->id ) . "'"
 			);
 		}
 		$this->modified = false;
@@ -196,6 +200,7 @@ class Menuitem {
 	 * Возвращает данные элемента меню в XML
 	 *
 	 * @param \DOMElement $node
+	 *
 	 * @return bool
 	 */
 	public function getXML( $node ) {
@@ -353,10 +358,11 @@ class Menuitem {
 
 		$this->load();
 		$db = \Difra\MySQL::getInstance();
-		$items = $db->fetch( "SELECT `id`,`position` FROM `cms_menu_items`"
-		. " WHERE `menu`='" . $this->menu . "'"
-		. " AND `parent`" . ( $this->parent ? "='" . $db->escape( $this->parent ) . "'" : ' IS NULL' )
-		. " ORDER BY `position`" );
+		$items = $db->fetch(
+			    "SELECT `id`,`position` FROM `cms_menu_items`"
+			    . " WHERE `menu`='" . $this->menu . "'"
+			    . " AND `parent`" . ( $this->parent ? "='" . $db->escape( $this->parent ) . "'" : ' IS NULL' )
+			    . " ORDER BY `position`" );
 		$newSort = array();
 		$pos = 1;
 		$prev = false;
@@ -386,10 +392,11 @@ class Menuitem {
 
 		$this->load();
 		$db = \Difra\MySQL::getInstance();
-		$items = $db->fetch( "SELECT `id`,`position` FROM `cms_menu_items`"
-		. " WHERE `menu`='" . $this->menu . "'"
-		. " AND `parent`" . ( $this->parent ? "='" . $db->escape( $this->parent ) . "'" : ' IS NULL' )
-		. " ORDER BY `position`" );
+		$items = $db->fetch(
+			    "SELECT `id`,`position` FROM `cms_menu_items`"
+			    . " WHERE `menu`='" . $this->menu . "'"
+			    . " AND `parent`" . ( $this->parent ? "='" . $db->escape( $this->parent ) . "'" : ' IS NULL' )
+			    . " ORDER BY `position`" );
 		$newSort = array();
 		$pos = 1;
 		$next = false;

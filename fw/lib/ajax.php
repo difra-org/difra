@@ -31,14 +31,18 @@ class Ajax {
 			if( empty( $parameters ) ) {
 				return;
 			}
-			foreach( $parameters as $k => $v ) {
-				if( $k == 'form' ) {
-					foreach( $v as $elem ) {
-						$this->parseParam( $this->parameters, $elem['name'], $elem['value'] );
+			try {
+				foreach( $parameters as $k => $v ) {
+					if( $k == 'form' ) {
+						foreach( $v as $elem ) {
+							$this->parseParam( $this->parameters, $elem['name'], $elem['value'] );
+						}
+					} else {
+						$this->parseParam( $this->parameters, $k, $v );
 					}
-				} else {
-					$this->parseParam( $this->parameters, $k, $v );
 				}
+			} catch( Exception $ex ) {
+				throw new \Difra\View\Exception( 400 );
 			}
 		} elseif( isset( $_POST['_method'] ) and $_POST['_method'] == 'iframe' ) {
 			// Form came via IFrame
@@ -113,9 +117,14 @@ class Ajax {
 	 * @param array $arr
 	 * @param array $keys
 	 * @param mixed $v
+	 *
+	 * @throws Exception
 	 */
 	private function putParam( &$arr, $keys, $v ) {
 
+		if( !is_array( $arr ) ) {
+			throw new Exception( 'Ajax->putParam expects array' );
+		}
 		if( empty( $keys ) ) {
 			$arr = $v;
 			return;

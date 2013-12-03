@@ -1,6 +1,5 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-	<xsl:template match="/root/GalleryConfig">
+	<xsl:template match="GalleryConfig">
 		<h2>
 			<xsl:value-of select="$locale/gallery/adm/config/title"/>
 		</h2>
@@ -14,29 +13,29 @@
 						<xsl:value-of select="$locale/gallery/adm/config/perpage"/>
 					</th>
 					<td>
-						<input type="number" name="perpage" value="{@perpage}"/>
+						<input type="number" name="perpage" value="{@perpage}" class="full-width"/>
 					</td>
 				</tr>
-                <tr>
-                    <th>
-                        <xsl:value-of select="$locale/gallery/adm/config/format"/>
-                    </th>
-                    <td>
-                        <select name="format">
-                            <option value="png">
-                                <xsl:text>png</xsl:text>
-                            </option>
-                            <option value="jpg">
-                                <xsl:if test="@format='jpg'">
-                                    <xsl:attribute name="selected">
-                                        <xsl:text>selected</xsl:text>
-                                    </xsl:attribute>
-                                </xsl:if>
-                                <xsl:text>jpg</xsl:text>
-                            </option>
-                        </select>
-                    </td>
-                </tr>
+				<tr>
+				    <th>
+					<xsl:value-of select="$locale/gallery/adm/config/format"/>
+				    </th>
+				    <td>
+					<select name="format">
+					    <option value="png">
+						<xsl:text>png</xsl:text>
+					    </option>
+					    <option value="jpg">
+						<xsl:if test="@format='jpg'">
+						    <xsl:attribute name="selected">
+							<xsl:text>selected</xsl:text>
+						    </xsl:attribute>
+						</xsl:if>
+						<xsl:text>jpg</xsl:text>
+					    </option>
+					</select>
+				    </td>
+				</tr>
 			</table>
 			<h3>
 				<xsl:value-of select="$locale/gallery/adm/config/title-images"/>

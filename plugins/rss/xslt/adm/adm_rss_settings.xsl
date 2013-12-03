@@ -73,6 +73,10 @@
 			</table>
 
 			<table class="form">
+				<colgroup>
+					<col style="width: 290px"/>
+					<col/>
+				</colgroup>
 				<tr>
 					<th>
 						<xsl:value-of select="$locale/rss/adm/title"/>

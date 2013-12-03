@@ -30,12 +30,17 @@ class Paginator {
 	/** @var string|bool Символ для формирования get-параметра, например '?' -> $linkPrefix?page=$page, иначе ссылка будет вида $linkPrefix/page/$page */
 	protected $get = false;
 
+	public function __construct() {
+
+		$this->linkPrefix = \Difra\Envi\Action::getControllerUri();
+	}
+
 	/**
 	 * Возвращает строку для LIMIT
 	 *
 	 * @return string
 	 */
-	public function getLimit() {
+	public function getPaginatorLimit() {
 
 		return array( ( $this->page - 1 ) * $this->perpage, $this->perpage );
 	}
@@ -64,7 +69,7 @@ class Paginator {
 
 		/** @var \DOMElement $pNode */
 		$pNode = $node->appendChild( $node->ownerDocument->createElement( 'paginator' ) );
-		$pNode->setAttribute( 'current', $this->page );
+		$pNode->setAttribute( 'page', $this->page );
 		$pNode->setAttribute( 'pages', $this->pages );
 		$pNode->setAttribute( 'link', $this->linkPrefix );
 		$pNode->setAttribute( 'get', $this->get );

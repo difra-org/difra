@@ -90,6 +90,7 @@ class Debugger {
 	 */
 	public static function isEnabled() {
 
+		self::init();
 		return (bool)self::$enabled;
 	}
 
@@ -102,6 +103,7 @@ class Debugger {
 	 */
 	public static function isConsoleEnabled() {
 
+		self::init();
 		return self::$console;
 	}
 
@@ -111,6 +113,7 @@ class Debugger {
 	 */
 	public static function isCachesEnabled() {
 
+		self::init();
 		return (bool)self::$caches;
 	}
 
@@ -206,6 +209,7 @@ class Debugger {
 	 */
 	public static function debugXML( $node, $standalone = false ) {
 
+		self::init();
 		$node->setAttribute( 'debug', self::$enabled ? '1' : '0' );
 		$node->setAttribute( 'debugConsole', self::$console );
 		$node->setAttribute( 'caches', self::$caches ? '1' : '0' );
@@ -233,6 +237,7 @@ class Debugger {
 	 */
 	public static function captureException( $exception ) {
 
+		self::init();
 		$err = array(
 			'class' => 'errors',
 			'stage' => 'exception',

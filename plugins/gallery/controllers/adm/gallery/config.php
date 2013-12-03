@@ -4,13 +4,14 @@ class AdmGalleryConfigController extends \Difra\Controller {
 
 	public function dispatch() {
 
-		$this->view->instance = 'adm';
+		\Difra\View::$instance = 'adm';
 	}
 
 	public function indexAction() {
 
 		/** @var \DOMElement $configNode */
 		$configNode = $this->root->appendChild( $this->xml->createElement( 'GalleryConfig' ) );
+		$configNode->appendChild( $this->xml->createElement( 'zlo' ) );
 		$conf = \Difra\Config::getInstance();
 		$configNode->setAttribute( 'perpage', $conf->getValue( 'gallery', 'perpage' ) );
 		$imgSizes = \Difra\Plugins\Gallery\Album::getSizes();

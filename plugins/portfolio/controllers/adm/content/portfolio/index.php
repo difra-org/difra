@@ -24,7 +24,8 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 		\Difra\Param\AjaxString $release = null,
 		\Difra\Param\AjaxString $link = null,
 		\Difra\Param\AjaxString $software = null,
-		\Difra\Param\AjaxInt $id = null
+		\Difra\Param\AjaxInt $id = null,
+		\Difra\Param\AjaxData $roles = null
 	) {
 
 		if( $id ) {
@@ -37,5 +38,30 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 		$entry->release = $release;
 		$entry->link = $link;
 		$entry->software = $software;
+
+		$sortedAuthors = array();
+		if( !is_null( $roles ) ) {
+			$authors = $roles->val();
+			if( !empty( $authors ) ) {
+				foreach( $authors as $line ) {
+					if( empty( $line ) ) {
+						continue;
+					}
+					$role = false;
+					$contributors = array();
+					foreach( $line as $k => $v ) {
+						if( $k === 'role' ) {
+							$role = $v;
+						} else {
+							$contributors[] = $v;
+						}
+					}
+					if( $role and !empty( $contributors ) ) {
+						$sortedAuthors[] = array( 'role' => $role, 'contibutors' => $contributors );
+					}
+				}
+			}
+		}
+		$entry->authors = $sortedAuthors;
 	}
 }

@@ -8,6 +8,8 @@ class Table extends Storage {
 	static protected $propertiesList = null;
 	/** @var string|string[] Column or column list for Primary Key */
 	static protected $primary = null;
+	/** @var string|null Name of database table */
+	static protected $tableName = null;
 
 	/**
 	 * Returns table name
@@ -19,6 +21,9 @@ class Table extends Storage {
 		static $table = null;
 		if( !is_null( $table ) ) {
 			return $table;
+		}
+		if( isset( static::$tableName ) ) {
+			return $table = static::$tableName;
 		}
 		return $table = mb_strtolower( implode( '_', static::getClassParts() ) );
 	}
@@ -120,7 +125,7 @@ class Table extends Storage {
 		foreach( static::$propertiesList as $name => $prop ) {
 			if( !is_array( $prop ) ) {
 			} elseif( in_array( $prop['type'], self::$keyTypes ) ) {
-				$result[$name] = array( 'type' => $prop['type'], 'columns' => isset( $prop['columns'] ) ? $prop['columns'] : $name );
+				$result[$name] = $prop;
 			} else {
 				foreach( self::$keyTypes as $keyType ) {
 					if( $keyType == 'primary' ) {
