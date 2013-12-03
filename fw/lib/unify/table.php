@@ -145,4 +145,4 @@ class Table extends Storage {
 
 		return self::$propertiesList;
 	}
-}}
+}
