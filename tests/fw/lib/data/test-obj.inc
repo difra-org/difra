@@ -1,9 +1,10 @@
 <?php
 
+namespace Objects;
+
 class TestObj extends \Difra\Unify {
 
-	static public $objKey = 'test';
-	static protected $table = 'test_table';
+	static protected $tableName = 'test_table';
 	static protected $propertiesList = array(
 		'id' => array(
 			'type' => 'int',
@@ -11,10 +12,14 @@ class TestObj extends \Difra\Unify {
 		),
 		'visible' => 'bool',
 		'parent' => array(
-			'type' => 'foreign',
-			'object' => 'test'
+			'type' => 'int',
+			'index' => true
 		),
-		'test2' => 'foreign',
+		'parent_ext' => array(
+			'type' => 'foreign',
+			'source' => 'id',
+			'keys' => 'parent'
+		),
 		'title' => array(
 			'type' => 'varchar',
 			'length' => 1000,
