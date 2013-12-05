@@ -37,12 +37,16 @@ class Query extends Paginator {
 	/**
 	 * Конструктор
 	 * @param $objKey Имя объектов для запроса
+	 *
+	 * @throws \Difra\Exception
 	 */
 	public function __construct( $objKey ) {
 
 		parent::__construct();
 		$this->objKey = $objKey;
-		$class = Storage::getClass( $objKey );
+		if( !$class = Storage::getClass( $objKey ) ) {
+			throw new Exception( 'objKey \'' . $objKey . '\' does not exist.' );
+		}
 		$this->order = $class::getDefaultOrder() ? (array)$class::getDefaultOrder() : null;
 		$this->orderDesc = $class::getDefaultOrderDesc() ? (array)$class::getDefaultOrderDesc() : null;
 	}
