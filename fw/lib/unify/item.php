@@ -441,12 +441,15 @@ abstract class Item extends DBAPI {
 			return $parts;
 		}
 		$parts = explode( '\\', $class = get_called_class() );
-		if( sizeof( $parts ) < 4 or $parts[0] != 'Difra' or $parts[1] != 'Plugins' or $parts[3] != 'Objects' ) {
-			throw new \Difra\Exception( 'Bad object class name: ' . $class );
+		if( sizeof( $parts ) == 2 and $parts[0] == 'Objects' ) {
+			unset( $parts[0] );
+			return $parts;
+		} elseif( sizeof( $parts ) >= 4 and $parts[0] == 'Difra' and $parts[1] == 'Plugins' and $parts[3] == 'Objects' ) {
+			unset( $parts[3] );
+			unset( $parts[1] );
+			unset( $parts[0] );
+			return $parts;
 		}
-		unset( $parts[3] );
-		unset( $parts[1] );
-		unset( $parts[0] );
-		return $parts;
+		throw new \Difra\Exception( 'Bad object class name: ' . $class );
 	}
 }

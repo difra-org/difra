@@ -13,17 +13,11 @@ class Ajax {
 	private $actions = array();
 	private $problem = false;
 
-	private $jsonFlags = 0;
-
 	/**
 	 * Constructor
 	 */
 	public function __construct() {
 
-		$this->jsonFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
-		if( Debugger::isEnabled() ) {
-			$this->jsonFlags |= JSON_PRETTY_PRINT;
-		}
 		if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) {
 			// Ajaxer request
 			$this->isAjax = true;
@@ -208,7 +202,20 @@ class Ajax {
 		if( !empty( $this->actions ) ) {
 			$this->setResponse( 'actions', $this->actions );
 		}
-		return json_encode( $this->response, $this->jsonFlags );
+		return json_encode( $this->response, self::getJsonFlags() );
+	}
+
+	public static function getJsonFlags() {
+
+		static $jsonFlags = null;
+		if( !is_null( $jsonFlags ) ) {
+			return $jsonFlags;
+		}
+		$jsonFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+		if( Debugger::isEnabled() ) {
+			$jsonFlags |= JSON_PRETTY_PRINT;
+		}
+		return $jsonFlags;
 	}
 
 	/**
