@@ -171,6 +171,7 @@
 				<afterAuth>После авторизации</afterAuth>
 				<behavior>Поведение</behavior>
 				<afterAddress>Адрес редиректа после авторизации</afterAddress>
+				<activeNotify>Оповещать пользователей о ручном активировании</activeNotify>
 			</settings>
 			<additionals>
 				<title>Дополнительные поля</title>

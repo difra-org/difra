@@ -70,7 +70,7 @@ class Notify {
 
 		$Settings = \Difra\Plugins\Users::getSettings();
 
-		if( !isset( $Settings['activeType'] ) || $Settings['activeType'] != 'manual' ) {
+		if( !isset( $Settings['sendActiveNotify'] ) || $Settings['sendActiveNotify'] == 0 ) {
 			return;
 		}
 

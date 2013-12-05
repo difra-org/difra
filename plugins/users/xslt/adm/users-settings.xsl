@@ -56,6 +56,22 @@
 				</tr>
 				<tr>
 					<th>
+						<label for="sendActiveNotify">
+							<xsl:value-of select="$locale/users/adm/settings/activeNotify"/>
+						</label>
+					</th>
+					<td>
+						<input type="checkbox" id="sendActiveNotify" name="sendActiveNotify">
+							<xsl:if test="@sendActiveNotify and @sendActiveNotify=1">
+								<xsl:attribute name="checked">
+									<xsl:text>checked</xsl:text>
+								</xsl:attribute>
+							</xsl:if>
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<th>
 						<label for="sendNotify">
 							<xsl:value-of select="$locale/users/adm/settings/notify"/>
 						</label>
