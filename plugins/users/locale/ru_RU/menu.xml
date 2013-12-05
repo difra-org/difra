@@ -2,6 +2,7 @@
 	<menu>
 		<adm>
 			<menu_users_list>Список</menu_users_list>
+			<menu_users_settings>Настройки</menu_users_settings>
 		</adm>
 	</menu>
 </locale>

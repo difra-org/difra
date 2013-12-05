@@ -1,11 +1,3 @@
-function addAdditionalField() {
-
-	$('#additionalsAddFields').show();
-	$('#addedFields').append('<tr><th><input type = "text" name="additional_name[]" class="full-width" placeholder="Название" /></th>' +
-		'<td><input type="text" name="additional_value[]" class="full-width" placeholder="Значение" /></td></tr>');
-
-};
-
 function changePassEnabler() {
 
 	var dis = $('#changePw').is(':checked');
@@ -14,4 +6,40 @@ function changePassEnabler() {
 	} else {
 		$( '#newPw' ).attr( 'disabled', 'disabled' );
 	}
+};
+
+function changeNotifyEnabler() {
+
+	var dis = $('#sendNotify').is(':checked');
+	if( dis === true ) {
+		$( '#notifyList' ).removeAttr( 'disabled' );
+	} else {
+		$( '#notifyList' ).attr( 'disabled', 'disabled' );
+	}
+};
+
+function changeBehaviorEnabler( el ) {
+
+	var dis = $( el ).val();
+	if( dis == 'redirect' ) {
+		$( '#redirectURI' ).removeAttr( 'disabled' );
+	} else {
+		$( '#redirectURI' ).attr( 'disabled', 'disabled' );
+	}
+};
+
+function deleteAddtitionalField( delObj ) {
+	$( delObj ).parent().parent().remove();
+};
+
+function addAdditionalField() {
+
+	var addedHtml = '<tr class="additionalField"><td><input type="text" name="fieldName[]"/></td>' +
+			'<td><input type="text" name="fieldValue[]" class="full-width"/></td>' +
+			'<td><a href="#" class="action delete" onclick="deleteAddtitionalField( this )"/></td></tr>';
+
+	$( 'tr.additionalField:last' ).after( addedHtml );
+
+
+
 };
