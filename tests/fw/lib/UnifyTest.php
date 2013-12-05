@@ -2,7 +2,7 @@
 
 class UnifyTest extends PHPUnit_Framework_TestCase {
 
-	public function test_get() {
+	public function test_construct() {
 
 		include_once( __DIR__ . '/data/test-obj.inc' );
 		\Difra\Unify::registerObjects( array() );
@@ -29,4 +29,19 @@ class UnifyTest extends PHPUnit_Framework_TestCase {
 		\Difra\Unify::getObj( 'noSuchObject123', 123 );
 	}
 
+	public function test_create() {
+
+		include_once( __DIR__ . '/data/test-obj.inc' );
+		\Difra\Unify::registerObjects( array( 'Objects\\TestObj' ) );
+		$test = \Objects\TestObj::create();
+		//$i = $test->id;
+	}
+
+	public function test_load() {
+
+		include_once( __DIR__ . '/data/test-obj.inc' );
+		\Difra\Unify::registerObjects( array( 'Objects\\TestObj' ) );
+		$test = \Difra\Unify::getObj( 'TestObj', 10 );
+		//$i = $test->id;
+	}
 }
