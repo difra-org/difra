@@ -34,7 +34,7 @@ class UnifyPaginatorTest extends PHPUnit_Framework_TestCase {
 		$paginator = new \Difra\Unify\Paginator;
 		$paginator->setPerpage( 20 );
 		$paginator->setPage( 1 );
-		$lim = $paginator->getLimit();
+		$lim = $paginator->getPaginatorLimit();
 		$this->assertEquals( $lim, array( 0, 20 ) );
 	}
 
@@ -43,7 +43,7 @@ class UnifyPaginatorTest extends PHPUnit_Framework_TestCase {
 		$paginator = new \Difra\Unify\Paginator;
 		$paginator->setPerpage( 10 );
 		$paginator->setPage( 2 );
-		$lim = $paginator->getLimit();
+		$lim = $paginator->getPaginatorLimit();
 		$this->assertEquals( $lim, array( 10, 10 ) );
 	}
 
@@ -65,7 +65,7 @@ class UnifyPaginatorTest extends PHPUnit_Framework_TestCase {
 		$xml1 = new DOMDocument();
 		$root1 = $xml1->appendChild( $xml1->createElement( 'test' ) );
 		$node = $root1->appendChild( $xml1->createElement( 'paginator' ) );
-		$node->setAttribute( 'current', 3 );
+		$node->setAttribute( 'page', 3 );
 		$node->setAttribute( 'pages', 5 );
 		$node->setAttribute( 'link', '/tests' );
 		$node->setAttribute( 'get', '' );

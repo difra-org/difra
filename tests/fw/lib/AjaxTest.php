@@ -41,11 +41,10 @@ class AjaxTest extends PHPUnit_Framework_TestCase {
 			'name' => 'inv1'
 		);
 
-		$ajax->invalid( 'inv2', 'invalid value' );
+		$ajax->invalid( 'inv2' );
 		$actions[] = array(
 			'action' => 'invalid',
-			'name' => 'inv2',
-			'message' => 'invalid value'
+			'name' => 'inv2'
 		);
 
 		$ajax->status( 'field1', 'bad value', 'problem' );
@@ -102,7 +101,7 @@ class AjaxTest extends PHPUnit_Framework_TestCase {
 			'</form>'
 		);
 
-		$this->assertEquals( $ajax->getResponse(), json_encode( array( 'actions' => $actions ) ) );
+		$this->assertEquals( $ajax->getResponse(), json_encode( array( 'actions' => $actions ), \Difra\Ajax::getJsonFlags() ) );
 
 		$ajax->clean();
 		$this->assertEquals( $ajax->getResponse(), '[]' );
