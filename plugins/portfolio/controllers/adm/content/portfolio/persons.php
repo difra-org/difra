@@ -11,7 +11,7 @@ class AdmContentPortfolioPersonsController extends \Difra\Plugins\Widgets\Direct
 
 	public function action( $value ) {
 
-		$escapedValue = htmlspecialchars( $value );
+		$escapedValue = addslashes( htmlspecialchars( $value ) );
 		\Difra\Ajax::getInstance()->exec(
 			<<<SCRIPT
 			var person = $( '.widgets-directory.last' );

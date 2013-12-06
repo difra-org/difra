@@ -11,7 +11,7 @@ class AdmContentPortfolioRolesController extends \Difra\Plugins\Widgets\Director
 
 	public function action( $value ) {
 
-		$escapedValue = htmlspecialchars( $value );
+		$escapedValue = addslashes( htmlspecialchars( $value ) );
 		$ts = microtime( true );
 		\Difra\Ajax::getInstance()->exec(
 			<<<SCRIPT
