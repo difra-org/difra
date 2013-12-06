@@ -170,7 +170,7 @@ class Query extends Paginator {
 		$d = '';
 		foreach( (array)$this->order as $column ) {
 			$ord .= "$d`$table`.`" . $db->escape( $column ) . '`' .
-				( empty( $this->orderDesc ) or !in_array( $column, $this->orderDesc ) ? '' : ' DESC' );
+				( ( empty( $this->orderDesc ) or !in_array( $column, $this->orderDesc ) ) ? '' : ' DESC' );
 			$d = ', ';
 		}
 		return $ord;
