@@ -227,9 +227,21 @@ class Query extends Paginator {
 		if( empty( $conditions ) ) {
 			return;
 		}
-		foreach( $conditions as $k => $cond ) {
-			$this->conditions[$k] = $cond;
+		foreach( $conditions as $k => $v ) {
+			$this->addCondition( $k, $v );
 		}
+	}
+
+	/**
+	 * Добавить условие поиска
+	 * @param string $column
+	 * @param string $value
+	 *
+	 * @throws \Difra\Exception
+	 */
+	public function addCondition( $column, $value ) {
+
+		$this->conditions[$column] = $value;
 	}
 
 	/**
