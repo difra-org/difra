@@ -55,4 +55,50 @@ class Users {
 		\Difra\Config::getInstance()->set( 'users_settings', $settingsArray );
 	}
 
+	/**
+	 * Возвращает полный список всех пользователей с их параметрами и выбранными дополнительными полями
+	 * @param \DOMNode $node
+	 * @param array    $fields
+	 * @param array    $joinedFields
+	 */
+	public static function getCustomListXML( \DOMNode $node, array $fields = null, array $joinedFields = null ) {
+
+		$db = \Difra\MySQL::getInstance();
+		$mainFields = array();
+		$mainFieldsString = '';
+		$joinSelectFields = array();
+		$joinSelectFieldsString = '';
+		$joinString = '';
+
+		if( !empty( $fields ) ) {
+			foreach( $fields as $key ) {
+				$mainFields[] = "u.`" . $key . "`";
+			}
+			$mainFieldsString = ', ' . implode( ', ', $mainFields );
+		}
+
+		if( !empty( $joinedFields ) ) {
+			foreach( $joinedFields as $key ) {
+				$joinSelectFields[] = "`uf_" . $key . "`.`value` AS `" . $key . "`";
+
+				$joinString .= " LEFT JOIN `users_fields` AS `uf_" . $key .
+							"` ON u.`id` = `uf_" . $key . "`.`id` AND `uf_" . $key . "`.`name`='" . $key . "' ";
+			}
+			$joinSelectFieldsString = ', ' . implode( ', ', $joinSelectFields );
+		}
+
+		$query = "SELECT u.`id`, u.`email`" . $mainFieldsString . $joinSelectFieldsString . " FROM `users` u " . $joinString;
+		$res = $db->fetch( $query );
+
+		if( !empty( $res ) ) {
+			$usersNode = $node->appendChild( $node->ownerDocument->createElement( 'users' ) );
+			foreach( $res as $k=>$data ) {
+				$userNode = $usersNode->appendChild( $node->ownerDocument->createElement( 'user' ) );
+				foreach( $data as $key=>$value ) {
+					$userNode->setAttribute( $key, $value );
+				}
+			}
+		}
+	}
+
 }
