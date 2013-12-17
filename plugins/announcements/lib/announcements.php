@@ -79,7 +79,7 @@ class Announcements {
 			$bigImg = $Images->scaleAndCrop( $rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png' );
 
 		} catch( \Difra\Exception $ex ) {
-			throw new \Difra\Exception( 'Bad image format. ' . $ex->getMessage() );
+			throw new \Difra\Exception( \Difra\Locales::getInstance()->getXPath( 'announcements/badImageFormat' ) );
 		}
 
 		try {

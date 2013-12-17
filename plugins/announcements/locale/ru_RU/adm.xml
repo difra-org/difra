@@ -43,6 +43,8 @@
 		<archive>Архив</archive>
 		<freeEvent>Вход свободный</freeEvent>
 
+		<badImageFormat>Неверный формат загружаемого изображения.</badImageFormat>
+
 		<adm>
 			<announcements>Анонсы</announcements>
 			<settings>настройки</settings>
