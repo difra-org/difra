@@ -61,12 +61,16 @@ class AuthIndexController extends Difra\Controller {
 
 		$Auth = Difra\Auth::getInstance();
 		$id   = $Auth->getId();
+
+		Plugins\Users\User::unSetLongSession( $id );
+
 		$Auth->logout();
 
 		// в случае ручного логаута убираем длинную сессию
 		//\Difra\Plugins\Users::getInstance()->unSetLongSession( $id );
 
 		// TODO: сделать так, чтобы в случаях, если страница требует авторизации, происходил редирект на главную
+		\Difra\Libs\Cookies::getInstance()->remove( 'logged' );
 		$this->ajax->reload();
 	}
 
@@ -77,12 +81,16 @@ class AuthIndexController extends Difra\Controller {
 
 		$Auth = Difra\Auth::getInstance();
 		$id   = $Auth->getId();
+
+		Plugins\Users\User::unSetLongSession( $id );
+
 		$Auth->logout();
 
 		// в случае ручного логаута убираем длинную сессию
 		//\Difra\Plugins\Users::getInstance()->unSetLongSession( $id );
 
 		// TODO: сделать так, чтобы в случаях, если страница требует авторизации, происходил редирект на главную
+		\Difra\Libs\Cookies::getInstance()->remove( 'logged' );
 		\Difra\View::redirect( '/' );
 
 	}

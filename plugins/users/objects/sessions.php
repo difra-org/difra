@@ -21,7 +21,7 @@ class Sessions extends \Difra\Unify {
 			'required' => true
 		),
 		'ip' => array(
-			'type' => 'int',
+			'type' => 'bigint',
 			'required' => true
 		),
 		'session_id_key' => array(
