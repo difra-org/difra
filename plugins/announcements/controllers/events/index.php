@@ -49,7 +49,7 @@ class EventsIndexController extends \Difra\Controller {
 		$Announce = $Announcements->getByLink( $link );
 
 		if( $Announce === false ) {
-			throw new \Difra\View\Exception(404);
+			throw new \Difra\View\Exception( 404 );
 			return;
 		}
 
@@ -58,6 +58,8 @@ class EventsIndexController extends \Difra\Controller {
 		}
 
 		$Announce->getXML( $this->eventRoot );
+
+		$this->root->setAttribute( 'pageTitle', $Announce->getHumanizedTitle() );
 
 		$additionalsFieldsNode = $this->eventRoot->appendChild( $this->eventRoot->ownerDocument->createElement( 'additionalsFields' ) );
 		\Difra\Plugins\Announcements\Additionals::getListXML( $additionalsFieldsNode );
