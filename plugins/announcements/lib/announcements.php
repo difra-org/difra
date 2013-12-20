@@ -174,7 +174,7 @@ class Announcements {
 
 		$db = \Difra\MySQL::getInstance();
 		$where = " `visible`=1 ";
-		$query = "SELECT `id`, `link`, UNIX_TIMESTAMP( `modified` ) AS `mod` FROM `announcements` WHERE " . $where . " ORDER BY `modified`";
+		$query = "SELECT `id`, `link`, DATE_FORMAT( `modified`, '%Y-%m-%d' ) AS `mod` FROM `announcements` WHERE " . $where . " ORDER BY `modified`";
 		$res = $db->fetch( $query );
 
 		$mainHost = Envi::getHost();
@@ -183,8 +183,7 @@ class Announcements {
 		foreach( $res as $k => $data ) {
 
 			$link = 'http://' . $mainHost . '/events/' . $data['id'] . '-' . $data['link'];
-			$date = date( 'Y-m-d', $data['mod'] );
-			$returnArray[] = array( 'loc' => $link, 'lastmod' => $date );
+			$returnArray[] = array( 'loc' => $link, 'lastmod' => $data['mod'] );
 		}
 
 		return $returnArray;
