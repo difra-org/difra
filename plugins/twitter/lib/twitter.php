@@ -20,6 +20,11 @@ class Twitter {
 	 */
 	public static function post( $text ) {
 
+		$onOff = \Difra\Config::getInstance()->getValue( 'oAuth', 'postToTwitter' );
+		if( is_null( $onOff ) || $onOff == '' || $onOff == 0 ) {
+			return null;
+		}
+
 		$requestFields = array( 'status' => $text );
 		$Twitter = new self;
 		$Twitter->_performRequest( $requestFields );

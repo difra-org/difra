@@ -2,6 +2,7 @@
 	<twitter>
 		<adm>
 			<oAuth>
+				<onoff>Включить постинг в твиттер</onoff>
 				<settingsTitle>Настройки авторизации OAuth</settingsTitle>
 				<consumerKey>Consumer key</consumerKey>
 				<consumerSecret>Consumer secret</consumerSecret>
