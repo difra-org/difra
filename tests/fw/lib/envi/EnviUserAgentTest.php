@@ -203,5 +203,14 @@ class EnviUserAgentTest extends PHPUnit_Framework_TestCase {
 			     'engine' => 'WebKit',
 			     'device' => null
 			) );
+		\Difra\Envi\UserAgent::setUAString( 'Mozilla/5.0 (Windows NT 6.3; WOW64; Trident/7.0; rv:11.0) like Gecko' );
+		$this->assertEquals( \Difra\Envi\UserAgent::getUserAgent(),
+				     array(
+					  'agent' => 'IE',
+					  'version' => '11.0',
+					  'os' => 'Windows',
+					  'engine' => 'Trident',
+					  'device' => null
+				     ) );
 	}
 }
