@@ -20,7 +20,11 @@
 	<xsl:template match="PortfolioEntry" mode="adm-list">
 		<tr>
 			<td>
-				[entry]
+				<xsl:value-of select="@name"/>
+			</td>
+			<td>
+				<a href="/adm/content/portfolio/edit/{@id}" class="action edit"/>
+				<a href="/adm/content/portfolio/delete/{@id}" class="action delete ajaxer"/>
 			</td>
 		</tr>
 	</xsl:template>

@@ -34,6 +34,7 @@ class Entry extends \Difra\Unify {
 			'length' => 1000,
 			'index' => true
 		),
+		'link_caption' => 'text',
 		'description' => 'longblob',
 		'software' => array(
 			'type' => 'char',
@@ -51,6 +52,39 @@ class Entry extends \Difra\Unify {
 			'keys' => 'id'
 		)
 	);
+
+	/**
+	 * @param \DOMNode $node
+	 */
+	protected function postProcessXML( $node ) {
+
+		// дата релиза
+
+		if( !is_null( $this->release ) ) {
+			$Locale = \Difra\Locales::getInstance();
+			$node->setAttribute( 'release', $Locale->getDateFromMysql( $this->release . ' 00:00:00' ) );
+		}
+
+		// авторы
+
+		if( !is_null( $this->authors ) ) {
+			$authorsArray = unserialize( $this->authors );
+			if( !empty( $authorsArray ) ) {
+				foreach( $authorsArray as $k=>$data ) {
+					if( isset( $data['role'] ) ) {
+						$roleNode = $node->appendChild( $node->ownerDocument->createElement( 'role' ) );
+						$roleNode->setAttribute( 'name', $data['role'] );
+						if( isset( $data['contibutors'] ) && is_array( $data['contibutors'] ) ) {
+							foreach( $data['contibutors'] as $cName ) {
+								$cNode = $roleNode->appendChild( $node->ownerDocument->createElement( 'contibutor' ) );
+								$cNode->setAttribute( 'name', $cName );
+							}
+						}
+					}
+				}
+			}
+		}
+	}
 
 	protected function afterLoad() {
 		/*

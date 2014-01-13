@@ -20,9 +20,10 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 
 	public function saveAjaxAction(
 		\Difra\Param\AjaxString $name,
-		\Difra\Param\AjaxHTML $description,
+		\Difra\Param\AjaxSafeHTML $description,
 		\Difra\Param\AjaxString $release = null,
 		\Difra\Param\AjaxString $link = null,
+		\Difra\Param\AjaxString $link_caption = null,
 		\Difra\Param\AjaxString $software = null,
 		\Difra\Param\AjaxInt $id = null,
 		\Difra\Param\AjaxData $roles = null
@@ -35,8 +36,13 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 		}
 		$entry->name = $name;
 		$entry->description = $description;
+		if( !is_null( $release ) ) {
+			$release = strtotime( $release->val() );
+			$release = date( 'Y-m-d', $release );
+		}
 		$entry->release = $release;
 		$entry->link = $link;
+		$entry->link_caption = $link_caption;
 		$entry->software = $software;
 
 		$sortedAuthors = array();
@@ -62,6 +68,31 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 				}
 			}
 		}
+
 		$entry->authors = $sortedAuthors;
+		//$entry->save();
+		$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'portfolio/adm/notify/added' ) );
+		$this->ajax->redirect( '/adm/content/portfolio/' );
 	}
+
+	public function deleteAjaxAction( \Difra\Param\AnyInt $id ) {
+
+		//TODO: добавить удаление изображений
+
+		$entry = \Difra\Unify::getObj( 'PortfolioEntry', $id->val() );
+		$entry->delete();
+
+		$this->ajax->refresh();
+	}
+
+	public function editAction( \Difra\Param\AnyInt $id ) {
+
+		$mainXml = $this->root->appendChild( $this->xml->createElement( 'PortfolioEntryEdit' ) );
+		$mainXml->setAttribute( 'edit', true );
+		$entryNode = $mainXml->appendChild( $this->xml->createElement( 'entry' ) );
+		$entry = \Difra\Unify::getObj( 'PortfolioEntry', $id->val() );
+		$entry->getXML( $entryNode );
+	}
+
+
 }

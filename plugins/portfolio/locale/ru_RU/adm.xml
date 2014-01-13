@@ -13,11 +13,15 @@
 				<title-name-prefix>«</title-name-prefix>
 				<title-name-postfix>»</title-name-postfix>
 			</edit>
+			<notify>
+				<added>Работа сохранена в портфолио.</added>
+			</notify>
 		</adm>
 		<entry>
 			<name>Название проекта</name>
 			<release>Дата релиза</release>
 			<link>Ссылка</link>
+			<link_caption>Текст ссылки</link_caption>
 			<software>Программное обеспечение</software>
 			<authors>Участники проекта</authors>
 			<description>Описание</description>

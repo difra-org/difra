@@ -17,7 +17,7 @@
 						</label>
 					</th>
 					<td>
-						<input type="text" name="name" id="name" class="full-width"/>
+						<input type="text" name="name" id="name" class="full-width" value="{entry/@name}"/>
 					</td>
 				</tr>
 				<tr>
@@ -27,7 +27,7 @@
 						</label>
 					</th>
 					<td>
-						<input type="date" name="release" id="release" class="full-width"/>
+						<input type="date" name="release" id="release" class="full-width" value="{entry/@release}"/>
 					</td>
 				</tr>
 				<tr>
@@ -37,7 +37,17 @@
 						</label>
 					</th>
 					<td>
-						<input type="url" name="link" id="link" class="full-width"/>
+						<input type="url" name="link" id="link" class="full-width" value="{entry/@link}"/>
+					</td>
+				</tr>
+				<tr>
+					<th>
+						<label for="link_caption">
+							<xsl:value-of select="$locale/portfolio/entry/link_caption"/>
+						</label>
+					</th>
+					<td>
+						<input type="text" name="link_caption" id="link_caption" class="full-width" value="{entry/@link_caption}"/>
 					</td>
 				</tr>
 				<tr>
@@ -47,7 +57,7 @@
 						</label>
 					</th>
 					<td>
-						<input type="text" name="software" class="full-width"/>
+						<input type="text" name="software" class="full-width" value="{entry/@software}"/>
 					</td>
 				</tr>
 			</table>
@@ -71,6 +81,36 @@
 						</th>
 					</tr>
 				</thead>
+
+				<xsl:if test="entry/role">
+
+					<xsl:for-each select="entry/role">
+						<xsl:variable name="currentRole" select="position()"/>
+						<tr>
+							<td>
+								<a class="action delete" onclick="$(this).parent().parent().remove()" href="#"></a>
+								<xsl:text>&#160;&#160;&#160;</xsl:text>
+								<xsl:value-of select="@name"/>
+								<input class="portfolio-role" type="hidden" ts="{position()}" value="{@name}"
+								       name="roles[{position()}][role]"></input>
+							</td>
+							<td class="add-person">
+								<xsl:if test="current()/contibutor">
+									<xsl:for-each select="current()/contibutor">
+										<div class="portfolio-person">
+											<xsl:value-of select="@name"/>
+											<input type="hidden" value="{@name}" name="roles[{$currentRole}][]"/>
+											<a class="action delete"
+											   onclick="$(this).parent().remove();" href="#"></a>
+										</div>
+									</xsl:for-each>
+								</xsl:if>
+								<a class="action add ajaxer widgets-directory last" href="/adm/content/portfolio/persons"></a>
+							</td>
+						</tr>
+					</xsl:for-each>
+				</xsl:if>
+
 				<tbody>
 					<tr id="add-role">
 						<td>
@@ -87,8 +127,13 @@
 				</label>
 			</h3>
 			<textarea name="description" editor="full" id="description">
-
+				<xsl:value-of select="entry/@description" disable-output-escaping="yes"/>
 			</textarea>
+
+			<xsl:if test="@edit=1">
+				<input type="hidden" name="id" value="{entry/@id}"/>
+			</xsl:if>
+
 			<div class="form-buttons">
 				<input type="submit" value="{$locale/portfolio/entry/form-submit}"/>
 			</div>
