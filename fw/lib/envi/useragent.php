@@ -17,7 +17,8 @@ class UserAgent {
 		'CriOS' => 'Chrome',
 		'Firefox' => 'Firefox',
 		'Opera' => 'Opera',
-		'Safari' => 'Safari'
+		'Safari' => 'Safari',
+		'Trident' => 'IE'
 	);
 
 	static $engines = array(
@@ -180,18 +181,28 @@ class UserAgent {
 		$ua = self::getUAArray();
 		$agent = self::getAgent();
 		$agentId = self::getAgentId();
-		if( isset( $ua['Version'] ) ) {
+		if( isset( $ua['Version'] ) ) { // good browsers that give us version
 			self::$version = $ua['Version'];
 			if( substr( self::$version, -7 ) == ' Mobile' ) {
 				self::$version = substr( self::$version, 0, -7 );
 			}
 		} elseif( isset( $ua[$agentId] ) ) {
-			if( $agentId == 'Opera' ) {
+			if( $msiePos = strpos( $ua['Mozilla'], 'MSIE' ) ) { // IE 8-10
+				$version = substr( $ua['Mozilla'], $msiePos + 4 );
+				if( $p = strpos( $version, ';' ) ) {
+					$version = substr( $version, 0, $p );
+				}
+				self::$version = trim( $version );
+			} elseif( $agentId == 'Trident' ) { // IE 11
+				$rv1 = strpos( $ua['Trident'], 'rv:' ) + 3;
+				$rv2 = strpos( $ua['Trident'], ')', $rv1 );
+				self::$version = substr( $ua['Trident'], $rv1, $rv2 - $rv1 );
+			} elseif( $agentId == 'Opera' ) { // Opera
 				self::$version = explode( ' ', $ua[$agentId], 2 )[0];
 			} else {
 				self::$version = $ua[$agentId];
 			}
-		} elseif( $agent == 'IE' ) {
+		} elseif( $agent == 'IE' ) { // IE 7
 			$version = substr( $ua['Mozilla'], strpos( $ua['Mozilla'], 'MSIE' ) + 4 );
 			if( $p = strpos( $version, ';' ) ) {
 				$version = substr( $version, 0, $p );
