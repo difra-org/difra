@@ -10,7 +10,19 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 	public function indexAction() {
 
 		$search = new \Difra\Unify\Search( 'PortfolioEntry' );
-		$search->getListXML( $this->root );
+		$portfolioNode = $this->root->appendChild( $this->xml->createElement( 'PortfolioEntryList' ) );
+		$search->setOrder( 'release', 'release' );
+		$workList = $search->getList();
+		$idArray = array();
+		foreach( $workList as $work ) {
+			$workNode = $portfolioNode->appendChild( $this->xml->createElement( 'PortfolioEntry' ) );
+			$work->getXML( $workNode );
+			$idArray[] = $work->id;
+		}
+
+		if( !empty( $idArray ) ) {
+			\Difra\Plugins\Portfolio::getMainImagesXML( $idArray, $portfolioNode );
+		}
 	}
 
 	public function addAction() {

@@ -174,4 +174,26 @@ class Portfolio {
 		}
 	}
 
+	/**
+	 * Возвращает в xml главные картинки работ по их id
+	 * @param array $ids
+	 * @param \DOMNode $node
+	 */
+	public static function getMainImagesXML( array $ids, \DOMNode $node ) {
+
+		$db = \Difra\MySQL::getInstance();
+		$ids = array_map( 'intval', $ids );
+		$query = "SELECT `id`, `portfolio` FROM `portfolio_images` WHERE `position`=1 AND `portfolio` IN (" . implode( ', ', $ids ) . ")";
+		$res = $db->fetch( $query );
+
+		if( !empty( $res ) ) {
+			foreach( $res as $k=>$data ) {
+				$imageNode = $node->appendChild( $node->ownerDocument->createElement( 'image' ) );
+				foreach( $data as $key=>$value ) {
+					$imageNode->setAttribute( $key, $value );
+				}
+			}
+		}
+	}
+
 }

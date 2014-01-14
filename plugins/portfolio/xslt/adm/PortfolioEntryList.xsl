@@ -11,6 +11,18 @@
 			</xsl:when>
 			<xsl:otherwise>
 				<table>
+					<colgroup>
+						<col style="width: 100px"/>
+						<col/>
+						<col/>
+						<col/>
+					</colgroup>
+					<tr>
+						<th></th>
+						<th><xsl:value-of select="$locale/portfolio/entry/name"/></th>
+						<th><xsl:value-of select="$locale/portfolio/entry/release"/></th>
+						<th></th>
+					</tr>
 					<xsl:apply-templates select="PortfolioEntry" mode="adm-list"/>
 				</table>
 			</xsl:otherwise>
@@ -18,9 +30,20 @@
 	</xsl:template>
 
 	<xsl:template match="PortfolioEntry" mode="adm-list">
+
+		<xsl:variable name="wId" select="@id"/>
+
 		<tr>
 			<td>
+				<a href="/adm/content/portfolio/edit/{@id}/">
+					<img src="/portimages/{/root/content/PortfolioEntryList/image[@portfolio=$wId]/@id}-small.png" />
+				</a>
+			</td>
+			<td>
 				<xsl:value-of select="@name"/>
+			</td>
+			<td>
+				<xsl:value-of select="@release"/>
 			</td>
 			<td>
 				<a href="/adm/content/portfolio/edit/{@id}" class="action edit"/>
