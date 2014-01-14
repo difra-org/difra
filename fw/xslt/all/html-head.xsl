@@ -5,6 +5,7 @@
 			<title>
 				<xsl:call-template name="html-head-title"/>
 			</title>
+			<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
 
 			<xsl:variable name="instance">
 				<xsl:choose>
@@ -16,9 +17,6 @@
 					</xsl:otherwise>
 				</xsl:choose>
 			</xsl:variable>
-
-			<link rel="SHORTCUT ICON" href="/favicon.ico"/>
-			<link rel="ICON" href="/favicon.ico" type="image/x-icon"/>
 
 			<!-- keywords -->
 			<xsl:choose>
