@@ -110,11 +110,19 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 
 	public function deleteAjaxAction( \Difra\Param\AnyInt $id ) {
 
-		//TODO: добавить удаление изображений
-
 		$entry = \Difra\Unify::getObj( 'PortfolioEntry', $id->val() );
-		$entry->delete();
 
+		$images = new \Difra\Unify\Search( 'PortfolioImages' );
+		$images->addCondition( 'portfolio', $id->val() );
+		$imageList = $images->getList();
+
+		if( !empty( $imageList ) ) {
+			foreach( $imageList as $img ) {
+				\Difra\Plugins\Portfolio::deleteImage( $img->id );
+			}
+		}
+
+		$entry->delete();
 		$this->ajax->refresh();
 	}
 
