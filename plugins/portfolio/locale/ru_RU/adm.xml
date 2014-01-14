@@ -1,6 +1,7 @@
 <locale>
 	<portfolio>
 		<adm>
+			<portfolio>Портфолио</portfolio>
 			<list>
 				<title>Работы в портфолио</title>
 				<empty>В портфолио не добавлено ни одной работы.</empty>
@@ -14,8 +15,18 @@
 				<title-name-postfix>»</title-name-postfix>
 			</edit>
 			<notify>
-				<added>Работа сохранена в портфолио.</added>
+				<added>Работа добавлена в портфолио.</added>
+				<edited>Работа сохранена в портфолио.</edited>
+				<settingSaved>Настройки портфолио сохранены</settingSaved>
+				<badImageSizes>Неверно заданы размеры картинок.</badImageSizes>
 			</notify>
+			<settings>
+				<title>Настройки</title>
+				<image-sizes>Размеры изображений</image-sizes>
+				<image-sizes-info>По одному размеру на строку в формате «суффикс ширина высота», например: «s 200 150». Суффикс «f»
+					зарезервирован.
+				</image-sizes-info>
+			</settings>
 		</adm>
 		<entry>
 			<name>Название проекта</name>
@@ -28,6 +39,9 @@
 			<form-submit>Сохранить</form-submit>
 			<role>Роль</role>
 			<contributors>Участники</contributors>
+			<loadPics>Загрузка изображений</loadPics>
+			<pics>Изображения работы</pics>
+			<mainParams>Основные параметры</mainParams>
 		</entry>
 	</portfolio>
 </locale>

@@ -28,11 +28,11 @@ class Entry extends \Difra\Unify {
 			'type' => 'varchar',
 			'length' => 1000,
 			'required' => true,
+			'index' => true
 		),
 		'link' => array(
 			'type' => 'varchar',
 			'length' => 1000,
-			'index' => true
 		),
 		'link_caption' => 'text',
 		'description' => 'longblob',
@@ -61,8 +61,7 @@ class Entry extends \Difra\Unify {
 		// дата релиза
 
 		if( !is_null( $this->release ) ) {
-			$Locale = \Difra\Locales::getInstance();
-			$node->setAttribute( 'release', $Locale->getDateFromMysql( $this->release . ' 00:00:00' ) );
+			$node->setAttribute( 'release', date( 'd-m-Y', strtotime( $this->release . ' 00:00:00' ) ) );
 		}
 
 		// авторы

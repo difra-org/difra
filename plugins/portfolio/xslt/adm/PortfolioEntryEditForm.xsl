@@ -2,9 +2,62 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
 	<xsl:template name="PortfolioEntryEditForm">
 		<form action="/adm/content/portfolio/save" method="post" class="ajaxer">
-			<h3>
 
+			<xsl:if test="entry/images/PortfolioImagesList/PortfolioImages">
+				<h3>
+					<xsl:value-of select="$locale/portfolio/entry/pics"/>
+				</h3>
+
+				<xsl:for-each select="entry/images/PortfolioImagesList/PortfolioImages">
+					<div>
+						<xsl:attribute name="class">
+							<xsl:text>portfolio-image</xsl:text>
+							<xsl:if test="position()=1">
+								<xsl:text> main</xsl:text>
+							</xsl:if>
+						</xsl:attribute>
+						<img src="/portimages/{@id}-medium.png" />
+
+						<div class="controls">
+							<xsl:call-template name="actionLeft">
+								<xsl:with-param name="link">
+									<xsl:text>/adm/content/portfolio/imageup</xsl:text>
+									<xsl:value-of select="../@id"/>
+									<xsl:text>/</xsl:text>
+									<xsl:value-of select="@id"/>
+								</xsl:with-param>
+							</xsl:call-template>
+							<xsl:call-template name="actionRight">
+								<xsl:with-param name="link">
+									<xsl:text>/adm/content/portfolio/imagedown</xsl:text>
+									<xsl:value-of select="../@id"/>
+									<xsl:text>/</xsl:text>
+									<xsl:value-of select="@id"/>
+								</xsl:with-param>
+							</xsl:call-template>
+							<xsl:call-template name="actionDelete">
+								<xsl:with-param name="link">
+									<xsl:text>/adm/content/portfolio/deleteimage</xsl:text>
+									<xsl:value-of select="../@id"/>
+									<xsl:text>/</xsl:text>
+									<xsl:value-of select="@id"/>
+								</xsl:with-param>
+							</xsl:call-template>
+						</div>
+					</div>
+
+				</xsl:for-each>
+			</xsl:if>
+
+			<h3>
+				<xsl:value-of select="$locale/portfolio/entry/loadPics"/>
 			</h3>
+			<input type="file" name="image[]" class="ajaxer" multiple="multiple" />
+
+			<h3>
+				<xsl:value-of select="$locale/portfolio/entry/mainParams"/>
+			</h3>
+
 			<table>
 				<colgroup>
 					<col style="width:250px"/>
@@ -61,6 +114,7 @@
 					</td>
 				</tr>
 			</table>
+
 			<h3>
 				<label for="authors">
 					<xsl:value-of select="$locale/portfolio/entry/authors"/>
