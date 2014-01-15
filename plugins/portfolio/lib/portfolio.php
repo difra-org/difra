@@ -63,7 +63,7 @@ class Portfolio {
 			foreach( $imgSizes as $k=>$size ) {
 
 				if( $size ) {
-					$tmpImg = $Images->createThumbnail( $img, $size[1], $size[2] );
+					$tmpImg = $Images->createThumbnail( $img, $size[0], $size[1] );
 				} else {
 					$tmpImg = $Images->convert( $img, 'png' );
 				}
