@@ -61,7 +61,12 @@ class Entry extends \Difra\Unify {
 		// дата релиза
 
 		if( !is_null( $this->release ) ) {
-			$node->setAttribute( 'release', date( 'd-m-Y', strtotime( $this->release . ' 00:00:00' ) ) );
+			$release = date( 'd-m-Y', strtotime( $this->release . ' 00:00:00' ) );
+			$node->setAttribute( 'release', $release );
+
+			$xDate = explode( '-', $release );
+			$fullDate = $xDate[0] . ' ' . \Difra\Locales::getInstance()->getXPath( 'portfolio/months/m_' . $xDate[1] ) . ' ' . $xDate[2];
+			$node->setAttribute( 'fullDate', $fullDate );
 		}
 
 		// авторы

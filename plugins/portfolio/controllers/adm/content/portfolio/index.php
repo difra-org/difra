@@ -32,7 +32,7 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 
 	public function saveAjaxAction(
 		\Difra\Param\AjaxString $name,
-		\Difra\Param\AjaxSafeHTML $description,
+		\Difra\Param\AjaxHTML $description,
 		\Difra\Param\AjaxString $release = null,
 		\Difra\Param\AjaxString $link = null,
 		\Difra\Param\AjaxString $link_caption = null,
@@ -41,6 +41,14 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 		\Difra\Param\AjaxData $roles = null,
 		\Difra\Param\AjaxFiles $image = null
 	) {
+
+		if( is_null( $id ) && !\Difra\Plugins\Portfolio::checkURI( $name->val() ) ) {
+
+			$this->ajax->invalid( 'name' );
+			$this->ajax->status( 'name',
+				\Difra\Locales::getInstance()->getXPath( 'portfolio/adm/notify/dupName' ), 'problem' );
+			return;
+		}
 
 		if( $id ) {
 			$entry = \Difra\Unify::getObj( 'PortfolioEntry', (string)$id );
@@ -52,7 +60,7 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 			$release = strtotime( $release->val() . ' 00:00:00' );
 			$release = date( 'Y-m-d', $release );
 		}
-		// $entry->description = $description;
+		$entry->description = $description;
 		$entry->release = $release;
 		$entry->link = $link;
 		$entry->link_caption = $link_caption;

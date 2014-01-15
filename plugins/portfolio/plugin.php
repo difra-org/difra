@@ -18,5 +18,8 @@ class Plugin extends \Difra\Plugin {
 	}
 
 	public function getSitemap() {
+
+		return \Difra\Plugins\Portfolio::getSiteMap();
+
 	}
 }

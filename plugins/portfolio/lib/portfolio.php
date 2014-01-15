@@ -196,4 +196,49 @@ class Portfolio {
 		}
 	}
 
+	/**
+	 * Возвращает в xml все картинки работы по её id
+	 * @param          $workId
+	 * @param \DOMNode $node
+	 */
+	public static function getWorkImagesXML( $workId, \DOMNode $node ) {
+
+		$images = new \Difra\Unify\Search( 'PortfolioImages' );
+		$images->addCondition( 'portfolio', $workId );
+		$images->setOrder( 'position' );
+		$images->getListXML( $node );
+	}
+
+	/**
+	 * Проверяет на дубликаты генерируемый ури работы портфолио
+	 * @param $title
+	 *
+	 * @return bool
+	 */
+	public static function checkURI( $title ) {
+
+		$entry = new \Difra\Unify\Search( 'PortfolioEntry' );
+		$entry->addCondition( 'uri', \Difra\Locales::getInstance()->makeLink( $title ) );
+		$list = $entry->getList();
+		return !is_null( $list ) ? false : true;
+	}
+
+	/**
+	 * Возвращает массив ссылок на работы портфолио для карты сайта
+	 * @return array|null
+	 */
+	public static function getSiteMap() {
+
+		$currentHost = \Difra\Envi::getHost();
+		$db = \Difra\MySQL::getInstance();
+		$query = "SELECT `uri` FROM `portfolio_entry`";
+		$res = $db->fetch( $query );
+		$returnArray = array();
+		if( !empty( $res ) ) {
+			foreach( $res as $k=>$data ) {
+				$returnArray[] = array( 'loc' => 'http://' . $currentHost . '/portfolio/' . $data['uri'] );
+			}
+		}
+		return !empty( $returnArray ) ? $returnArray : null;
+	}
 }

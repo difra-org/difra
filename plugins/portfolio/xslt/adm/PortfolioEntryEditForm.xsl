@@ -70,7 +70,10 @@
 						</label>
 					</th>
 					<td>
-						<input type="text" name="name" id="name" class="full-width" value="{entry/@name}"/>
+						<div class="container">
+							<input type="text" name="name" id="name" class="full-width" value="{entry/@name}"/>
+							<div class="status"/>
+						</div>
 					</td>
 				</tr>
 				<tr>
