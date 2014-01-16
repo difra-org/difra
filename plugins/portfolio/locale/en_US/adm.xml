@@ -1,7 +1,7 @@
 <locale>
 	<portfolio>
 		<adm>
-			<portfolio>Портфолио</portfolio>
+			<portfolio>Portfolio</portfolio>
 			<list>
 				<title>Работы в портфолио</title>
 				<empty>В портфолио не добавлено ни одной работы.</empty>

@@ -12,6 +12,8 @@ class PortfolioIndexController extends \Difra\Controller {
 		}
 
 		$mainXml = $this->root->appendChild( $this->xml->createElement( 'PortfolioView' ) );
+		$this->root->setAttribute( 'pageTitle', \Difra\Locales::getInstance()->getXPath( 'portfolio/adm/portfolio' ) );
+
 
 		$search = new \Difra\Unify\Search( 'PortfolioEntry' );
 		$search->setOrder( 'release', 'release' );
@@ -49,6 +51,7 @@ class PortfolioIndexController extends \Difra\Controller {
 		$mainXml = $this->root->appendChild( $this->xml->createElement( 'PortfolioWork' ) );
 		$list[0]->getXML( $mainXml );
 		\Difra\Plugins\Portfolio::getWorkImagesXML( $list[0]->id, $mainXml );
+		$this->root->setAttribute( 'pageTitle', $list[0]->name );
 	}
 
 
