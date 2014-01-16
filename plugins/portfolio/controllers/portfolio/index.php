@@ -13,6 +13,28 @@ class PortfolioIndexController extends \Difra\Controller {
 
 		$mainXml = $this->root->appendChild( $this->xml->createElement( 'PortfolioView' ) );
 
+		$search = new \Difra\Unify\Search( 'PortfolioEntry' );
+		$search->setOrder( 'release', 'release' );
+		$workList = $search->getList();
+		$idArray = array();
+		$newYear = 0;
+		foreach( $workList as $work ) {
+			$workNode = $mainXml->appendChild( $this->xml->createElement( 'PortfolioEntry' ) );
+			$work->getXML( $workNode );
+			if( !is_null( $work->release ) ) {
+				$xRelease = explode( '-', $work->release );
+				if( $newYear != $xRelease[0] ) {
+					$workNode->setAttribute( 'newYear', $xRelease[0] );
+					$newYear = $xRelease[0];
+				}
+			}
+			$idArray[] = $work->id;
+		}
+
+		if( !empty( $idArray ) ) {
+			\Difra\Plugins\Portfolio::getMainImagesXML( $idArray, $mainXml );
+		}
+
 	}
 
 	private function _viewWork( $link ) {
