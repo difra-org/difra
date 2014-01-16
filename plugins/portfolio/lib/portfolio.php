@@ -241,4 +241,52 @@ class Portfolio {
 		}
 		return !empty( $returnArray ) ? $returnArray : null;
 	}
+
+	/**
+	 * Возвращает в xml последние пять работ
+	 * @param \DOMNode $node
+	 * @param int      $limit
+	 * @param int      $picLimit
+	 */
+	public static function getLastWorksXML( \DOMNode $node, $limit = 5, $picLimit = 3 ) {
+
+		$db = \Difra\MySQL::getInstance();
+		$query = "SELECT `name`, `uri`, `description`, `id` FROM `portfolio_entry` ORDER BY `release` DESC LIMIT " . intval( $limit );
+		$res = $db->fetch( $query );
+		if( !empty( $res ) ) {
+
+			$idArray = array();
+			foreach( $res as $k=>$data ) {
+				$idArray[] = $data['id'];
+			}
+			//  забираем картинки работ
+			$query = "SELECT `id`, `portfolio` FROM `portfolio_images` WHERE `portfolio` IN (" . implode( ', ', $idArray ) . ") ORDER BY `position` ASC";
+			$imgRes = $db->fetch( $query );
+			$imagesArray = array();
+			if( !empty( $imgRes ) ) {
+				foreach( $imgRes as $k=>$data ) {
+					$imagesArray[$data['portfolio']][] = $data['id'];
+				}
+			}
+
+			// собираем xml
+			foreach( $res as $k=>$data ) {
+
+				$workNode = $node->appendChild( $node->ownerDocument->createElement( 'work' ) );
+				foreach( $data as $key=>$value ) {
+					$workNode->setAttribute( $key, $value );
+				}
+				if( isset( $imagesArray[$data['id']] ) && is_array( $imagesArray[$data['id']] ) ) {
+					$maxPics = 0;
+					foreach( $imagesArray[$data['id']] as $img ) {
+						if( $maxPics < $picLimit ) {
+							$imgNode = $workNode->appendChild( $node->ownerDocument->createElement( 'image' ) );
+							$imgNode->setAttribute( 'id', $img );
+						}
+						$maxPics++;
+					}
+				}
+			}
+		}
+	}
 }
