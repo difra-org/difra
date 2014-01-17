@@ -36,11 +36,14 @@
 		<tr>
 			<td>
 				<a href="/adm/content/portfolio/edit/{@id}/">
-					<img src="/portimages/{/root/content/PortfolioEntryList/image[@portfolio=$wId]/@id}-small.png" />
+					<span class="portfolioPreview"
+					      style="background-image: url('/portimages/{/root/content/PortfolioEntryList/image[@portfolio=$wId]/@id}-small.png');"/>
 				</a>
 			</td>
 			<td>
-				<xsl:value-of select="@name"/>
+				<a href="/adm/content/portfolio/edit/{@id}/">
+					<xsl:value-of select="@name"/>
+				</a>
 			</td>
 			<td>
 				<xsl:value-of select="@release"/>

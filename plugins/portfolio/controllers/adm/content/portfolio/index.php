@@ -14,14 +14,16 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 		$search->setOrder( 'release', 'release' );
 		$workList = $search->getList();
 		$idArray = array();
-		foreach( $workList as $work ) {
-			$workNode = $portfolioNode->appendChild( $this->xml->createElement( 'PortfolioEntry' ) );
-			$work->getXML( $workNode );
-			$idArray[] = $work->id;
-		}
+		if( !is_null( $workList ) ) {
+			foreach( $workList as $work ) {
+				$workNode = $portfolioNode->appendChild( $this->xml->createElement( 'PortfolioEntry' ) );
+				$work->getXML( $workNode );
+				$idArray[] = $work->id;
+			}
 
-		if( !empty( $idArray ) ) {
-			\Difra\Plugins\Portfolio::getMainImagesXML( $idArray, $portfolioNode );
+			if( !empty( $idArray ) ) {
+				\Difra\Plugins\Portfolio::getMainImagesXML( $idArray, $portfolioNode );
+			}
 		}
 	}
 
