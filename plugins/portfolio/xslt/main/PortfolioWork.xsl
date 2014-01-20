@@ -8,8 +8,9 @@
 				<div style="width: 50%" class="portfolioColumns">
 					<!-- картинки портфолио -->
 					<xsl:for-each select="PortfolioImagesList/PortfolioImages">
-
-						<img src="/portimages/{@id}-full.png" />
+						<a href="#" onclick="portfolio.view(event,{@id}, 'png', {position()})" id="portfolioThumb_{position()}">
+							<img src="/portimages/{@id}-full.png" />
+						</a>
 
 					</xsl:for-each>
 				</div>

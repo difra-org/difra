@@ -1,0 +1,81 @@
+.portfolioView {
+
+	.overlay-container {
+		position: absolute;
+		border-radius: 10px;
+		overflow: hidden;
+		max-height: 90%;
+	}
+	.overlay-inner {
+		padding: 3px; !important;
+		position: relative;
+
+		a {
+			float: left;
+			text-decoration: none;
+		}
+	}
+
+	.overlay-portfolio {
+		height: 800px;
+		overflow-y: scroll;
+	}
+
+	.overlay-portfolio img {
+		display: block;
+		max-width: 100%;
+	}
+}
+
+.portfolioView .overlay-inner .prev,
+.portfolioView .overlay-inner .next,
+.portfolioView .overlay-inner .close {
+	background-color:   rgba(0, 0, 0, 0.3);
+	color:              @white;
+	font-size:          24px;
+	text-align:         center;
+	position: absolute;
+	line-height:        67px;
+	height:             60px;
+	width:              60px;
+	opacity:            0;
+	transition:         opacity 0.5s ease;
+	-webkit-transition: opacity 0.5s ease;
+	-moz-transition:    opacity 0.5s ease;
+	-o-transition:      opacity 0.5s ease;
+	-ms-transition:     opacity 0.5s ease;
+}
+
+.portfolioView .overlay-inner:hover .prev,
+.portfolioView .overlay-inner:hover .next,
+.portfolioView .overlay-inner:hover .close {
+	opacity: 1;
+}
+
+.portfolioView .overlay-inner .prev {
+	border-top-right-radius:    5px;
+	border-bottom-right-radius: 5px;
+	top:                        50%;
+	left:                       3px;
+	margin-top:                 -30px;
+}
+
+.portfolioView .overlay-inner .next {
+	border-top-left-radius:    5px;
+	border-bottom-left-radius: 5px;
+	top:                       50%;
+	right:                     3px;
+	margin-top:                -30px;
+}
+
+.portfolioView .overlay-inner .close {
+	border-bottom-left-radius: 5px;
+	top:                       3px;
+	right:                     3px;
+}
+
+.portfolioView .overlay-inner:hover .prev.disabled,
+.portfolioView .overlay-inner:hover .next.disabled {
+	opacity: 0;
+	cursor:  default;
+}
