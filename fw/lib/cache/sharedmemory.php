@@ -24,7 +24,8 @@ class SharedMemory extends Common {
 	 */
 	public static function isAvailable() {
 
-		return extension_loaded( 'shmop' ); // TODO: это не достаточная проверка
+		// TODO: это не достаточная проверка, иногда бывают ошибки
+		return extension_loaded( 'shmop' ) and php_sapi_name() != 'cli';
 	}
 
 	/**

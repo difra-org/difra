@@ -21,7 +21,7 @@ class XCache extends Common {
 	public static function isAvailable() {
 
 		try {
-			if( !extension_loaded( 'xcache' ) or !ini_get( 'xcache.var_size' ) ) {
+			if( !extension_loaded( 'xcache' ) or !ini_get( 'xcache.var_size' ) or php_sapi_name() == 'cli' ) {
 				return false;
 			}
 			@xcache_isset( 'test' );

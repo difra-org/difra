@@ -34,9 +34,9 @@ class MemCached extends Common {
 			self::$_memcache = new \MemCached;
 			$currentServers = self::$_memcache->getServerList();
 			if( empty( $currentServers ) ) {
-				self::$_memcache->addServers( array( array( '127.0.0.1', '11211', '10' ) ) );
+				return false;
 			}
-			return (bool)self::$_memcache->getVersion();
+			return true;
 		} catch( \Difra\Exception $ex ) {
 			return false;
 		}
