@@ -2,6 +2,7 @@
 	<menu>
 		<adm>
 			<menu_content_portfolio>Portfolio</menu_content_portfolio>
+			<menu_settings_portfolio>Portfolio settings</menu_settings_portfolio>
 		</adm>
 	</menu>
 </locale>

@@ -39,6 +39,7 @@ class Debugger {
 		}
 		if( !isset( $_SERVER['VHOST_DEVMODE'] ) or strtolower( $_SERVER['VHOST_DEVMODE'] ) != 'on' ) {
 			ini_set( 'display_errors', 'Off' );
+			set_exception_handler( array( '\Difra\Debugger', 'productionException' ) );
 			return;
 		}
 
@@ -249,6 +250,13 @@ class Debugger {
 		self::$handledByException = "$msg in $file:$line";
 		self::addLineAsArray( $err );
 		return false;
+	}
+
+	public static function productionException( $exception ) {
+
+		if( $exception instanceof \Difra\Exception ) {
+			$exception->notify();
+		}
 	}
 
 	/** @var array Текст последней ошибки, пойманной captureNormal, чтобы не поймать её ещё раз в captureShutdown */

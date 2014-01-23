@@ -16,6 +16,22 @@
 				</colgroup>
 				<tr>
 					<th>
+						<label for="postToTwitter">
+							<xsl:value-of select="$locale/twitter/adm/oAuth/onoff"/>
+						</label>
+					</th>
+					<td>
+						<input type="checkbox" name="postToTwitter" id="postToTwitter">
+							<xsl:if test="@postToTwitter and @postToTwitter=1">
+								<xsl:attribute name="checked">
+									<xsl:text>checked</xsl:text>
+								</xsl:attribute>
+							</xsl:if>
+						</input>
+					</td>
+				</tr>
+				<tr>
+					<th>
 						<xsl:value-of select="$locale/twitter/adm/oAuth/consumerKey"/>
 					</th>
 					<td>

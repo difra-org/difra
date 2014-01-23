@@ -72,7 +72,7 @@ abstract class DirectoryController extends \Difra\Controller {
 		$xml = new \DOMDocument();
 		$node = $xml->appendChild( $xml->createElement( 'DirectoryWindow' ) );
 		$search = new \Difra\Unify\Search( 'WidgetsDirectory' );
-		$search->addCustomConditions( 'directory', static::directory );
+		$search->addCondition( 'directory', static::directory );
 		$search->getListXML( $node );
 		return \Difra\View::render( $xml, 'widget_directory', true );
 	}

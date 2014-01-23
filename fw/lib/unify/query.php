@@ -169,7 +169,8 @@ class Query extends Paginator {
 		$ord = ' ORDER BY ';
 		$d = '';
 		foreach( (array)$this->order as $column ) {
-			$ord .= "$d`$table`.`" . $db->escape( $column ) . '`' . ( !in_array( $column, $this->orderDesc ) ? '' : ' DESC' );
+			$ord .= "$d`$table`.`" . $db->escape( $column ) . '`' .
+				( ( empty( $this->orderDesc ) or !in_array( $column, $this->orderDesc ) ) ? '' : ' DESC' );
 			$d = ', ';
 		}
 		return $ord;
@@ -226,9 +227,21 @@ class Query extends Paginator {
 		if( empty( $conditions ) ) {
 			return;
 		}
-		foreach( $conditions as $k => $cond ) {
-			$this->conditions[$k] = $cond;
+		foreach( $conditions as $k => $v ) {
+			$this->addCondition( $k, $v );
 		}
+	}
+
+	/**
+	 * Добавить условие поиска
+	 * @param string $column
+	 * @param string $value
+	 *
+	 * @throws \Difra\Exception
+	 */
+	public function addCondition( $column, $value ) {
+
+		$this->conditions[$column] = $value;
 	}
 
 	/**

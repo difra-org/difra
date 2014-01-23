@@ -309,6 +309,29 @@ class User {
 	}
 
 	/**
+	 * Удаляет длинную сессию пользователя по id сессии
+	 * @param $sessionId
+	 */
+	public static function unSetLongSessionBySID( $sessionId ) {
+
+		$db = \Difra\MySQL::getInstance();
+		$db->query( "DELETE FROM `users_sessions` WHERE `session_id`='" . $db->escape( $sessionId ) . "'" );
+		\Difra\Libs\Cookies::getInstance()->remove( 'resume' );
+	}
+
+	/**
+	 * Удаляет длинную сессию пользователя по id юзера
+	 * @param $id
+	 */
+	public static function unSetLongSession( $id ) {
+
+		$db = \Difra\MySQL::getInstance();
+		$db->query( "DELETE FROM `users_sessions` WHERE `id`='" . intval( $id ) . "'" );
+
+		\Difra\Libs\Cookies::getInstance()->remove( 'resume' );
+	}
+
+	/**
 	 * Проверяет пользовательскую сессию авторизации и при необходимости логинит пользователя
 	 */
 	public static function checkLongSession() {
@@ -321,8 +344,42 @@ class User {
 			return;
 		}
 
-		//TODO: Доделать !!!
+		// TODO: тут должны быть джойны от юнифая
 
+		$db   = \Difra\MySQL::getInstance();
+		$data = $db->fetchRow( "SELECT s.`ip`, u.*
+				FROM `users_sessions` s
+				RIGHT JOIN `users` AS `u` ON u.`id` = s.`id` AND u.`active`=1 AND u.`banned`=0
+				WHERE s.`session_id`='" . $db->escape( $_COOKIE['resume'] ) . "'" );
+
+		if( empty( $data ) ) {
+			self::unSetLongSessionBySID( $_COOKIE['resume'] );
+			return;
+		}
+
+		// проверяем IP и логиним юзера
+		$currentIp = $_SERVER['REMOTE_ADDR'];
+		preg_match( '/\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/', $currentIp, $t );
+
+		if( !empty( $t ) ) {
+
+			$currentNetwork = $t[0] . '.0.0';
+			if( ( $data['ip'] & ip2long( self::IP_MASK ) ) == ip2long( $currentNetwork ) ) {
+				// маска сети совпала, можно залогинить пользователя
+				$email = strtolower( $data['email'] );
+				$additionals = null;
+				$additionalsData = $db->fetch( "SELECT `name`, `value` FROM `users_fields` WHERE `id`='" .
+					intval( $data['id'] ) . "'" );
+				if( !empty( $additionalsData ) ) {
+					foreach( $additionalsData as $k=>$tempData ) {
+						$additionals[$tempData['name']] = $tempData['value'];
+					}
+				}
+
+				\Difra\Auth::getInstance()->login( $email, $data, $additionals );
+				return;
+			}
+		}
 	}
 
 }

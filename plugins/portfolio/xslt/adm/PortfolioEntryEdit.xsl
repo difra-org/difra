@@ -7,9 +7,10 @@
 			</a>
 			<xsl:text> → </xsl:text>
 			<xsl:value-of select="$locale/portfolio/adm/edit/title"/>
-			<xsl:if test="@name">
+			<xsl:if test="@edit=1">
+				<xsl:text> </xsl:text>
 				<xsl:value-of select="$locale/portfolio/adm/edit/title-name-prefix"/>
-				<xsl:value-of select="@name"/>
+				<xsl:value-of select="entry/@name"/>
 				<xsl:value-of select="$locale/portfolio/adm/edit/title-name-postfix"/>
 			</xsl:if>
 		</h2>

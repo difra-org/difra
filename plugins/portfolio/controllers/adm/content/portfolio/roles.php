@@ -11,7 +11,7 @@ class AdmContentPortfolioRolesController extends \Difra\Plugins\Widgets\Director
 
 	public function action( $value ) {
 
-		$escapedValue = htmlspecialchars( $value );
+		$escapedValue = addslashes( htmlspecialchars( $value ) );
 		$ts = microtime( true );
 		\Difra\Ajax::getInstance()->exec(
 			<<<SCRIPT
@@ -23,7 +23,7 @@ class AdmContentPortfolioRolesController extends \Difra\Plugins\Widgets\Director
 		  '$escapedValue' +
 		  '<input type="hidden" name="roles[$ts][role]" value="$escapedValue" class="portfolio-role" ts="$ts">' +
 	         '</td>' +
-		 '<td class=".add-person"><a href="/adm/content/portfolio/persons" class="action add ajaxer widgets-directory"></a></td>' +
+		 '<td class="add-person"><a href="/adm/content/portfolio/persons" class="action add ajaxer widgets-directory"></a></td>' +
 		'</tr>'
 	);
 }
