@@ -110,14 +110,17 @@ class Action {
 	private static function saveCache( $result = 'action' ) {
 
 		if( $result != '404' ) {
+			// save main variables
 			$match = array(
 				'vars' => array(
 					'controllerClass' => self::$controllerClass,
 					'controllerFile' => self::$controllerFile,
+					'controllerUri' => self::$controllerUri,
 					'parameters' => self::$parameters
 				),
 				'result' => $result
 			);
+			// save action types variables
 			foreach( self::$methodTypes as $methodType ) {
 				$methodVar = "method{$methodType[0]}{$methodType[1]}";
 				$match['vars'][$methodVar] = self::${$methodVar};
