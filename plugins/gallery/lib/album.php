@@ -366,7 +366,7 @@ class Album {
 				if( $size ) {
 
 					$tmpImg = $Images->scaleAndCrop( $img, $size[0], $size[1], $this->format );
-					if( $waterMarkOn === 1 && $waterMarkOnPreview === 1 ) {
+					if( $waterMarkOn && $waterMarkOnPreview ) {
 						if( $waterText != '' ) {
 							$tmpImg = $Images->setWatermark( $tmpImg, $waterText, null, $this->format, 7 );
 						} elseif( $watermarkImage ) {
@@ -377,7 +377,7 @@ class Album {
 				} else {
 
 					$tmpImg = $Images->convert( $img, $this->format );
-					if( $waterMarkOn === 1 ) {
+					if( $waterMarkOn ) {
 						if( $waterText != '' ) {
 							$tmpImg = $Images->setWatermark( $tmpImg, $waterText, null, $this->format, 15 );
 						} elseif( $watermarkImage ) {
