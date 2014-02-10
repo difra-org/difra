@@ -81,10 +81,24 @@ abstract class Item extends DBAPI {
 	 */
 	public function __set( $name, $value ) {
 
-//		if( (string) $this->$name === ( is_object( $value ) and $value::type != 'html' ? (string) $value : $value->val( true ) ) ) {
-		if( $this->$name == $value ) {
+		// html objects handling
+		if( is_object( $current = $this->$name ) and $current::type == 'html' ) {
+			$currentValue = $current->val( true );
+		} else {
+			$currentValue = $current;
+		}
+		if( is_object( $value ) and $value::type == 'html' ) {
+			$newValue = $value->val( true );
+		} else {
+			$newValue = $value;
+		}
+
+		// not modified property, no need to update
+		if( $currentValue == $newValue ) {
 			return;
 		}
+
+		// set update data
 		$this->_data[$name] = $value;
 		$this->_modified[$name] = $value;
 	}
