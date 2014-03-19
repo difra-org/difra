@@ -227,7 +227,7 @@ abstract class Common {
 						break;
 					}
 
-					usleep( 50000 );
+					usleep( 5000 );
 				}
 			}
 
@@ -301,6 +301,7 @@ abstract class Common {
 					$parents[] = $d;
 				}
 				if( $this->withAll( $instance ) and is_dir( $d = "{$dir}{$this->type}/all" ) ) {
+					$found = true;
 					$parents[] = $d;
 				}
 			}
