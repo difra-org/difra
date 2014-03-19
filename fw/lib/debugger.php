@@ -197,7 +197,7 @@ class Debugger {
 		$root = $xml->appendChild( $xml->createElement( 'root' ) );
 		self::debugXML( $root, $standalone );
 
-		return View::render( $xml, 'all', true );
+		return View::render( $xml, 'all', true, true );
 	}
 
 	/**
