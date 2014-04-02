@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -31,12 +38,13 @@ class Envi {
 
 	/**
 	 * Домен и подсайты
-	 *
+
 	 */
 
 	/**
 	 * Получить имя хоста (домена)
-	 * @param bool $main        Получить имя «главного» хоста (нужно в случае, если у сайта есть поддомены)
+	 *
+	 * @param bool $main Получить имя «главного» хоста (нужно в случае, если у сайта есть поддомены)
 	 *
 	 * @return string
 	 */

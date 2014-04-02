@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\MySQL\Abstracts;
 
 use Difra\Envi;
@@ -24,7 +31,7 @@ abstract class Common {
 
 	/**
 	 * Абстрактные методы
-	 *
+
 	 */
 
 	/**
@@ -34,12 +41,14 @@ abstract class Common {
 
 	/**
 	 * Отправка запроса в базу
+	 *
 	 * @param string $query
 	 */
 	abstract protected function realQuery( $query );
 
 	/**
 	 * Получение данных из базы
+	 *
 	 * @param string $query
 	 * @param bool   $replica
 	 *
@@ -65,6 +74,7 @@ abstract class Common {
 
 	/**
 	 * Возвращает количество строк, затронутых последним запросом
+	 *
 	 * @return int
 	 */
 	abstract protected function getAffectedRows();
@@ -89,11 +99,12 @@ abstract class Common {
 
 	/**
 	 * Функционал
-	 *
+
 	 */
 
 	/**
 	 * Устанавливает соединение с базой
+	 *
 	 * @throws \Difra\Exception
 	 * @return void
 	 */
@@ -116,9 +127,10 @@ abstract class Common {
 
 	/**
 	 * Сделать запрос в базу
+	 *
 	 * @throws exception
 	 *
-	 * @param string|array $query        SQL-запрос
+	 * @param string|array $query SQL-запрос
 	 *
 	 * @return void
 	 */
@@ -145,10 +157,11 @@ abstract class Common {
 
 	/**
 	 * Возвращает результат запроса
+	 *
 	 * @throws exception
 	 *
-	 * @param string $query          SQL-запрос
-	 * @param bool   $replica        Позволить читать данные из реплики
+	 * @param string $query   SQL-запрос
+	 * @param bool   $replica Позволить читать данные из реплики
 	 *
 	 * @return array
 	 */
@@ -163,7 +176,7 @@ abstract class Common {
 	/**
 	 * Безопасно «обернуть» строку для SQL-запроса
 	 *
-	 * @param string|array $data        Строка или массив строк
+	 * @param string|array $data Строка или массив строк
 	 *
 	 * @return string|array
 	 */
@@ -182,6 +195,7 @@ abstract class Common {
 
 	/**
 	 * Определение, доступен ли модуль
+	 *
 	 * @return bool
 	 */
 	public static function isAvailable() {
@@ -211,6 +225,7 @@ abstract class Common {
 
 	/**
 	 * Проверка наличия соединения с базой
+	 *
 	 * @return bool
 	 */
 	public function isConnected() {
@@ -225,6 +240,7 @@ abstract class Common {
 
 	/**
 	 * Возврат текста ошибки
+	 *
 	 * @return string|null
 	 */
 	public function getError() {
@@ -237,8 +253,8 @@ abstract class Common {
 	 *
 	 * @throws exception
 	 *
-	 * @param string $query          SQL-запрос
-	 * @param bool   $replica        Позволить читать данные из реплики
+	 * @param string $query   SQL-запрос
+	 * @param bool   $replica Позволить читать данные из реплики
 	 *
 	 * @return array
 	 */
@@ -284,8 +300,9 @@ abstract class Common {
 
 	/**
 	 * Возвращает одну строку результатов запроса
-	 * @param string $query          SQL-запрос
-	 * @param bool   $replica        Позволить читать данные из реплики
+	 *
+	 * @param string $query   SQL-запрос
+	 * @param bool   $replica Позволить читать данные из реплики
 	 *
 	 * @return array|bool
 	 */
@@ -297,8 +314,9 @@ abstract class Common {
 
 	/**
 	 * Возвращает одно значение из результатов запроса
-	 * @param string $query          SQL-запрос
-	 * @param bool   $replica        Позволить читать данные из реплики
+	 *
+	 * @param string $query   SQL-запрос
+	 * @param bool   $replica Позволить читать данные из реплики
 	 *
 	 * @return mixed|null
 	 */
@@ -311,9 +329,9 @@ abstract class Common {
 	/**
 	 * Возвращает результат SQL-запроса в виде дерева XML
 	 *
-	 * @param \DOMNode $node           XML-Нода
-	 * @param string   $query          Запрос
-	 * @param bool     $replica        Позволить читать данные из реплики
+	 * @param \DOMNode $node    XML-Нода
+	 * @param string   $query   Запрос
+	 * @param bool     $replica Позволить читать данные из реплики
 	 *
 	 * @return bool
 	 */

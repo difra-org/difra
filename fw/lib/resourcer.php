@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -11,8 +18,10 @@ class Resourcer {
 
 	/**
 	 * Фабрика сборщиков ресурсов
+	 *
 	 * @param string $type
 	 * @param bool   $quiet
+	 *
 	 * @return Resourcer\CSS|Resourcer\JS|Resourcer\XSLT|Resourcer\Menu|Resourcer\Locale
 	 * @throws Exception
 	 */

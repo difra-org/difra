@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
+/**
  * Class SitemapController
  */
 class SitemapController extends \Difra\Controller {
@@ -15,6 +22,7 @@ class SitemapController extends \Difra\Controller {
 	 * /sitemap-2.xml и т.д.
 	 *
 	 * @param Difra\Param\AnyInt $page
+	 *
 	 * @throws Difra\View\Exception
 	 */
 	public function indexAction( \Difra\Param\AnyInt $page = null ) {

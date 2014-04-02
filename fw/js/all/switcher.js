@@ -1,4 +1,11 @@
 /**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
+/**
  * Переключает страницы с помощью ajax.
  * В исходной и конечной странице должны присутствовать контейнеры .switcher,
  * которые данный скрипт заменяет при переключении.
@@ -21,10 +28,10 @@ switcher.ajaxConfig = {
 	cache: false,
 	headers: { 'X-Requested-With': 'SwitchPage' },
 	type: 'GET',
-	beforeSend: function() {
+	beforeSend: function () {
 		loading.show();
 	},
-	success: function( data, status, xhr ) {
+	success: function ( data, status, xhr ) {
 		try {
 			var newdata = $( data );
 		} catch( ignore ) {
@@ -37,16 +44,16 @@ switcher.ajaxConfig = {
 			return;
 		}
 		/*
-		var newPath = '/';
-		var content = newdata.find( '#content' );
-		if( content.length && content.attr( 'basepath' ) ) {
-			newPath = content.attr( 'basepath' );
-		}
-		if( switcher.basePath != newPath ) {
-			switcher.fallback();
-			return;
-		}
-		*/
+		 var newPath = '/';
+		 var content = newdata.find( '#content' );
+		 if( content.length && content.attr( 'basepath' ) ) {
+		 newPath = content.attr( 'basepath' );
+		 }
+		 if( switcher.basePath != newPath ) {
+		 switcher.fallback();
+		 return;
+		 }
+		 */
 		$( document ).triggerHandler( 'destruct' );
 		if( !switcher.noPush ) {
 			if( typeof history.pushState == 'function' ) {
@@ -58,7 +65,7 @@ switcher.ajaxConfig = {
 		}
 		$( document ).triggerHandler( 'switch' );
 
-		a.each( function( k, v ) {
+		a.each( function ( k, v ) {
 			try {
 				$( '#' + $( v ).attr( 'id' ) ).replaceWith( v ).remove();
 			} catch( ignore ) {
@@ -78,19 +85,19 @@ switcher.ajaxConfig = {
 		$( document ).triggerHandler( 'construct' );
 		loading.hide();
 	},
-	error: function( xhr ) {
+	error: function ( xhr ) {
 		switcher.fallback();
 	}
 };
 
-switcher.fallback = function() {
+switcher.fallback = function () {
 
 	$( document ).triggerHandler( 'destruct' );
 	loading.hide();
 	document.location = switcher.url;
 };
 
-switcher.page = function( url, noPush, data ) {
+switcher.page = function ( url, noPush, data ) {
 
 	// filter protocol://host part
 	var host = window.location.protocol + "//" + window.location.host + "/";
@@ -120,7 +127,7 @@ switcher.page = function( url, noPush, data ) {
 	}
 };
 
-window.onhashchange = function() {
+window.onhashchange = function () {
 
 	if( switcher.hashChanged ) {
 		switcher.hashChanged = false;
@@ -133,23 +140,23 @@ window.onhashchange = function() {
 	}
 };
 
-window.onpopstate = function() {
+window.onpopstate = function () {
 
 	if( switcher.url && switcher.url != decodeURI( document.location.pathname ) && switcher.url != document.location.hash.substring( 2 ) ) {
 		switcher.page( document.location.href, true );
 	}
 };
 
-$( document ).ready( function() {
+$( document ).ready( function () {
 
 	/*
-	var content = $( '#content' );
-	if( content.length && content.attr( 'basepath' ) ) {
-		switcher.basePath = content.attr( 'basepath' );
-	} else {
-		switcher.basePath = '/';
-	}
-	*/
+	 var content = $( '#content' );
+	 if( content.length && content.attr( 'basepath' ) ) {
+	 switcher.basePath = content.attr( 'basepath' );
+	 } else {
+	 switcher.basePath = '/';
+	 }
+	 */
 	if( document.location.hash && document.location.hash.substring( 0, 2 ) == '#!' ) {
 		switcher.page( document.location.hash.substring( 2 ), true );
 		if( typeof history.replaceState == 'function' ) {
@@ -165,7 +172,7 @@ $( document ).ready( function() {
 	}
 } );
 
-$( document ).on( 'click dblclick', 'a', function( event ) {
+$( document ).on( 'click dblclick', 'a', function ( event ) {
 	if( $( this ).hasClass( 'ajaxer' ) || $( this ).hasClass( 'noAjaxer' ) ) {
 		return;
 	}

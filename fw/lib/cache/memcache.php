@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Cache;
 
 /**
@@ -49,6 +56,7 @@ class MemCache extends Common {
 
 	/**
 	 * Реализация получения данных из кэша
+	 *
 	 * @param string $id
 	 * @param bool   $doNotTestCacheValidity
 	 *
@@ -62,6 +70,7 @@ class MemCache extends Common {
 
 	/**
 	 * Реализация сохранения данных в кэше
+	 *
 	 * @param string $id
 	 * @param mixed  $data
 	 * @param bool   $specificLifetime
@@ -78,6 +87,7 @@ class MemCache extends Common {
 
 	/**
 	 * Реализация удаления данных из кэша
+	 *
 	 * @param string $id
 	 */
 	public function realRemove( $id ) {
@@ -87,6 +97,7 @@ class MemCache extends Common {
 
 	/**
 	 * Реализация проверки существования ключа
+	 *
 	 * @param string $key
 	 *
 	 * @return bool
@@ -98,6 +109,7 @@ class MemCache extends Common {
 
 	/**
 	 * Реализация функции определения наличия автоматической подчистки кэша
+	 *
 	 * @return bool
 	 */
 	public function isAutomaticCleaningAvailable() {

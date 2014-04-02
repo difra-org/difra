@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs\XML;
 
 /**
@@ -9,6 +16,7 @@ class XMLRPC {
 
 	/**
 	 * Синглтон
+	 *
 	 * @static
 	 * @return self
 	 */
@@ -54,9 +62,9 @@ class XMLRPC {
 	 * Функция, выполняющая обработку XML-RPC запроса.
 	 *
 	 * @param            $handler экземпляр класса удалённых процедур. Имена методов должны соответствовать именам
-	 *                 запрашиваемых методов, либо класс должен именть magic метод __call()
+	 *                            запрашиваемых методов, либо класс должен именть magic метод __call()
 	 * @param array|bool $methods список доступных методов (если не указан, класс должен иметь метод getMethods(),
-	 *                 возвращающий соответствующий список)
+	 *                            возвращающий соответствующий список)
 	 *
 	 * @return string
 	 */

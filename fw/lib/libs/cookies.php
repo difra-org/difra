@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs;
 
 use Difra\Envi;
@@ -44,7 +51,9 @@ class Cookies {
 	 * Cookies::setPath()
 	 *
 	 * @desc Устанавливает путь
+	 *
 	 * @param string $path
+	 *
 	 * @return void
 	 */
 	public function setPath( $path ) {
@@ -56,7 +65,9 @@ class Cookies {
 	 * Cookies::setDomain()
 	 *
 	 * @desc Устанавливает домен
+	 *
 	 * @param string $domain
+	 *
 	 * @return void
 	 */
 	public function setDomain( $domain ) {
@@ -68,7 +79,9 @@ class Cookies {
 	 * Cookies::setExpire()
 	 *
 	 * @desc Устанавливает время жизни
+	 *
 	 * @param integer $expireTime
+	 *
 	 * @return void
 	 */
 	public function setExpire( $expireTime ) {
@@ -80,8 +93,10 @@ class Cookies {
 	 * Cookies::set()
 	 *
 	 * @desc Устанавливает куку
+	 *
 	 * @param string       $name
 	 * @param string|array $value
+	 *
 	 * @return boolean
 	 */
 	public function set( $name, $value ) {
@@ -96,7 +111,9 @@ class Cookies {
 	 * Cookies::remove()
 	 *
 	 * @desc Удаляет куку
+	 *
 	 * @param string $name
+	 *
 	 * @return boolean
 	 */
 	public function remove( $name ) {
@@ -113,21 +130,21 @@ class Cookies {
 	public function notify( $message, $error = false ) {
 
 		$this->set( 'notify',
-			array(
-			     'type' => $error ? 'error' : 'ok',
-			     'message' => (string)$message,
-			     'lang' => array(
-				     'close' => \Difra\Locales::getInstance()->getXPath( 'notifications/close' )
-			     )
-			) );
+			    array(
+				    'type' => $error ? 'error' : 'ok',
+				    'message' => (string)$message,
+				    'lang' => array(
+					    'close' => \Difra\Locales::getInstance()->getXPath( 'notifications/close' )
+				    )
+			    ) );
 	}
 
 	/**
 	 * Sets cookie that makes Ajaxer request some URL.
 	 *
-*@param $url
+	 * @param $url
 	 *
-*@return void
+	 * @return void
 	 */
 	public function query( $url ) {
 

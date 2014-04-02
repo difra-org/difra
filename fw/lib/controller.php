@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -42,6 +49,7 @@ class Controller {
 
 	/**
 	 * Вызов фабрики
+	 *
 	 * @return Controller|null
 	 */
 	public static function getInstance() {
@@ -206,54 +214,54 @@ class Controller {
 			$name = $parameter->getName();
 			$class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
 			switch( call_user_func( array( "$class", "getSource" ) ) ) {
-				case 'query':
-					// параметр из query — нужно соблюдать очередность параметров
-					if( call_user_func( array( "$class", "isNamed" ) ) ) {
-						// именованный параметр
-						if( sizeof( self::$parameters ) >= 2 and self::$parameters[0] == $name ) {
-							array_shift( self::$parameters );
-							if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
-								throw new View\Exception( 404 );
-							}
-							$callParameters[$parameter->getName()] =
-								new $class( array_shift( self::$parameters ) );
-						} elseif( !$parameter->isOptional() ) {
+			case 'query':
+				// параметр из query — нужно соблюдать очередность параметров
+				if( call_user_func( array( "$class", "isNamed" ) ) ) {
+					// именованный параметр
+					if( sizeof( self::$parameters ) >= 2 and self::$parameters[0] == $name ) {
+						array_shift( self::$parameters );
+						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
 							throw new View\Exception( 404 );
-						} else {
-							$callParameters[$parameter->getName()] = null;
 						}
-						array_shift( $namedParameters );
-					} else {
-						if( !empty( self::$parameters ) and ( !$parameter->isOptional() or
-								empty( $namedParameters ) or
-								self::$parameters[0] != $namedParameters[0] )
-						) {
-							if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
-								throw new View\Exception( 404 );
-							}
-							$callParameters[$name] = new $class( array_shift( self::$parameters ) );
-						} elseif( !$parameter->isOptional() ) {
-							throw new View\Exception( 404 );
-						} else {
-							$callParameters[$parameter->getName()] = null;
-						}
-					}
-					break;
-				case 'ajax':
-					$value = $this->ajax->getParam( $name );
-					if( !is_null( $value ) and $value !== '' ) {
-						if( !call_user_func( array( "$class", "verify" ), $value ) ) {
-							$this->ajax->invalid( $name );
-							continue;
-						}
-						$callParameters[$name] = new $class( $value );
-					} elseif( call_user_func( array( "$class", 'isAuto' ) ) ) {
-						$callParameters[$name] = new $class;
+						$callParameters[$parameter->getName()] =
+							new $class( array_shift( self::$parameters ) );
 					} elseif( !$parameter->isOptional() ) {
-						$this->ajax->required( $name );
+						throw new View\Exception( 404 );
 					} else {
-						$callParameters[$name] = null;
+						$callParameters[$parameter->getName()] = null;
 					}
+					array_shift( $namedParameters );
+				} else {
+					if( !empty( self::$parameters ) and ( !$parameter->isOptional() or
+							empty( $namedParameters ) or
+							self::$parameters[0] != $namedParameters[0] )
+					) {
+						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
+							throw new View\Exception( 404 );
+						}
+						$callParameters[$name] = new $class( array_shift( self::$parameters ) );
+					} elseif( !$parameter->isOptional() ) {
+						throw new View\Exception( 404 );
+					} else {
+						$callParameters[$parameter->getName()] = null;
+					}
+				}
+				break;
+			case 'ajax':
+				$value = $this->ajax->getParam( $name );
+				if( !is_null( $value ) and $value !== '' ) {
+					if( !call_user_func( array( "$class", "verify" ), $value ) ) {
+						$this->ajax->invalid( $name );
+						continue;
+					}
+					$callParameters[$name] = new $class( $value );
+				} elseif( call_user_func( array( "$class", 'isAuto' ) ) ) {
+					$callParameters[$name] = new $class;
+				} elseif( !$parameter->isOptional() ) {
+					$this->ajax->required( $name );
+				} else {
+					$callParameters[$name] = null;
+				}
 			}
 		}
 		if( !$this->ajax->hasProblem() ) {

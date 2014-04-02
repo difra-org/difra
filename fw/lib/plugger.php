@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -28,6 +35,7 @@ class Plugger {
 
 	/**
 	 * Возвращает список всех доступных плагинов
+	 *
 	 * @return string[]
 	 */
 	private static function getPluginsNames() {
@@ -54,6 +62,7 @@ class Plugger {
 
 	/**
 	 * Возвращает массив с объектами всех доступных плагинов
+	 *
 	 * @return \Difra\Plugin[]
 	 */
 	public static function getAllPlugins() {
@@ -197,6 +206,7 @@ class Plugger {
 
 	/**
 	 * Получает пути к папкам всех включенных плагинов
+	 *
 	 * @return array
 	 */
 	public static function getPaths() {
@@ -216,6 +226,7 @@ class Plugger {
 
 	/**
 	 * Позволяет узнать, включен ли плагин с таким названием
+	 *
 	 * @param string $pluginName
 	 *
 	 * @return bool

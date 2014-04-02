@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Envi;
 
 use Difra\Envi, Difra\Debugger, Difra\View, Difra\Cache, Difra\Resourcer, Difra\Plugger;
@@ -81,6 +88,7 @@ class Action {
 
 	/**
 	 * Загрузка данных из кэша
+	 *
 	 * @throws View\Exception
 	 * @return bool
 	 */
@@ -90,21 +98,22 @@ class Action {
 			return false;
 		}
 		switch( $data['result'] ) {
-			case 'action':
-				/** @noinspection PhpIncludeInspection */
-				foreach( $data['vars'] as $k => $v ) {
-					self::${$k} = $v;
-				}
-				include_once( self::$controllerFile );
-				break;
-			case '404':
-				throw new View\Exception( 404 );
+		case 'action':
+			/** @noinspection PhpIncludeInspection */
+			foreach( $data['vars'] as $k => $v ) {
+				self::${$k} = $v;
+			}
+			include_once( self::$controllerFile );
+			break;
+		case '404':
+			throw new View\Exception( 404 );
 		}
 		return true;
 	}
 
 	/**
 	 * Сохранить результат в кэш
+	 *
 	 * @param string $result Тип резултата: 'action' или '404'
 	 */
 	private static function saveCache( $result = 'action' ) {
@@ -136,6 +145,7 @@ class Action {
 
 	/**
 	 * Обработка запросов к ресурсам
+	 *
 	 * @param string[] $parts
 	 *
 	 * @throws View\Exception
@@ -177,6 +187,7 @@ class Action {
 
 	/**
 	 * Собирает пути к папкам всех контроллеров
+	 *
 	 * @return string[]
 	 */
 	public static function getControllerPaths() {
@@ -203,6 +214,7 @@ class Action {
 
 	/**
 	 * Поиск папок с самой глубокой вложенностью, подходящих для запроса
+	 *
 	 * @param string[] $parts
 	 *
 	 * @return string[]
@@ -233,6 +245,7 @@ class Action {
 
 	/**
 	 * Поиск подходящего контроллера
+	 *
 	 * @param $parts
 	 *
 	 * @return null|string
@@ -275,6 +288,7 @@ class Action {
 
 	/**
 	 * Поиск подходящих экшенов
+	 *
 	 * @param string[] $parts
 	 *
 	 * @return bool|string
@@ -301,6 +315,7 @@ class Action {
 
 	/**
 	 * Возвращает имя класса найденного контроллера
+	 *
 	 * @return null|string
 	 */
 	public static function getControllerClass() {

@@ -1,6 +1,13 @@
 <?php
 
 /**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
+/**
  * Class AdmDevelopmentTypographController
  */
 class AdmDevelopmentTypographController extends \Difra\Controller {
@@ -48,21 +55,22 @@ class AdmDevelopmentTypographController extends \Difra\Controller {
 					\Difra\Param\AjaxCheckbox $doReplaceAfter,
 					\Difra\Param\AjaxCheckbox $doMacros ) {
 
-		$settingsArray = array( 'spaceAfterShortWord' => $spaceAfterShortWord->val(),
-					'lengthShortWord' => $lengthShortWord->val(),
-					'spaceBeforeLastWord' => $spaceBeforeLastWord->val(),
-					'lengthLastWord' => $lengthLastWord->val(),
-					'spaceAfterNum' => $spaceAfterNum->val(),
-					'spaceBeforeParticles' => $spaceBeforeParticles->val(),
-					'delRepeatSpace' => $delRepeatSpace->val(),
-					'delSpaceBeforePunctuation' => $delSpaceBeforePunctuation->val(),
-					'delSpaceBeforeProcent' => $delSpaceBeforeProcent->val(),
-					'doReplaceBefore' => $doReplaceBefore->val(),
-					'doReplaceAfter' => $doReplaceAfter->val(),
-					'doMacros' => $doMacros->val() );
+		$settingsArray = array(
+			'spaceAfterShortWord' => $spaceAfterShortWord->val(),
+			'lengthShortWord' => $lengthShortWord->val(),
+			'spaceBeforeLastWord' => $spaceBeforeLastWord->val(),
+			'lengthLastWord' => $lengthLastWord->val(),
+			'spaceAfterNum' => $spaceAfterNum->val(),
+			'spaceBeforeParticles' => $spaceBeforeParticles->val(),
+			'delRepeatSpace' => $delRepeatSpace->val(),
+			'delSpaceBeforePunctuation' => $delSpaceBeforePunctuation->val(),
+			'delSpaceBeforeProcent' => $delSpaceBeforeProcent->val(),
+			'doReplaceBefore' => $doReplaceBefore->val(),
+			'doReplaceAfter' => $doReplaceAfter->val(),
+			'doMacros' => $doMacros->val()
+		);
 
 		\Difra\Config::getInstance()->set( 'typograph', $settingsArray );
 		$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'adm/typograph/saved' ) );
 	}
-
 }

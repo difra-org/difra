@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Param\Filters;
 
 use Difra\Envi;
@@ -52,9 +59,9 @@ class HTML {
 	}
 
 	/**
-	 * @param string $source               Исходный HTML
-	 * @param bool   $clean                Произвести ли чистку от говн
-	 * @param bool   $withHeaders          Вернуть ли полную HTML-страницу (true) или только содержимое (false)
+	 * @param string $source      Исходный HTML
+	 * @param bool   $clean       Произвести ли чистку от говн
+	 * @param bool   $withHeaders Вернуть ли полную HTML-страницу (true) или только содержимое (false)
 	 *
 	 * @return string
 	 */
@@ -125,19 +132,19 @@ class HTML {
 
 		$replaceNodes = array();
 		switch( $node->nodeType ) {
-			case XML_ELEMENT_NODE:
-				if( !isset( $this->allowedTags[$node->nodeName] ) ) {
-					$replaceNodes[] = $node;
-				}
-				$this->cleanAttributes( $node, isset( $this->allowedTags[$node->nodeName] ) ? $this->allowedTags[$node->nodeName] : array() );
-				break;
-			case XML_TEXT_NODE:
-				break;
-			case XML_COMMENT_NODE:
+		case XML_ELEMENT_NODE:
+			if( !isset( $this->allowedTags[$node->nodeName] ) ) {
 				$replaceNodes[] = $node;
-				break;
-			default:
-				$replaceNodes[] = $node;
+			}
+			$this->cleanAttributes( $node, isset( $this->allowedTags[$node->nodeName] ) ? $this->allowedTags[$node->nodeName] : array() );
+			break;
+		case XML_TEXT_NODE:
+			break;
+		case XML_COMMENT_NODE:
+			$replaceNodes[] = $node;
+			break;
+		default:
+			$replaceNodes[] = $node;
 		}
 		if( $node->hasChildNodes() ) {
 			foreach( $node->childNodes as $child ) {
@@ -150,6 +157,7 @@ class HTML {
 
 	/**
 	 * Чистка аттрибутов ноды по спискам допустимых аттрибутов
+	 *
 	 * @param \DOMElement $node
 	 * @param array       $attributes
 	 */
@@ -190,6 +198,7 @@ class HTML {
 
 	/**
 	 * Фильтр ссылок
+	 *
 	 * @param string $link
 	 *
 	 * @return string
@@ -211,6 +220,7 @@ class HTML {
 
 	/**
 	 * Фильтр стилей
+	 *
 	 * @param string $attr
 	 *
 	 * @return string
@@ -247,6 +257,7 @@ class HTML {
 
 	/**
 	 * Фильтр ссылок
+	 *
 	 * @param string $classes
 	 *
 	 * @return string
@@ -267,6 +278,7 @@ class HTML {
 
 	/**
 	 * Фильтр целых положительных чисел ≥1
+	 *
 	 * @param $input
 	 *
 	 * @return int|string

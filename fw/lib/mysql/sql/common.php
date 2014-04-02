@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\MySQL\SQL;
 
 /**
@@ -15,13 +22,16 @@ abstract class Common {
 
 	/**
 	 * Создание объекта из чанков
+	 *
 	 * @param array $chunks
+	 *
 	 * @return mixed
 	 */
 	//abstract public static function create( $chunks = null );
 
 	/**
 	 * Возвращает массив всех загруженных в данный момент объектов данного типа
+	 *
 	 * @return array
 	 */
 	public static function getList() {
@@ -31,7 +41,9 @@ abstract class Common {
 
 	/**
 	 * Возвращает имя из чанка (при необходимости убирает `)
+	 *
 	 * @param $name
+	 *
 	 * @return string
 	 */
 	public static function chunk2name( $name ) {

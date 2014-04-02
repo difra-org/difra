@@ -1,4 +1,9 @@
-<?xml version="1.0" encoding="utf-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+Copyright © A-Jam Studio
+License: http://ajamstudio.com/difra/license
+-->
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9">
 	<xsl:template match="sitemap:urlset" xmlns:sitemap="http://www.sitemaps.org/schemas/sitemap/0.9">
 		<html>

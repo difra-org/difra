@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 include_once( DIR_FW . 'lib/debugger.php' );
@@ -17,6 +24,7 @@ class Autoloader {
 
 	/**
 	 * Загрузчик классов
+	 *
 	 * @param $class
 	 *
 	 * @throws Exception
@@ -39,6 +47,7 @@ class Autoloader {
 
 	/**
 	 * Возвращает имя файла для заданного класса
+	 *
 	 * @param string $class
 	 *
 	 * @return string
@@ -70,6 +79,7 @@ class Autoloader {
 
 	/**
 	 * Обработчик событий
+	 *
 	 * @throws exception
 	 */
 	public static function register() {
@@ -79,6 +89,7 @@ class Autoloader {
 
 	/**
 	 * Добавляет имя класса в чёрный список
+	 *
 	 * @param string $class
 	 */
 	public static function addBL( $class ) {

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 use Difra\Envi\Setup;
@@ -23,7 +30,9 @@ class Locales {
 
 	/**
 	 * @static
+	 *
 	 * @param null $locale
+	 *
 	 * @return Locales
 	 */
 	static function getInstance( $locale = null ) {
@@ -41,7 +50,9 @@ class Locales {
 
 	/**
 	 * Конструктор
+	 *
 	 * @param $locale
+	 *
 	 * @return \Difra\Locales
 	 */
 	public function __construct( $locale ) {
@@ -63,7 +74,9 @@ class Locales {
 
 	/**
 	 * Возвращает дерево языковых строк
+	 *
 	 * @param \DOMElement $node
+	 *
 	 * @return void
 	 */
 	public function getLocaleXML( $node ) {
@@ -76,7 +89,9 @@ class Locales {
 
 	/**
 	 * Меняет текущую локаль
+	 *
 	 * @param string $locale
+	 *
 	 * @return void
 	 */
 	public function setLocale( $locale ) {
@@ -90,6 +105,7 @@ class Locales {
 	 *
 	 * @param string      $string
 	 * @param string|bool $locale
+	 *
 	 * @return array|bool
 	 */
 	public function parseDate( $string, $locale = false ) {
@@ -117,7 +133,9 @@ class Locales {
 
 	/**
 	 * Проверяет валидность введенной даты
+	 *
 	 * @param $string
+	 *
 	 * @return bool
 	 */
 	public function isDate( $string ) {
@@ -131,7 +149,8 @@ class Locales {
 	/**
 	 * Возвращает дату в формате MySQL
 	 *
-	 * @param string $string        Дата. Если не указано, будет возвращена текущая дата.
+	 * @param string $string Дата. Если не указано, будет возвращена текущая дата.
+	 *
 	 * @return bool|string
 	 */
 	public function getMysqlDate( $string = null ) {
@@ -149,6 +168,7 @@ class Locales {
 	 * Возвращает строку в синтаксисе MySQL для получения дат в формате локали из базы данных
 	 *
 	 * @param bool $locale
+	 *
 	 * @return mixed
 	 */
 	public function getMysqlFormat( $locale = false ) {
@@ -162,6 +182,7 @@ class Locales {
 	 * Возвращает строчку из языковых файлов по её XPath
 	 *
 	 * @param string $xpath
+	 *
 	 * @return string|bool
 	 */
 	public function getXPath( $xpath ) {
@@ -180,7 +201,9 @@ class Locales {
 
 	/**
 	 * Возвращает дату в формате текущей локали
+	 *
 	 * @param int $timestamp
+	 *
 	 * @return string
 	 */
 	public function getDate( $timestamp ) {
@@ -190,7 +213,9 @@ class Locales {
 
 	/**
 	 * Возвращает дату и время в формате текущей локали
+	 *
 	 * @param $timestamp
+	 *
 	 * @return string
 	 */
 	public function getDateTime( $timestamp ) {
@@ -202,7 +227,8 @@ class Locales {
 	 * Парсит строку даты в формате MySQL и возвращает её в формате текущей локали
 	 *
 	 * @param         $date
-	 * @param boolean $withTime  - выводить дату вместе с временем
+	 * @param boolean $withTime - выводить дату вместе с временем
+	 *
 	 * @return string
 	 */
 	public function getDateFromMysql( $date, $withTime = false ) {
@@ -219,7 +245,9 @@ class Locales {
 
 	/**
 	 * Создаёт строчку для ссылки
+	 *
 	 * @param string $string
+	 *
 	 * @return string
 	 */
 	public function makeLink( $string ) {

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs;
 
 use Difra\Envi;
@@ -13,6 +20,7 @@ class Vault {
 
 	/**
 	 * Добавляет файл во временное хранилище.
+	 *
 	 * @param $data
 	 *
 	 * @return int
@@ -34,6 +42,7 @@ class Vault {
 
 	/**
 	 * Получает файл из временного хранилища.
+	 *
 	 * @param $id
 	 *
 	 * @return string|null
@@ -50,6 +59,7 @@ class Vault {
 
 	/**
 	 * Удаляет файл из временного хранилища.
+	 *
 	 * @param $id
 	 */
 	static function delete( $id ) {

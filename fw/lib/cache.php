@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -70,23 +77,23 @@ class Cache {
 
 		// create new adapter
 		switch( $configName ) {
-			case self::INST_XCACHE:
-				self::$_adapters[$configName] = new Cache\XCache();
-				return self::$_adapters[$configName];
-			case self::INST_SHAREDMEM:
-				self::$_adapters[$configName] = new Cache\SharedMemory();
-				return self::$_adapters[$configName];
-			case self::INST_MEMCACHED:
-				self::$_adapters[$configName] = new Cache\MemCached();
-				return self::$_adapters[$configName];
-			case self::INST_MEMCACHE:
-				self::$_adapters[$configName] = new Cache\MemCache();
-				return self::$_adapters[$configName];
-			default:
-				if( !isset( self::$_adapters[self::INST_NONE] ) ) {
-					self::$_adapters[self::INST_NONE] = new Cache\None();
-				}
-				return self::$_adapters[self::INST_NONE];
+		case self::INST_XCACHE:
+			self::$_adapters[$configName] = new Cache\XCache();
+			return self::$_adapters[$configName];
+		case self::INST_SHAREDMEM:
+			self::$_adapters[$configName] = new Cache\SharedMemory();
+			return self::$_adapters[$configName];
+		case self::INST_MEMCACHED:
+			self::$_adapters[$configName] = new Cache\MemCached();
+			return self::$_adapters[$configName];
+		case self::INST_MEMCACHE:
+			self::$_adapters[$configName] = new Cache\MemCache();
+			return self::$_adapters[$configName];
+		default:
+			if( !isset( self::$_adapters[self::INST_NONE] ) ) {
+				self::$_adapters[self::INST_NONE] = new Cache\None();
+			}
+			return self::$_adapters[self::INST_NONE];
 		}
 	}
 }

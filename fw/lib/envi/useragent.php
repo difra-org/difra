@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Envi;
 
 use Difra\Libs\XML\DOM;
@@ -59,6 +66,7 @@ class UserAgent {
 
 	/**
 	 * Возвращает массив с данными о браузере пользователя
+	 *
 	 * @return array
 	 */
 	public static function getUserAgent() {
@@ -100,6 +108,7 @@ class UserAgent {
 
 	/**
 	 * Возвращает имя браузера
+	 *
 	 * @return string|bool
 	 */
 	public static function getAgent() {
@@ -129,6 +138,7 @@ class UserAgent {
 
 	/**
 	 * Возвращает движок браузера
+	 *
 	 * @return string|bool
 	 */
 	public static function getEngine() {
@@ -150,6 +160,7 @@ class UserAgent {
 
 	/**
 	 * Возвращает операционную систему пользователя
+	 *
 	 * @return string|bool
 	 */
 	public static function getOS() {
@@ -171,6 +182,7 @@ class UserAgent {
 
 	/**
 	 * Возвращает версию браузера
+	 *
 	 * @return string|bool
 	 */
 	public static function getVersion() {

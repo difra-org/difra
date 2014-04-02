@@ -1,3 +1,9 @@
+--
+-- This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+-- Copyright © A-Jam Studio
+-- License: http://ajamstudio.com/difra/license
+--
+
 CREATE TABLE `config` (
   `config` longblob
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
