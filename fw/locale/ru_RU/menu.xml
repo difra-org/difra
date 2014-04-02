@@ -13,6 +13,7 @@ License: http://ajamstudio.com/difra/license
 			<menu_database>База данных</menu_database>
 			<menu_users>Пользователи</menu_users>
 			<menu_settings>Настройки</menu_settings>
+			<menu_status>Общая информация</menu_status>
 			<menu_development>Разработка</menu_development>
 			<menu_development_plugins>Плагины</menu_development_plugins>
 			<menu_development_config>Состояние конфигурации</menu_development_config>
