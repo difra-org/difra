@@ -195,14 +195,15 @@ class DBAPI extends Table {
 			$prop = array( 'type' => $prop );
 //			return '`' . $db->escape( $name ) . '` ' . $prop;
 		}
-		// column name
-		$line = '`' . $db->escape( $name ) . '` ' . $prop['type'];
-		// length
-		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] );
+		$line =
+			'`' . $db->escape( $name ) . '` ' // column name
+			. $prop['type'] // type
+			. ( !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] ) ) // length
+			. ( ( !empty( $prop['unsigned'] ) and $prop['unsigned'] ) ? ' unsigned' : '' ); // unsigned
 		// default value
 		if( !empty( $prop['default'] ) ) {
 			$line .= self::getDefault( $prop['default'] );
-		} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
+		} elseif( ( !empty( $prop['required'] ) and $prop['required'] ) or ( !empty( $prop['null'] ) and !$prop['null'] ) ) {
 			$line .= ' NOT NULL';
 		}
 		// column options
