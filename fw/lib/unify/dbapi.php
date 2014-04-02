@@ -179,7 +179,10 @@ class DBAPI extends Table {
 		\Difra\MySQL::getInstance()->query( self::getDbCreate() );
 	}
 
-
+	/**
+	 * Типы-альясы
+	 * @var array[]
+	 */
 	private static $typeAliases = array(
 		'bool' => array(
 			'type' => 'tinyint',
@@ -192,6 +195,25 @@ class DBAPI extends Table {
 	);
 
 	/**
+	 * Препроцессинг свойств из $propertiesList
+	 * @param mixed $prop
+	 */
+	private static function preprocessDefinition( $prop ) {
+
+		// simple columns (name => type)
+		if( !is_array( $prop ) ) {
+			$prop = array( 'type' => $prop );
+		}
+		// type aliases
+		if( !empty( self::$typeAliases[$prop['type']] ) ) {
+			foreach( self::$typeAliases[$prop['type']] as $k => $v ) {
+				$prop[$k] = $v;
+			}
+		}
+		return $prop;
+	}
+
+	/**
 	 * Generates SQL string for column create/alter
 	 *
 	 * @param string       $name Column name
@@ -201,17 +223,8 @@ class DBAPI extends Table {
 	 */
 	private static function getColumnDefinition( $name, $prop ) {
 
+		$prop = self::preprocessDefinition( $prop );
 		$db = \Difra\MySQL::getInstance();
-		// simple columns (name => type)
-		if( !is_array( $prop ) ) {
-			$prop = array( 'type' => $prop );
-//			return '`' . $db->escape( $name ) . '` ' . $prop;
-		}
-		if( !empty( self::$typeAliases[$prop['type']] ) ) {
-			foreach( self::$typeAliases[$prop['type']] as $k => $v ) {
-				$prop[$k] = $v;
-			}
-		}
 		$line =
 			'`' . $db->escape( $name ) . '` ' // column name
 			. $prop['type'] // type
