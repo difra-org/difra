@@ -179,6 +179,18 @@ class DBAPI extends Table {
 		\Difra\MySQL::getInstance()->query( self::getDbCreate() );
 	}
 
+
+	private static $typeAliases = array(
+		'bool' => array(
+			'type' => 'tinyint',
+			'length' => 1
+		),
+		'boolean' => array(
+			'type' => 'tinyint',
+			'length' => 1
+		)
+	);
+
 	/**
 	 * Generates SQL string for column create/alter
 	 *
@@ -194,6 +206,11 @@ class DBAPI extends Table {
 		if( !is_array( $prop ) ) {
 			$prop = array( 'type' => $prop );
 //			return '`' . $db->escape( $name ) . '` ' . $prop;
+		}
+		if( !empty( self::$typeAliases[$prop['type']] ) ) {
+			foreach( self::$typeAliases[$prop['type']] as $k => $v ) {
+				$prop[$k] = $v;
+			}
 		}
 		$line =
 			'`' . $db->escape( $name ) . '` ' // column name
