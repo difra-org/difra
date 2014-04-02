@@ -196,7 +196,10 @@ class DBAPI extends Table {
 
 	/**
 	 * Препроцессинг свойств из $propertiesList
+	 *
 	 * @param mixed $prop
+	 *
+	 * @return array
 	 */
 	private static function preprocessDefinition( $prop ) {
 
