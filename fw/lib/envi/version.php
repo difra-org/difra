@@ -17,7 +17,7 @@ namespace Difra\Envi;
 class Version {
 
 	/** Framework version */
-	const VERSION = '5.0';
+	const VERSION = '5.1';
 	/** Revision */
 	const REVISION = '$Rev: 1160 $';
 
