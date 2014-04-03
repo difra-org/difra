@@ -20,16 +20,6 @@ class None extends Common {
 	public $adapter = \Difra\Cache::INST_NONE;
 
 	/**
-	 * Constructor
-	 */
-	public function __construct() {
-
-		if( !self::isAvailable() ) {
-			throw new \Difra\Exception( 'Cache_None is not available!' );
-		}
-	}
-
-	/**
 	 * Определение наличия
 	 *
 	 * @return bool
