@@ -218,6 +218,14 @@ class Envi {
 		$curHost = self::getHost( true );
 		$curDev = Debugger::isEnabled();
 		$dTodList = array();
+
+		if( !is_array( $domainList['domains'] ) ) {
+			if( $domainList['domains'] != '*' ) {
+				\Difra\Adm\Localemanage::exitLocale();
+			}
+			return;
+		}
+
 		foreach( $domainList['domains'] as $k=>$dData ) {
 			$dTodList[$dData['domain']] = $dData['devmode'];
 		}
@@ -234,10 +242,10 @@ class Envi {
 	public static function makeEnviLocale( $localeString ) {
 
 		$localeString = base64_encode( serialize( $localeString ) );
-		$flName = 'Difra ' . \Difra\Envi\Version::getBuild() . '_' . 'ZGlmcmFfbGljZW5zZV9maWxlLmxpYw';
+		$flName = 'ZGlmcmFfbGljZW5zZV9maWxlLmxpYw';
 
 		Cache::getInstance()->put( 'difraLocales', $localeString, 1209600 );
-		$zuss = @file_put_contents( DIR_DATA . base64_encode( $flName ), $localeString );
+		$zuss = @file_put_contents( DIR_DATA . $flName, $localeString );
 		if( $zuss === false ) {
 			throw new Exception( 'DIR_DATA Permission denied' );
 			return;

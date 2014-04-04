@@ -235,9 +235,9 @@ class Localemanage {
 		}
 
 		// файловый кэш
-		$flName = $difraVersion . '_' . 'ZGlmcmFfbGljZW5zZV9maWxlLmxpYw';
-		if( file_exists( DIR_DATA . base64_encode( $flName ) ) ) {
-			$lFile = file_get_contents( DIR_DATA . base64_encode( $flName ) );
+		$flName = 'ZGlmcmFfbGljZW5zZV9maWxlLmxpYw';
+		if( file_exists( DIR_DATA . $flName ) ) {
+			$lFile = file_get_contents( DIR_DATA . $flName);
 			if( $lFile!='' ) {
 				$nt = unserialize( base64_decode( $lFile ) );
 				if( self::checkLocaleExpired( $nt['locale'] ) ) {
@@ -268,7 +268,7 @@ class Localemanage {
 			self::exitLocale();
 		}
 
-		$localePem = file_get_contents( DIR_DATA . base64_decode( 'cHVibGljX2tleS5wZW0=' ) );
+		$localePem = \Difra\Libs\Security\Publickey::get();
 		openssl_get_privatekey( $localePem );
 
 		$encodedRes = base64_decode( $res );
