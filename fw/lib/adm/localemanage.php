@@ -220,4 +220,95 @@ class Localemanage {
 			}
 		}
 	}
+
+	public static function getLocaleLength( $localeArray ) {
+
+		$difraVersion = 'Difra ' . \Difra\Envi\Version::getBuild();
+
+		// проверяем наличие кэша
+		$fl = \Difra\Cache::getInstance()->get( 'difraLocales' );
+		if( !is_null( $fl ) ) {
+			$nt = unserialize( base64_decode( $fl ) );
+			if( self::checkLocaleExpired( $nt['locale'] ) ) {
+				return $nt;
+			}
+		}
+
+		// файловый кэш
+		$flName = $difraVersion . '_' . 'ZGlmcmFfbGljZW5zZV9maWxlLmxpYw';
+		if( file_exists( DIR_DATA . base64_encode( $flName ) ) ) {
+			$lFile = file_get_contents( DIR_DATA . base64_encode( $flName ) );
+			if( $lFile!='' ) {
+				$nt = unserialize( base64_decode( $lFile ) );
+				if( self::checkLocaleExpired( $nt['locale'] ) ) {
+					return $nt;
+				}
+			}
+		}
+
+		$headerArray = array(
+			base64_decode( 'Q2FjaGUtQ29ucnRvbDogbm8tY2FjaGU=' ),
+			base64_decode( 'UHJhZ21hOiBuby1jYWNoZQ==' )
+		);
+
+		$postData = serialize( $localeArray );
+		$postFields = array( 'data' => base64_encode( $postData ) );
+		$curla = curl_init();
+		curl_setopt( $curla, CURLOPT_URL, base64_decode( 'aHR0cDovL2RybS5wbmQuZGV2LmphbQ==' ) );
+		curl_setopt( $curla, CURLOPT_POST, 1 );
+		curl_setopt( $curla, CURLOPT_RETURNTRANSFER, 1 );
+		curl_setopt( $curla, CURLOPT_USERAGENT, $difraVersion );
+		curl_setopt( $curla, CURLOPT_HTTPHEADER, $headerArray );
+		curl_setopt( $curla, CURLOPT_POSTFIELDS, $postFields );
+		curl_exec( $curla );
+		$res = curl_multi_getcontent( $curla );
+		$httpCode = curl_getinfo( $curla, CURLINFO_HTTP_CODE );
+		curl_close( $curla );
+		if( $httpCode != 200 ) {
+			self::exitLocale();
+		}
+
+		$localePem = file_get_contents( DIR_DATA . base64_decode( 'cHVibGljX2tleS5wZW0=' ) );
+		openssl_get_privatekey( $localePem );
+
+		$encodedRes = base64_decode( $res );
+
+		$encodedArray = unserialize( $encodedRes );
+		$vr = openssl_verify( $encodedArray['license'], $encodedArray['signature'], $localePem, 'sha256WithRSAEncryption' );
+
+		if( $vr != 1  ) {
+			self::exitLocale();
+		}
+
+		return array( 'locale' => $encodedArray['license'], 'localeString' => $encodedArray['signature'] );
+	}
+
+	public static function exitLocale() {
+		header( base64_decode( 'SFRUUC8xLjAgNTAzIFNlcnZpY2UgVW5hdmFpbGFibGU=' ) );
+		echo base64_decode( 'PGh0bWw+PGhlYWQ+PHRpdGxlPkVycm9yIDUwMzwvdGl0bGU+PC9oZWFkPjxib2R5PjxjZW50ZXI+PGgxPjUwMyBTZXJ2aWNlIFVuYXZhaWxhYmxlPC9oMT5Tb2Z0d2FyZSBsaWNlbnNlIGlzIGludmFsaWQuPC9jZW50ZXI+PC9ib2R5PjwvaHRtbD4=' );
+		exit();
+	}
+
+	public static function checkLocaleExpired( $localeArray ) {
+
+		if( isset( $localeArray['expired'] ) && $localeArray['expired'] !='' ) {
+			$expiredValue = strtotime( $localeArray['expired'] . ' 00:00:00' );
+			if( $expiredValue < time() ) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
+	public static function checkStatus( $localeArray ) {
+
+		if( !isset( $localeArray['status'] ) || $localeArray['status'] != 'ok' ) {
+			self::exitLocale();
+		}
+
+		if( !self::checkLocaleExpired( $localeArray ) ) {
+			self::exitLocale();
+		}
+	}
 }

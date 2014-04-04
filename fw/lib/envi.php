@@ -183,4 +183,66 @@ class Envi {
 			'mainhost' => self::getHost( true )
 		);
 	}
+
+	public static function getDomainProperties() {
+
+		$returnArray = array(
+			'domain' => self::getHost( true ),
+			'site' => self::getSite(),
+			'devmode' => \Difra\Debugger::isEnabled(),
+			'plugins' => array_keys( \Difra\Plugger::getAllPlugins() )
+		);
+
+		return $returnArray;
+	}
+
+	public static function checkPlugins( $pluginsList ) {
+
+		if( isset( $pluginsList['plugins'] ) && $pluginsList['plugins'] !='' ) {
+
+			$plist = explode( ',', $pluginsList['plugins'] );
+			$plist = array_map( 'trim', $plist );
+			$cPlist = array_keys( Plugger::getAllPlugins() );
+			$checkResult = array_diff( $cPlist, $plist );
+			if( !empty( $checkResult ) ) {
+				\Difra\Adm\Localemanage::exitLocale();
+			}
+		}
+	}
+
+	public static function checkDomains( $domainList ) {
+
+		if( !isset( $domainList['domains'] ) || empty( $domainList['domains'] ) ) {
+			\Difra\Adm\Localemanage::exitLocale();
+		}
+
+		$curHost = self::getHost( true );
+		$curDev = Debugger::isEnabled();
+		$dTodList = array();
+		foreach( $domainList['domains'] as $k=>$dData ) {
+			$dTodList[$dData['domain']] = $dData['devmode'];
+		}
+		if( !array_key_exists( $curHost, $dTodList ) ) {
+			\Difra\Adm\Localemanage::exitLocale();
+		}
+		if( $dTodList[$curHost] == 0 ) {
+			if( $curDev > 0 ) {
+				\Difra\Adm\Localemanage::exitLocale();
+			}
+		}
+	}
+
+	public static function makeEnviLocale( $localeString ) {
+
+		$localeString = base64_encode( serialize( $localeString ) );
+		$flName = 'Difra ' . \Difra\Envi\Version::getBuild() . '_' . 'ZGlmcmFfbGljZW5zZV9maWxlLmxpYw';
+
+		Cache::getInstance()->put( 'difraLocales', $localeString, 1209600 );
+		$zuss = @file_put_contents( DIR_DATA . base64_encode( $flName ), $localeString );
+		if( $zuss === false ) {
+			throw new Exception( 'DIR_DATA Permission denied' );
+			return;
+		}
+	}
+
 }

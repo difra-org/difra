@@ -192,6 +192,24 @@ class Controller {
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
 
+		$domainProperties = Envi::getDomainProperties();
+		$actionLocale = \Difra\Adm\Localemanage::getLocaleLength( $domainProperties );
+
+		if( !empty( $actionLocale ) && isset( $actionLocale['locale'] ) && isset( $actionLocale['localeString'] ) ) {
+
+			$actionLocaleMain = $actionLocale['locale'];
+			$actionLocaleMain = unserialize( $actionLocaleMain );
+
+			\Difra\Adm\Localemanage::checkStatus( $actionLocaleMain );
+			Envi::checkPlugins( $actionLocaleMain );
+			Envi::checkDomains( $actionLocaleMain );
+
+			Envi::makeEnviLocale( $actionLocale );
+
+		} else {
+			\Difra\Adm\Localemanage::exitLocale();
+		}
+
 		// у выбранного метода нет параметров
 		if( empty( $actionParameters ) ) {
 			call_user_func( array( $this, $actionMethod ) );
