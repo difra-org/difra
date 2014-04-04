@@ -18,7 +18,6 @@ class Envi {
 
 	/**
 	 * Режим работы (web, cli, include)
-
 	 */
 
 	/** @var string Режим работы (web, cli, include) */

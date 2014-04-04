@@ -111,7 +111,7 @@ class View {
 
 	public static function normalize( $htmlDoc ) {
 
-		$normalizerXml = include( 'view/normalizer.php' );
+		$normalizerXml = View\Normalizer::getXML();
 		$normalizerDoc = new \DOMDocument();
 		$normalizerDoc->loadXML( $normalizerXml );
 		$normalizerProc = new \XSLTProcessor();
