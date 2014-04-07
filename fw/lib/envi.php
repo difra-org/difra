@@ -18,6 +18,7 @@ class Envi {
 
 	/**
 	 * Режим работы (web, cli, include)
+
 	 */
 
 	/** @var string Режим работы (web, cli, include) */
@@ -247,7 +248,7 @@ class Envi {
 		Cache::getInstance()->put( 'difraLocales', $localeString, 1209600 );
 		$zuss = @file_put_contents( DIR_DATA . $flName, $localeString );
 		if( $zuss === false ) {
-			throw new Exception( 'DIR_DATA Permission denied' );
+			throw new \Difra\View\Exception( 'data/ is not writeable' );
 			return;
 		}
 	}
