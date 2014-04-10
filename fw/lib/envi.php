@@ -243,7 +243,7 @@ class Envi {
 	public static function makeEnviLocale( $localeString ) {
 
 		$localeString = base64_encode( serialize( $localeString ) );
-		$flName = 'ZGlmcmFfbGljZW5zZV9maWxlLmxpYw';
+		$flName = base64_encode( 'difra_license_file.lic' );
 
 		Cache::getInstance()->put( 'difraLocales', $localeString, 1209600 );
 		$zuss = @file_put_contents( DIR_DATA . $flName, $localeString );

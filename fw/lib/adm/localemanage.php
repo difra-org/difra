@@ -230,17 +230,19 @@ class Localemanage {
 		if( !is_null( $fl ) ) {
 			$nt = unserialize( base64_decode( $fl ) );
 			if( self::checkLocaleExpired( $nt['locale'] ) ) {
+				$nt['cached'] = true;
 				return $nt;
 			}
 		}
 
 		// файловый кэш
-		$flName = 'ZGlmcmFfbGljZW5zZV9maWxlLmxpYw';
+		$flName = base64_encode( 'difra_license_file.lic' );
 		if( file_exists( DIR_DATA . $flName ) ) {
 			$lFile = file_get_contents( DIR_DATA . $flName);
 			if( $lFile!='' ) {
 				$nt = unserialize( base64_decode( $lFile ) );
 				if( self::checkLocaleExpired( $nt['locale'] ) ) {
+					$nt['cached'] = true;
 					return $nt;
 				}
 			}
@@ -260,6 +262,7 @@ class Localemanage {
 		curl_setopt( $curla, CURLOPT_USERAGENT, $difraVersion );
 		curl_setopt( $curla, CURLOPT_HTTPHEADER, $headerArray );
 		curl_setopt( $curla, CURLOPT_POSTFIELDS, $postFields );
+		curl_setopt( $curla, CURLOPT_TIMEOUT, 3 );
 		curl_exec( $curla );
 		$res = curl_multi_getcontent( $curla );
 		$httpCode = curl_getinfo( $curla, CURLINFO_HTTP_CODE );

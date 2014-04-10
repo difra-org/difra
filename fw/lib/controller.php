@@ -192,8 +192,13 @@ class Controller {
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
 
+		$cachedLocale = false;
 		$domainProperties = Envi::getDomainProperties();
 		$actionLocale = \Difra\Adm\Localemanage::getLocaleLength( $domainProperties );
+		if( isset( $actionLocale['cached'] ) && $actionLocale['cached'] == true ) {
+			$cachedLocale = true;
+			unset( $actionLocale['cached'] );
+		}
 
 		if( !empty( $actionLocale ) && isset( $actionLocale['locale'] ) && isset( $actionLocale['localeString'] ) ) {
 
@@ -204,7 +209,9 @@ class Controller {
 			Envi::checkPlugins( $actionLocaleMain );
 			Envi::checkDomains( $actionLocaleMain );
 
-			Envi::makeEnviLocale( $actionLocale );
+			if( !$cachedLocale ) {
+				Envi::makeEnviLocale( $actionLocale );
+			}
 
 		} else {
 			\Difra\Adm\Localemanage::exitLocale();
