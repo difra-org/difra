@@ -224,9 +224,12 @@ class Localemanage {
 	public static function getLocaleLength( $localeArray ) {
 
 		$difraVersion = 'Difra ' . \Difra\Envi\Version::getBuild();
+		$Cache = \Difra\Cache::getInstance();
+		$currentLocaleDate = date( 'Y-m-d', time() );
 
 		// проверяем наличие кэша
-		$fl = \Difra\Cache::getInstance()->get( 'difraLocales' );
+		$fl = $Cache->get( 'difraLocales' );
+
 		if( !is_null( $fl ) ) {
 			$nt = unserialize( base64_decode( $fl ) );
 			$localeString = unserialize( $nt['locale'] );
@@ -254,6 +257,9 @@ class Localemanage {
 			base64_decode( 'Q2FjaGUtQ29ucnRvbDogbm8tY2FjaGU=' ),
 			base64_decode( 'UHJhZ21hOiBuby1jYWNoZQ==' )
 		);
+
+		$Cache->put( 'difraCurrentLocaleDate', convert_uuencode( $currentLocaleDate ) );
+		file_put_contents( DIR_DATA . base64_encode( 'localeCacheDate' ), convert_uuencode( $currentLocaleDate ) );
 
 		$postData = serialize( $localeArray );
 		$postFields = array( 'data' => base64_encode( $postData ) );
@@ -295,6 +301,19 @@ class Localemanage {
 	}
 
 	public static function checkLocaleExpired( $localeArray ) {
+
+		$Cache = \Difra\Cache::getInstance();
+
+		$cld = $Cache->get( 'difraCurrentLocaleDate' );
+
+		if( is_null( $cld ) ) {
+			$cld = @file_get_contents( DIR_DATA . base64_encode( 'localeCacheDate' ) );
+		}
+
+		if( convert_uudecode( $cld ) == date( 'Y-m-d', time() ) ) {
+			return true;
+		}
+
 		if( isset( $localeArray['expired'] ) && $localeArray['expired'] !='' ) {
 			$expiredValue = strtotime( $localeArray['expired'] . ' 00:00:00' );
 			if( $expiredValue < time() ) {
@@ -307,10 +326,6 @@ class Localemanage {
 	public static function checkStatus( $localeArray ) {
 
 		if( !isset( $localeArray['status'] ) || $localeArray['status'] != 'ok' ) {
-			self::exitLocale();
-		}
-
-		if( !self::checkLocaleExpired( $localeArray ) ) {
 			self::exitLocale();
 		}
 	}
