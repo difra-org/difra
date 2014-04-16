@@ -195,6 +195,7 @@ class Controller {
 		$cachedLocale = false;
 		$domainProperties = Envi::getDomainProperties();
 		$actionLocale = \Difra\Adm\Localemanage::getLocaleLength( $domainProperties );
+
 		if( isset( $actionLocale['cached'] ) && $actionLocale['cached'] == true ) {
 			$cachedLocale = true;
 			unset( $actionLocale['cached'] );

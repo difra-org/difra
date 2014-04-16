@@ -229,7 +229,8 @@ class Localemanage {
 		$fl = \Difra\Cache::getInstance()->get( 'difraLocales' );
 		if( !is_null( $fl ) ) {
 			$nt = unserialize( base64_decode( $fl ) );
-			if( self::checkLocaleExpired( $nt['locale'] ) ) {
+			$localeString = unserialize( $nt['locale'] );
+			if( self::checkLocaleExpired( $localeString ) ) {
 				$nt['cached'] = true;
 				return $nt;
 			}
@@ -241,7 +242,8 @@ class Localemanage {
 			$lFile = file_get_contents( DIR_DATA . $flName);
 			if( $lFile!='' ) {
 				$nt = unserialize( base64_decode( $lFile ) );
-				if( self::checkLocaleExpired( $nt['locale'] ) ) {
+				$localeString = unserialize( $nt['locale'] );
+				if( self::checkLocaleExpired( $localeString ) ) {
 					$nt['cached'] = true;
 					return $nt;
 				}
@@ -293,14 +295,12 @@ class Localemanage {
 	}
 
 	public static function checkLocaleExpired( $localeArray ) {
-
 		if( isset( $localeArray['expired'] ) && $localeArray['expired'] !='' ) {
 			$expiredValue = strtotime( $localeArray['expired'] . ' 00:00:00' );
 			if( $expiredValue < time() ) {
 				return false;
 			}
 		}
-
 		return true;
 	}
 
