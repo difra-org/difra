@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Envi;
 
 /**
@@ -10,7 +17,7 @@ namespace Difra\Envi;
 class Version {
 
 	/** Framework version */
-	const VERSION = '5.0';
+	const VERSION = '5.1';
 	/** Revision */
 	const REVISION = '$Rev: 1160 $';
 
@@ -18,6 +25,7 @@ class Version {
 	 * Get revision number from Subversion files
 	 *
 	 * @param string $dir Path to search for subversion files
+	 *
 	 * @return int|bool
 	 */
 	private static function getSVNRev( $dir ) {
@@ -46,6 +54,7 @@ class Version {
 	 * Get build
 	 *
 	 * @param bool $asArray
+	 *
 	 * @return array|string
 	 */
 	public static function getBuild( $asArray = false ) {
@@ -78,5 +87,4 @@ class Version {
 		}
 		return $revisionStr;
 	}
-
 }

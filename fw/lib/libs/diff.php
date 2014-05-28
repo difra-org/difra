@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs;
 
 /**
@@ -20,6 +27,7 @@ class Diff {
 	 *
 	 * @param string[] $array1
 	 * @param string[] $array2
+	 *
 	 * @return bool
 	 */
 	static public function diffArrays( $array1, $array2 ) {
@@ -31,12 +39,13 @@ class Diff {
 	/**
 	 * Рекурсивная часть функции diffArrays()
 	 *
-	 * @param string[] $array1       Массив 1
-	 * @param string[] $array2       Массив 2
-	 * @param array    $result       Внутренний параметр
-	 * @param int      $i1           Внутренний параметр
-	 * @param int      $i2           Внутренний параметр
-	 * @param int      $depth        Внутренний параметр
+	 * @param string[] $array1 Массив 1
+	 * @param string[] $array2 Массив 2
+	 * @param array    $result Внутренний параметр
+	 * @param int      $i1     Внутренний параметр
+	 * @param int      $i2     Внутренний параметр
+	 * @param int      $depth  Внутренний параметр
+	 *
 	 * @return array
 	 */
 	static private function _diffArrays( $array1, $array2, $result = array(), $i1 = 0, $i2 = 0, $depth = 0 ) {

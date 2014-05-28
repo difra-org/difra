@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 use Difra\Envi\Action;
@@ -266,11 +273,11 @@ class Ajax {
 	public function notify( $message ) {
 
 		$this->addAction( array(
-				       'action' => 'notify',
-				       'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
-				       'lang' => array(
-					       'close' => Locales::getInstance()->getXPath( 'notifications/close' )
-				       )
+					  'action' => 'notify',
+					  'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
+					  'lang' => array(
+						  'close' => Locales::getInstance()->getXPath( 'notifications/close' )
+					  )
 				  ) );
 	}
 
@@ -284,11 +291,11 @@ class Ajax {
 	public function error( $message ) {
 
 		$this->addAction( array(
-				       'action' => 'error',
-				       'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
-				       'lang' => array(
-					       'close' => Locales::getInstance()->getXPath( 'notifications/close' )
-				       )
+					  'action' => 'error',
+					  'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
+					  'lang' => array(
+						  'close' => Locales::getInstance()->getXPath( 'notifications/close' )
+					  )
 				  ) );
 	}
 
@@ -304,15 +311,15 @@ class Ajax {
 
 		$this->problem = true;
 		$this->addAction( array(
-				       'action' => 'require',
-				       'name' => $name
+					  'action' => 'require',
+					  'name' => $name
 				  ) );
 	}
 
 	/**
 	 * Set incorrect field status for form element
 	 *
-	 * @param string $name    Form element name
+	 * @param string $name Form element name
 	 *
 	 * @return void
 	 */
@@ -341,10 +348,10 @@ class Ajax {
 	public function status( $name, $message, $class ) {
 
 		$this->addAction( array(
-				       'action' => 'status',
-				       'name' => $name,
-				       'message' => $message,
-				       'classname' => $class
+					  'action' => 'status',
+					  'name' => $name,
+					  'message' => $message,
+					  'classname' => $class
 				  ) );
 	}
 
@@ -358,8 +365,8 @@ class Ajax {
 	public function redirect( $url ) {
 
 		$this->addAction( array(
-				       'action' => 'redirect',
-				       'url' => $url
+					  'action' => 'redirect',
+					  'url' => $url
 				  ) );
 	}
 
@@ -379,7 +386,7 @@ class Ajax {
 	public function reload() {
 
 		$this->addAction( array(
-				       'action' => 'reload'
+					  'action' => 'reload'
 				  ) );
 	}
 
@@ -393,8 +400,8 @@ class Ajax {
 	public function display( $html ) {
 
 		$this->addAction( array(
-				       'action' => 'display',
-				       'html' => $html
+					  'action' => 'display',
+					  'html' => $html
 				  ) );
 	}
 
@@ -409,9 +416,9 @@ class Ajax {
 	public function load( $target, $html ) {
 
 		$this->addAction( array(
-				       'action' => 'load',
-				       'target' => $target,
-				       'html' => $html
+					  'action' => 'load',
+					  'target' => $target,
+					  'html' => $html
 				  ) );
 	}
 
@@ -421,7 +428,7 @@ class Ajax {
 	public function close() {
 
 		$this->addAction( array(
-				       'action' => 'close'
+					  'action' => 'close'
 				  ) );
 	}
 
@@ -431,7 +438,7 @@ class Ajax {
 	public function reset() {
 
 		$this->addAction( array(
-				       'action' => 'reset'
+					  'action' => 'reset'
 				  ) );
 	}
 
@@ -443,15 +450,16 @@ class Ajax {
 	public function confirm( $text ) {
 
 		$this->addAction( array(
-				       'action' => 'display',
-				       'html' =>
-				       '<form action="' . Envi::getUri() . '" class="ajaxer">' .
-				       '<input type="hidden" name="confirm" value="1"/>' .
-				       '<div>' . $text . '</div>' .
-				       '<input type="submit" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-yes' )
-				       . '"/>' .
-				       '<input type="button" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
-				       '</form>'
+					  'action' => 'display',
+					  'html' =>
+						  '<form action="' . Envi::getUri() . '" class="ajaxer">' .
+						  '<input type="hidden" name="confirm" value="1"/>' .
+						  '<div>' . $text . '</div>' .
+						  '<input type="submit" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-yes' )
+						  . '"/>' .
+						  '<input type="button" value="' . Locales::getInstance()
+											  ->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
+						  '</form>'
 				  ) );
 	}
 
@@ -461,8 +469,8 @@ class Ajax {
 	public function exec( $script ) {
 
 		$this->addAction( array(
-				       'action' => 'exec',
-				       'script' => $script
+					  'action' => 'exec',
+					  'script' => $script
 				  ) );
 	}
 }

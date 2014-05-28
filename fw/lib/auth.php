@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 use Difra\Envi\Session;
@@ -22,6 +29,7 @@ class Auth {
 
 	/**
 	 * Синглтон
+	 *
 	 * @return Auth
 	 */
 	static public function getInstance() {
@@ -66,6 +74,7 @@ class Auth {
 
 	/**
 	 * Логин
+	 *
 	 * @param int   $userId
 	 * @param array $data
 	 * @param array $additionals
@@ -118,6 +127,7 @@ class Auth {
 
 	/**
 	 * Загрузка информации об авторизации из сессии
+	 *
 	 * @return bool
 	 */
 	private function load() {
@@ -145,6 +155,7 @@ class Auth {
 
 	/**
 	 * Возвращает тип пользователя
+	 *
 	 * @return string|null
 	 */
 	public function getType() {
@@ -154,6 +165,7 @@ class Auth {
 
 	/**
 	 * Определяет, авторизован ли пользователь
+	 *
 	 * @return bool
 	 */
 	public function isLogged() {
@@ -173,6 +185,7 @@ class Auth {
 
 	/**
 	 * Устанавливает дополнительные поля информации о пользователе
+	 *
 	 * @param array $additionals
 	 */
 	public function setAdditionals( $additionals ) {
@@ -183,6 +196,7 @@ class Auth {
 
 	/**
 	 * Возвращает дополнительные поля информации о пользователе
+	 *
 	 * @return array
 	 */
 	public function getAdditionals() {
@@ -192,11 +206,11 @@ class Auth {
 
 	/**
 	 * Определяет, является ли пользователь модераторо
+	 *
 	 * @return bool
 	 */
 	public function isModerator() {
 
 		return $this->moderator;
 	}
-
 }

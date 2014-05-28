@@ -1,15 +1,24 @@
+<!--
+This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+Copyright © A-Jam Studio
+License: http://ajamstudio.com/difra/license
+-->
 <menu>
-	<content href="" priority="80"/>
-	<catalog href="" priority="70"/>
-	<media href="" priority="60"/>
-	<talks href="" priority="50"/>
-	<database href="" priority="40"/>
-	<users href="" priority="30"/>
-	<settings href="" priority="20"/>
-	<development href="" priority="10" sup="1">
-		<config/>
+	<content href="" priority="90"/>
+	<catalog href="" priority="80"/>
+	<media href="" priority="70"/>
+	<talks href="" priority="60"/>
+	<database href="" priority="50"/>
+	<users href="" priority="40"/>
+	<settings href="" priority="30"/>
+	<development href="" priority="20" sup="1">
+	<config/>
 		<plugins/>
 		<locales/>
 		<typograph/>
 	</development>
+	<!--
+	Todo: needs styles
+	<status priority="10"/>
+	-->
 </menu>

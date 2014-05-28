@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\MySQL\Abstracts;
 
 use Difra\Exception;
@@ -14,6 +21,7 @@ class MySQLi extends Common {
 
 	/**
 	 * Возвращает доступность модуля
+	 *
 	 * @return bool
 	 */
 	static function isAvailable() {
@@ -23,12 +31,14 @@ class MySQLi extends Common {
 
 	/**
 	 * Объект соединения
+	 *
 	 * @var \mysqli
 	 */
 	public $db = null;
 
 	/**
 	 * Реализация установки соединения с базой
+	 *
 	 * @throws \Difra\Exception
 	 */
 	protected function realConnect() {
@@ -46,6 +56,7 @@ class MySQLi extends Common {
 
 	/**
 	 * Реализация запроса в базу
+	 *
 	 * @param string $query
 	 *
 	 * @throws \Difra\Exception
@@ -60,6 +71,7 @@ class MySQLi extends Common {
 
 	/**
 	 * Реализация получения данных из базы
+	 *
 	 * @param string $query
 	 * @param bool   $replica
 	 *
@@ -112,6 +124,7 @@ class MySQLi extends Common {
 
 	/**
 	 * Реализация обезопасивания строки
+	 *
 	 * @param $string
 	 *
 	 * @return string

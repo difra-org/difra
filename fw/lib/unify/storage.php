@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Unify;
 
 use Difra\Exception;
@@ -48,8 +55,9 @@ abstract class Storage {
 
 	/**
 	 * Получение объекта по $objKey
-	 * @param string $objKey         Имя объекта
-	 * @param mixed  $primary        Значение primary-поля (например, id)
+	 *
+	 * @param string $objKey  Имя объекта
+	 * @param mixed  $primary Значение primary-поля (например, id)
 	 *
 	 * @return static
 	 * @throws Exception

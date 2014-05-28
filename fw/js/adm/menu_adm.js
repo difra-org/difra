@@ -1,6 +1,13 @@
-$( document ).on( 'click dblclick', '#menu_adm > ul > li', function() {
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
+$( document ).on( 'click dblclick', '#menu_adm > ul > li', function () {
 	$( this ).addClass( 'clicked' );
-	$( '#menu_adm > ul > li' ).each( function() {
+	$( '#menu_adm > ul > li' ).each( function () {
 		if( !$( this ).hasClass( 'clicked' ) ) {
 			$( this ).children( 'ul' ).slideUp( 'fast' );
 		}
@@ -14,6 +21,6 @@ $( document ).on( 'click dblclick', '#menu_adm > ul > li', function() {
 	}
 } );
 
-$( document ).on( 'click dblclick', '#menu_adm > ul > li > ul', function() {
+$( document ).on( 'click dblclick', '#menu_adm > ul > li > ul', function () {
 	return false;
 } );

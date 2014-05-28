@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Cache;
 
 use Difra;
@@ -19,14 +26,17 @@ abstract class Common {
 
 	/**
 	 * Получить данные из бэкэнда
+	 *
 	 * @param string $id
 	 * @param bool   $doNotTestCacheValidity
+	 *
 	 * @return mixed|null
 	 */
 	abstract public function realGet( $id, $doNotTestCacheValidity = false );
 
 	/**
 	 * Добавить запись в бэкэнд
+	 *
 	 * @param string $id
 	 * @param mixed  $data
 	 * @param bool   $specificLifetime
@@ -35,14 +45,18 @@ abstract class Common {
 
 	/**
 	 * Удаление записи из бэкэнда
+	 *
 	 * @param string $id
 	 */
 	abstract public function realRemove( $id );
 
 	/**
 	 * Проверить наличие записи в кэше
+	 *
 	 * @deprecated
+	 *
 	 * @param string $id
+	 *
 	 * @return bool
 	 */
 	abstract public function test( $id );
@@ -66,7 +80,9 @@ abstract class Common {
 
 	/**
 	 * Получить запись из кэша
+	 *
 	 * @param $key
+	 *
 	 * @return string|null
 	 */
 	public function get( $key ) {
@@ -80,6 +96,7 @@ abstract class Common {
 
 	/**
 	 * Добавить запись в кэш
+	 *
 	 * @param string $key
 	 * @param string $data
 	 * @param int    $ttl
@@ -95,6 +112,7 @@ abstract class Common {
 
 	/**
 	 * Удалить запись из кэша
+	 *
 	 * @param string $key
 	 */
 	public function remove( $key ) {
@@ -104,7 +122,9 @@ abstract class Common {
 
 	/**
 	 * @deprecated
+	 *
 	 * @param $key
+	 *
 	 * @return null
 	 */
 	public function smartGet( $key ) {
@@ -114,6 +134,7 @@ abstract class Common {
 
 	/**
 	 * @deprecated
+	 *
 	 * @param     $key
 	 * @param     $data
 	 * @param int $ttl
@@ -125,6 +146,7 @@ abstract class Common {
 
 	/**
 	 * @deprecated
+	 *
 	 * @param $key
 	 */
 	public function smartRemove( $key ) {

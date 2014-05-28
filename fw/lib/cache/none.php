@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Cache;
 
 /**
@@ -13,17 +20,8 @@ class None extends Common {
 	public $adapter = \Difra\Cache::INST_NONE;
 
 	/**
-	 * Constructor
-	 */
-	public function __construct() {
-
-		if( !self::isAvailable() ) {
-			throw new \Difra\Exception( 'Cache_None is not available!' );
-		}
-	}
-
-	/**
 	 * Определение наличия
+	 *
 	 * @return bool
 	 */
 	public static function isAvailable() {
@@ -33,6 +31,7 @@ class None extends Common {
 
 	/**
 	 * Получение данных
+	 *
 	 * @param string  $id
 	 * @param boolean $doNotTestCacheValidity
 	 *
@@ -45,6 +44,7 @@ class None extends Common {
 
 	/**
 	 * Проверка существования ключа
+	 *
 	 * @param string $id cache id
 	 *
 	 * @return boolean
@@ -56,6 +56,7 @@ class None extends Common {
 
 	/**
 	 * Сохранение данных
+	 *
 	 * @param string   $id
 	 * @param string   $data
 	 * @param bool|int $specificLifetime
@@ -69,6 +70,7 @@ class None extends Common {
 
 	/**
 	 * Удаление данных
+	 *
 	 * @param string $id
 	 *
 	 * @return boolean
@@ -80,6 +82,7 @@ class None extends Common {
 
 	/**
 	 * Наличие автоматической подчистки кэша
+	 *
 	 * @return boolean
 	 */
 	public function isAutomaticCleaningAvailable() {

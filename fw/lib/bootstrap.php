@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 // Установка констант путей для запуска из PHAR
 if( isset( $_ ) ) {
 	define( 'DIR_ROOT', dirname( $_ ) . '/' );

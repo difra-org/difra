@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs\Import;
 
 use Difra\Exception;
@@ -75,8 +82,8 @@ class Wordpress {
 	}
 
 	/**
-	 * @param \Difra\Libs\Objects\Blog        $blog
-	 * @param \DOMElement                     $item
+	 * @param \Difra\Libs\Objects\Blog $blog
+	 * @param \DOMElement              $item
 	 *
 	 * @throws \Difra\Exception
 	 */
@@ -177,12 +184,10 @@ class Wordpress {
 	 * @param \DOMElement              $item
 	 */
 	public static function importPage( &$blog, &$item ) {
-
 		// TODO
 	}
 
 	public static function importComment( &$obj, $node ) {
-
 		// TODO
 	}
 }

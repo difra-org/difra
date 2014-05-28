@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -65,6 +72,7 @@ class Events {
 
 	/**
 	 * Зарегистрировать обработчик события (статический вариант)
+	 *
 	 * @param             $type          Имя события
 	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
 	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
@@ -102,6 +110,7 @@ class Events {
 
 	/**
 	 * Вызывает обрабочики указанного события
+	 *
 	 * @param $event
 	 */
 	private static function start( $event ) {
@@ -112,7 +121,7 @@ class Events {
 		}
 		foreach( $handlers as $handler ) {
 			Debugger::addEventLine( 'Handler for ' . $event . ': ' . $handler['class'] . '->' . ( $handler['method']
-				? $handler['method'] : 'getInstance' ) . ' started' );
+							? $handler['method'] : 'getInstance' ) . ' started' );
 			call_user_func( array( $handler['class'], $handler['method'] ) );
 		}
 	}

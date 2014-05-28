@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -14,6 +21,7 @@ class Mailer {
 
 	/**
 	 * Синглтон
+	 *
 	 * @return Mailer
 	 */
 	public static function getInstance() {
@@ -32,11 +40,13 @@ class Mailer {
 
 	/**
 	 * Отправляет письмо
-	 * @param string      $email                To:
-	 * @param string      $subject              Subject:
-	 * @param string      $body                 Тело письма
-	 * @param string|bool $fromMail             From: (адрес)
-	 * @param string|bool $fromText             From: (имя)
+	 *
+	 * @param string      $email    To:
+	 * @param string      $subject  Subject:
+	 * @param string      $body     Тело письма
+	 * @param string|bool $fromMail From: (адрес)
+	 * @param string|bool $fromText From: (имя)
+	 *
 	 * @return bool
 	 * @throws exception
 	 */
@@ -81,9 +91,9 @@ class Mailer {
 	 * В ответе шаблона будут распознаны следующие ноды:
 	 * from, fromtext, subject, text
 	 *
-	 * @param string $email               Адрес
-	 * @param string $template            Шаблон письма
-	 * @param array  $data                Данные для шаблона
+	 * @param string $email    Адрес
+	 * @param string $template Шаблон письма
+	 * @param array  $data     Данные для шаблона
 	 */
 	public function createMail( $email, $template, $data ) {
 

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -79,6 +86,7 @@ class View {
 
 	/**
 	 * Редирект
+	 *
 	 * @param $url
 	 */
 	public static function redirect( $url ) {
@@ -103,7 +111,7 @@ class View {
 
 	public static function normalize( $htmlDoc ) {
 
-		$normalizerXml = include( 'view/normalizer.php' );
+		$normalizerXml = View\Normalizer::getXML();
 		$normalizerDoc = new \DOMDocument();
 		$normalizerDoc->loadXML( $normalizerXml );
 		$normalizerProc = new \XSLTProcessor();

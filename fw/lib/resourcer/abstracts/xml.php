@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Resourcer\Abstracts;
 
 /**
@@ -12,6 +19,7 @@ abstract class XML extends Common {
 	 *
 	 * @param      $instance
 	 * @param bool $withFilenames
+	 *
 	 * @return mixed
 	 */
 	protected function processData( $instance, $withFilenames = false ) {
@@ -65,5 +73,4 @@ abstract class XML extends Common {
 			}
 		}
 	}
-
 }

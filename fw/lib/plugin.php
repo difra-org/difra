@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -23,6 +30,7 @@ abstract class Plugin {
 
 	/**
 	 * Синглтон
+	 *
 	 * @return self
 	 */
 	static public function getInstance() {
@@ -42,6 +50,7 @@ abstract class Plugin {
 
 	/**
 	 * Возвращает список зависимостей и т.п.
+	 *
 	 * @return array|null
 	 */
 	public function getInfo() {
@@ -87,6 +96,7 @@ abstract class Plugin {
 
 	/**
 	 * Включает плагин
+	 *
 	 * @return bool
 	 */
 	public function enable() {
@@ -101,6 +111,7 @@ abstract class Plugin {
 
 	/**
 	 * Возвращает путь к папке плагина
+	 *
 	 * @return string
 	 */
 	public function getPath() {
@@ -114,6 +125,7 @@ abstract class Plugin {
 
 	/**
 	 * Возвращает название плагина
+	 *
 	 * @return string
 	 */
 	public function getName() {
@@ -126,6 +138,7 @@ abstract class Plugin {
 
 	/**
 	 * Возвращает объекты, предоставляемые плагином
+	 *
 	 * @return null
 	 */
 	public function getObjects() {

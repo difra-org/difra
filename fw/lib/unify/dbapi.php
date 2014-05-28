@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Unify;
 
 class DBAPI extends Table {
@@ -173,6 +180,43 @@ class DBAPI extends Table {
 	}
 
 	/**
+	 * Типы-альясы
+	 * @var array[]
+	 */
+	private static $typeAliases = array(
+		'bool' => array(
+			'type' => 'tinyint',
+			'length' => 1
+		),
+		'boolean' => array(
+			'type' => 'tinyint',
+			'length' => 1
+		)
+	);
+
+	/**
+	 * Препроцессинг свойств из $propertiesList
+	 *
+	 * @param mixed $prop
+	 *
+	 * @return array
+	 */
+	private static function preprocessDefinition( $prop ) {
+
+		// simple columns (name => type)
+		if( !is_array( $prop ) ) {
+			$prop = array( 'type' => $prop );
+		}
+		// type aliases
+		if( !empty( self::$typeAliases[$prop['type']] ) ) {
+			foreach( self::$typeAliases[$prop['type']] as $k => $v ) {
+				$prop[$k] = $v;
+			}
+		}
+		return $prop;
+	}
+
+	/**
 	 * Generates SQL string for column create/alter
 	 *
 	 * @param string       $name Column name
@@ -182,20 +226,17 @@ class DBAPI extends Table {
 	 */
 	private static function getColumnDefinition( $name, $prop ) {
 
+		$prop = self::preprocessDefinition( $prop );
 		$db = \Difra\MySQL::getInstance();
-		// simple columns (name => type)
-		if( !is_array( $prop ) ) {
-			$prop = array( 'type' => $prop );
-//			return '`' . $db->escape( $name ) . '` ' . $prop;
-		}
-		// column name
-		$line = '`' . $db->escape( $name ) . '` ' . $prop['type'];
-		// length
-		$line .= !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] );
+		$line =
+			'`' . $db->escape( $name ) . '` ' // column name
+			. $prop['type'] // type
+			. ( !empty( $prop['length'] ) ? "({$prop['length']})" : self::getDefaultSizeForSqlType( $prop['type'] ) ) // length
+			. ( ( !empty( $prop['unsigned'] ) and $prop['unsigned'] ) ? ' unsigned' : '' ); // unsigned
 		// default value
 		if( !empty( $prop['default'] ) ) {
 			$line .= self::getDefault( $prop['default'] );
-		} elseif( !empty( $prop['required'] ) and $prop['required'] ) {
+		} elseif( ( !empty( $prop['required'] ) and $prop['required'] ) or ( !empty( $prop['null'] ) and !$prop['null'] ) ) {
 			$line .= ' NOT NULL';
 		}
 		// column options
@@ -377,6 +418,7 @@ class DBAPI extends Table {
 
 	/**
 	 * Получение статуса таблиц в базе
+	 *
 	 * @param \DOMElement|\DOMNode $node
 	 */
 	final public static function getDbStatusXML( $node ) {

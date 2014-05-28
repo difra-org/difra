@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs\XML;
 
 /**
@@ -16,6 +23,7 @@ class Sitemap {
 
 	/**
 	 * Собирает данные для Sitemap из плагинов
+	 *
 	 * @return array
 	 */
 	public static function getSitemap() {
@@ -116,6 +124,7 @@ class Sitemap {
 	 * Формирует индексный sitemap.xml
 	 *
 	 * @param int $pages
+	 *
 	 * @return string
 	 */
 	private static function makeIndexXML( $pages ) {
@@ -134,6 +143,7 @@ class Sitemap {
 	 * Формирует sitemap.xml со ссылками
 	 *
 	 * @param array $urls
+	 *
 	 * @return string
 	 */
 	private static function makeSitemapXML( &$urls ) {
@@ -158,7 +168,7 @@ class Sitemap {
 
 	public static function getHTML( $page = null ) {
 
-		if( $html = \Difra\Cache::getInstance()->get( 'sitemap-html-' . ( $page ?: '0' ) ) ) {
+		if( $html = \Difra\Cache::getInstance()->get( 'sitemap-html-' . ( $page ? : '0' ) ) ) {
 			return $html;
 		}
 		if( !$page ) {
@@ -172,7 +182,7 @@ class Sitemap {
 		$dom = new \DOMDocument();
 		$dom->loadXML( $xml );
 		$html = \Difra\View::render( $dom, 'sitemap', true, true );
-		\Difra\Cache::getInstance()->put( 'sitemap-html-' . ( $page ?: '0' ), $html );
+		\Difra\Cache::getInstance()->put( 'sitemap-html-' . ( $page ? : '0' ), $html );
 		return $html;
 	}
 
@@ -190,7 +200,7 @@ class Sitemap {
 		$html = '';
 		$i = 1;
 		foreach( $sxml->xpath( '/sitemap:sitemapindex/sitemap:sitemap/sitemap:loc' ) as $loc ) {
-			$link = preg_replace( '/\.xml$/', '.html', (string) $loc );
+			$link = preg_replace( '/\.xml$/', '.html', (string)$loc );
 			$html .= '<a href="' . $link . '">Sitemap page ' . $i . '</a>';
 			$i++;
 		}

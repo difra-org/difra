@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -31,12 +38,13 @@ class Envi {
 
 	/**
 	 * Домен и подсайты
-	 *
+
 	 */
 
 	/**
 	 * Получить имя хоста (домена)
-	 * @param bool $main        Получить имя «главного» хоста (нужно в случае, если у сайта есть поддомены)
+	 *
+	 * @param bool $main Получить имя «главного» хоста (нужно в случае, если у сайта есть поддомены)
 	 *
 	 * @return string
 	 */
@@ -175,4 +183,74 @@ class Envi {
 			'mainhost' => self::getHost( true )
 		);
 	}
+
+	public static function getDomainProperties() {
+
+		$returnArray = array(
+			'domain' => self::getHost( true ),
+			'site' => self::getSite(),
+			'devmode' => \Difra\Debugger::isEnabled(),
+			'plugins' => array_keys( \Difra\Plugger::getAllPlugins() )
+		);
+
+		return $returnArray;
+	}
+
+	public static function checkPlugins( $pluginsList ) {
+
+		if( isset( $pluginsList['plugins'] ) && $pluginsList['plugins'] !='' ) {
+
+			$plist = explode( ',', $pluginsList['plugins'] );
+			$plist = array_map( 'trim', $plist );
+			$cPlist = array_keys( Plugger::getAllPlugins() );
+			$checkResult = array_diff( $cPlist, $plist );
+			if( !empty( $checkResult ) ) {
+				\Difra\Adm\Localemanage::exitLocale();
+			}
+		}
+	}
+
+	public static function checkDomains( $domainList ) {
+
+		if( !isset( $domainList['domains'] ) || empty( $domainList['domains'] ) ) {
+			\Difra\Adm\Localemanage::exitLocale();
+		}
+
+		$curHost = self::getHost( true );
+		$curDev = Debugger::isEnabled();
+		$dTodList = array();
+
+		if( !is_array( $domainList['domains'] ) ) {
+			if( $domainList['domains'] != '*' ) {
+				\Difra\Adm\Localemanage::exitLocale();
+			}
+			return;
+		}
+
+		foreach( $domainList['domains'] as $k=>$dData ) {
+			$dTodList[$dData['domain']] = $dData['devmode'];
+		}
+		if( !array_key_exists( $curHost, $dTodList ) ) {
+			\Difra\Adm\Localemanage::exitLocale();
+		}
+		if( $dTodList[$curHost] == 0 ) {
+			if( $curDev > 0 ) {
+				\Difra\Adm\Localemanage::exitLocale();
+			}
+		}
+	}
+
+	public static function makeEnviLocale( $localeString ) {
+
+		$localeString = base64_encode( serialize( $localeString ) );
+		$flName = base64_encode( 'difra_license_file.lic' );
+
+		Cache::getInstance()->put( 'difraLocales', $localeString, 1209600 );
+		$zuss = @file_put_contents( DIR_DATA . $flName, $localeString );
+		if( $zuss === false ) {
+			throw new \Difra\View\Exception( 'data/ is not writeable' );
+			return;
+		}
+	}
+
 }

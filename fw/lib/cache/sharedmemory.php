@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Cache;
 
 /**
@@ -20,6 +27,7 @@ class SharedMemory extends Common {
 
 	/**
 	 * Проверка доступности
+	 *
 	 * @return bool
 	 */
 	public static function isAvailable() {
@@ -30,6 +38,7 @@ class SharedMemory extends Common {
 
 	/**
 	 * Получение данных из кэша
+	 *
 	 * @param string  $id
 	 * @param boolean $doNotTestCacheValidity
 	 *
@@ -67,6 +76,7 @@ class SharedMemory extends Common {
 
 	/**
 	 * Проверка существования ключа
+	 *
 	 * @param string $id
 	 *
 	 * @return boolean
@@ -79,6 +89,7 @@ class SharedMemory extends Common {
 
 	/**
 	 * Сохранение данных в кэше
+	 *
 	 * @param string   $id
 	 * @param string   $data
 	 * @param bool|int $specificLifetime
@@ -168,6 +179,7 @@ class SharedMemory extends Common {
 
 	/**
 	 * Удаление данных
+	 *
 	 * @param string $id
 	 *
 	 * @return boolean
@@ -235,6 +247,7 @@ class SharedMemory extends Common {
 
 	/**
 	 * Очистка кэша
+	 *
 	 * @param string $mode
 	 *
 	 * @return boolean true if no problem
@@ -278,6 +291,7 @@ class SharedMemory extends Common {
 
 	/**
 	 * Определяет наличие автоматической подчистки кэша
+	 *
 	 * @return boolean
 	 */
 	public function isAutomaticCleaningAvailable() {

@@ -1,5 +1,12 @@
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 // Fixes page rubber scroll on iOS devices for elements with .scrollable class
-$( document ).on( 'touchstart', '.scrollable', function( event ) {
+$( document ).on( 'touchstart', '.scrollable', function ( event ) {
 	if( ( event.target ).closest( '.scrollable,.unscrollable' ).hasClass( '.unscrollable' ) ) {
 		return;
 	}
@@ -16,7 +23,7 @@ $( document ).on( 'touchstart', '.scrollable', function( event ) {
 } );
 
 // Disable page scrolling on iOS devices for elements with .unscrollable class
-$( document ).on( 'touchmove', '.unscrollable', function( event ) {
+$( document ).on( 'touchmove', '.unscrollable', function ( event ) {
 	if( ( event.target ).parent().closest( '.scrollable,.unscrollable' ).hasClass( '.unscrollable' ) ) {
 		event.preventDefault();
 	}

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs;
 
 /**
@@ -9,6 +16,7 @@ final class Images {
 
 	/**
 	 * Синглтон
+	 *
 	 * @static
 	 * @return Images
 	 */
@@ -20,6 +28,7 @@ final class Images {
 
 	/**
 	 * Получение объекта из строки данных
+	 *
 	 * @param string|\Difra\Param\AjaxFile $data
 	 *
 	 * @throws \Difra\Exception
@@ -43,6 +52,7 @@ final class Images {
 
 	/**
 	 * Получение строки данных из объекта
+	 *
 	 * @param \Imagick $img
 	 * @param string   $type
 	 *
@@ -66,6 +76,7 @@ final class Images {
 
 	/**
 	 * Перевод строки данных в другой формат
+	 *
 	 * @param string $data
 	 * @param string $type
 	 *
@@ -80,10 +91,10 @@ final class Images {
 	/**
 	 * Resizes image from binary string to given resolution keeping aspect ratio
 	 *
-	 * @param string|\Difra\Param\AjaxFile $data                binary string with image in it
-	 * @param int                          $maxWidth            maximum height of thumbnail
-	 * @param int                          $maxHeight           maximum width of thumbnail
-	 * @param string                       $type                resulting image type
+	 * @param string|\Difra\Param\AjaxFile $data      binary string with image in it
+	 * @param int                          $maxWidth  maximum height of thumbnail
+	 * @param int                          $maxHeight maximum width of thumbnail
+	 * @param string                       $type      resulting image type
 	 *
 	 * @return string
 	 */
@@ -108,10 +119,10 @@ final class Images {
 	/**
 	 * Resizes image from binary string to given resolution keeping aspect ratio
 	 *
-	 * @param string $data                      binary string with image in it
-	 * @param int    $maxWidth                  maximum width of thumbnail
-	 * @param int    $maxHeight                 maximum height of thumbnail
-	 * @param string $type                      resulting image type
+	 * @param string $data      binary string with image in it
+	 * @param int    $maxWidth  maximum width of thumbnail
+	 * @param int    $maxHeight maximum height of thumbnail
+	 * @param string $type      resulting image type
 	 *
 	 * @return string
 	 */
@@ -124,6 +135,7 @@ final class Images {
 
 	/**
 	 * Создаёт на картинке водный знак из текста или другого изображения
+	 *
 	 * @param string    $image
 	 * @param string    $text
 	 * @param string    $watermarkImage
@@ -187,7 +199,7 @@ final class Images {
 		foreach( $positions as $position ) {
 			$colors =
 				$originalImage->getImageRegion( $watermark_width, $watermark_height, $position[0], $position[1] )
-				->getImageColors();
+					      ->getImageColors();
 
 			if( $min === null || $colors <= $min_colors ) {
 				$min = $position;

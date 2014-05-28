@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\MySQL\Abstracts;
 
 /**
@@ -27,6 +34,7 @@ class None extends Common {
 	 *
 	 * @param string $query
 	 * @param bool   $replica
+	 *
 	 * @return array|null
 	 */
 	protected function realFetch( $query, $replica = false ) {
@@ -58,11 +66,11 @@ class None extends Common {
 	 * Заглушка для realEscape
 	 *
 	 * @param $string
+	 *
 	 * @return string
 	 */
 	protected function realEscape( $string ) {
 
 		return $string;
 	}
-
 }

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Resourcer\Abstracts;
 
 use Difra;
@@ -18,6 +25,7 @@ abstract class Common {
 
 	/**
 	 * Основная функция — сборщик ресурса
+	 *
 	 * @param string $instance
 	 *
 	 * @return mixed
@@ -29,6 +37,7 @@ abstract class Common {
 
 	/**
 	 * Синглтон
+	 *
 	 * @return self
 	 */
 	static public function getInstance() {
@@ -40,6 +49,7 @@ abstract class Common {
 
 	/**
 	 * Проверка допустимости имени инстанса
+	 *
 	 * @param $instance
 	 *
 	 * @return bool
@@ -55,6 +65,7 @@ abstract class Common {
 
 	/**
 	 * Вывод ресурса
+	 *
 	 * @param $instance
 	 *
 	 * @return bool
@@ -122,6 +133,7 @@ abstract class Common {
 
 	/**
 	 * Определяет, возможно ли вывести ресурс в браузер
+	 *
 	 * @return bool
 	 */
 	public function isPrintable() {
@@ -183,6 +195,7 @@ abstract class Common {
 
 	/**
 	 * Возвращает собранный ресурс.
+	 *
 	 * @param      $instance
 	 * @param bool $withSources
 	 *
@@ -227,7 +240,7 @@ abstract class Common {
 						break;
 					}
 
-					usleep( 50000 );
+					usleep( 5000 );
 				}
 			}
 
@@ -250,6 +263,7 @@ abstract class Common {
 
 	/**
 	 * Собирает ресурс.
+	 *
 	 * @param string $instance
 	 * @param bool   $withSources
 	 *
@@ -271,6 +285,7 @@ abstract class Common {
 
 	/**
 	 * Ищет папки ресурсов по папкам фреймворка, сайта и плагинов.
+	 *
 	 * @param string $instance
 	 *
 	 * @return bool
@@ -283,12 +298,12 @@ abstract class Common {
 		if( is_null( $paths ) ) {
 			$paths = Difra\Plugger::getPaths();
 			$paths = array_merge( array(
-						   DIR_SITE,
-						   DIR_ROOT
+						      DIR_SITE,
+						      DIR_ROOT
 					      ),
 					      $paths,
 					      array(
-						   DIR_FW
+						      DIR_FW
 					      ) );
 		}
 
@@ -301,6 +316,7 @@ abstract class Common {
 					$parents[] = $d;
 				}
 				if( $this->withAll( $instance ) and is_dir( $d = "{$dir}{$this->type}/all" ) ) {
+					$found = true;
 					$parents[] = $d;
 				}
 			}
@@ -316,6 +332,7 @@ abstract class Common {
 	/**
 	 * Находит названия всех возможных инстансов для данного ресурса.
 	 * Внимание: это медленно и не кэшируется, НЕ должно быть использовано в пользовательской части!
+	 *
 	 * @return array|bool
 	 */
 	public function findInstances() {
@@ -353,6 +370,7 @@ abstract class Common {
 
 	/**
 	 * Добавляет папки в список папок ресурсов
+	 *
 	 * @param string       $instance
 	 * @param string|array $dirs
 	 */
@@ -373,6 +391,7 @@ abstract class Common {
 
 	/**
 	 * Ищет ресурсы по подпапкам
+	 *
 	 * @param $instance
 	 */
 	public function processDirs( $instance ) {
@@ -435,6 +454,7 @@ abstract class Common {
 
 	/**
 	 * Составляет список всех подходящих файлов
+	 *
 	 * @param string $instance
 	 *
 	 * @return string[]
@@ -470,6 +490,7 @@ abstract class Common {
 
 	/**
 	 * Постпроцессинг ресурса
+	 *
 	 * @param string $text
 	 *
 	 * @return string

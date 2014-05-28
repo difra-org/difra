@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Unify;
 
 use Difra\Exception;
@@ -47,6 +54,7 @@ class Paginator {
 
 	/**
 	 * Установка общего количества элементов
+	 *
 	 * @param int $count
 	 */
 	public function setTotal( $count ) {
@@ -77,7 +85,9 @@ class Paginator {
 
 	/**
 	 * Установить текущую страницу
+	 *
 	 * @param $page
+	 *
 	 * @throws \Difra\Exception
 	 */
 	public function setPage( $page ) {
@@ -100,6 +110,7 @@ class Paginator {
 
 	/**
 	 * Префикс для ссылки
+	 *
 	 * @param string $linkPrefix
 	 */
 	public function setLinkPrefix( $linkPrefix ) {
@@ -109,6 +120,7 @@ class Paginator {
 
 	/**
 	 * Установка количества выводимых элементов на страницу результата
+	 *
 	 * @param int $perpage
 	 */
 	public function setPerpage( $perpage ) {

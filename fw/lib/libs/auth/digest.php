@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs\Auth;
 
 use Difra\Envi\Session;
@@ -35,7 +42,7 @@ class Digest {
 
 		header( 'HTTP/1.1 401 Unauthorized' );
 		header( 'WWW-Authenticate: Digest realm="' . $this->realm . '",qop="auth",nonce="' . $this->getNonce( true ) . '",opaque="' . md5( $this->realm ) . '"' .
-		( $this->stale ? ',stale=TRUE' : '' ) );
+			( $this->stale ? ',stale=TRUE' : '' ) );
 
 		throw new Exception( 401 );
 	}

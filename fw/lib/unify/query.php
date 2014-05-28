@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Unify;
 
 use Difra\Exception;
@@ -36,6 +43,7 @@ class Query extends Paginator {
 
 	/**
 	 * Конструктор
+	 *
 	 * @param $objKey Имя объектов для запроса
 	 *
 	 * @throws \Difra\Exception
@@ -53,6 +61,7 @@ class Query extends Paginator {
 
 	/**
 	 * Выполнение запроса
+	 *
 	 * @return \Difra\Unify[]|null
 	 */
 	public function doQuery() {
@@ -82,6 +91,7 @@ class Query extends Paginator {
 
 	/**
 	 * Формирование строки запроса
+	 *
 	 * @return string
 	 */
 	public function getQuery() {
@@ -106,6 +116,7 @@ class Query extends Paginator {
 
 	/**
 	 * Формирование списка получаемых полей для запроса
+	 *
 	 * @throws \Difra\Exception
 	 * @return string
 	 */
@@ -215,6 +226,7 @@ class Query extends Paginator {
 	/**
 	 * Добавить условие поиска
 	 * В формате ключ = значение.
+	 *
 	 * @param array $conditions
 	 *
 	 * @throws \Difra\Exception
@@ -234,6 +246,7 @@ class Query extends Paginator {
 
 	/**
 	 * Добавить условие поиска
+	 *
 	 * @param string $column
 	 * @param string $value
 	 *

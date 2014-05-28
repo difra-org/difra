@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Cache;
 
 use Difra;
@@ -16,6 +23,7 @@ class XCache extends Common {
 
 	/**
 	 * Определяет работоспособность расширения
+	 *
 	 * @return bool
 	 */
 	public static function isAvailable() {
@@ -36,6 +44,7 @@ class XCache extends Common {
 
 	/**
 	 * Получение данных из кэша
+	 *
 	 * @param string  $id
 	 * @param boolean $doNotTestCacheValidity
 	 *
@@ -51,6 +60,7 @@ class XCache extends Common {
 
 	/**
 	 * Проверка существования ключа
+	 *
 	 * @param string $id cache id
 	 *
 	 * @return boolean
@@ -62,6 +72,7 @@ class XCache extends Common {
 
 	/**
 	 * Сохранение данных в кэше
+	 *
 	 * @param string   $id
 	 * @param string   $data
 	 * @param bool|int $specificLifetime
@@ -75,6 +86,7 @@ class XCache extends Common {
 
 	/**
 	 * Удаление данных
+	 *
 	 * @param string $id
 	 *
 	 * @return boolean
@@ -86,6 +98,7 @@ class XCache extends Common {
 
 	/**
 	 * Определяет наличие автоматической подчистки кэша
+	 *
 	 * @return boolean
 	 */
 	public function isAutomaticCleaningAvailable() {

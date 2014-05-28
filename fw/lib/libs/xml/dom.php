@@ -1,15 +1,24 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs\XML;
 
 /**
  * Class DOM
+ *
  * @package Difra\Libs
  */
 class DOM {
 
 	/**
 	 * Временно для array2xml
+	 *
 	 * @deprecated
 	 * @static
 	 * @return DOM
@@ -22,6 +31,7 @@ class DOM {
 
 	/**
 	 * Функция для переименования ноды в DOM-документе
+	 *
 	 * @static
 	 *
 	 * @param \DOMNode $node
@@ -43,6 +53,7 @@ class DOM {
 
 	/**
 	 * Создаёт XML, в котором значения элементов массива становятся значениями нод
+	 *
 	 * @static
 	 *
 	 * @param \DOMNode $node
@@ -64,6 +75,7 @@ class DOM {
 
 	/**
 	 * Создаёт XML, в котором значения элементов массива становятся значениями аттрибутов
+	 *
 	 * @static
 	 *
 	 * @param \DOMElement|\DOMNode $node

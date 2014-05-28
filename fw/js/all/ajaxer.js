@@ -1,8 +1,15 @@
 /**
- * Отправляет ajax-запросы и обрабатывает результаты.
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
  *
- * Добавляет события:
- * form-submit                — срабатывает перед отправкой данных формы
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
+/**
+ * Sends ajax-requests and processes results.
+ *
+ * Adds events:
+ * form-submit                fires before sending form data
  */
 
 var ajaxer = {};
@@ -16,7 +23,7 @@ ajaxer.setup = {
 	}
 };
 
-ajaxer.httpRequest = function( url, params, headers ) {
+ajaxer.httpRequest = function ( url, params, headers ) {
 
 	$.ajaxSetup( ajaxer.setup );
 	var data = {};
@@ -32,7 +39,7 @@ ajaxer.httpRequest = function( url, params, headers ) {
 	return $.ajax( url, data ).responseText;
 };
 
-ajaxer.query = function( url, data ) {
+ajaxer.query = function ( url, data ) {
 
 	if( typeof debug !== 'undefined' ) {
 		debug.addReq( 'Ajaxer request: ' + url );
@@ -44,7 +51,7 @@ ajaxer.query = function( url, data ) {
  * Обработка экшенов
  */
 
-ajaxer.process = function( data, form ) {
+ajaxer.process = function ( data, form ) {
 
 	this.clean( form );
 	ajaxer.statusInit();
@@ -67,44 +74,44 @@ ajaxer.process = function( data, form ) {
 			}
 			ajaxer.triggerHandler( 'ajaxer-pre-' + action.action );
 			switch( action.action ) {
-				case 'notify':                // сообщение
-					this.notify( action.lang, action.message );
-					break;
-				case 'require':                // не заполнено обязательное поле формы
-					this.require( form, action.name );
-					break;
-				case 'invalid':                // не правильное значение поля формы
-					this.invalid( form, action.name );
-					break;
-				case 'status':                // текстовый статус для поля
-					this.status( form, action.name, action.message, action.classname );
-					break;
-				case 'redirect':        // перенаправление
-					this.redirect( action.url );
-					break;
-				case 'display':                // показать оверлей с пришедшим html
-					this.display( action.html );
-					break;
-				case 'reload':                // перезагрузить страницу
-					this.reload();
-					break;
-				case 'close':                // закрыть оверлей
-					this.close( form );
-					break;
-				case 'error':                // сообщение об ошибке
-					this.error( action.lang, action.message );
-					break;
-				case 'reset':                // сделать форме reset
-					this.reset( form );
-					break;
-				case 'load':                // заменить содержимое DOM-элемента
-					this.load( action.target, action.html );
-					break;
-				case 'exec':
-					this.exec( action.script );
-					break;
-				default:
-					console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
+			case 'notify':                // сообщение
+				this.notify( action.lang, action.message );
+				break;
+			case 'require':                // не заполнено обязательное поле формы
+				this.require( form, action.name );
+				break;
+			case 'invalid':                // не правильное значение поля формы
+				this.invalid( form, action.name );
+				break;
+			case 'status':                // текстовый статус для поля
+				this.status( form, action.name, action.message, action.classname );
+				break;
+			case 'redirect':        // перенаправление
+				this.redirect( action.url );
+				break;
+			case 'display':                // показать оверлей с пришедшим html
+				this.display( action.html );
+				break;
+			case 'reload':                // перезагрузить страницу
+				this.reload();
+				break;
+			case 'close':                // закрыть оверлей
+				this.close( form );
+				break;
+			case 'error':                // сообщение об ошибке
+				this.error( action.lang, action.message );
+				break;
+			case 'reset':                // сделать форме reset
+				this.reset( form );
+				break;
+			case 'load':                // заменить содержимое DOM-элемента
+				this.load( action.target, action.html );
+				break;
+			case 'exec':
+				this.exec( action.script );
+				break;
+			default:
+				console.warn( 'Ajaxer action "' + action.action + '" not implemented' );
 			}
 			ajaxer.triggerHandler( 'ajaxer-' + action.action );
 		}
@@ -122,7 +129,7 @@ ajaxer.process = function( data, form ) {
 	ajaxer.statusUpdate( form );
 };
 
-ajaxer.triggerHandler = function( action ) {
+ajaxer.triggerHandler = function ( action ) {
 	try {
 		$( document ).triggerHandler( action );
 	} catch( err ) {
@@ -130,24 +137,24 @@ ajaxer.triggerHandler = function( action ) {
 	}
 };
 
-ajaxer.clean = function( form ) {
+ajaxer.clean = function ( form ) {
 
 	$( form ).find( '.problem' ).removeClass( 'problem' );
 	ajaxer.topScroll = -1;
 };
 
-ajaxer.notify = function( lang, message ) {
+ajaxer.notify = function ( lang, message ) {
 
 	ajaxer.overlayShow( '<p>' + message + '</p>' + '<a href="#" onclick="ajaxer.close(this)" class="button">' + ( lang.close ? lang.close : 'OK' ) + '</a>' );
 };
 
-ajaxer.error = function( lang, message ) {
+ajaxer.error = function ( lang, message ) {
 
 	ajaxer.notify( lang, message );
 };
 
 // поиск элемента формы
-ajaxer.smartFind = function( container, name ) {
+ajaxer.smartFind = function ( container, name ) {
 
 	var el = $( container ).find( '[name="' + name.replace( /"/g, "&quot;" ) + '"]:enabled' );
 	if( !el.length ) {
@@ -163,7 +170,7 @@ ajaxer.smartFind = function( container, name ) {
 };
 
 ajaxer.topScroll = -1;
-ajaxer.scroll = function( element ) {
+ajaxer.scroll = function ( element ) {
 	var top = element.offset().top - 32;
 	if( top < 0 ) {
 		top = 0;
@@ -176,7 +183,7 @@ ajaxer.scroll = function( element ) {
 	}
 };
 
-ajaxer.require = function( form, name ) {
+ajaxer.require = function ( form, name ) {
 
 	var el = ajaxer.smartFind( form, name );
 	if( !el.length || el.attr( 'type' ) == 'hidden' ) {
@@ -193,7 +200,7 @@ ajaxer.require = function( form, name ) {
 	}
 };
 
-ajaxer.invalid = function( form, name, message ) {
+ajaxer.invalid = function ( form, name, message ) {
 
 	var el = ajaxer.smartFind( form, name );
 	if( !el.length || el.attr( 'type' ) == 'hidden' ) {
@@ -210,7 +217,7 @@ ajaxer.invalid = function( form, name, message ) {
 	}
 };
 
-ajaxer.redirect = function( url ) {
+ajaxer.redirect = function ( url ) {
 
 	if( typeof(switcher) == 'undefined' ) {
 		document.location( url );
@@ -219,27 +226,27 @@ ajaxer.redirect = function( url ) {
 	}
 };
 
-ajaxer.reload = function() {
+ajaxer.reload = function () {
 
 	window.location.reload();
 };
 
-ajaxer.display = function( html ) {
+ajaxer.display = function ( html ) {
 
 	ajaxer.overlayShow( html );
 };
 
-ajaxer.close = function( obj ) {
+ajaxer.close = function ( obj ) {
 
 	ajaxer.overlayHide( obj );
 };
 
-ajaxer.reset = function( form ) {
+ajaxer.reset = function ( form ) {
 
 	$( form ).get( 0 ).reset();
 };
 
-ajaxer.load = function( target, html ) {
+ajaxer.load = function ( target, html ) {
 
 	var cut = $( html ).filter( target );
 	if( cut.length ) {
@@ -250,7 +257,7 @@ ajaxer.load = function( target, html ) {
 	$( window ).resize();
 };
 
-ajaxer.exec = function( script ) {
+ajaxer.exec = function ( script ) {
 	eval( script );
 };
 
@@ -261,13 +268,13 @@ ajaxer.exec = function( script ) {
 ajaxer.statuses = {};
 
 // инициализация статусов
-ajaxer.statusInit = function() {
+ajaxer.statusInit = function () {
 
 	ajaxer.statuses = {};
 };
 
 // эта функция устанавливает статус
-ajaxer.status = function( form, name, message, classname ) {
+ajaxer.status = function ( form, name, message, classname ) {
 
 	ajaxer.statuses[name] = { message: message, classname: classname, used: 0 };
 	/*
@@ -282,9 +289,9 @@ ajaxer.status = function( form, name, message, classname ) {
 };
 
 // эта функция обновляет поля статусов в соответствии со значениями, установленными через ajaxer.status()
-ajaxer.statusUpdate = function( form ) {
+ajaxer.statusUpdate = function ( form ) {
 
-	$( form ).find( '.status' ).each( function( i, obj1 ) {
+	$( form ).find( '.status' ).each( function ( i, obj1 ) {
 		var obj = $( obj1 );
 		// получаем имя элемента, к которому относится это поле статуса
 		var container = obj.closest( '.container' );
@@ -305,7 +312,7 @@ ajaxer.statusUpdate = function( form ) {
 		}
 		if( name in ajaxer.statuses ) {
 			// похоже, обновился статус или стиль
-			obj.animate( { opacity: 0 }, 'fast', function() {
+			obj.animate( { opacity: 0 }, 'fast', function () {
 				if( obj.attr( 'status-class' ) ) {
 					if( obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
 						obj.removeClass( obj.attr( 'status-class' ) );
@@ -323,7 +330,7 @@ ajaxer.statusUpdate = function( form ) {
 			ajaxer.statuses[name].used = 1;
 		} else if( obj.attr( 'status-class' ) ) {
 			// статус был изменен, но теперь нет
-			obj.animate( { opacity: 0 }, 'fast', function() {
+			obj.animate( { opacity: 0 }, 'fast', function () {
 				obj.removeClass( obj.attr( 'status-class' ) );
 				obj.removeAttr( 'status-class' );
 				obj.html( obj.attr( 'original-text' ) );
@@ -347,7 +354,7 @@ ajaxer.statusUpdate = function( form ) {
  * Работа с оверлеем
  */
 
-ajaxer.overlayShow = function( content ) {
+ajaxer.overlayShow = function ( content ) {
 
 	$( 'body' ).append(
 		'<div class="overlay" id="ajaxer-' + ajaxer.id + '">' +
@@ -365,14 +372,14 @@ ajaxer.overlayShow = function( content ) {
 	ajaxer.id++;
 };
 
-ajaxer.overlayHide = function( obj ) {
+ajaxer.overlayHide = function ( obj ) {
 
 	var el = $( obj ).parents( '.overlay' );
 	if( !el.length ) {
 		el = $( '.overlay' );
 	}
 	$( 'html' ).css( 'overflow', '' );
-	el.fadeOut( 'fast', function() {
+	el.fadeOut( 'fast', function () {
 		$( this ).remove();
 	} );
 };
@@ -381,7 +388,7 @@ ajaxer.overlayHide = function( obj ) {
  * Обработка сабмита форм
  */
 
-ajaxer.sendForm = function( form, event ) {
+ajaxer.sendForm = function ( form, event ) {
 
 	var data = {
 		form: $( form ).serializeArray()
@@ -390,7 +397,7 @@ ajaxer.sendForm = function( form, event ) {
 };
 
 ajaxer.submitting = false;
-$( document ).on( 'submit', 'form.ajaxer', function( event ) {
+$( document ).on( 'submit', 'form.ajaxer', function ( event ) {
 
 	if( ajaxer.submitting ) {
 		return;
@@ -425,7 +432,7 @@ $( document ).on( 'submit', 'form.ajaxer', function( event ) {
 	form.append( '<input type="hidden" name="_method" value="iframe"/>' );
 	// добавляем на страницу iframe
 	var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none" src="/iframe"></iframe>' );
-	frame.one( 'load', function( event ) {
+	frame.one( 'load', function ( event ) {
 		ajaxer.initIframe( form, event )
 	} );
 	$( 'body' ).append( frame );
@@ -436,13 +443,13 @@ $( document ).on( 'submit', 'form.ajaxer', function( event ) {
  * Отправка файлов через iframe
  */
 
-ajaxer.initIframe = function( form, event ) {
+ajaxer.initIframe = function ( form, event ) {
 	var interval;
 	var frame = $( 'iframe#ajaxerFrame' );
 	event.stopPropagation();
 	// цепляем новую функцию onload на iframe
 	frame.off( 'load' );
-	frame.one( 'load', function() {
+	frame.one( 'load', function () {
 		window.clearInterval( interval );
 		// получаем данные из iframe
 		var rawframe = frame.get( 0 );
@@ -483,14 +490,14 @@ ajaxer.initIframe = function( form, event ) {
 	var uuid = form.attr( 'uuid' );
 	ajaxer.fetchProgress( uuid );
 	interval = window.setInterval(
-		function() {
+		function () {
 			ajaxer.fetchProgress( uuid );
 		},
 		1000
 	);
 };
 
-ajaxer.fetchProgress = function( uuid ) {
+ajaxer.fetchProgress = function ( uuid ) {
 
 	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID': uuid } );
 	res = $.parseJSON( res );
@@ -524,7 +531,7 @@ ajaxer.fetchProgress = function( uuid ) {
  * Обработка событий страницы
  */
 
-$( document ).on( 'click dblclick', 'a.ajaxer', function( e ) {
+$( document ).on( 'click dblclick', 'a.ajaxer', function ( e ) {
 	var href = $( this ).attr( 'href' );
 	if( href && href != '#' ) {
 		ajaxer.query( href );
@@ -532,24 +539,24 @@ $( document ).on( 'click dblclick', 'a.ajaxer', function( e ) {
 	e.preventDefault();
 } );
 
-$( document ).on( 'keypress', '.ajaxer input', function( e ) {
+$( document ).on( 'keypress', '.ajaxer input', function ( e ) {
 	if( e.which == 13 ) {
 		$( this ).parents( 'form' ).submit();
 		e.preventDefault();
 	}
 } );
 
-$( document ).on( 'click dblclick', '.submit', function( e ) {
+$( document ).on( 'click dblclick', '.submit', function ( e ) {
 	$( this ).parents( 'form' ).submit();
 	e.preventDefault();
 } );
 
-$( document ).on( 'click dblclick', '.reset', function( e ) {
+$( document ).on( 'click dblclick', '.reset', function ( e ) {
 	ajaxer.reset( $( this ).parents( 'form' ) );
 	e.preventDefault();
 } );
 
-ajaxer.watcher = function() {
+ajaxer.watcher = function () {
 
 	var mc = $.cookie( 'query' );
 	if( mc ) {

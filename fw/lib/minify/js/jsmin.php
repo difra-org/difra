@@ -1,6 +1,11 @@
 <?php
+
 /**
- * Основано на jsmin.php - PHP implementation of Douglas Crockford's JSMin.c.
+ * This file can be freely used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ *            Based on jsmin.php - PHP implementation of Douglas Crockford's JSMin.c.
  */
 
 namespace Difra\Minify\JS;
@@ -28,7 +33,9 @@ class JSMin {
 	 *
 	 * @uses __construct()
 	 * @uses min()
+	 *
 	 * @param string $js Javascript to be minified
+	 *
 	 * @return string
 	 */
 	public static function minify( $js ) {
@@ -57,12 +64,13 @@ class JSMin {
 	 * action treats a string as a single character. Wow!
 	 * action recognizes a regular expression if it is preceded by ( or , or =.
 	 *
-	 * @uses next()
-	 * @uses get()
+	 * @uses   next()
+	 * @uses   get()
 	 * @throws JSMinException If parser errors are found:
 	 *         - Unterminated string literal
 	 *         - Unterminated regular expression set in regex literal
 	 *         - Unterminated regular expression literal
+	 *
 	 * @param int $command One of class constants:
 	 *                     ACTION_KEEP_A      Output A. Copy B to A. Get the next B.
 	 *                     ACTION_DELETE_A    Copy B to A. Get the next B. (Delete A).
@@ -182,6 +190,7 @@ class JSMin {
 	 * Is $c a letter, digit, underscore, dollar sign, or non-ASCII character.
 	 *
 	 * @param $c
+	 *
 	 * @return bool
 	 */
 	protected function isAlphaNum( $c ) {

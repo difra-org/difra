@@ -1,3 +1,8 @@
+<!--
+This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+Copyright © A-Jam Studio
+License: http://ajamstudio.com/difra/license
+-->
 <locale>
 	<menu>
 		<adm>
@@ -8,6 +13,7 @@
 			<menu_database>Database</menu_database>
 			<menu_users>Users</menu_users>
 			<menu_settings>Settings</menu_settings>
+			<menu_status>General information</menu_status>
 			<menu_development>Development</menu_development>
 			<menu_development_plugins>Plugins</menu_development_plugins>
 			<menu_development_config>Configuration status</menu_development_config>

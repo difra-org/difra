@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -29,6 +36,7 @@ class Config {
 
 	/**
 	 * Синглтон
+	 *
 	 * @static
 	 * @return Config
 	 */
@@ -74,6 +82,7 @@ class Config {
 
 	/**
 	 * Слияние двух массивов конфигураций
+	 *
 	 * @param array $a1
 	 * @param array $a2
 	 *
@@ -113,6 +122,7 @@ class Config {
 
 	/**
 	 * Возвращает разницу между дефолтным и текущим конфигами
+	 *
 	 * @return array
 	 */
 	private function diff() {
@@ -156,6 +166,7 @@ class Config {
 
 	/**
 	 * Сохранение настроек
+	 *
 	 * @return bool
 	 */
 	public function save() {
@@ -179,6 +190,7 @@ class Config {
 
 	/**
 	 * Получение значение настройки
+	 *
 	 * @param string $key
 	 *
 	 * @return mixed
@@ -191,6 +203,7 @@ class Config {
 
 	/**
 	 * Установка значения настройки
+	 *
 	 * @param string $key
 	 * @param mixed  $value
 	 */
@@ -203,6 +216,7 @@ class Config {
 
 	/**
 	 * Получение значения элемента массива настроек
+	 *
 	 * @param string $key
 	 * @param string $arrayKey
 	 *
@@ -216,6 +230,7 @@ class Config {
 
 	/**
 	 * Установка значения элемента массива настроек
+	 *
 	 * @param string $key
 	 * @param string $arrayKey
 	 * @param mixed  $arrayValue
@@ -232,6 +247,7 @@ class Config {
 
 	/**
 	 * Получить полный конфиг
+	 *
 	 * @return array
 	 */
 	public function getConfig() {
@@ -242,6 +258,7 @@ class Config {
 
 	/**
 	 * Получить измененные настройки
+	 *
 	 * @return array
 	 */
 	public function getDiff() {

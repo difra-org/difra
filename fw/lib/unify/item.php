@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Unify;
 
 /**
@@ -57,6 +64,7 @@ abstract class Item extends DBAPI {
 
 	/**
 	 * Получение значения поля
+	 *
 	 * @param $name
 	 *
 	 * @return mixed
@@ -76,22 +84,38 @@ abstract class Item extends DBAPI {
 
 	/**
 	 * Установка значения поля
+	 *
 	 * @param string $name
 	 * @param mixed  $value
 	 */
 	public function __set( $name, $value ) {
 
-//		if( (string) $this->$name === ( is_object( $value ) and $value::type != 'html' ? (string) $value : $value->val( true ) ) ) {
-		if( $this->$name == $value ) {
+		// html objects handling
+		if( is_object( $current = $this->$name ) and $current::type == 'html' ) {
+			$currentValue = $current->val( true );
+		} else {
+			$currentValue = $current;
+		}
+		if( is_object( $value ) and $value::type == 'html' ) {
+			$newValue = $value->val( true );
+		} else {
+			$newValue = $value;
+		}
+
+		// not modified property, no need to update
+		if( $currentValue == $newValue ) {
 			return;
 		}
+
+		// set update data
 		$this->_data[$name] = $value;
 		$this->_modified[$name] = $value;
 	}
 
 	/**
 	 * Загружает данные
-	 * @param bool $full        Включать ли поля с autoload=false
+	 *
+	 * @param bool $full Включать ли поля с autoload=false
 	 */
 	public function load( $full = false ) {
 
@@ -124,8 +148,8 @@ abstract class Item extends DBAPI {
 		}
 		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetchRow(
-			'SELECT `' . implode( '`,`', $db->escape( static::getKeys( $full ) ) ) . '` FROM `' . $db->escape( static::getTable() ) . '`'
-			. ' WHERE `' . $db->escape( $field ) . "`='" . $db->escape( $value ) . "'"
+			   'SELECT `' . implode( '`,`', $db->escape( static::getKeys( $full ) ) ) . '` FROM `' . $db->escape( static::getTable() ) . '`'
+			   . ' WHERE `' . $db->escape( $field ) . "`='" . $db->escape( $value ) . "'"
 		);
 		if( empty( $data ) ) {
 			throw new \Difra\Exception( "No such object: '" . static::getObjKey() . "' with `" . $field . "`='" . $value . "'." );
@@ -183,8 +207,8 @@ abstract class Item extends DBAPI {
 					$this->_saveImages[$name] = $property;
 				} else {
 					$property->saveImages(
-						DIR_DATA . '/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue(),
-						'/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue()
+						 DIR_DATA . '/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue(),
+						 '/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue()
 					);
 					$set[] = '`' . $db->escape( $name ) . "`='" . $db->escape( $property ) . "'";
 				}
@@ -227,7 +251,7 @@ abstract class Item extends DBAPI {
 	/**
 	 * Возвращает список ключей (обёртка для getKeysArray)
 	 *
-	 * @param bool $full|'only'        Вместе с ключами с autoload=false
+	 * @param bool $full |'only'        Вместе с ключами с autoload=false
 	 *
 	 * @return array
 	 */
@@ -245,7 +269,8 @@ abstract class Item extends DBAPI {
 
 	/**
 	 * Возвращает список ключей
-	 * @param bool $full|'only'        Вместе с ключами с autoload=false
+	 *
+	 * @param bool $full |'only'        Вместе с ключами с autoload=false
 	 *
 	 * @return array
 	 */
@@ -285,6 +310,7 @@ abstract class Item extends DBAPI {
 
 	/**
 	 * Возвращает имя объекта
+	 *
 	 * @return string
 	 */
 	public static function getObjKey() {
@@ -308,6 +334,7 @@ abstract class Item extends DBAPI {
 
 	/**
 	 * Возвращает критерии поиска по умолчанию
+	 *
 	 * @return array|null
 	 */
 	public static function getDefaultSearchConditions() {
@@ -317,6 +344,7 @@ abstract class Item extends DBAPI {
 
 	/**
 	 * Создание нового объекта
+	 *
 	 * @return static
 	 */
 	public static function create() {
@@ -351,6 +379,7 @@ abstract class Item extends DBAPI {
 
 	/**
 	 * Возвращает объект по значению поля (если соответствующих строк в таблице несколько, будет возвращён только первый)
+	 *
 	 * @param string $field
 	 * @param string $value
 	 *
@@ -392,8 +421,8 @@ abstract class Item extends DBAPI {
 		if( $primary = $this->getPrimaryValue() ) {
 			$db = \Difra\MySQL::getInstance();
 			$db->query(
-				'DELETE FROM `' . static::getTable()
-				. '` WHERE `' . $db->escape( $this->getPrimary() ) . '`=\'' . $db->escape( $primary ) . '\''
+			   'DELETE FROM `' . static::getTable()
+			   . '` WHERE `' . $db->escape( $this->getPrimary() ) . '`=\'' . $db->escape( $primary ) . '\''
 			);
 		}
 	}

@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Libs\Debug;
 
 /**
@@ -29,6 +36,7 @@ class errorConstants {
 
 	/**
 	 * Синглтон
+	 *
 	 * @static
 	 * @return errorConstants
 	 */
@@ -40,6 +48,7 @@ class errorConstants {
 
 	/**
 	 * Возвращает массив соответствий кодов ошибок и соответствующих строк
+	 *
 	 * @return array
 	 */
 	public function getArray() {
@@ -51,6 +60,7 @@ class errorConstants {
 	 * Возвращает по коду ошибки строку в виде "E_COMPILE_ERROR"
 	 *
 	 * @param $code
+	 *
 	 * @return null
 	 */
 	public function getError( $code ) {
@@ -62,6 +72,7 @@ class errorConstants {
 	 * Возвращает по коду ошибки строку в виде "Compile Error"
 	 *
 	 * @param $code
+	 *
 	 * @return null|string
 	 */
 	public function getVerbalError( $code ) {

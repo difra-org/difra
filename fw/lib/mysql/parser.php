@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\MySQL;
 
 /**
@@ -14,6 +21,7 @@ class Parser {
 	 * Сравнивает структуру SQL-таблиц с состоянием, сохраненным в файлах bin/db.sql и возвращает результат в XML.
 	 *
 	 * @param $node
+	 *
 	 * @return array|bool
 	 */
 	public static function getStatusXML( $node ) {
@@ -70,7 +78,9 @@ class Parser {
 
 	/**
 	 * Получение текущей структуры таблиц в текстовом виде.
+	 *
 	 * @param bool $asArray
+	 *
 	 * @return string|array
 	 */
 	public static function getCurrentSQL( $asArray = false ) {
@@ -96,9 +106,10 @@ class Parser {
 	/**
 	 * Разбивает SQL-строку на части с учётом строк, комментариев и т.д.
 	 *
-	 * @param string $text                SQL-строка
-	 * @param bool   $tree                Части, заключённые в скобки, добавляются как ветки дерева
-	 * @param bool   $recursive           Внутренний параметр
+	 * @param string $text      SQL-строка
+	 * @param bool   $tree      Части, заключённые в скобки, добавляются как ветки дерева
+	 * @param bool   $recursive Внутренний параметр
+	 *
 	 * @return array
 	 */
 	private static function chop( $text, $tree = false, $recursive = false ) {
@@ -249,6 +260,7 @@ class Parser {
 	 * Возвращает имя класса для загрузки SQL-команды, порубленной на чанки
 	 *
 	 * @param $chunks
+	 *
 	 * @return string|null
 	 */
 	public static function getChunksClass( $chunks ) {
@@ -263,7 +275,9 @@ class Parser {
 
 	/**
 	 * Преобразует набор чанков в строку
+	 *
 	 * @param $array
+	 *
 	 * @return string
 	 */
 	public static function def2string( $array ) {

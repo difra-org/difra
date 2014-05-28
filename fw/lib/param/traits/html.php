@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra\Param\Traits;
 
 /**
@@ -14,7 +21,9 @@ trait HTML {
 
 	/**
 	 * Проверка значения
+	 *
 	 * @param string $value
+	 *
 	 * @return string
 	 */
 	public static function verify( $value ) {
@@ -24,6 +33,7 @@ trait HTML {
 
 	/**
 	 * Сохранение изображений
+	 *
 	 * @param string $path
 	 * @param string $urlPrefix
 	 */
@@ -37,6 +47,7 @@ trait HTML {
 	 * Получение «причёсанного» html
 	 *
 	 * @param bool $quiet
+	 *
 	 * @return string
 	 */
 	public function val( $quiet = false ) {

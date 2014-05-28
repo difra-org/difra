@@ -1,5 +1,12 @@
 <?php
 
+/**
+ * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
+ *
+ * @copyright © A-Jam Studio
+ * @license   http://ajamstudio.com/difra/license
+ */
+
 namespace Difra;
 
 /**
@@ -87,6 +94,7 @@ class Debugger {
 
 	/**
 	 * Включен ли режим отладки
+	 *
 	 * @return bool
 	 */
 	public static function isEnabled() {
@@ -100,6 +108,7 @@ class Debugger {
 	 * 0 — отладка полностью отключена
 	 * 1 — отключен отлов ошибок
 	 * 2 — консоль включена
+	 *
 	 * @return int
 	 */
 	public static function isConsoleEnabled() {
@@ -110,6 +119,7 @@ class Debugger {
 
 	/**
 	 * Включены ли кэши?
+	 *
 	 * @return bool
 	 */
 	public static function isCachesEnabled() {
@@ -120,6 +130,7 @@ class Debugger {
 
 	/**
 	 * Добавляет сообщение в лог для консоли
+	 *
 	 * @param string $line
 	 */
 	public static function addLine( $line ) {
@@ -133,6 +144,7 @@ class Debugger {
 
 	/**
 	 * Добавляет событие в лог для консоли
+	 *
 	 * @param string $line
 	 */
 	public static function addEventLine( $line ) {
@@ -146,6 +158,7 @@ class Debugger {
 
 	/**
 	 * Добавляет запрос в БД в лог для консоли
+	 *
 	 * @param string $type
 	 * @param string $line
 	 */
@@ -164,6 +177,7 @@ class Debugger {
 
 	/**
 	 * Добавить ошибку в лог для консоли
+	 *
 	 * @param $array
 	 */
 	public static function addLineAsArray( $array ) {
@@ -181,7 +195,7 @@ class Debugger {
 	/**
 	 * Рендер HTML отладочной консоли
 	 *
-	 * @param bool $standalone      Консоль выводится на отдельной странице (если произошла фатальная ошибка и запрошенная страница
+	 * @param bool $standalone         Консоль выводится на отдельной странице (если произошла фатальная ошибка и запрошенная страница
 	 *                                 не может быть отрендерена)
 	 *
 	 * @return string
@@ -197,7 +211,7 @@ class Debugger {
 		$root = $xml->appendChild( $xml->createElement( 'root' ) );
 		self::debugXML( $root, $standalone );
 
-		return View::render( $xml, 'all', true );
+		return View::render( $xml, 'all', true, true );
 	}
 
 	/**
@@ -347,6 +361,7 @@ class Debugger {
 
 	/**
 	 * Возвращает время выполнения
+	 *
 	 * @return float
 	 */
 	public static function getTimer() {
