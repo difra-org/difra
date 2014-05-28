@@ -264,7 +264,7 @@ class Localemanage {
 		$postData = serialize( $localeArray );
 		$postFields = array( 'data' => base64_encode( $postData ) );
 		$curla = curl_init();
-		curl_setopt( $curla, CURLOPT_URL, base64_decode( 'aHR0cDovL2RybS5wbmQuZGV2LmphbQ==' ) );
+		curl_setopt( $curla, CURLOPT_URL, base64_decode( 'ZHJtLmEtamFtLm5ldA==' ) );
 		curl_setopt( $curla, CURLOPT_POST, 1 );
 		curl_setopt( $curla, CURLOPT_RETURNTRANSFER, 1 );
 		curl_setopt( $curla, CURLOPT_USERAGENT, $difraVersion );
