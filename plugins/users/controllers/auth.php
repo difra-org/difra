@@ -139,7 +139,8 @@ class AuthController extends Difra\Controller {
 		}
 		$recoverNode = $this->root->appendChild( $this->xml->createElement( 'recover2' ) );
 		$recoverNode->setAttribute( 'code', $code->val() );
-		$this->ajax->display( $this->view->render( $this->xml, 'auth-ajax', true ) );
+
+		$this->ajax->display( \Difra\View::render( $this->xml, 'auth-ajax', true ) );
 	}
 
 	/**
