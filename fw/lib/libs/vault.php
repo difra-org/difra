@@ -9,8 +9,6 @@
 
 namespace Difra\Libs;
 
-use Difra\Envi;
-
 /**
  * Class Vault
  *
@@ -31,7 +29,7 @@ class Vault {
 		$db->query( 'DELETE FROM `vault` WHERE `created`<DATE_SUB(now(),INTERVAL 3 HOUR)' );
 		$db->query( "INSERT INTO `vault` SET `data`='" . $db->escape( $data ) . "'" );
 		if( $id = $db->getLastId() ) {
-			Envi\Session::start();
+			\Difra\Envi\Session::start();
 			if( !isset( $_SESSION['vault'] ) ) {
 				$_SESSION['vault'] = array();
 			}
@@ -49,7 +47,7 @@ class Vault {
 	 */
 	static function get( $id ) {
 
-		Envi\Session::start();
+		\Difra\Envi\Session::start();
 		if( !isset( $_SESSION['vault'] ) or !isset( $_SESSION['vault'][$id] ) ) {
 			return null;
 		}
@@ -64,7 +62,7 @@ class Vault {
 	 */
 	static function delete( $id ) {
 
-		Envi\Session::start();
+		\Difra\Envi\Session::start();
 		if( !isset( $_SESSION['vault'][$id] ) ) {
 			return;
 		}
@@ -89,12 +87,12 @@ class Vault {
 
 		// when using AjaxSafeHTML, characters inside src= are encoded using ESAPI
 		$html =
-			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . '&#x2f;up&#x2f;tmp&#x2f;',
+			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . \Difra\Envi::getHost() . '&#x2f;up&#x2f;tmp&#x2f;',
 				     'src="/up/tmp/',
 				     $html );
 		$html = str_replace( 'src="&#x2f;up&#x2f;tmp&#x2f;', 'src="/up/tmp/', $html );
 		$html =
-			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . str_replace( '/', '&#x2f;', "$urlPrefix/" ),
+			str_replace( 'src="http&#x3a;&#x2f;&#x2f;' . \Difra\Envi::getHost() . str_replace( '/', '&#x2f;', "$urlPrefix/" ),
 				     'src="' . $urlPrefix . '/',
 				     $html );
 		$html = str_replace( 'src="' . str_replace( '/', '&#x2f;', $urlPrefix . '/' ), 'src="' . $urlPrefix . '/', $html );

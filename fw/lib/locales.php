@@ -9,8 +9,6 @@
 
 namespace Difra;
 
-use Difra\Envi\Setup;
-
 /**
  * Class Locales
  *
@@ -39,7 +37,7 @@ class Locales {
 
 		static $locales = array();
 		if( !$locale ) {
-			$locale = Setup::getLocale();
+			$locale = \Difra\Envi\Setup::getLocale();
 		}
 		if( isset( $locales[$locale] ) ) {
 			return $locales[$locale];

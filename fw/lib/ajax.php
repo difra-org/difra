@@ -9,8 +9,6 @@
 
 namespace Difra;
 
-use Difra\Envi\Action;
-
 class Ajax {
 
 	public $isAjax = false;
@@ -382,6 +380,7 @@ class Ajax {
 
 	/**
 	 * Soft refresh current page
+	 *
 	 * @return $this
 	 */
 	public function refresh() {
@@ -439,6 +438,7 @@ class Ajax {
 
 	/**
 	 * Close overlay
+	 *
 	 * @return $this
 	 */
 	public function close() {
@@ -451,6 +451,7 @@ class Ajax {
 
 	/**
 	 * Clean form
+	 *
 	 * @return $this
 	 */
 	public function reset() {
@@ -465,6 +466,7 @@ class Ajax {
 	 * Display confirmation window (Are you sure? [Yes] [No])
 	 *
 	 * @param $text
+	 *
 	 * @return $this
 	 */
 	public function confirm( $text ) {
@@ -489,6 +491,7 @@ class Ajax {
 	 * This is dangerous! Don't use it if there is another way.
 	 *
 	 * @param $script
+	 *
 	 * @return $this
 	 */
 	public function exec( $script ) {

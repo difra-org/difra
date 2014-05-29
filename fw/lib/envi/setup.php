@@ -9,8 +9,6 @@
 
 namespace Difra\Envi;
 
-use Difra\Envi;
-
 /**
  * Class Setup
  *

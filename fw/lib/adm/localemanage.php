@@ -9,8 +9,6 @@
 
 namespace Difra\Adm;
 
-use Difra\Envi\Action;
-
 /**
  * Class Localemanage
  *
@@ -189,7 +187,7 @@ class Localemanage {
 		static $controllers = null;
 		if( is_null( $controllers ) ) {
 			$controllers = array();
-			$dirs = Action::getControllerPaths();
+			$dirs = \Difra\Envi\Action::getControllerPaths();
 			foreach( $dirs as $dir ) {
 				$this->getAllFiles( $controllers, $dir );
 				$this->getAllFiles( $controllers, $dir . '../lib' );
@@ -242,8 +240,8 @@ class Localemanage {
 		// файловый кэш
 		$flName = base64_encode( 'difra_license_file.lic' );
 		if( file_exists( DIR_DATA . $flName ) ) {
-			$lFile = file_get_contents( DIR_DATA . $flName);
-			if( $lFile!='' ) {
+			$lFile = file_get_contents( DIR_DATA . $flName );
+			if( $lFile != '' ) {
 				$nt = unserialize( base64_decode( $lFile ) );
 				$localeString = unserialize( $nt['locale'] );
 				if( self::checkLocaleExpired( $localeString ) ) {
@@ -287,7 +285,7 @@ class Localemanage {
 		$encodedArray = unserialize( $encodedRes );
 		$vr = openssl_verify( $encodedArray['license'], $encodedArray['signature'], $localePem, 'sha256WithRSAEncryption' );
 
-		if( $vr != 1  ) {
+		if( $vr != 1 ) {
 			self::exitLocale();
 		}
 
@@ -295,6 +293,7 @@ class Localemanage {
 	}
 
 	public static function exitLocale() {
+
 		header( base64_decode( 'SFRUUC8xLjAgNTAzIFNlcnZpY2UgVW5hdmFpbGFibGU=' ) );
 		echo base64_decode( 'PGh0bWw+PGhlYWQ+PHRpdGxlPkVycm9yIDUwMzwvdGl0bGU+PC9oZWFkPjxib2R5PjxjZW50ZXI+PGgxPjUwMyBTZXJ2aWNlIFVuYXZhaWxhYmxlPC9oMT5Tb2Z0d2FyZSBsaWNlbnNlIGlzIGludmFsaWQuPC9jZW50ZXI+PC9ib2R5PjwvaHRtbD4=' );
 		exit();
@@ -314,7 +313,7 @@ class Localemanage {
 			return true;
 		}
 
-		if( isset( $localeArray['expired'] ) && $localeArray['expired'] !='' ) {
+		if( isset( $localeArray['expired'] ) && $localeArray['expired'] != '' ) {
 			$expiredValue = strtotime( $localeArray['expired'] . ' 00:00:00' );
 			if( $expiredValue < time() ) {
 				return false;

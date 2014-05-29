@@ -9,9 +9,6 @@
 
 namespace Difra\Param\Filters;
 
-use Difra\Envi;
-use Difra\Libs\ESAPI;
-
 class HTML {
 
 	/** @var array Список разрешенных тэгов, параметр — массив аттрибутов и обрабочиков */
@@ -158,8 +155,8 @@ class HTML {
 	/**
 	 * Чистка аттрибутов ноды по спискам допустимых аттрибутов
 	 *
-	 * @param \DOMElement $node
-	 * @param array       $attributes
+	 * @param \DOMElement|\DOMNode $node
+	 * @param array                $attributes
 	 */
 	private function cleanAttributes( &$node, $attributes = array() ) {
 

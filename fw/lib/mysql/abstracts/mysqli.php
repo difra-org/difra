@@ -9,8 +9,6 @@
 
 namespace Difra\MySQL\Abstracts;
 
-use Difra\Exception;
-
 /**
  * Адаптер MySQLi
  * Class MySQLi
@@ -46,11 +44,11 @@ class MySQLi extends Common {
 		$this->db =
 			@new \mysqli( !empty( $this->config['hostname'] ) ? 'p:' . $this->config['hostname'] : '', $this->config['username'], $this->config['password'] );
 		if( $this->db->connect_error ) {
-			throw new Exception( $this->error = $this->db->connect_error );
+			throw new \Difra\Exception( $this->error = $this->db->connect_error );
 		}
 		$this->db->set_charset( 'utf8' );
 		if( !$this->db->select_db( $this->config['database'] ) ) {
-			throw new Exception( $this->error = $this->db->error );
+			throw new \Difra\Exception( $this->error = $this->db->error );
 		}
 	}
 
@@ -65,7 +63,7 @@ class MySQLi extends Common {
 
 		$this->db->query( $query );
 		if( $err = $this->db->error ) {
-			throw new Exception( "MySQL error: [$err] on request [$query]" );
+			throw new \Difra\Exception( "MySQL error: [$err] on request [$query]" );
 		}
 	}
 
@@ -82,7 +80,7 @@ class MySQLi extends Common {
 
 		$res = $this->db->query( $query );
 		if( $err = $this->db->error ) {
-			throw new Exception( 'MySQL: ' . $err );
+			throw new \Difra\Exception( 'MySQL: ' . $err );
 		}
 		if( $this->isND() ) {
 			// при наличии mysqlnd

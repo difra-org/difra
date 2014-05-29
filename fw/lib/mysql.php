@@ -9,9 +9,6 @@
 
 namespace Difra;
 
-use Difra\MySQL\Abstracts\MySQLi;
-use Difra\MySQL\Abstracts\None;
-
 /**
  * Абстрактная фабрика для MySQL-адаптеров
  * Class MySQL
@@ -45,7 +42,7 @@ class MySQL {
 				return self::getInstance( $auto, $new );
 			}
 
-			if( MySQLi::isAvailable() ) {
+			if( \Difra\MySQL\Abstracts\MySQLi::isAvailable() ) {
 				Debugger::addLine( "MySQL module: MySQLi" );
 				return self::getInstance( $auto = self::INST_MySQLi, $new );
 			} else {
@@ -60,10 +57,10 @@ class MySQL {
 
 		switch( $adapter ) {
 		case self::INST_MySQLi:
-			$obj = new MySQLi();
+			$obj = new \Difra\MySQL\Abstracts\MySQLi();
 			break;
 		default:
-			$obj = new None();
+			$obj = new \Difra\MySQL\Abstracts\None();
 		}
 		if( !$new ) {
 			self::$adapters[$adapter] = $obj;

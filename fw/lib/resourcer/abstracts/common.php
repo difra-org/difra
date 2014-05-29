@@ -9,8 +9,6 @@
 
 namespace Difra\Resourcer\Abstracts;
 
-use Difra;
-
 /**
  * Абстрактный класс сборщика ресурсов
  * Class Common
@@ -121,7 +119,7 @@ abstract class Common {
 			return false;
 		}
 		header( 'Content-Type: ' . $this->contentType );
-		if( !$modified = Difra\Cache::getInstance()->get( "{$instance}_{$this->type}_modified" ) ) {
+		if( !$modified = \Difra\Cache::getInstance()->get( "{$instance}_{$this->type}_modified" ) ) {
 			$modified = gmdate( 'D, d M Y H:i:s' ) . ' GMT';
 		}
 		\Difra\View::addExpires( \Difra\Controller::DEFAULT_CACHE );
@@ -150,8 +148,8 @@ abstract class Common {
 	 */
 	public function compileGZ( $instance ) {
 
-		$cache = Difra\Cache::getInstance();
-		if( $cache->adapter == Difra\Cache::INST_NONE ) {
+		$cache = \Difra\Cache::getInstance();
+		if( $cache->adapter == \Difra\Cache::INST_NONE ) {
 			return false;
 		}
 
@@ -208,9 +206,9 @@ abstract class Common {
 		}
 
 		// get compiled from cache if available
-		$cache = Difra\Cache::getInstance();
+		$cache = \Difra\Cache::getInstance();
 
-		if( $cache->adapter != Difra\Cache::INST_NONE ) {
+		if( $cache->adapter != \Difra\Cache::INST_NONE ) {
 
 			$cacheKey = "{$instance}_{$this->type}";
 			if( !is_null( $cached = $cache->get( $cacheKey ) ) ) {
@@ -296,7 +294,7 @@ abstract class Common {
 
 		static $paths = null;
 		if( is_null( $paths ) ) {
-			$paths = Difra\Plugger::getPaths();
+			$paths = \Difra\Plugger::getPaths();
 			$paths = array_merge( array(
 						      DIR_SITE,
 						      DIR_ROOT
@@ -343,7 +341,7 @@ abstract class Common {
 			DIR_ROOT . $this->type,
 			DIR_SITE . $this->type,
 		);
-		$paths = Difra\Plugger::getPaths();
+		$paths = \Difra\Plugger::getPaths();
 		if( !empty( $paths ) ) {
 			foreach( $paths as $dir ) {
 				$parents[] = "{$dir}/{$this->type}";
@@ -484,7 +482,7 @@ abstract class Common {
 	 */
 	private function withAll( $instance ) {
 
-		$instances = Difra\Config::getInstance()->get( 'instances' );
+		$instances = \Difra\Config::getInstance()->get( 'instances' );
 		return isset( $instances[$instance] ) and isset( $instances[$instance]['withAll'] ) and $instances[$instance]['withAll'];
 	}
 

@@ -9,8 +9,6 @@
 
 namespace Difra\Resourcer;
 
-use Difra\Envi, Difra\Debugger;
-
 /**
  * Class Menu
  *
@@ -52,7 +50,7 @@ class Menu extends Abstracts\XML {
 		foreach( $node as $subname => $subNode ) {
 			/** @noinspection PhpUndefinedFieldInspection */
 			if( $subNode->attributes()->sup and $subNode->attributes()->sup == '1' ) {
-				if( !Debugger::isEnabled() ) {
+				if( !\Difra\Debugger::isEnabled() ) {
 					$subNode->addAttribute( 'hidden', 1 );
 				}
 			}

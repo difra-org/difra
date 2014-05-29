@@ -9,8 +9,6 @@
 
 namespace Difra\Cache;
 
-use Difra;
-
 /**
  * Реализация кэширования через расширение xcache
  * Class XCache
@@ -19,7 +17,7 @@ use Difra;
  */
 class XCache extends Common {
 
-	public $adapter = Difra\Cache::INST_XCACHE;
+	public $adapter = \Difra\Cache::INST_XCACHE;
 
 	/**
 	 * Определяет работоспособность расширения
@@ -36,7 +34,7 @@ class XCache extends Common {
 			if( $e = error_get_last() and $e['file'] == __FILE__ ) {
 				return false;
 			}
-		} catch( Difra\Exception $ex ) {
+		} catch( \Difra\Exception $ex ) {
 			return false;
 		}
 		return true;

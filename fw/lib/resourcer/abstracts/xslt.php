@@ -9,8 +9,6 @@
 
 namespace Difra\Resourcer\Abstracts;
 
-use Difra;
-
 /**
  * Class XSLT
  *

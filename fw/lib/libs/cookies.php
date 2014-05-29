@@ -9,8 +9,6 @@
 
 namespace Difra\Libs;
 
-use Difra\Envi;
-
 /**
  * Cookies
  *
@@ -42,7 +40,7 @@ class Cookies {
 	 */
 	private function __construct() {
 
-		$this->domain = Envi::getHost( true );
+		$this->domain = \Difra\Envi::getHost( true );
 		$this->domain = ( substr( $this->domain, 0, 4 ) == 'www.' ) ? substr( $this->domain, 3 ) : ( '.' . $this->domain );
 		$this->path = '/';
 	}

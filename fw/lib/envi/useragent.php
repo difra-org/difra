@@ -9,8 +9,6 @@
 
 namespace Difra\Envi;
 
-use Difra\Libs\XML\DOM;
-
 /**
  * Class UserAgent
  *
@@ -55,7 +53,7 @@ class UserAgent {
 	public static function getUserAgentXML( $node ) {
 
 		if( $ua = self::getUserAgent() ) {
-			DOM::array2domAttr( $node, $ua );
+			\Difra\Libs\XML\DOM::array2domAttr( $node, $ua );
 		}
 		if( $uac = self::getUserAgentClass() ) {
 			$node->setAttribute( 'uaClass', $uac );
@@ -302,7 +300,7 @@ class UserAgent {
 		if( !is_null( self::$device ) ) {
 			return self::$device;
 		}
-		$os = self::getOS();
+		self::getOS();
 		if( in_array( self::$rawOS, array( 'iPhone', 'iPad', 'iPod' ) ) ) {
 			return self::$device = self::$rawOS;
 		}

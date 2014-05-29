@@ -9,9 +9,6 @@
 
 namespace Difra\MySQL\Abstracts;
 
-use Difra\Envi;
-use Difra\Exception, Difra\Debugger;
-
 /**
  * Абстрактный класс для реализации адаптеров к MySQL
  * Class Common
@@ -113,14 +110,14 @@ abstract class Common {
 		if( $this->connected === true ) {
 			return;
 		} elseif( $this->connected === false ) {
-			throw new Exception( 'MySQL connection is not available' );
+			throw new \Difra\Exception( 'MySQL connection is not available' );
 		}
 		$this->connected = false;
 		try {
 			$this->realConnect();
-		} catch( Exception $ex ) {
+		} catch( \Difra\Exception $ex ) {
 			$ex->notify();
-			throw new Exception( 'MySQL connection is not available: ' . $ex->getMessage() );
+			throw new \Difra\Exception( 'MySQL connection is not available: ' . $ex->getMessage() );
 		}
 		$this->connected = true;
 	}
@@ -128,7 +125,7 @@ abstract class Common {
 	/**
 	 * Сделать запрос в базу
 	 *
-	 * @throws exception
+	 * @throws \Difra\Exception
 	 *
 	 * @param string|array $query SQL-запрос
 	 *
@@ -140,7 +137,7 @@ abstract class Common {
 			$this->connect();
 			$this->realQuery( $query );
 			$this->queries++;
-			Debugger::addDBLine( 'MySQL', $query );
+			\Difra\Debugger::addDBLine( 'MySQL', $query );
 		} else {
 			try {
 				$this->transactionStart();
@@ -148,17 +145,15 @@ abstract class Common {
 					$this->query( $subQuery );
 				}
 				$this->transactionCommit();
-			} catch( Exception $ex ) {
+			} catch( \Difra\Exception $ex ) {
 				$this->transactionCancel();
-				throw new Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
+				throw new \Difra\Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
 			}
 		}
 	}
 
 	/**
 	 * Возвращает результат запроса
-	 *
-	 * @throws exception
 	 *
 	 * @param string $query   SQL-запрос
 	 * @param bool   $replica Позволить читать данные из реплики
@@ -168,7 +163,7 @@ abstract class Common {
 	public function fetch( $query, $replica = false ) {
 
 		$this->connect();
-		Debugger::addDBLine( 'MySQL', $query );
+		\Difra\Debugger::addDBLine( 'MySQL', $query );
 		$this->queries++;
 		return $this->realFetch( $query, $replica );
 	}
@@ -213,13 +208,13 @@ abstract class Common {
 			$this->config['hostname'] = '';
 		}
 		if( empty( $this->config['username'] ) ) {
-			$this->config['username'] = Envi::getSite();
+			$this->config['username'] = \Difra\Envi::getSite();
 		}
 		if( empty( $this->config['password'] ) ) {
 			$this->config['password'] = '';
 		}
 		if( empty( $this->config['database'] ) ) {
-			$this->config['database'] = Envi::getSite();
+			$this->config['database'] = \Difra\Envi::getSite();
 		}
 	}
 
@@ -232,7 +227,7 @@ abstract class Common {
 
 		try {
 			$this->connect();
-		} catch( Exception $ex ) {
+		} catch( \Difra\Exception $ex ) {
 			return false;
 		}
 		return $this->connected ? true : false;
@@ -250,8 +245,6 @@ abstract class Common {
 
 	/**
 	 * Возвращает результаты запроса в ассоциативном массиве id => row
-	 *
-	 * @throws exception
 	 *
 	 * @param string $query   SQL-запрос
 	 * @param bool   $replica Позволить читать данные из реплики
