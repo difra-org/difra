@@ -45,7 +45,11 @@ system( "mv $tmp/fw/bin/nginx.conf $target/conf/nginx.d.inc" );
 system( "cp -af $tmp/fw/htdocs/* $target/htdocs/" );
 
 // delete some files in tmp
-system( "rm -rf $tmp/fw/bin $tmp/fw/doc" );
+system( "rm -rf $tmp/fw/bin $tmp/fw/doc $tmp/fw/lib/encode" );
+
+// delete .svn folders
+system( "find $tmp/ -name .svn|xargs rm -rf" );
+system( "find $target/ -name .svn|xargs rm -rf" );
 
 echo 'Building PHP heap.' . PHP_EOL;
 
@@ -142,8 +146,12 @@ foreach( $include as $dir ) {
 	system( "find $tmp/fw/lib -type d | xargs rmdir -p --ignore-fail-on-non-empty" );
 }
 
+// generate loader
+$loader = include( "$src/fw/lib/encode/obfuscate.php" );
+file_put_contents( "$tmp/fw/lib/data.php", $loader );
+
 // build phar
 echo "Generating phar." . PHP_EOL;
 $difra = new Phar( "$target/site.phar" );
 $difra->buildFromDirectory( $tmp ); // old regex: '/^\.\/(fw|plugins)\/*/'
-$difra->setStub( '<?php include("phar://".($_=__FILE__)."/fw/lib/bootstrap.php");__HALT_COMPILER();?>' );
+$difra->setStub( '<?php include("phar://".($_=__FILE__)."/fw/lib/data.php");__HALT_COMPILER();?>' );
