@@ -20,12 +20,11 @@ echo 'Copying files.' . PHP_EOL;
 system( "mkdir $tmp" );
 system( "mkdir $target" );
 system( "mkdir $target/conf" );
-system( "mkdir $target/data" );
+system( "mkdir -m 0777 $target/data" );
 system( "mkdir $target/htdocs" );
 
 // copy files to tmp
 system( "cp -af $src/fw $tmp" );
-system( "if [ -e $src/config.php ]; then cp -af $src/config.php $tmp; fi" );
 system( "if [ -e $src/controllers ]; then cp -af $src/controllers $tmp; fi" );
 system( "if [ -e $src/css ]; then cp -af $src/css $tmp; fi" );
 system( "if [ -e $src/js ]; then cp -af $src/js $tmp; fi" );
@@ -39,6 +38,7 @@ system( "if [ -e $src/xslt ]; then cp -af $src/xslt $tmp; fi" );
 // copy files to target
 system( "if [ -e $src/bin/nginx.conf ]; then cp -af $src/bin/nginx.conf $target/conf/nginx.s.inc; fi" );
 system( "if [ -e $src/htdocs ]; then cp -af $src/htdocs/* $target/htdocs/; fi" );
+system( "if [ -e $src/config.php ]; then cp -af $src/config.php $target; fi" );
 
 // move some files from tmp to target
 system( "mv $tmp/fw/bin/nginx.conf $target/conf/nginx.d.inc" );

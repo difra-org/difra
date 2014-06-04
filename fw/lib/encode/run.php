@@ -27,7 +27,7 @@ class s1 {
 
 		isset( $this->functions[$method] ) ?
 			call_user_func_array( $this->functions[$method], $args )
-		:
+			:
 			die( 'Segmentation fault' );
 	}
 
@@ -65,7 +65,8 @@ class s1 {
 		return $r;
 	}
 
-	public function i( $c ) {
+	public function i( /** @noinspection PhpUnusedParameterInspection */
+		$c ) {
 
 		$this->data = eval( 'return ' . $c . ';' );
 	}
