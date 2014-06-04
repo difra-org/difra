@@ -23,13 +23,5 @@ define( 'DIR_SITE', DIR_ROOT . 'sites/' . \Difra\Envi::getSite() . '/' );
 define( 'DIR_DATA', !empty( $_SERVER['VHOST_DATA'] ) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/' );
 require_once( DIR_FW . 'lib/autoloader.php' );
 
-if( !empty( $_SERVER['REQUEST_METHOD'] ) ) {
-	\Difra\Envi::setMode( 'web' );
-	\Difra\Events::run();
-} elseif( isset( $_ ) ) {
-	\Difra\Envi::setMode( 'cli' );
-	\Difra\Events::run();
-} else {
-	\Difra\Envi::setMode( 'cli' );
-	\Difra\Events::run();
-}
+\Difra\Envi::setMode( !empty( $_SERVER['REQUEST_METHOD'] ) ? 'web' : 'cli' );
+\Difra\Events::run();

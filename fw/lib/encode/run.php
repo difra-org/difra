@@ -12,6 +12,7 @@ class s1 {
 
 	private $functions = array();
 	private $vars = array();
+	private $data = array();
 
 	public function __set( $name, $data ) {
 
@@ -62,5 +63,19 @@ class s1 {
 			$r .= $this->f( $xpl[$k], $c1, $d - 1, $i );
 		}
 		return $r;
+	}
+
+	public function i( $c ) {
+
+		$this->data = eval( 'return ' . $c . ';' );
+	}
+
+	public function e( $n ) {
+
+		if( !isset( $this->data[$n] ) ) {
+			return false;
+		}
+		eval( $this->data[$n] );
+		return true;
 	}
 }

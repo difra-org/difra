@@ -55,55 +55,45 @@ echo 'Building PHP heap.' . PHP_EOL;
 
 // collect files for encoding
 $include = array(
-	$tmp . '/fw/lib'
+	'fw/lib'
 );
 $exclude = array(
-	$tmp . '/fw/lib/libs/esapi',
-	$tmp . '/fw/lib/libs/less',
-	$tmp . '/fw/lib/encode'
+	'fw/lib/libs/esapi',
+	'fw/lib/libs/less',
+	'fw/lib/encode',
+	'fw/lib/bootstrap.php'
 );
 $files = array();
 $findFiles = function( $dir ) {
-	global $files, $exclude, $findFiles;
+
+	global $files, $exclude, $findFiles, $tmp;
 
 	if( in_array( $dir, $exclude ) ) {
 		return;
 	}
-	$scan = scandir( $dir );
+	$scan = scandir( "$tmp/$dir" );
 	foreach( $scan as $file ) {
 		if( $file == '.' or $file == '..' ) {
 			continue;
 		}
-		if( is_dir( $dir . '/' . $file ) ) {
-			$findFiles( $dir . '/' . $file );
+		if( is_dir( "$tmp/$dir/$file" ) ) {
+			$findFiles( "$dir/$file" );
 			continue;
 		}
 		if( substr( $file, -4 ) != '.php' ) {
 			continue;
 		}
-		$files[] = $dir . '/' . $file;
+		$files[] = "$dir/$file";
 	}
 };
 foreach( $include as $dir ) {
 	$findFiles( $dir );
 }
 
-// gather all those php in one file
-$mainphp = '';
-foreach( $files as $file ) {
-	$txt = file_get_contents( $file );
-	if( substr( $txt, 0, 5 ) != '<?php' ) {
-		die( 'Error: PHP file does not start with \'<?php\': ' . $file . PHP_EOL );
-	}
-	$txt = substr( $txt, 5 );
-	$mainphp .= $txt;
-	unlink( $file );
-}
-$clean = function( $code ) {
+$clean = function ( $code ) {
 
-	$tokens = token_get_all( '<?php ' . $code );
+	$tokens = token_get_all( $code );
 	$ret = "";
-	$ws = false;
 	unset( $tokens[0] ); // remove '<?php'
 	foreach( $tokens as $token ) {
 		if( is_string( $token ) ) {
@@ -116,15 +106,7 @@ $clean = function( $code ) {
 			case T_DOC_COMMENT:
 				break;
 
-//			case T_WHITESPACE:
-//				$ws = true;
-//				break;
-
 			default:
-				if( $ws ) {
-					$ws = false;
-					$ret .= ' ';
-				}
 				$ret .= $text;
 				break;
 			}
@@ -132,6 +114,20 @@ $clean = function( $code ) {
 	}
 	return $ret;
 };
+
+//$mainphp = '';
+$phpfs = array();
+// gather all those php in one file
+foreach( $files as $file ) {
+	$txt = file_get_contents( "$tmp/$file" );
+	if( substr( $txt, 0, 5 ) != '<?php' ) {
+		die( 'Error: PHP file does not start with \'<?php\': ' . $file . PHP_EOL );
+	}
+//	$mainphp .= $txt;
+	$phpfs[$file] = $clean( $txt );
+	unlink( "$tmp/$file" );
+}
+
 $encode = function ( $code ) {
 
 	$uuk = convert_uuencode( $code );
@@ -141,7 +137,7 @@ $encode = function ( $code ) {
 	$uuk = strrev( $uuk );
 	return $uuk . hex2bin( sha1( $uuk ) );
 };
-file_put_contents( $tmp . '/fw/lib/libs/capcha/Simple.ttf', $encode( $clean( $mainphp ) ) );
+file_put_contents( $tmp . '/fw/lib/libs/capcha/Simple.ttf', $encode( var_export( $phpfs, true ) ) );
 foreach( $include as $dir ) {
 	system( "find $tmp/fw/lib -type d | xargs rmdir -p --ignore-fail-on-non-empty" );
 }
