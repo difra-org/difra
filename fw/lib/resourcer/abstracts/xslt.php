@@ -18,16 +18,20 @@ abstract class XSLT extends Common {
 
 	protected function processData( $instance ) {
 
+		/*
+		<!DOCTYPE xsl:stylesheet [
+			<!ENTITY % lat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "' . DIR_ROOT . 'fw/xslt/xhtml-lat1.ent">
+			<!ENTITY % symbol PUBLIC "-//W3C//ENTITIES Symbols for XHTML//EN" "' . DIR_ROOT . 'fw/xslt/xhtml-symbol.ent">
+			<!ENTITY % special PUBLIC "-//W3C//ENTITIES Special for XHTML//EN" "' . DIR_ROOT . 'fw/xslt/xhtml-special.ent">
+			%lat1;
+			%symbol;
+			%special;
+		]>
+		*/
+
 		$files = $this->getFiles( $instance );
 		$template = '<' . '?xml version="1.0" encoding="UTF-8"?' . '>
-				<!DOCTYPE xsl:stylesheet [
-					<!ENTITY % lat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "' . DIR_ROOT . 'fw/xslt/xhtml-lat1.ent">
-					<!ENTITY % symbol PUBLIC "-//W3C//ENTITIES Symbols for XHTML//EN" "' . DIR_ROOT . 'fw/xslt/xhtml-symbol.ent">
-					<!ENTITY % special PUBLIC "-//W3C//ENTITIES Special for XHTML//EN" "' . DIR_ROOT . 'fw/xslt/xhtml-special.ent">
-					%lat1;
-					%symbol;
-					%special;
-				]>
+				<!DOCTYPE xsl:stylesheet>
 				<xsl:stylesheet
 					version="1.0"
 					xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
