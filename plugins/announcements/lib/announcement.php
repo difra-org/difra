@@ -334,7 +334,8 @@ Class Announcement {
 			$where = " WHERE an.`visible`=1 AND an.`beginDate` <= NOW() AND an.`endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d 00:00:00')";
 		}
 		if( $archive ) {
-			$where = " WHERE an.`visible`=1 AND an.`beginDate`<=NOW() ";
+			//$where = " WHERE an.`visible`=1 AND an.`beginDate`<=NOW() ";
+			$where = " WHERE an.`visible`=1 ";
 		}
 
 
