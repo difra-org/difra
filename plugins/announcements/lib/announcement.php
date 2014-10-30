@@ -331,7 +331,7 @@ Class Announcement {
 		$db = \Difra\MySQL::getInstance();
 		$where = $groupJoin = $groupSelect = '';
 		if( $onlyVisible ) {
-			$where = " WHERE an.`visible`=1 AND an.`beginDate` <= NOW() AND an.`endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d 00:00:00')";
+			$where = " WHERE an.`visible`=1 AND an.`beginDate` <= NOW() AND an.`endDate` >= DATE_FORMAT(NOW(),'%Y-%m-%d')";
 		}
 		if( $archive ) {
 			$where = " WHERE an.`visible`=1 AND an.`beginDate`<=NOW() ";
@@ -344,8 +344,8 @@ Class Announcement {
 		}
 
 		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . ",
-				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`,
-				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d 00:00:00' ) as `curStamp`
+				IF(`fromEventDate`='0000-00-00', `eventDate`, `fromEventDate`) AS `sortDate`,
+				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d' ) as `curStamp`
 
                     		FROM `announcements` an
                     			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
@@ -455,8 +455,8 @@ Class Announcement {
 		}
 
 		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData` " . $groupSelect . ",
-				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`,
-				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d 00:00:00' ) as `curStamp`
+				IF(`fromEventDate`='0000-00-00', `eventDate`, `fromEventDate`) AS `sortDate`,
+				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d' ) as `curStamp`
                     		FROM `announcements` an
                     			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
                     			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
@@ -581,8 +581,8 @@ Class Announcement {
 		$eventsArray = null;
 
 		$query = "SELECT an.*, u.`email`, uf.`value` AS `nickname`, aloc.`locationData`,
-				IF(`fromEventDate`='0000-00-00 00:00:00', `eventDate`, `fromEventDate`) AS `sortDate`,
-				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d 00:00:00' ) as `curStamp`
+				IF(`fromEventDate`='0000-00-00', `eventDate`, `fromEventDate`) AS `sortDate`,
+				DATE_FORMAT( CURRENT_TIMESTAMP, '%Y-%m-%d' ) as `curStamp`
                     		FROM `announcements` an
                     			LEFT JOIN `users` AS `u` ON u.`id`=an.`user`
                     			LEFT JOIN `users_fields` AS `uf` ON uf.`id`=an.`user` AND uf.`name`='nickname'
@@ -646,7 +646,7 @@ Class Announcement {
 		$eventNode->appendChild( $node->ownerDocument->createElement( 'status', $this->getStatus() ) );
 
 		if( !is_null( $this->fromEventDate ) && $this->fromEventDate != ''
-			&& $this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != 'null'
+			&& $this->fromEventDate != '0000-00-00' && $this->fromEventDate != 'null'
 		) {
 
 			$fromEventDate = $Locale->getDateFromMysql( $this->fromEventDate . ' 00:00:00' );
@@ -797,7 +797,7 @@ Class Announcement {
 	public function getEventPeriodDays() {
 
 		if( !is_null( $this->fromEventDate ) && $this->fromEventDate != '' &&
-			$this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != 'null'
+			$this->fromEventDate != '0000-00-00' && $this->fromEventDate != 'null'
 		) {
 
 			$nowDate = new \DateTime( date( 'Y-m-d' ) );
@@ -906,7 +906,7 @@ Class Announcement {
 			$title .= $this->locationData['name'] . '. ';
 		}
 
-		if( $this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
+		if( $this->fromEventDate != '0000-00-00' && $this->fromEventDate != '' && $this->fromEventDate != $this->eventDate ) {
 
 			$tempDateFrom = date( 'd|m', strtotime( $this->fromEventDate ) );
 			$tempDateEvent = date( 'd|m', strtotime( $this->eventDate ) );
@@ -957,7 +957,7 @@ Class Announcement {
 
 		$title = '';
 		$Locale = \Difra\Locales::getInstance();
-		if( $this->fromEventDate != '' && $this->fromEventDate != '0000-00-00 00:00:00' && $this->fromEventDate != $this->eventDate ) {
+		if( $this->fromEventDate != '' && $this->fromEventDate != '0000-00-00' && $this->fromEventDate != $this->eventDate ) {
 
 			$fromEventDate = date( 'd|m', strtotime( $this->fromEventDate ) );
 			$exFromEventDate = explode( '|', $fromEventDate );
@@ -1012,7 +1012,7 @@ Class Announcement {
 
 		//TODO: Переформатирование даты не с помощью date()!
 
-		if( !is_null( $this->fromEventDate ) && !is_null( $this->eventDate ) && $this->fromEventDate!='0000-00-00 00:00:00' ) {
+		if( !is_null( $this->fromEventDate ) && !is_null( $this->eventDate ) && $this->fromEventDate!='0000-00-00' ) {
 			$node->setAttribute( 'fromDate', date( 'c', strtotime( $this->fromEventDate ) ) );
 			$node->setAttribute( 'endDate', date( 'c', strtotime( $this->eventDate ) ) );
 		} else {
