@@ -9,8 +9,6 @@
 
 namespace Difra\Envi;
 
-use Difra\Envi, Difra\Debugger, Difra\View, Difra\Cache, Difra\Resourcer, Difra\Plugger;
-
 /**
  * Определение нужного контроллера и метода (экшена), запуск выполнения контроллера
  * Class Action
@@ -57,11 +55,11 @@ class Action {
 	public static function find() {
 
 		if( self::loadCache() ) {
-			Debugger::addLine( 'Cached controller ' . self::$controllerClass . ' from ' . self::$controllerFile );
+			\Difra\Debugger::addLine( 'Cached controller ' . self::$controllerClass . ' from ' . self::$controllerFile );
 			return;
 		}
 
-		$uri = trim( Envi::getUri(), '/' );
+		$uri = trim( \Difra\Envi::getUri(), '/' );
 		$parts = $uri ? explode( '/', $uri ) : array();
 
 		self::getResource( $parts );
@@ -69,7 +67,7 @@ class Action {
 		$controllerUriParts = $parts;
 		if( !self::$controllerFile = self::findController( $parts ) ) {
 			self::saveCache( '404' );
-			throw new View\Exception( 404 );
+			throw new \Difra\View\Exception( 404 );
 		}
 		self::$controllerUri = '/' . implode( '/', sizeof( $parts ) ? array_slice( $controllerUriParts, 0, -sizeof( $parts ) ) : $controllerUriParts );
 
@@ -83,18 +81,18 @@ class Action {
 		self::$parameters = $parts;
 
 		self::saveCache( 'action' );
-		Debugger::addLine( 'Selected controller ' . self::$controllerClass . ' from ' . self::$controllerFile );
+		\Difra\Debugger::addLine( 'Selected controller ' . self::$controllerClass . ' from ' . self::$controllerFile );
 	}
 
 	/**
 	 * Загрузка данных из кэша
 	 *
-	 * @throws View\Exception
+	 * @throws \Difra\View\Exception
 	 * @return bool
 	 */
 	private static function loadCache() {
 
-		if( !$data = Cache::getInstance()->get( self::getCacheKey() ) ) {
+		if( !$data = \Difra\Cache::getInstance()->get( self::getCacheKey() ) ) {
 			return false;
 		}
 		switch( $data['result'] ) {
@@ -106,7 +104,7 @@ class Action {
 			include_once( self::$controllerFile );
 			break;
 		case '404':
-			throw new View\Exception( 404 );
+			throw new \Difra\View\Exception( 404 );
 		}
 		return true;
 	}
@@ -140,7 +138,7 @@ class Action {
 			);
 		}
 
-		Cache::getInstance()->put( self::getCacheKey(), $match, 300 );
+		\Difra\Cache::getInstance()->put( self::getCacheKey(), $match, 300 );
 	}
 
 	/**
@@ -148,7 +146,7 @@ class Action {
 	 *
 	 * @param string[] $parts
 	 *
-	 * @throws View\Exception
+	 * @throws \Difra\View\Exception
 	 * @return bool
 	 */
 	private static function getResource( $parts ) {
@@ -156,16 +154,16 @@ class Action {
 		if( sizeof( $parts ) != 2 ) {
 			return false;
 		}
-		$resourcer = Resourcer::getInstance( $parts[0], true );
+		$resourcer = \Difra\Resourcer::getInstance( $parts[0], true );
 		if( $resourcer and $resourcer->isPrintable() ) {
 			try {
 				if( !$resourcer->view( $parts[1] ) ) {
-					throw new View\Exception( 404 );
+					throw new \Difra\View\Exception( 404 );
 				}
-				View::$rendered = true;
+				\Difra\View::$rendered = true;
 				die();
 			} catch( \Difra\Exception $ex ) {
-				throw new View\Exception( 404 );
+				throw new \Difra\View\Exception( 404 );
 			}
 		}
 		return false;
@@ -196,7 +194,7 @@ class Action {
 		if( !is_null( $controllerDirs ) ) {
 			return $controllerDirs;
 		}
-		$controllerDirs = Plugger::getPaths();
+		$controllerDirs = \Difra\Plugger::getPaths();
 		$controllerDirs = array_merge( array( DIR_SITE, DIR_ROOT, DIR_FW ), $controllerDirs );
 		foreach( $controllerDirs as $k => $v ) {
 			$controllerDirs[$k] = $v . 'controllers/';
@@ -209,7 +207,7 @@ class Action {
 	 */
 	private static function getCacheKey() {
 
-		return 'action:uri:' . Envi::getUri();
+		return 'action:uri:' . \Difra\Envi::getUri();
 	}
 
 	/**

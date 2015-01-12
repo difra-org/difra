@@ -9,8 +9,6 @@
 
 namespace Difra\Libs;
 
-use Difra\Envi\Session;
-
 /**
  * Class Capcha
  *
@@ -28,7 +26,7 @@ class Capcha {
 	 */
 	public function __construct() {
 
-		Session::start();
+		\Difra\Envi\Session::start();
 		$this->key = isset( $_SESSION['capcha_key'] ) ? $_SESSION['capcha_key'] : false;
 	}
 
@@ -185,7 +183,7 @@ class Capcha {
 
 		$this->key = $this->genKey( $this->keyLength );
 		$data = $this->mkCapcha( $this->sizeX, $this->sizeY, $this->key );
-		Session::start();
+		\Difra\Envi\Session::start();
 		$_SESSION['capcha_key'] = $this->key;
 		return $data;
 	}

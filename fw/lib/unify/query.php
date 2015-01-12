@@ -9,10 +9,6 @@
 
 namespace Difra\Unify;
 
-use Difra\Exception;
-use Difra\MySQL;
-use Difra\Unify;
-
 /**
  * Class Query
  *
@@ -44,7 +40,7 @@ class Query extends Paginator {
 	/**
 	 * Конструктор
 	 *
-	 * @param $objKey Имя объектов для запроса
+	 * @param string $objKey Имя объектов для запроса
 	 *
 	 * @throws \Difra\Exception
 	 */
@@ -53,7 +49,7 @@ class Query extends Paginator {
 		parent::__construct();
 		$this->objKey = $objKey;
 		if( !$class = Storage::getClass( $objKey ) ) {
-			throw new Exception( 'objKey \'' . $objKey . '\' does not exist.' );
+			throw new \Difra\Exception( 'objKey \'' . $objKey . '\' does not exist.' );
 		}
 		$this->order = $class::getDefaultOrder() ? (array)$class::getDefaultOrder() : null;
 		$this->orderDesc = $class::getDefaultOrderDesc() ? (array)$class::getDefaultOrderDesc() : null;
@@ -67,7 +63,7 @@ class Query extends Paginator {
 	public function doQuery() {
 
 //		try {
-		$db = MySQL::getInstance();
+		$db = \Difra\MySQL::getInstance();
 		$result = $db->fetch( $this->getQuery() );
 //		} catch( Exception $ex ) {
 //			return null;
@@ -79,7 +75,7 @@ class Query extends Paginator {
 			return null;
 		}
 		$res = array();
-		$class = Unify::getClass( $this->objKey );
+		$class = \Difra\Unify::getClass( $this->objKey );
 		foreach( $result as $newData ) {
 			/** @var Item $o */
 			$o = new $class;
@@ -103,7 +99,7 @@ class Query extends Paginator {
 
 		$q .= $this->getSelectKeys();
 		// TODO: JOIN keys (все джойны и т.п. надо выполнять в дочерних функциях, чтобы поддержать множественные джойны)
-		$class = Unify::getClass( $this->objKey );
+		$class = \Difra\Unify::getClass( $this->objKey );
 		/** @var $class Item */
 		$q .= " FROM `{$class::getTable()}`";
 		// TODO: ... LEFT JOIN ... ON ...
@@ -122,11 +118,11 @@ class Query extends Paginator {
 	 */
 	public function getSelectKeys() {
 
-		$db = MySQL::getInstance();
-		/** @var Unify $class */
-		$class = Unify::getClass( $this->objKey );
+		$db = \Difra\MySQL::getInstance();
+		/** @var \Difra\Unify $class */
+		$class = \Difra\Unify::getClass( $this->objKey );
 		if( !$class ) {
-			throw new Exception( "Can't query unknown object '{$this->objKey}'" );
+			throw new \Difra\Exception( "Can't query unknown object '{$this->objKey}'" );
 		}
 		$keys = $class::getKeys( $this->full );
 		$keys = $db->escape( $keys );
@@ -145,9 +141,9 @@ class Query extends Paginator {
 	 */
 	public function getWhere() {
 
-		$db = MySQL::getInstance();
-		/** @var Unify $class */
-		$class = Unify::getClass( $this->objKey );
+		$db = \Difra\MySQL::getInstance();
+		/** @var \Difra\Unify $class */
+		$class = \Difra\Unify::getClass( $this->objKey );
 		$conditions = !empty( $this->conditions ) ? $this->conditions : $class::getDefaultSearchConditions();
 		if( empty( $conditions ) ) {
 			return '';
@@ -173,9 +169,9 @@ class Query extends Paginator {
 		if( empty( $this->order ) ) {
 			return '';
 		}
-		/** @var Unify $class */
-		$class = Unify::getClass( $this->objKey );
-		$db = MySQL::getInstance();
+		/** @var \Difra\Unify $class */
+		$class = \Difra\Unify::getClass( $this->objKey );
+		$db = \Difra\MySQL::getInstance();
 		$table = $db->escape( $class::getTable() );
 		$ord = ' ORDER BY ';
 		$d = '';
@@ -234,7 +230,7 @@ class Query extends Paginator {
 	public function addConditions( $conditions ) {
 
 		if( !is_array( $conditions ) ) {
-			throw new Exception( 'Difra\Unify\Query->addConditions() accepts only array as parameter.' );
+			throw new \Difra\Exception( 'Difra\Unify\Query->addConditions() accepts only array as parameter.' );
 		}
 		if( empty( $conditions ) ) {
 			return;
@@ -289,7 +285,7 @@ class Query extends Paginator {
 		} elseif( $query instanceof Query ) {
 			$this->with[] = $query;
 		} else {
-			throw new Exception( "Expected string or Unify\\Query as a parameter" );
+			throw new \Difra\Exception( "Expected string or Unify\\Query as a parameter" );
 		}
 	}
 }

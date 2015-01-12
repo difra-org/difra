@@ -9,8 +9,6 @@
 
 namespace Difra;
 
-use Difra\Envi\Action;
-
 class Ajax {
 
 	public $isAjax = false;
@@ -234,11 +232,12 @@ class Ajax {
 	 *
 	 * @param array $action Ajaxer actions array.
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	private function addAction( $action ) {
 
 		$this->actions[] = $action;
+		return $this;
 	}
 
 	/**
@@ -255,12 +254,15 @@ class Ajax {
 	 * Clean ajax answer data
 	 *
 	 * @param bool $problem
+	 *
+	 * @return $this
 	 */
 	public function clean( $problem = false ) {
 
 		$this->actions = array();
 		$this->response = array();
 		$this->problem = $problem;
+		return $this;
 	}
 
 	/**
@@ -268,7 +270,7 @@ class Ajax {
 	 *
 	 * @param string $message Message text
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function notify( $message ) {
 
@@ -279,6 +281,7 @@ class Ajax {
 						  'close' => Locales::getInstance()->getXPath( 'notifications/close' )
 					  )
 				  ) );
+		return $this;
 	}
 
 	/**
@@ -286,7 +289,7 @@ class Ajax {
 	 *
 	 * @param string $message Error message text.
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function error( $message ) {
 
@@ -297,6 +300,7 @@ class Ajax {
 						  'close' => Locales::getInstance()->getXPath( 'notifications/close' )
 					  )
 				  ) );
+		return $this;
 	}
 
 	/**
@@ -305,7 +309,7 @@ class Ajax {
 	 *
 	 * @param string $name Form field name
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function required( $name ) {
 
@@ -314,6 +318,7 @@ class Ajax {
 					  'action' => 'require',
 					  'name' => $name
 				  ) );
+		return $this;
 	}
 
 	/**
@@ -321,13 +326,14 @@ class Ajax {
 	 *
 	 * @param string $name Form element name
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function invalid( $name ) {
 
 		$this->problem = true;
 		$action = array( 'action' => 'invalid', 'name' => $name );
 		$this->addAction( $action );
+		return $this;
 	}
 
 	/**
@@ -343,7 +349,7 @@ class Ajax {
 	 * @param string $message Message to display in .status element
 	 * @param string $class   Class name to add to element
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function status( $name, $message, $class ) {
 
@@ -353,6 +359,7 @@ class Ajax {
 					  'message' => $message,
 					  'classname' => $class
 				  ) );
+		return $this;
 	}
 
 	/**
@@ -360,7 +367,7 @@ class Ajax {
 	 *
 	 * @param string $url
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function redirect( $url ) {
 
@@ -368,26 +375,31 @@ class Ajax {
 					  'action' => 'redirect',
 					  'url' => $url
 				  ) );
+		return $this;
 	}
 
 	/**
 	 * Soft refresh current page
+	 *
+	 * @return $this
 	 */
 	public function refresh() {
 
 		$this->redirect( $_SERVER['HTTP_REFERER'] );
+		return $this;
 	}
 
 	/**
 	 * Reload current page
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function reload() {
 
 		$this->addAction( array(
 					  'action' => 'reload'
 				  ) );
+		return $this;
 	}
 
 	/**
@@ -395,7 +407,7 @@ class Ajax {
 	 *
 	 * @param string $html innerHTML content
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function display( $html ) {
 
@@ -403,6 +415,7 @@ class Ajax {
 					  'action' => 'display',
 					  'html' => $html
 				  ) );
+		return $this;
 	}
 
 	/**
@@ -411,7 +424,7 @@ class Ajax {
 	 * @param string $target jQuery element selector (e.g. '#targetId')
 	 * @param string $html   Content for innerHTML
 	 *
-	 * @return void
+	 * @return $this
 	 */
 	public function load( $target, $html ) {
 
@@ -420,32 +433,41 @@ class Ajax {
 					  'target' => $target,
 					  'html' => $html
 				  ) );
+		return $this;
 	}
 
 	/**
 	 * Close overlay
+	 *
+	 * @return $this
 	 */
 	public function close() {
 
 		$this->addAction( array(
 					  'action' => 'close'
 				  ) );
+		return $this;
 	}
 
 	/**
 	 * Clean form
+	 *
+	 * @return $this
 	 */
 	public function reset() {
 
 		$this->addAction( array(
 					  'action' => 'reset'
 				  ) );
+		return $this;
 	}
 
 	/**
 	 * Display confirmation window (Are you sure? [Yes] [No])
 	 *
 	 * @param $text
+	 *
+	 * @return $this
 	 */
 	public function confirm( $text ) {
 
@@ -461,10 +483,16 @@ class Ajax {
 											  ->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
 						  '</form>'
 				  ) );
+		return $this;
 	}
 
 	/**
+	 * Execute javascript code.
+	 * This is dangerous! Don't use it if there is another way.
+	 *
 	 * @param $script
+	 *
+	 * @return $this
 	 */
 	public function exec( $script ) {
 
@@ -472,6 +500,7 @@ class Ajax {
 					  'action' => 'exec',
 					  'script' => $script
 				  ) );
+		return $this;
 	}
 }
 

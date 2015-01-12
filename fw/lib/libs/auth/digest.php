@@ -9,9 +9,6 @@
 
 namespace Difra\Libs\Auth;
 
-use Difra\Envi\Session;
-use Difra\View\Exception;
-
 /**
  * Class Digest
  * Поддержка Digest-аутентификации
@@ -44,7 +41,7 @@ class Digest {
 		header( 'WWW-Authenticate: Digest realm="' . $this->realm . '",qop="auth",nonce="' . $this->getNonce( true ) . '",opaque="' . md5( $this->realm ) . '"' .
 			( $this->stale ? ',stale=TRUE' : '' ) );
 
-		throw new Exception( 401 );
+		throw new \Difra\View\Exception( 401 );
 	}
 
 	public function verify() {
@@ -88,7 +85,7 @@ class Digest {
 
 	private function getNonce( $regen = false ) {
 
-		Session::start();
+		\Difra\Envi\Session::start();
 		if( $regen ) {
 			$key = '';
 			for( $i = 0; $i < 16; $i++ ) {
@@ -102,7 +99,7 @@ class Digest {
 
 	private function checkNC( $nc ) {
 
-		Session::start();
+		\Difra\Envi\Session::start();
 		if( !isset( $_SESSION['digest_nc'] ) or $_SESSION['digest_nc'] >= $nc ) {
 			return false;
 		}

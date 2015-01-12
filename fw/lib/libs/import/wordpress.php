@@ -7,11 +7,10 @@
  * @license   http://ajamstudio.com/difra/license
  */
 
+/**
+ * @deprecated
+ */
 namespace Difra\Libs\Import;
-
-use Difra\Exception;
-use Difra\Libs\Objects\Blog;
-use Difra\Libs\Objects\Post;
 
 class Wordpress {
 
@@ -40,7 +39,7 @@ class Wordpress {
 	 */
 	public static function import( &$xml ) {
 
-		$blog = new Blog();
+		$blog = new \Difra\Libs\Objects\Blog();
 		if( !$rss = $xml->documentElement ) {
 			throw new \Difra\Exception( 'Wordpress data is not XML' );
 		}
@@ -89,7 +88,7 @@ class Wordpress {
 	 */
 	public static function importPost( &$blog, &$item ) {
 
-		$post = new Post();
+		$post = new \Difra\Libs\Objects\Post();
 		/** @var \DOMElement $key */
 		foreach( $item->childNodes as $key ) {
 			if( $key->nodeType == XML_TEXT_NODE and !trim( $key->nodeValue ) ) {
@@ -124,12 +123,12 @@ class Wordpress {
 				break;
 			case 'wp:post_parent': // 0
 				if( $value ) {
-					throw new Exception( 'wp:post_parent is not zero, i don\'t know how to handle that!' );
+					throw new \Difra\Exception( 'wp:post_parent is not zero, i don\'t know how to handle that!' );
 				}
 				break;
 			case 'description': // 0
 				if( $value ) {
-					throw new Exception( 'post description is not empty, i don\'t know how to handle that!' );
+					throw new \Difra\Exception( 'post description is not empty, i don\'t know how to handle that!' );
 				}
 				break;
 			case 'wp:comment':
@@ -148,7 +147,7 @@ class Wordpress {
 						$subValue = $subNode->childNodes->item( 0 )->nodeValue;
 						break;
 					default:
-						throw new Exception( "Unknown field in wp:postmeta: '" . $subNode->nodeName . "'" );
+						throw new \Difra\Exception( "Unknown field in wp:postmeta: '" . $subNode->nodeName . "'" );
 					}
 				}
 				if( !$subKey or !$subValue ) {

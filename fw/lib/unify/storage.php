@@ -9,8 +9,6 @@
 
 namespace Difra\Unify;
 
-use Difra\Exception;
-
 /**
  * Class Storage
  *
@@ -60,13 +58,13 @@ abstract class Storage {
 	 * @param mixed  $primary Значение primary-поля (например, id)
 	 *
 	 * @return static
-	 * @throws Exception
+	 * @throws \Difra\Exception
 	 */
 	final public static function getObj( $objKey, $primary ) {
 
 		$class = self::getClass( $objKey );
 		if( !$class ) {
-			throw new Exception( "Can't find class for object '{$objKey}''" );
+			throw new \Difra\Exception( "Can't find class for object '{$objKey}''" );
 		}
 		return $class::get( $primary );
 	}
@@ -83,7 +81,7 @@ abstract class Storage {
 
 		$class = self::getClass( $objKey );
 		if( !$class ) {
-			throw new Exception( "Can't find class for object '{$objKey}''" );
+			throw new \Difra\Exception( "Can't find class for object '{$objKey}''" );
 		}
 		return $class::create();
 	}

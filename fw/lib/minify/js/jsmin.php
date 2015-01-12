@@ -10,8 +10,6 @@
 
 namespace Difra\Minify\JS;
 
-use Difra;
-
 class JSMin {
 
 	const ACTION_KEEP_A = 1;
@@ -349,6 +347,6 @@ class JSMin {
 	}
 }
 
-class JSMinException extends Difra\Exception {
+class JSMinException extends \Difra\Exception {
 
 }

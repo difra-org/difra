@@ -9,8 +9,6 @@
 
 namespace Difra\Libs;
 
-use Difra\Debugger;
-
 include_once( DIR_FW . 'lib/libs/less/lessc.inc.php' );
 
 class Less {
@@ -20,7 +18,7 @@ class Less {
 		static $less = null;
 		if( !$less ) {
 			$less = new \lessc;
-			if( !Debugger::isEnabled() ) {
+			if( !\Difra\Debugger::isEnabled() ) {
 				$less->setFormatter( 'compressed' );
 				$less->setPreserveComments( false );
 			} else {

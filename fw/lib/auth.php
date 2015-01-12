@@ -9,8 +9,6 @@
 
 namespace Difra;
 
-use Difra\Envi\Session;
-
 /**
  * Адаптер для аутентификации
  * Сохраняет информацию об авторизации в сессиях, производит логин и логаут пользователя
@@ -111,7 +109,7 @@ class Auth {
 	 */
 	private function save() {
 
-		Session::start();
+		\Difra\Envi\Session::start();
 		if( $this->logged ) {
 			$_SESSION['auth'] = array(
 				'id' => $this->id,

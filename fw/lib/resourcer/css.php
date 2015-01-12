@@ -9,8 +9,6 @@
 
 namespace Difra\Resourcer;
 
-use Difra\Libs\Less;
-
 /**
  * Class CSS
  *
@@ -24,6 +22,6 @@ class CSS extends Abstracts\Plain {
 
 	public function processText( $text ) {
 
-		return Less::compile( $text );
+		return \Difra\Libs\Less::compile( $text );
 	}
 }

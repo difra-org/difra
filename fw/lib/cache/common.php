@@ -9,8 +9,6 @@
 
 namespace Difra\Cache;
 
-use Difra;
-
 /**
  * Абстрактный класс для реализаций кэширования
  * Class Common
@@ -74,7 +72,7 @@ abstract class Common {
 	public function __construct() {
 
 		if( !method_exists( $this, 'isAvailable' ) or !$this::isAvailable() ) {
-			throw new Difra\Exception( __CLASS__ . ' requested, but that cache is not available!' );
+			throw new \Difra\Exception( __CLASS__ . ' requested, but that cache is not available!' );
 		}
 	}
 
@@ -87,7 +85,7 @@ abstract class Common {
 	 */
 	public function get( $key ) {
 
-		$data = $this->realGet( Difra\Envi::getSite() . '_' . $key );
+		$data = $this->realGet( \Difra\Envi::getSite() . '_' . $key );
 		if( !$data or !isset( $data['expires'] ) or $data['expires'] < time() ) {
 			return null;
 		}
@@ -107,7 +105,7 @@ abstract class Common {
 			'expires' => time() + $ttl,
 			'data' => $data
 		);
-		$this->realPut( Difra\Envi::getSite() . '_' . $key, $data, $ttl );
+		$this->realPut( \Difra\Envi::getSite() . '_' . $key, $data, $ttl );
 	}
 
 	/**
@@ -117,7 +115,7 @@ abstract class Common {
 	 */
 	public function remove( $key ) {
 
-		$this->realRemove( Difra\Envi::getSite() . '_' . $key );
+		$this->realRemove( \Difra\Envi::getSite() . '_' . $key );
 	}
 
 	/**

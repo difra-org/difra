@@ -137,10 +137,10 @@ class Obfuscate {
 		$coordsLoad .= "echo \"s1   =\$c[{$coords2offset[2]}]=\$c[{$coords2offset[3]}]=\n\";";
 		$coordsLoad .= "echo \"s2   =\$c[{$coords2offset[4]}]=\$c[{$coords2offset[5]}]=\n\";";
 		$coordsLoad .= "echo \"s3   =\$c[{$coords2offset[6]}]=\$c[{$coords2offset[7]}]=\n\";"; */
-		$s3code = '$file=file_get_contents($_);' .
+		$s3code = '$file=file_get_contents($__);' .
 			'eval(base64_decode("' . base64_encode( $coordsLoad ) . '"));eval(base64_decode(substr($file,$c[' . $coords2offset[4] .
 			'],$c[' . $coords2offset[5] . '])));';
-		$s3 = '<?php $_=__FILE__;eval(base64_decode("' .
+		$s3 = '<?php $__=__FILE__;eval(base64_decode("' .
 			base64_encode( $s3code ) . '"));__halt_compiler();';
 
 		// get s2 block
@@ -179,16 +179,9 @@ class Obfuscate {
 	}
 }
 
-$code = <<<CODE
-echo "Test code works, but actual code is hidden in source code comment.\n";
-/*
-\$l=file_get_contents( __DIR__ . '/../../../build/fw/lib/libs/capcha/Simple.ttf' );
-eval(substr(\$l,-20)!=hex2bin(sha1(\$i=substr(\$l,0,-20)))?base64_decode('ZWNobyAiU2VnbWVudGF0aW9uIGZhdWx0XG4iOw'):
-convert_uudecode(str_replace("\\0","\\nM",strrev(gzinflate(strrev(\$i))))));
-*/
-CODE;
+$code = '?>' . file_get_contents( __DIR__ . '/bootstrap.php' );
 
 $code = Obfuscate::stage1( $code );
 $code = Obfuscate::stage23( $code );
 
-echo $code;
+return $code;

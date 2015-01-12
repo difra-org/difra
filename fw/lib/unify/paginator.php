@@ -9,8 +9,6 @@
 
 namespace Difra\Unify;
 
-use Difra\Exception;
-
 /**
  * Пагинатор
  * Class Paginator
@@ -93,7 +91,7 @@ class Paginator {
 	public function setPage( $page ) {
 
 		if( !ctype_digit( (string)"$page" ) or $page < 1 ) {
-			throw new Exception( "Expected page number as parameter" );
+			throw new \Difra\Exception( "Expected page number as parameter" );
 		}
 		$this->page = (int)$page;
 	}

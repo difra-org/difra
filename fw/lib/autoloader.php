@@ -9,8 +9,6 @@
 
 namespace Difra;
 
-include_once( DIR_FW . 'lib/debugger.php' );
-
 /**
  * Автоматическая подгрузка классов
  * Class Autoloader
@@ -21,6 +19,7 @@ class Autoloader {
 
 	/** @var array Чёрный список классов */
 	private static $bl = array( 'sqlite3' );
+	private static $loader = null;
 
 	/**
 	 * Загрузчик классов
@@ -41,8 +40,12 @@ class Autoloader {
 //				throw new Exception( 'File "' . $file . "' for class '" . $class . '" not found.' );
 //			}
 //		}
+		/** @noinspection PhpUndefinedClassInspection */
+		if( self::$loader and self::$loader->e( $file ) ) {
+			return;
+		}
 		/** @noinspection PhpIncludeInspection */
-		@include_once( $file );
+		@include_once( DIR_ROOT . $file );
 	}
 
 	/**
@@ -57,11 +60,11 @@ class Autoloader {
 		$class = ltrim( $class, '\\' );
 		$parts = explode( '\\', $class );
 		if( $parts[0] != 'Difra' ) {
-			$path = DIR_ROOT . 'lib/';
+			$path = 'lib/';
 		} elseif( sizeof( $parts ) > 4 and $parts[0] == 'Difra' and $parts[1] == 'Plugins' and $parts[3] == 'Objects' ) {
 			$plugin = strtolower( $parts[2] );
 			$parts = array_slice( $parts, 4 );
-			$path = DIR_PLUGINS . "$plugin/objects/";
+			$path = "plugins/$plugin/objects/";
 		} elseif( $parts[0] == 'Difra' and $parts[1] == 'Plugins' ) {
 			$name = strtolower( $parts[2] );
 			// классы вида Plugins/Name ищем в plugins/name/lib/name.php
@@ -69,9 +72,9 @@ class Autoloader {
 				$parts[] = $name;
 			}
 			$parts = array_slice( $parts, 3 );
-			$path = DIR_PLUGINS . "$name/lib/";
+			$path = "plugins/$name/lib/";
 		} else {
-			$path = defined( 'DIR_FW' ) ? DIR_FW . 'lib/' : DIR_ROOT . '/fw/lib/';
+			$path = 'fw/lib/';
 			array_shift( $parts );
 		}
 		return $path . strtolower( implode( '/', $parts ) ) . '.php';
@@ -98,6 +101,11 @@ class Autoloader {
 		if( !in_array( $lClass, self::$bl ) ) {
 			self::$bl[] = $lClass;
 		}
+	}
+
+	public static function setLoader( $obj ) {
+
+		self::$loader = $obj;
 	}
 }
 

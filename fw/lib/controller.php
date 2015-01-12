@@ -17,11 +17,11 @@ namespace Difra;
  */
 class Controller {
 
-	/** @var \Difra\Locales */
+	/** @deprecated */
 	public $locale;
-	/** @var \Difra\Ajax */
+	/** @deprecated */
 	public $ajax;
-	/** @var \Difra\Auth */
+	/** @deprecated */
 	protected $auth;
 
 	/** @var bool */

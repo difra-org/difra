@@ -9,8 +9,6 @@
 
 namespace Difra\Envi;
 
-use Difra\Envi;
-
 /**
  * Class Session
  *
@@ -54,7 +52,7 @@ class Session {
 
 		if( !isset( $_SESSION ) and isset( $_COOKIE[ini_get( 'session.name' )] ) ) {
 			session_start();
-			if( !isset( $_SESSION['dhost'] ) or $_SESSION['dhost'] != Envi::getHost( true ) ) {
+			if( !isset( $_SESSION['dhost'] ) or $_SESSION['dhost'] != \Difra\Envi::getHost( true ) ) {
 				$_SESSION = array();
 			}
 		}
@@ -67,7 +65,7 @@ class Session {
 		if( !isset( $_SESSION ) ) {
 			session_start();
 			$_SESSION = array();
-			$_SESSION['dhost'] = Envi::getHost( true );
+			$_SESSION['dhost'] = \Difra\Envi::getHost( true );
 		}
 	}
 
@@ -75,7 +73,7 @@ class Session {
 	private static function save() {
 
 		if( !empty( $_SESSION ) and empty( $_SESSION['dhost'] ) ) {
-			$_SESSION['dhost'] = Envi::getHost( true );
+			$_SESSION['dhost'] = \Difra\Envi::getHost( true );
 		}
 	}
 }
