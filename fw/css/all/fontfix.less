@@ -1,10 +1,17 @@
-body {
+/*
+This fix is for smooth web fonts in some windows browsers. It screwed fonts for some other os/browser pairs.
+If problem appears again, it should be fixed for explicit os/browser like:
 
-	/*
-	// фикс для того, чтобы винда нормально рендерила веб-шрифты
+.Windows.IE.v8 body,
+.Linux.Firefox.v24 body {
+	...
+}
+
+Original fix:
+body {
 	-webkit-font-smoothing: subpixel-antialiased !important;
 	-webkit-backface-visibility: hidden;
 	//-moz-backface-visibility: hidden;
 	-ms-backface-visibility: hidden;
-	*/
 }
+*/

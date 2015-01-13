@@ -1,12 +1,5 @@
 <?php
 
-/**
- * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
- *
- * @copyright © A-Jam Studio
- * @license   http://ajamstudio.com/difra/license
- */
-
 // Значение 1 значит, что ключевое слово будет преобразовано в верхний регистр, 0 — в нижний регистр
 
 return array(

@@ -1,11 +1,4 @@
 /**
- * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
- *
- * @copyright © A-Jam Studio
- * @license   http://ajamstudio.com/difra/license
- */
-
-/**
  * Переключает страницы с помощью ajax.
  * В исходной и конечной странице должны присутствовать контейнеры .switcher,
  * которые данный скрипт заменяет при переключении.

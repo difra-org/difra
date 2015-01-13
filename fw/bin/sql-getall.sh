@@ -1,12 +1,5 @@
 #!/bin/bash
 
-#
-# This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
-#
-# Copyright © A-Jam Studio
-# License: http://ajamstudio.com/difra/license
-#
-
 BASEPATH=`dirname $0`/../..
 PLUGINS=$BASEPATH/plugins
 

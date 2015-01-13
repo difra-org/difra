@@ -1,11 +1,4 @@
 /**
- * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
- *
- * @copyright © A-Jam Studio
- * @license   http://ajamstudio.com/difra/license
- */
-
-/**
  * Sends ajax-requests and processes results.
  *
  * Adds events:

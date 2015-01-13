@@ -1,12 +1,6 @@
 <?php
 
-/**
- * This file can be freely used, distributed or modified, completely or partially, without written permission by copyright holder.
- *
- * @copyright © A-Jam Studio
- * @license   http://ajamstudio.com/difra/license
- *            Based on jsmin.php - PHP implementation of Douglas Crockford's JSMin.c.
- */
+/** Based on jsmin.php - PHP implementation of Douglas Crockford's JSMin.c */
 
 namespace Difra\Minify\JS;
 
