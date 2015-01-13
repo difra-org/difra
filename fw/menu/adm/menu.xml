@@ -7,10 +7,9 @@
 	<users href="" priority="40"/>
 	<settings href="" priority="30"/>
 	<development href="" priority="20" sup="1">
-	<config/>
+		<config/>
 		<plugins/>
 		<locales/>
-		<typograph/>
 	</development>
 	<!--
 	Todo: needs styles

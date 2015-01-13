@@ -172,69 +172,59 @@ class Typographer {
 		$this->text = str_ireplace( $before, $after, $this->text );
 	}
 
-	private function replaceAfter() {
+	/**
+	 * Обрабатывает все варианты пробелов
+	 */
+	private function spaces() {
 
-		// Замена +- около чисел
-		$this->text = preg_replace( '/(?<=^| |\>|&nbsp;|&#160;)\+-(?=\d)/', $this->plusmn, $this->text );
+		$this->text = str_replace("\r", '', $this->text);
 
-		// Замена 3 точек на троеточие
-		$this->text = preg_replace( '/(^|[^.])\.{3}([^.]|$)/', '$1' . $this->hellip . '$2', $this->text );
+		if($this->delTab) {
+			$this->text = str_replace("\t", '', $this->text);
+		} elseif($this->replaceTab) {
+			$this->text = str_replace("\t", ' ', $this->text);
+		}
 
-		// Градусы Цельсия
-		$this->text = preg_replace( '/(\d+)( |\&\#160;|\&nbsp;)?(C|F)([\W \.,:\!\?"\]\)]|$)/',
-					    '$1' .
-					    $this->space . $this->deg . '$3$4',
-					    $this->text );
+		$this->text = trim($this->text);
 
-		// XXXX г.
-		$this->text = preg_replace( '/(^|\D)(\d{4})г( |\.|$)/', '$1$2' . $this->space . 'г$3', $this->text );
+		$this->text = str_replace('&nbsp;', ' ', $this->text);
+		$this->text = str_replace('&#160;', ' ', $this->text);
 
-		$m = '(км|м|дм|см|мм)';
-		// Кв. км м дм см мм
-		$this->text = preg_replace( '/(^|\D)(\d+)( |\&\#160;|\&nbsp;)?' . $m . '2(\D|$)/',
-					    '$1$2' .
-					    $this->space . '$4' . $this->sup2 . '$5',
-					    $this->text );
+		if($this->delRepeatSpace) {
+			$this->text = preg_replace('/ {2,}/', ' ', $this->text);
+			$this->text = preg_replace("/\n {1,}/m", "\n", $this->text);
+			$this->text = preg_replace("/\n{3,}/m", "\n\n", $this->text);
+		}
 
-		// Куб. км м дм см мм
-		$this->text = preg_replace( '/(^|\D)(\d+)( |\&\#160;|\&nbsp;)?' . $m . '3(\D|$)/',
-					    '$1$2' .
-					    $this->space . '$4' . $this->sup3 . '$5',
-					    $this->text );
+		if($this->delSpaceBeforePunctuation) {
+			$before = array('!', ';', ',', '?', '.', ')',);
+			$after = array();
+			foreach($before as $i) {
+				$after[] = '/ \\' . $i . '/';
+			}
+			$this->text = preg_replace($after, $before, $this->text);
+			$this->text = preg_replace('/\( /', '(', $this->text);
+		}
 
-		if( $this->doMacros ) {
-			// ГРАД(n)
-			$this->text = preg_replace( '/ГРАД\(([\d\.,]+?)\)/', '$1' . $this->deg, $this->text );
+		if($this->spaceBeforeParticles) {
+			$this->text = preg_replace('/ (ли|ль|же|ж|бы|б)(?![а-яА-Я])/', $this->space . '$1', $this->text);
+		}
 
-			// ДЮЙМ(n)
-			$this->text = preg_replace( '/ДЮЙМ\(([\d\.,]+?)\)/', '$1' . $this->Prime, $this->text );
+		if($this->spaceAfterShortWord and $this->lengthShortWord > 0) {
+			$this->text = preg_replace('/( [а-яА-Я\w]{1,' . $this->lengthShortWord . '}) /', '$1' . $this->space, $this->text);
+		}
 
-			// Замена икса в числах на знак умножения
-			$this->text = preg_replace( '/(?<=\d) ?x ?(?=\d)/', $this->times, $this->text );
+		if($this->spaceBeforeLastWord and $this->lengthLastWord > 0) {
+			$this->text = preg_replace('/ ([а-яА-Я\w]{1,' . $this->lengthLastWord . '})(?=\.|\?|:|\!|,)/', $this->space . '$1', $this->text);
+		}
 
-			// Знак евро
-			$this->text = str_replace( 'ЕВРО()', $this->euro, $this->text );
+		if($this->spaceAfterNum) {
+			$this->text = preg_replace('/(№|&#8470;)(?=\d)/', $this->number . $this->space, $this->text);
+			$this->text = preg_replace('/(§|&#167;|&sect;)(?=\d)/', $this->sect . $this->space, $this->text);
+		}
 
-			// Знак фунта
-			$this->text = str_replace( 'ФУНТ()', $this->pound, $this->text );
-
-			// Знак цента
-			$this->text = str_replace( 'ЦЕНТ()', $this->cent, $this->text );
-
-			// Стрелка вверх
-			$this->text = str_replace( 'СТРВ()', $this->uarr, $this->text );
-
-			// Стрелка вниз
-			$this->text = str_replace( 'СТРН()', $this->darr, $this->text );
-
-			// Стрелка влево
-			$this->text = str_replace( 'СТРЛ()', $this->larr, $this->text );
-
-			// Стрелка вправо
-			$this->text = str_replace( 'СТРП()', $this->rarr, $this->text );
-
-			// Стрелка ввод
-			$this->text = str_replace( 'ВВОД()', $this->crarr, $this->text );
+		if($this->delSpaceBeforeProcent) {
+			$this->text = preg_replace('/( |&nbsp;|&#160;)%/', '%', $this->text);
 		}
 	}
 
@@ -337,62 +327,6 @@ class Typographer {
 	}
 
 	/**
-	 * Обрабатывает все варианты пробелов
-	 */
-	private function spaces() {
-
-		$this->text = str_replace( "\r", '', $this->text );
-
-		if( $this->delTab ) {
-			$this->text = str_replace( "\t", '', $this->text );
-		} elseif( $this->replaceTab ) {
-			$this->text = str_replace( "\t", ' ', $this->text );
-		}
-
-		$this->text = trim( $this->text );
-
-		$this->text = str_replace( '&nbsp;', ' ', $this->text );
-		$this->text = str_replace( '&#160;', ' ', $this->text );
-
-		if( $this->delRepeatSpace ) {
-			$this->text = preg_replace( '/ {2,}/', ' ', $this->text );
-			$this->text = preg_replace( "/\n {1,}/m", "\n", $this->text );
-			$this->text = preg_replace( "/\n{3,}/m", "\n\n", $this->text );
-		}
-
-		if( $this->delSpaceBeforePunctuation ) {
-			$before = array( '!', ';', ',', '?', '.', ')', );
-			$after = array();
-			foreach( $before as $i ) {
-				$after[] = '/ \\' . $i . '/';
-			}
-			$this->text = preg_replace( $after, $before, $this->text );
-			$this->text = preg_replace( '/\( /', '(', $this->text );
-		}
-
-		if( $this->spaceBeforeParticles ) {
-			$this->text = preg_replace( '/ (ли|ль|же|ж|бы|б)(?![а-яА-Я])/', $this->space . '$1', $this->text );
-		}
-
-		if( $this->spaceAfterShortWord and $this->lengthShortWord > 0 ) {
-			$this->text = preg_replace( '/( [а-яА-Я\w]{1,' . $this->lengthShortWord . '}) /', '$1' . $this->space, $this->text );
-		}
-
-		if( $this->spaceBeforeLastWord and $this->lengthLastWord > 0 ) {
-			$this->text = preg_replace( '/ ([а-яА-Я\w]{1,' . $this->lengthLastWord . '})(?=\.|\?|:|\!|,)/', $this->space . '$1', $this->text );
-		}
-
-		if( $this->spaceAfterNum ) {
-			$this->text = preg_replace( '/(№|&#8470;)(?=\d)/', $this->number . $this->space, $this->text );
-			$this->text = preg_replace( '/(§|&#167;|&sect;)(?=\d)/', $this->sect . $this->space, $this->text );
-		}
-
-		if( $this->delSpaceBeforeProcent ) {
-			$this->text = preg_replace( '/( |&nbsp;|&#160;)%/', '%', $this->text );
-		}
-	}
-
-	/**
 	 * Заменяет символы на utf эквивалент
 	 */
 	private function replaceWindowsCodes() {
@@ -454,6 +388,72 @@ class Typographer {
 		);
 
 		$this->text = str_replace( $before, $after, $this->text );
+	}
+
+	private function replaceAfter() {
+
+		// Замена +- около чисел
+		$this->text = preg_replace('/(?<=^| |\>|&nbsp;|&#160;)\+-(?=\d)/', $this->plusmn, $this->text);
+
+		// Замена 3 точек на троеточие
+		$this->text = preg_replace('/(^|[^.])\.{3}([^.]|$)/', '$1' . $this->hellip . '$2', $this->text);
+
+		// Градусы Цельсия
+		$this->text = preg_replace('/(\d+)( |\&\#160;|\&nbsp;)?(C|F)([\W \.,:\!\?"\]\)]|$)/',
+			'$1' .
+			$this->space . $this->deg . '$3$4',
+			$this->text);
+
+		// XXXX г.
+		$this->text = preg_replace('/(^|\D)(\d{4})г( |\.|$)/', '$1$2' . $this->space . 'г$3', $this->text);
+
+		$m = '(км|м|дм|см|мм)';
+		// Кв. км м дм см мм
+		$this->text = preg_replace('/(^|\D)(\d+)( |\&\#160;|\&nbsp;)?' . $m . '2(\D|$)/',
+			'$1$2' .
+			$this->space . '$4' . $this->sup2 . '$5',
+			$this->text);
+
+		// Куб. км м дм см мм
+		$this->text = preg_replace('/(^|\D)(\d+)( |\&\#160;|\&nbsp;)?' . $m . '3(\D|$)/',
+			'$1$2' .
+			$this->space . '$4' . $this->sup3 . '$5',
+			$this->text);
+
+		if($this->doMacros) {
+			// ГРАД(n)
+			$this->text = preg_replace('/ГРАД\(([\d\.,]+?)\)/', '$1' . $this->deg, $this->text);
+
+			// ДЮЙМ(n)
+			$this->text = preg_replace('/ДЮЙМ\(([\d\.,]+?)\)/', '$1' . $this->Prime, $this->text);
+
+			// Замена икса в числах на знак умножения
+			$this->text = preg_replace('/(?<=\d) ?x ?(?=\d)/', $this->times, $this->text);
+
+			// Знак евро
+			$this->text = str_replace('ЕВРО()', $this->euro, $this->text);
+
+			// Знак фунта
+			$this->text = str_replace('ФУНТ()', $this->pound, $this->text);
+
+			// Знак цента
+			$this->text = str_replace('ЦЕНТ()', $this->cent, $this->text);
+
+			// Стрелка вверх
+			$this->text = str_replace('СТРВ()', $this->uarr, $this->text);
+
+			// Стрелка вниз
+			$this->text = str_replace('СТРН()', $this->darr, $this->text);
+
+			// Стрелка влево
+			$this->text = str_replace('СТРЛ()', $this->larr, $this->text);
+
+			// Стрелка вправо
+			$this->text = str_replace('СТРП()', $this->rarr, $this->text);
+
+			// Стрелка ввод
+			$this->text = str_replace('ВВОД()', $this->crarr, $this->text);
+		}
 	}
 
 	/**
