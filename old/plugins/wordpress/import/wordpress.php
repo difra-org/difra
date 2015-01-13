@@ -17,13 +17,6 @@ class Wordpress {
 		return self::import( $xml );
 	}
 
-	public static function importString( $xmlString ) {
-
-		$xml = new \DOMDocument( 1.1 );
-		$xml->loadXML( $xmlString );
-		return self::import( $xml );
-	}
-
 	/**
 	 * @param \DOMDocument $xml
 	 *
@@ -171,6 +164,10 @@ class Wordpress {
 		$blog->addPost( $post );
 	}
 
+	public static function importComment(&$obj, $node) {
+		// TODO
+	}
+
 	/**
 	 * @param \Difra\Libs\Objects\Blog $blog
 	 * @param \DOMElement              $item
@@ -179,7 +176,10 @@ class Wordpress {
 		// TODO
 	}
 
-	public static function importComment( &$obj, $node ) {
-		// TODO
+	public static function importString($xmlString) {
+
+		$xml = new \DOMDocument(1.1);
+		$xml->loadXML($xmlString);
+		return self::import($xml);
 	}
 }
