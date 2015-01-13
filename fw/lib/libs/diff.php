@@ -4,7 +4,7 @@ namespace Difra\Libs;
 
 /**
  * Class Diff
- *
+ * @deprecated
  * @package Difra\Libs
  */
 class Diff {
