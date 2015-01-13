@@ -1,3 +1,7 @@
+/**
+ * This script will fix some counters to be used with Switcher.js.
+ */
+
 $( document ).on( 'construct', function () {
 
 	// Google Analytics
