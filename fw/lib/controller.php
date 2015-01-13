@@ -10,49 +10,31 @@ namespace Difra;
  */
 class Controller {
 
+	/** Значение по умолчанию */
+	const DEFAULT_CACHE = 60;
+	protected static $parameters = array();
 	/** @deprecated */
 	public $locale;
 	/** @deprecated */
 	public $ajax;
-	/** @deprecated */
-	protected $auth;
-
 	/** @var bool */
 	public $isAjaxAction = false;
-	/** @var string */
-	protected $method = null;
-	/** @var string */
-	protected $output = null;
-	/** @var string */
-	protected $outputType = 'text/plain';
-
 	/** @var bool|int Кэширование страницы на стороне веб-сервера (в секундах) */
 	public $cache = false;
-	/** Значение по умолчанию */
-	const DEFAULT_CACHE = 60;
-
 	/** @var \DOMDocument */
 	public $xml;
 	/** @var \DOMElement */
 	public $root;
 	/** @var \DOMElement */
 	public $realRoot;
-
-	protected static $parameters = array();
-
-	/**
-	 * Вызов фабрики
-	 *
-	 * @return Controller|null
-	 */
-	public static function getInstance() {
-
-		static $instance = null;
-		if( is_null( $instance ) ) {
-			$instance = \Difra\Envi\Action::getController();
-		}
-		return $instance;
-	}
+	/** @deprecated */
+	protected $auth;
+	/** @var string */
+	protected $method = null;
+	/** @var string */
+	protected $output = null;
+	/** @var string */
+	protected $outputType = 'text/plain';
 
 	/**
 	 * Конструктор
@@ -78,12 +60,32 @@ class Controller {
 	}
 
 	/**
+	 * Пустой dispatch
+	 */
+	public function dispatch() {
+	}
+
+	/**
 	 * Предварительная инициализация.
 	 * Имеет смысл, чтобы не выполнять дополнительные действия на 404 страницах.
 	 */
 	final static public function init() {
 
 		self::getInstance();
+	}
+
+	/**
+	 * Вызов фабрики
+	 *
+	 * @return Controller|null
+	 */
+	public static function getInstance() {
+
+		static $instance = null;
+		if(is_null($instance)) {
+			$instance = \Difra\Envi\Action::getController();
+		}
+		return $instance;
 	}
 
 	/**
@@ -99,55 +101,6 @@ class Controller {
 		Debugger::addLine( 'Started action ' . \Difra\Envi\Action::$method );
 		$controller->callAction();
 		Debugger::addLine( 'Finished action ' . \Difra\Envi\Action::$method );
-	}
-
-	/**
-	 * Выводит ответ в зависимости от типа запроса
-	 */
-	final static public function render() {
-
-		$controller = self::getInstance();
-		if( !empty( self::$parameters ) ) {
-			$controller->putExpires( true );
-			throw new \Difra\View\Exception( 404 );
-		} elseif( !is_null( $controller->output ) ) {
-			$controller->putExpires();
-			header( 'Content-Type: ' . $controller->outputType . '; charset="utf-8"' );
-			echo $controller->output;
-			View::$rendered = true;
-		} elseif( Debugger::isEnabled() and isset( $_GET['xml'] ) and $_GET['xml'] ) {
-			if( $_GET['xml'] == '2' ) {
-				$controller->fillXML();
-			}
-			header( 'Content-Type: text/xml; charset="utf-8"' );
-			$controller->xml->formatOutput = true;
-			$controller->xml->encoding = 'utf-8';
-			echo rawurldecode( $controller->xml->saveXML() );
-			View::$rendered = true;
-		} elseif( !View::$rendered and $controller->ajax->isAjax ) {
-			$controller->putExpires();
-			header( 'Content-type: text/plain' ); // тут нужен application/json, но тогда опера предлагает сохранить файл
-			echo( $controller->ajax->getResponse() );
-			View::$rendered = true;
-		} elseif( !View::$rendered ) {
-			$controller->putExpires();
-			try {
-				View::render( $controller->xml );
-			} catch( Exception $ex ) {
-				if( !Debugger::isConsoleEnabled() ) {
-					throw new View\Exception( 500 );
-				} else {
-					echo Debugger::debugHTML( true );
-					die();
-				}
-			}
-		}
-	}
-
-	/**
-	 * Пустой dispatch
-	 */
-	public function dispatch() {
 	}
 
 	/**
@@ -184,32 +137,6 @@ class Controller {
 		$actionMethod = \Difra\Envi\Action::${$method};
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
-
-		$cachedLocale = false;
-		$domainProperties = Envi::getDomainProperties();
-		$actionLocale = \Difra\Adm\Localemanage::getLocaleLength( $domainProperties );
-
-		if( isset( $actionLocale['cached'] ) && $actionLocale['cached'] == true ) {
-			$cachedLocale = true;
-			unset( $actionLocale['cached'] );
-		}
-
-		if( !empty( $actionLocale ) && isset( $actionLocale['locale'] ) && isset( $actionLocale['localeString'] ) ) {
-
-			$actionLocaleMain = $actionLocale['locale'];
-			$actionLocaleMain = unserialize( $actionLocaleMain );
-
-			\Difra\Adm\Localemanage::checkStatus( $actionLocaleMain );
-			Envi::checkPlugins( $actionLocaleMain );
-			Envi::checkDomains( $actionLocaleMain );
-
-			if( !$cachedLocale ) {
-				Envi::makeEnviLocale( $actionLocale );
-			}
-
-		} else {
-			\Difra\Adm\Localemanage::exitLocale();
-		}
 
 		// у выбранного метода нет параметров
 		if( empty( $actionParameters ) ) {
@@ -286,6 +213,71 @@ class Controller {
 		if( !$this->ajax->hasProblem() ) {
 			call_user_func_array( array( $this, $actionMethod ), $callParameters );
 		}
+	}
+
+	/**
+	 * Выводит ответ в зависимости от типа запроса
+	 */
+	final static public function render() {
+
+		$controller = self::getInstance();
+		if(!empty(self::$parameters)) {
+			$controller->putExpires(true);
+			throw new \Difra\View\Exception(404);
+		} elseif(!is_null($controller->output)) {
+			$controller->putExpires();
+			header('Content-Type: ' . $controller->outputType . '; charset="utf-8"');
+			echo $controller->output;
+			View::$rendered = true;
+		} elseif(Debugger::isEnabled() and isset($_GET['xml']) and $_GET['xml']) {
+			if($_GET['xml'] == '2') {
+				$controller->fillXML();
+			}
+			header('Content-Type: text/xml; charset="utf-8"');
+			$controller->xml->formatOutput = true;
+			$controller->xml->encoding = 'utf-8';
+			echo rawurldecode($controller->xml->saveXML());
+			View::$rendered = true;
+		} elseif(!View::$rendered and $controller->ajax->isAjax) {
+			$controller->putExpires();
+			header('Content-type: text/plain'); // тут нужен application/json, но тогда опера предлагает сохранить файл
+			echo($controller->ajax->getResponse());
+			View::$rendered = true;
+		} elseif(!View::$rendered) {
+			$controller->putExpires();
+			try {
+				View::render($controller->xml);
+			} catch(Exception $ex) {
+				if(!Debugger::isConsoleEnabled()) {
+					throw new View\Exception(500);
+				} else {
+					echo Debugger::debugHTML(true);
+					die();
+				}
+			}
+		}
+	}
+
+	/**
+	 * Устанавливает заголовок X-Accel-Expires для кэширования страниц целиком на стороне веб-сервера
+	 *
+	 * @param bool|int $ttl
+	 */
+	public function putExpires($ttl = null) {
+
+		if(Debugger::isEnabled()) {
+			return;
+		}
+		if(is_null($ttl)) {
+			$ttl = $this->cache;
+		}
+		if($ttl === true) {
+			$ttl = self::DEFAULT_CACHE;
+		}
+		if(!$ttl or !is_numeric($ttl) or $ttl < 0) {
+			return;
+		}
+		View::addExpires($ttl);
 	}
 
 	/**
@@ -381,28 +373,6 @@ class Controller {
 		if( false === strpos( $domain, Envi::getHost( true ) ) ) {
 			throw new Exception( 'Bad referer' );
 		}
-	}
-
-	/**
-	 * Устанавливает заголовок X-Accel-Expires для кэширования страниц целиком на стороне веб-сервера
-	 *
-	 * @param bool|int $ttl
-	 */
-	public function putExpires( $ttl = null ) {
-
-		if( Debugger::isEnabled() ) {
-			return;
-		}
-		if( is_null( $ttl ) ) {
-			$ttl = $this->cache;
-		}
-		if( $ttl === true ) {
-			$ttl = self::DEFAULT_CACHE;
-		}
-		if( !$ttl or !is_numeric( $ttl ) or $ttl < 0 ) {
-			return;
-		}
-		View::addExpires( $ttl );
 	}
 }
 
