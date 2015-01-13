@@ -7,7 +7,7 @@ class AjaxTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_actions() {
 
-		$ajax = \Difra\Ajax::getInstance();
+		$ajax = \Difra\Ajaxer::getInstance();
 		$actions = array();
 
 		$ajax->notify( 'notification message' );
@@ -101,7 +101,7 @@ class AjaxTest extends PHPUnit_Framework_TestCase {
 			'</form>'
 		);
 
-		$this->assertEquals( $ajax->getResponse(), json_encode( array( 'actions' => $actions ), \Difra\Ajax::getJsonFlags() ) );
+		$this->assertEquals($ajax->getResponse(), json_encode(array('actions' => $actions), \Difra\Ajaxer::getJsonFlags()));
 
 		$ajax->clean();
 		$this->assertEquals( $ajax->getResponse(), '[]' );

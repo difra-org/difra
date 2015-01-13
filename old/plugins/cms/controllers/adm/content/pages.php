@@ -60,7 +60,7 @@ class AdmContentPagesController extends \Difra\Controller {
 		$page->setTitle( $title->val() );
 		$page->setUri( $tag->val() );
 		$page->setBody( $body );
-		\Difra\Ajax::getInstance()->redirect( '/adm/content/pages' );
+		\Difra\Ajaxer::getInstance()->redirect('/adm/content/pages');
 	}
 
 	/**

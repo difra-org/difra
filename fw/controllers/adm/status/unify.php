@@ -20,9 +20,9 @@ class AdmStatusUnifyController extends Difra\Controller {
 			$class = \Difra\Unify\Storage::getClass( $name->val() );
 			$class::createDb();
 		} catch( \Difra\Exception $ex ) {
-			\Difra\Ajax::getInstance()->notify( $ex->getMessage() );
+			\Difra\Ajaxer::getInstance()->notify($ex->getMessage());
 		}
-		\Difra\Ajax::getInstance()->refresh();
+		\Difra\Ajaxer::getInstance()->refresh();
 	}
 
 	public function alterAjaxAction( \Difra\Param\AnyString $name ) {
@@ -35,8 +35,8 @@ class AdmStatusUnifyController extends Difra\Controller {
 				\Difra\MySQL::getInstance()->query( $status['sql'] );
 			}
 		} catch( \Difra\Exception $ex ) {
-			\Difra\Ajax::getInstance()->notify( $ex->getMessage() );
+			\Difra\Ajaxer::getInstance()->notify($ex->getMessage());
 		}
-		\Difra\Ajax::getInstance()->refresh();
+		\Difra\Ajaxer::getInstance()->refresh();
 	}
 }

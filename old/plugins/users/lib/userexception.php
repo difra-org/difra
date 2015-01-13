@@ -11,7 +11,7 @@ class userException extends \Exception {
 	 */
 	public function __construct( $field, $status, $needCapcha = false ) {
 
-		$Ajax = \Difra\Ajax::getInstance();
+		$Ajax = \Difra\Ajaxer::getInstance();
 
 		if( $needCapcha == true ) {
 			$_SESSION['needCapcha'] = true;

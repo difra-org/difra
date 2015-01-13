@@ -46,7 +46,7 @@ class Controller {
 		// загрузка основных классов
 		$this->locale = Locales::getInstance();
 		$this->auth = Auth::getInstance();
-		$this->ajax = Ajax::getInstance();
+		$this->ajax = Ajaxer::getInstance();
 
 		// создание xml с данными
 		$this->xml = new \DOMDocument;

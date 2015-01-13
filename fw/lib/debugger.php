@@ -9,21 +9,34 @@ namespace Difra;
  */
 class Debugger {
 
-	private static $enabled = self::DEBUG_DISABLED;
 	const DEBUG_DISABLED = 0;
 	const DEBUG_ENABLED = 1;
-
+	const CONSOLE_NONE = 0;
+	const CONSOLE_DISABLED = 1;
+	const CONSOLE_ENABLED = 2; // console disabled
+	const CACHES_DISABLED = 0; // console enabled, but not active
+	const CACHES_ENABLED = 1; // console enabled and active
+	/** @var bool */
+	static public $shutdown = false;
+	private static $enabled = self::DEBUG_DISABLED;
 	private static $console = self::CONSOLE_NONE;
-	const CONSOLE_NONE = 0; // console disabled
-	const CONSOLE_DISABLED = 1; // console enabled, but not active
-	const CONSOLE_ENABLED = 2; // console enabled and active
-
 	private static $caches = self::CACHES_ENABLED;
-	const CACHES_DISABLED = 0;
-	const CACHES_ENABLED = 1;
-
 	private static $output = array();
 	private static $hadError = false;
+	private static $handledByException = null;
+	/** @var array Текст последней ошибки, пойманной captureNormal, чтобы не поймать её ещё раз в captureShutdown */
+	private static $handledByNormal = null;
+
+	/**
+	 * Включен ли режим отладки
+	 *
+	 * @return bool
+	 */
+	public static function isEnabled() {
+
+		self::init();
+		return (bool)self::$enabled;
+	}
 
 	public static function init() {
 
@@ -48,7 +61,7 @@ class Debugger {
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL );
 			ini_set( 'html_errors',
-				 ( Envi::getMode() != 'web' or Ajax::getInstance()->isAjax ) ? 'Off' : 'On' );
+				(Envi::getMode() != 'web' or Ajaxer::getInstance()->isAjax) ? 'Off' : 'On');
 			self::$enabled = self::CONSOLE_DISABLED;
 			self::$console = self::CONSOLE_NONE;
 			return;
@@ -81,19 +94,8 @@ class Debugger {
 			// console is inactive, so enable errors output
 			ini_set( 'display_errors', 'On' );
 			ini_set( 'error_reporting', E_ALL );
-			ini_set( 'html_errors', Ajax::getInstance()->isAjax ? 'Off' : 'On' );
+			ini_set('html_errors', Ajaxer::getInstance()->isAjax ? 'Off' : 'On');
 		}
-	}
-
-	/**
-	 * Включен ли режим отладки
-	 *
-	 * @return bool
-	 */
-	public static function isEnabled() {
-
-		self::init();
-		return (bool)self::$enabled;
 	}
 
 	/**
@@ -136,6 +138,16 @@ class Debugger {
 	}
 
 	/**
+	 * Возвращает время выполнения
+	 *
+	 * @return float
+	 */
+	public static function getTimer() {
+
+		return microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
+	}
+
+	/**
 	 * Добавляет событие в лог для консоли
 	 *
 	 * @param string $line
@@ -169,72 +181,6 @@ class Debugger {
 	}
 
 	/**
-	 * Добавить ошибку в лог для консоли
-	 *
-	 * @param $array
-	 */
-	public static function addLineAsArray( $array ) {
-
-		if( !self::$enabled ) {
-			return;
-		}
-		if( $array['class'] == 'errors' ) {
-			self::$hadError = true;
-		}
-		$array['timer'] = self::getTimer();
-		self::$output[] = $array;
-	}
-
-	/**
-	 * Рендер HTML отладочной консоли
-	 *
-	 * @param bool $standalone         Консоль выводится на отдельной странице (если произошла фатальная ошибка и запрошенная страница
-	 *                                 не может быть отрендерена)
-	 *
-	 * @return string
-	 */
-	public static function debugHTML( $standalone = false ) {
-
-		static $alreadyDidIt = false;
-		if( $alreadyDidIt ) {
-			return '';
-		}
-		/** @var $root \DOMElement */
-		$xml = new \DOMDocument();
-		$root = $xml->appendChild( $xml->createElement( 'root' ) );
-		self::debugXML( $root, $standalone );
-
-		return View::render( $xml, 'all', true, true );
-	}
-
-	/**
-	 * Добавляет в XML-ноду данные о дебаге и для дебаг-панели
-	 *
-	 * @param \DOMNode|\DOMElement $node
-	 * @param bool                 $standalone
-	 *
-	 * @return string
-	 */
-	public static function debugXML( $node, $standalone = false ) {
-
-		self::init();
-		$node->setAttribute( 'debug', self::$enabled ? '1' : '0' );
-		$node->setAttribute( 'debugConsole', self::$console );
-		$node->setAttribute( 'caches', self::$caches ? '1' : '0' );
-		if( !self::$console ) {
-			return;
-		}
-		/** @var $debugNode \DOMElement */
-		$debugNode = $node->appendChild( $node->ownerDocument->createElement( 'debug' ) );
-		Libs\XML\DOM::array2domAttr( $debugNode, self::$output, true );
-		if( $standalone ) {
-			$node->setAttribute( 'standalone', 1 );
-		}
-	}
-
-	private static $handledByException = null;
-
-	/**
 	 * Callback для эксцепшенов
 	 *
 	 * @static
@@ -259,15 +205,29 @@ class Debugger {
 		return false;
 	}
 
+	/**
+	 * Добавить ошибку в лог для консоли
+	 *
+	 * @param $array
+	 */
+	public static function addLineAsArray($array) {
+
+		if(!self::$enabled) {
+			return;
+		}
+		if($array['class'] == 'errors') {
+			self::$hadError = true;
+		}
+		$array['timer'] = self::getTimer();
+		self::$output[] = $array;
+	}
+
 	public static function productionException( $exception ) {
 
 		if( $exception instanceof \Difra\Exception ) {
 			$exception->notify();
 		}
 	}
-
-	/** @var array Текст последней ошибки, пойманной captureNormal, чтобы не поймать её ещё раз в captureShutdown */
-	private static $handledByNormal = null;
 
 	/**
 	 * Callback для ловимых ошибок
@@ -302,9 +262,6 @@ class Debugger {
 		return false;
 	}
 
-	/** @var bool */
-	static public $shutdown = false;
-
 	/**
 	 * Callback для фатальных ошибок, которые не ловятся другими методами
 	 */
@@ -332,13 +289,60 @@ class Debugger {
 
 		// если по каким-то причинам рендер не случился, отрендерим свою страничку
 		if( !View::$rendered ) {
-			$ajax = Ajax::getInstance();
+			$ajax = Ajaxer::getInstance();
 			if( !$ajax->isAjax ) {
 				echo self::debugHTML( true );
 			} else {
 				echo $ajax->getResponse();
 			}
 			View::$rendered = true;
+		}
+	}
+
+	/**
+	 * Рендер HTML отладочной консоли
+	 *
+	 * @param bool $standalone         Консоль выводится на отдельной странице (если произошла фатальная ошибка и запрошенная страница
+	 *                                 не может быть отрендерена)
+	 *
+	 * @return string
+	 */
+	public static function debugHTML($standalone = false) {
+
+		static $alreadyDidIt = false;
+		if($alreadyDidIt) {
+			return '';
+		}
+		/** @var $root \DOMElement */
+		$xml = new \DOMDocument();
+		$root = $xml->appendChild($xml->createElement('root'));
+		self::debugXML($root, $standalone);
+
+		return View::render($xml, 'all', true, true);
+	}
+
+	/**
+	 * Добавляет в XML-ноду данные о дебаге и для дебаг-панели
+	 *
+	 * @param \DOMNode|\DOMElement $node
+	 * @param bool                 $standalone
+	 *
+	 * @return string
+	 */
+	public static function debugXML($node, $standalone = false) {
+
+		self::init();
+		$node->setAttribute('debug', self::$enabled ? '1' : '0');
+		$node->setAttribute('debugConsole', self::$console);
+		$node->setAttribute('caches', self::$caches ? '1' : '0');
+		if(!self::$console) {
+			return;
+		}
+		/** @var $debugNode \DOMElement */
+		$debugNode = $node->appendChild($node->ownerDocument->createElement('debug'));
+		Libs\XML\DOM::array2domAttr($debugNode, self::$output, true);
+		if($standalone) {
+			$node->setAttribute('standalone', 1);
 		}
 	}
 
@@ -350,16 +354,6 @@ class Debugger {
 	public static function hadError() {
 
 		return self::$hadError;
-	}
-
-	/**
-	 * Возвращает время выполнения
-	 *
-	 * @return float
-	 */
-	public static function getTimer() {
-
-		return microtime( true ) - $_SERVER['REQUEST_TIME_FLOAT'];
 	}
 
 	public static function checkSlow() {

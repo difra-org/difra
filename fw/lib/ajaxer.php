@@ -2,7 +2,7 @@
 
 namespace Difra;
 
-class Ajax {
+class Ajaxer {
 
 	public $isAjax = false;
 	public $isIframe = false;
@@ -79,6 +79,20 @@ class Ajax {
 	}
 
 	/**
+	 * Get data from ajaxer
+	 *
+	 * @return array
+	 */
+	private function getRequest() {
+
+		$res = array();
+		if(!empty($_POST['json'])) {
+			$res = json_decode($_POST['json'], true);
+		}
+		return $res;
+	}
+
+	/**
 	 * Parses parameter and puts it into $arr.
 	 * Subroutine for constructor.
 	 * Supports parameters like name[abc][]
@@ -87,19 +101,19 @@ class Ajax {
 	 * @param string $k   Parameter key
 	 * @param mixed  $v   Parameter value
 	 */
-	private function parseParam( &$arr, $k, $v ) {
+	private function parseParam(&$arr, $k, $v) {
 
-		$keys = explode( '[', $k );
-		if( sizeof( $keys ) == 1 ) {
+		$keys = explode('[', $k);
+		if(sizeof($keys) == 1) {
 			$arr[$k] = $v;
 			return;
 		}
-		for( $i = 1; $i < sizeof( $keys ); $i++ ) {
-			if( $keys[$i]{strlen( $keys[$i] ) - 1} == ']' ) {
-				$keys[$i] = substr( $keys[$i], 0, -1 );
+		for($i = 1; $i < sizeof($keys); $i++) {
+			if($keys[$i]{strlen($keys[$i]) - 1} == ']') {
+				$keys[$i] = substr($keys[$i], 0, -1);
 			}
 		}
-		$this->putParam( $arr, $keys, $v );
+		$this->putParam($arr, $keys, $v);
 	}
 
 	/**
@@ -112,51 +126,37 @@ class Ajax {
 	 *
 	 * @throws Exception
 	 */
-	private function putParam( &$arr, $keys, $v ) {
+	private function putParam(&$arr, $keys, $v) {
 
-		if( !is_array( $arr ) ) {
-			throw new Exception( 'Ajax->putParam expects array' );
+		if(!is_array($arr)) {
+			throw new Exception('Ajax->putParam expects array');
 		}
-		if( empty( $keys ) ) {
+		if(empty($keys)) {
 			$arr = $v;
 			return;
 		}
-		$k = array_shift( $keys );
-		if( $k ) {
-			if( !isset( $arr[$k] ) ) {
+		$k = array_shift($keys);
+		if($k) {
+			if(!isset($arr[$k])) {
 				$arr[$k] = array();
 			}
-			$this->putParam( $arr[$k], $keys, $v );
+			$this->putParam($arr[$k], $keys, $v);
 		} else {
 			$arr[] = array();
-			end( $arr );
-			$this->putParam( $arr[key( $arr )], $keys, $v );
+			end($arr);
+			$this->putParam($arr[key($arr)], $keys, $v);
 		}
 	}
 
 	/**
 	 * Singleton
 	 *
-	 * @return Ajax
+	 * @return Ajaxer
 	 */
 	static function getInstance() {
 
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
-	}
-
-	/**
-	 * Get data from ajaxer
-	 *
-	 * @return array
-	 */
-	private function getRequest() {
-
-		$res = array();
-		if( !empty( $_POST['json'] ) ) {
-			$res = json_decode( $_POST['json'], true );
-		}
-		return $res;
 	}
 
 	/**
@@ -172,6 +172,25 @@ class Ajax {
 	}
 
 	/**
+	 * Returns ajaxer actions for execution on browser side.
+	 *
+	 * @return string
+	 */
+	public function getResponse() {
+
+		if(Debugger::isEnabled()) {
+			if(Debugger::hadError()) {
+				$this->clean(true);
+			}
+			$this->load('#debug', Debugger::debugHTML(false));
+		}
+		if(!empty($this->actions)) {
+			$this->setResponse('actions', $this->actions);
+		}
+		return json_encode($this->response, self::getJsonFlags());
+	}
+
+	/**
 	 * Adds ajax reply.
 	 *
 	 * @param string $param Parameter name
@@ -179,46 +198,47 @@ class Ajax {
 	 *
 	 * @return void
 	 */
-	public function setResponse( $param, $value ) {
+	public function setResponse($param, $value) {
 
 		$this->response[$param] = $value;
 	}
 
 	/**
-	 * Returns ajaxer actions for execution on browser side.
+	 * Clean ajax answer data
 	 *
-	 * @return string
+	 * @param bool $problem
+	 *
+	 * @return $this
 	 */
-	public function getResponse() {
+	public function clean($problem = false) {
 
-		if( Debugger::isEnabled() ) {
-			if( Debugger::hadError() ) {
-				$this->clean( true );
-			}
-			$this->load( '#debug', Debugger::debugHTML( false ) );
-		}
-		if( !empty( $this->actions ) ) {
-			$this->setResponse( 'actions', $this->actions );
-		}
-		return json_encode( $this->response, self::getJsonFlags() );
-	}
-
-	public static function getJsonFlags() {
-
-		static $jsonFlags = null;
-		if( !is_null( $jsonFlags ) ) {
-			return $jsonFlags;
-		}
-		$jsonFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
-		if( Debugger::isEnabled() ) {
-			$jsonFlags |= JSON_PRETTY_PRINT;
-		}
-		return $jsonFlags;
+		$this->actions = array();
+		$this->response = array();
+		$this->problem = $problem;
+		return $this;
 	}
 
 	/**
 	 * Ajaxer Actions
 	 */
+
+	/**
+	 * Write $html contents to element $target
+	 *
+	 * @param string $target jQuery element selector (e.g. '#targetId')
+	 * @param string $html   Content for innerHTML
+	 *
+	 * @return $this
+	 */
+	public function load($target, $html) {
+
+		$this->addAction(array(
+			'action' => 'load',
+			'target' => $target,
+			'html'   => $html
+		));
+		return $this;
+	}
 
 	/**
 	 * Adds ajaxer action to ajax reply data.
@@ -227,10 +247,23 @@ class Ajax {
 	 *
 	 * @return $this
 	 */
-	private function addAction( $action ) {
+	private function addAction($action) {
 
 		$this->actions[] = $action;
 		return $this;
+	}
+
+	public static function getJsonFlags() {
+
+		static $jsonFlags = null;
+		if(!is_null($jsonFlags)) {
+			return $jsonFlags;
+		}
+		$jsonFlags = JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+		if(Debugger::isEnabled()) {
+			$jsonFlags |= JSON_PRETTY_PRINT;
+		}
+		return $jsonFlags;
 	}
 
 	/**
@@ -244,31 +277,16 @@ class Ajax {
 	}
 
 	/**
-	 * Clean ajax answer data
-	 *
-	 * @param bool $problem
-	 *
-	 * @return $this
-	 */
-	public function clean( $problem = false ) {
-
-		$this->actions = array();
-		$this->response = array();
-		$this->problem = $problem;
-		return $this;
-	}
-
-	/**
 	 * Display notification message.
 	 *
 	 * @param string $message Message text
 	 *
 	 * @return $this
 	 */
-	public function notify( $message ) {
+	public function notify($message) {
 
 		$this->addAction( array(
-					  'action' => 'notify',
+			'action' => 'notify',
 					  'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
 					  'lang' => array(
 						  'close' => Locales::getInstance()->getXPath( 'notifications/close' )
@@ -284,14 +302,14 @@ class Ajax {
 	 *
 	 * @return $this
 	 */
-	public function error( $message ) {
+	public function error($message) {
 
 		$this->addAction( array(
-					  'action' => 'error',
-					  'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
-					  'lang' => array(
-						  'close' => Locales::getInstance()->getXPath( 'notifications/close' )
-					  )
+			'action'  => 'error',
+			'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
+			'lang'    => array(
+				'close' => Locales::getInstance()->getXPath('notifications/close')
+			)
 				  ) );
 		return $this;
 	}
@@ -304,13 +322,13 @@ class Ajax {
 	 *
 	 * @return $this
 	 */
-	public function required( $name ) {
+	public function required($name) {
 
 		$this->problem = true;
-		$this->addAction( array(
-					  'action' => 'require',
-					  'name' => $name
-				  ) );
+		$this->addAction(array(
+			'action' => 'require',
+			'name'   => $name
+		));
 		return $this;
 	}
 
@@ -321,11 +339,11 @@ class Ajax {
 	 *
 	 * @return $this
 	 */
-	public function invalid( $name ) {
+	public function invalid($name) {
 
 		$this->problem = true;
-		$action = array( 'action' => 'invalid', 'name' => $name );
-		$this->addAction( $action );
+		$action = array('action' => 'invalid', 'name' => $name);
+		$this->addAction($action);
 		return $this;
 	}
 
@@ -344,29 +362,13 @@ class Ajax {
 	 *
 	 * @return $this
 	 */
-	public function status( $name, $message, $class ) {
+	public function status($name, $message, $class) {
 
 		$this->addAction( array(
-					  'action' => 'status',
-					  'name' => $name,
-					  'message' => $message,
-					  'classname' => $class
-				  ) );
-		return $this;
-	}
-
-	/**
-	 * Redirect
-	 *
-	 * @param string $url
-	 *
-	 * @return $this
-	 */
-	public function redirect( $url ) {
-
-		$this->addAction( array(
-					  'action' => 'redirect',
-					  'url' => $url
+			'action'    => 'status',
+			'name'      => $name,
+			'message'   => $message,
+			'classname' => $class
 				  ) );
 		return $this;
 	}
@@ -383,6 +385,22 @@ class Ajax {
 	}
 
 	/**
+	 * Redirect
+	 *
+	 * @param string $url
+	 *
+	 * @return $this
+	 */
+	public function redirect($url) {
+
+		$this->addAction( array(
+			'action' => 'redirect',
+			'url'    => $url
+				  ) );
+		return $this;
+	}
+
+	/**
 	 * Reload current page
 	 *
 	 * @return $this
@@ -390,7 +408,7 @@ class Ajax {
 	public function reload() {
 
 		$this->addAction( array(
-					  'action' => 'reload'
+			'action' => 'reload'
 				  ) );
 		return $this;
 	}
@@ -402,28 +420,10 @@ class Ajax {
 	 *
 	 * @return $this
 	 */
-	public function display( $html ) {
+	public function display($html) {
 
 		$this->addAction( array(
-					  'action' => 'display',
-					  'html' => $html
-				  ) );
-		return $this;
-	}
-
-	/**
-	 * Write $html contents to element $target
-	 *
-	 * @param string $target jQuery element selector (e.g. '#targetId')
-	 * @param string $html   Content for innerHTML
-	 *
-	 * @return $this
-	 */
-	public function load( $target, $html ) {
-
-		$this->addAction( array(
-					  'action' => 'load',
-					  'target' => $target,
+			'action' => 'display',
 					  'html' => $html
 				  ) );
 		return $this;

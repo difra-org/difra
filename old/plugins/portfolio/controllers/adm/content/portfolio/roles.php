@@ -13,7 +13,7 @@ class AdmContentPortfolioRolesController extends \Difra\Plugins\Widgets\Director
 
 		$escapedValue = addslashes( htmlspecialchars( $value ) );
 		$ts = microtime( true );
-		\Difra\Ajax::getInstance()->exec(
+		\Difra\Ajaxer::getInstance()->exec(
 			<<<SCRIPT
 			if( $( '.widgets-directory.last' ).closest( '#add-role' ).length ) {
 	$( '#add-role' ).before(

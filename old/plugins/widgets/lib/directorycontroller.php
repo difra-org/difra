@@ -6,12 +6,30 @@ abstract class DirectoryController extends \Difra\Controller {
 
 	const directory = null;
 
-	abstract public function action( $value );
-
 	public function indexAjaxAction() {
 
 		$this->subInit();
-		\Difra\Ajax::getInstance()->display( $this->renderWindow() );
+		\Difra\Ajaxer::getInstance()->display($this->renderWindow());
+	}
+
+	private function subInit() {
+
+		if(!static::directory) {
+			throw new \Difra\Exception('DirectoryController extended class should have \'directory\' constant with directory name.');
+		}
+		if(strlen(static::directory) > ($len = \Difra\Plugins\Widgets\Objects\Directory::DIRECTORY_LENGTH)) {
+			throw new \Difra\Exception('WidgetsDirectory directory name is too long. ' . $len . ' bytes is the limit.');
+		}
+	}
+
+	private function renderWindow() {
+
+		$xml = new \DOMDocument();
+		$node = $xml->appendChild($xml->createElement('DirectoryWindow'));
+		$search = new \Difra\Unify\Search('WidgetsDirectory');
+		$search->addCondition('directory', static::directory);
+		$search->getListXML($node);
+		return \Difra\View::render($xml, 'widget_directory', true);
 	}
 
 	public function addAjaxAction( \Difra\Param\AjaxString $search ) {
@@ -20,7 +38,7 @@ abstract class DirectoryController extends \Difra\Controller {
 		/** @var \Difra\Plugins\Widgets\Objects\Directory $class */
 		$class = \Difra\Unify\Storage::getClass( 'WidgetsDirectory' );
 		if( strlen( $search ) > $class::DIRECTORY_LENGTH ) {
-			\Difra\Ajax::getInstance()->notify(
+			\Difra\Ajaxer::getInstance()->notify(
 				   \Difra\Locales::getInstance()->getXPath( 'widgets/directory/value-too-long' )
 			);
 		}
@@ -32,9 +50,11 @@ abstract class DirectoryController extends \Difra\Controller {
 			$object->directory = static::directory;
 			$object->name = (string)$search;
 		}
-		\Difra\Ajax::getInstance()->close();
+		\Difra\Ajaxer::getInstance()->close();
 		$this->action( (string)$search );
 	}
+
+	abstract public function action($value);
 
 	public function chooseAjaxAction( \Difra\Param\AnyInt $id ) {
 
@@ -45,10 +65,10 @@ abstract class DirectoryController extends \Difra\Controller {
 			if( $object->directory != static::directory ) {
 				throw new \Difra\Exception( 'This item does not exist in this directory.' );
 			}
-			\Difra\Ajax::getInstance()->close();
+			\Difra\Ajaxer::getInstance()->close();
 			$this->action( $object->name );
 		} catch( \Difra\Exception $ex ) {
-			\Difra\Ajax::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'widgets/directory/choose-error' ) );
+			\Difra\Ajaxer::getInstance()->notify(\Difra\Locales::getInstance()->getXPath('widgets/directory/choose-error'));
 		}
 	}
 
@@ -64,26 +84,6 @@ abstract class DirectoryController extends \Difra\Controller {
 			$object->delete();
 		} catch( \Difra\Exception $ex ) {
 		}
-		\Difra\Ajax::getInstance()->load( '#DirectoryWindow', $this->renderWindow() );
-	}
-
-	private function renderWindow() {
-
-		$xml = new \DOMDocument();
-		$node = $xml->appendChild( $xml->createElement( 'DirectoryWindow' ) );
-		$search = new \Difra\Unify\Search( 'WidgetsDirectory' );
-		$search->addCondition( 'directory', static::directory );
-		$search->getListXML( $node );
-		return \Difra\View::render( $xml, 'widget_directory', true );
-	}
-
-	private function subInit() {
-
-		if( !static::directory ) {
-			throw new \Difra\Exception( 'DirectoryController extended class should have \'directory\' constant with directory name.' );
-		}
-		if( strlen( static::directory ) > ( $len = \Difra\Plugins\Widgets\Objects\Directory::DIRECTORY_LENGTH ) ) {
-			throw new \Difra\Exception( 'WidgetsDirectory directory name is too long. ' . $len . ' bytes is the limit.' );
-		}
+		\Difra\Ajaxer::getInstance()->load('#DirectoryWindow', $this->renderWindow());
 	}
 }
