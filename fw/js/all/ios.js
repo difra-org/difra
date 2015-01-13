@@ -1,4 +1,12 @@
-// Fixes page rubber scroll on iOS devices for elements with .scrollable class
+/**
+ * This scripts supports specific behavior for some elements on iOS devices.
+ * Very useful for position: fixed elements layout.
+ *
+ * .scrollable                Element will be scrollable.
+ * .unscrollable        Element will not be scrollable and react on "rubber" pull actions.
+ */
+
+// Fix page rubber scroll on iOS devices for elements with .scrollable class
 $( document ).on( 'touchstart', '.scrollable', function ( event ) {
 	if( ( event.target ).closest( '.scrollable,.unscrollable' ).hasClass( '.unscrollable' ) ) {
 		return;
