@@ -1,13 +1,20 @@
 /**
- * Переключает страницы с помощью ajax.
- * В исходной и конечной странице должны присутствовать контейнеры .switcher,
- * которые данный скрипт заменяет при переключении.
+ * Switcher.js allows native-like page switching with ajax.
  *
- * Добавляет события:
- * construct        — срабатывает после смены страницы
- * destruct        — срабатывает перед сменой страницы (в том числе при перенаправлении на новый адрес в случае неудачи)
- * switch        — срабатывает перед удачной ajax-сменой страницы
+ * Server identifies Switcher.js requests by "X-Requested-With: SwitchPage" HTTP header.
+ * When this header is detected, you can return only updated elements. Usually there is no point
+ * to track which elements was updated, but you can return very simplified page with container elements only,
+ * with all layout missing. To identify which elements to replace, this script uses id attribute. All container
+ * elements you want to update on page switch should contain .switcher class.
+ *
+ * If script fails to switch link, it uses http redirect to change page.
+ *
+ * This script adds following events:
+ * construct        fires after page change
+ * destruct        fires before page change
+ * switch        fires after destruct when script understands that page switch will be successful
  */
+
 var switcher = [];
 
 switcher.basePath = '/';
@@ -36,22 +43,11 @@ switcher.ajaxConfig = {
 			switcher.fallback();
 			return;
 		}
-		/*
-		 var newPath = '/';
-		 var content = newdata.find( '#content' );
-		 if( content.length && content.attr( 'basepath' ) ) {
-		 newPath = content.attr( 'basepath' );
-		 }
-		 if( switcher.basePath != newPath ) {
-		 switcher.fallback();
-		 return;
-		 }
-		 */
 		$( document ).triggerHandler( 'destruct' );
 		if( !switcher.noPush ) {
 			if( typeof history.pushState == 'function' ) {
 				history.pushState( { url: switcher.url }, null, switcher.url );
-			} else { // нет pushState — используем хеши
+			} else { // browser does not support pushState, use hashes
 				switcher.hashChanged = true;
 				window.location = switcher.basePath + '#!' + switcher.url;
 			}
@@ -83,6 +79,9 @@ switcher.ajaxConfig = {
 	}
 };
 
+/**
+ * Page switch fall back
+ */
 switcher.fallback = function () {
 
 	$( document ).triggerHandler( 'destruct' );
@@ -90,9 +89,15 @@ switcher.fallback = function () {
 	document.location = switcher.url;
 };
 
+/**
+ * Switch page
+ * @param url
+ * @param noPush
+ * @param data
+ */
 switcher.page = function ( url, noPush, data ) {
 
-	// filter protocol://host part
+	// cut protocol://host part if it matches current host
 	var host = window.location.protocol + "//" + window.location.host + "/";
 	if( host == url.substring( 0, host.length ) ) {
 		switcher.page( url.substring( host.length - 1 ) );
@@ -120,6 +125,9 @@ switcher.page = function ( url, noPush, data ) {
 	}
 };
 
+/**
+ * Support "Back" and "Forward" browser buttons for browsers without pushState
+ */
 window.onhashchange = function () {
 
 	if( switcher.hashChanged ) {
@@ -133,6 +141,9 @@ window.onhashchange = function () {
 	}
 };
 
+/**
+ * Support "Back" and "Forward" browser buttons
+ */
 window.onpopstate = function () {
 
 	if( switcher.url && switcher.url != decodeURI( document.location.pathname ) && switcher.url != document.location.hash.substring( 2 ) ) {
@@ -140,26 +151,24 @@ window.onpopstate = function () {
 	}
 };
 
+/**
+ * Init
+ */
 $( document ).ready( function () {
 
-	/*
-	 var content = $( '#content' );
-	 if( content.length && content.attr( 'basepath' ) ) {
-	 switcher.basePath = content.attr( 'basepath' );
-	 } else {
-	 switcher.basePath = '/';
-	 }
-	 */
 	if( document.location.hash && document.location.hash.substring( 0, 2 ) == '#!' ) {
+		// redirect /#!/some/page to /some/page in smart browsers
 		switcher.page( document.location.hash.substring( 2 ), true );
 		if( typeof history.replaceState == 'function' ) {
 			switcher.hashChanged = true;
 			history.replaceState( { url: switcher.url }, null, switcher.url );
 		}
 	} else if( typeof history.pushState != 'function' && document.location.hash.substring( 0, 2 ) != '#!' && content.length ) {
-		switcher.page( document.location.href ); // это приведёт к переходу на hash-ссылку при открытии обычной ссылки
+		// redirect /some/page to /#!/some/page in stupid browsers
+		switcher.page(document.location.href);
 	} else {
 		if( !switcher.url ) {
+			// remember current URL on first page load
 			switcher.url = decodeURI( document.location.pathname );
 		}
 	}
@@ -167,12 +176,16 @@ $( document ).ready( function () {
 
 $( document ).on( 'click dblclick', 'a', function ( event ) {
 	if( $( this ).hasClass( 'ajaxer' ) || $( this ).hasClass( 'noAjaxer' ) ) {
+		// skip link if it has class .ajaxer or .noAjaxer
 		return;
 	}
+
 	var href = $( this ).attr( 'href' );
 	if( href == '#' ) {
+		// do nothing on href="#" links
 		event.preventDefault();
 	} else if( href && href.substring( 0, 11 ) != 'javascript:' && href.substr( 0, 1 ) != '#' ) {
+		// link is not javascript and not anchor, use ajax page switching
 		event.preventDefault();
 		switcher.page( $( this ).attr( 'href' ) );
 	}

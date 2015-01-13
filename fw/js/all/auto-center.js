@@ -1,3 +1,8 @@
+/**
+ * This script will center elements with .auto-center, .auto-center-x, .auto-center-y classes inside container.
+ * Used for auto generated modal dialogs. Place new dialog inside of position:fixed overlay and call autocenter.run().
+ */
+
 var autocenter = {};
 
 autocenter.enabled = true;

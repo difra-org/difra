@@ -1,5 +1,5 @@
 /**
- * Sends ajax-requests and processes results.
+ * Sends ajax-requests and processes results. Read wiki documentation for more info.
  *
  * Adds events:
  * form-submit                fires before sending form data
@@ -16,6 +16,13 @@ ajaxer.setup = {
 	}
 };
 
+/**
+ * Ajax request
+ * @param url                URL
+ * @param params        POST data
+ * @param headers        additional headers
+ * @returns {string}
+ */
 ajaxer.httpRequest = function ( url, params, headers ) {
 
 	$.ajaxSetup( ajaxer.setup );
@@ -32,6 +39,11 @@ ajaxer.httpRequest = function ( url, params, headers ) {
 	return $.ajax( url, data ).responseText;
 };
 
+/**
+ * Send request from Ajaxer.js to Ajaxer.php
+ * @param url        URL
+ * @param data        Data
+ */
 ajaxer.query = function ( url, data ) {
 
 	if( typeof debug !== 'undefined' ) {
@@ -41,9 +53,11 @@ ajaxer.query = function ( url, data ) {
 };
 
 /**
- * Обработка экшенов
+ * Process Ajaxer.php data and perform required Ajaxer.js actions
+ *
+ * @param data        Data from Ajaxer.php
+ * @param form        Form object (if ajax form submit was performed)
  */
-
 ajaxer.process = function ( data, form ) {
 
 	this.clean( form );
@@ -67,40 +81,41 @@ ajaxer.process = function ( data, form ) {
 			}
 			ajaxer.triggerHandler( 'ajaxer-pre-' + action.action );
 			switch( action.action ) {
-			case 'notify':                // сообщение
+				case 'notify':		// pop-up message
 				this.notify( action.lang, action.message );
 				break;
-			case 'require':                // не заполнено обязательное поле формы
+				case 'require':		// required form element is not filled
 				this.require( form, action.name );
 				break;
-			case 'invalid':                // не правильное значение поля формы
+				case 'invalid':		// form element filled incorrectly
 				this.invalid( form, action.name );
 				break;
-			case 'status':                // текстовый статус для поля
+				case 'status':		// custom form element status
 				this.status( form, action.name, action.message, action.classname );
 				break;
-			case 'redirect':        // перенаправление
+				case 'redirect':	// http redirect
 				this.redirect( action.url );
 				break;
-			case 'display':                // показать оверлей с пришедшим html
+				case 'display':		// display some HTML in overlay
 				this.display( action.html );
 				break;
-			case 'reload':                // перезагрузить страницу
+				case 'reload':		// refresh page
 				this.reload();
 				break;
-			case 'close':                // закрыть оверлей
+				case 'close':		// close overlay
 				this.close( form );
 				break;
-			case 'error':                // сообщение об ошибке
+				case 'error':		// display error text
 				this.error( action.lang, action.message );
 				break;
-			case 'reset':                // сделать форме reset
+				case 'reset':		// reset form data
 				this.reset( form );
 				break;
-			case 'load':                // заменить содержимое DOM-элемента
+				case 'load':		// update (replace) some DOM element
 				this.load( action.target, action.html );
 				break;
-			case 'exec':
+				case 'exec':		// never use this if unsure, it's here only for very special cases
+					// this is possible security flow if you use it
 				this.exec( action.script );
 				break;
 			default:
@@ -130,23 +145,42 @@ ajaxer.triggerHandler = function ( action ) {
 	}
 };
 
+/**
+ * clean form element problem flags
+ * @param form        DOM element
+ */
 ajaxer.clean = function ( form ) {
 
 	$( form ).find( '.problem' ).removeClass( 'problem' );
 	ajaxer.topScroll = -1;
 };
 
+/**
+ * Display text message
+ * @param lang                Locale data array
+ * @param message        Message text
+ */
 ajaxer.notify = function ( lang, message ) {
 
 	ajaxer.overlayShow( '<p>' + message + '</p>' + '<a href="#" onclick="ajaxer.close(this)" class="button">' + ( lang.close ? lang.close : 'OK' ) + '</a>' );
 };
 
+/**
+ * Display error message text
+ * @param lang                Locale data array
+ * @param message        Error message text
+ */
 ajaxer.error = function ( lang, message ) {
 
 	ajaxer.notify( lang, message );
 };
 
-// поиск элемента формы
+/**
+ * Find form element by name.
+ * @param container
+ * @param name
+ * @returns {*|jQuery}
+ */
 ajaxer.smartFind = function ( container, name ) {
 
 	var el = $( container ).find( '[name="' + name.replace( /"/g, "&quot;" ) + '"]:enabled' );
@@ -163,6 +197,11 @@ ajaxer.smartFind = function ( container, name ) {
 };
 
 ajaxer.topScroll = -1;
+/**
+ * Scroll page up to certain element.
+ * Used to scroll page if some form element requires attention.
+ * @param element
+ */
 ajaxer.scroll = function ( element ) {
 	var top = element.offset().top - 32;
 	if( top < 0 ) {
@@ -176,6 +215,11 @@ ajaxer.scroll = function ( element ) {
 	}
 };
 
+/**
+ * Add "required element is not filled" problem flag
+ * @param form
+ * @param name
+ */
 ajaxer.require = function ( form, name ) {
 
 	var el = ajaxer.smartFind( form, name );
@@ -193,6 +237,12 @@ ajaxer.require = function ( form, name ) {
 	}
 };
 
+/**
+ * Add "element is filled not correctly" problem flag
+ * @param form
+ * @param name
+ * @param message
+ */
 ajaxer.invalid = function ( form, name, message ) {
 
 	var el = ajaxer.smartFind( form, name );
@@ -210,6 +260,10 @@ ajaxer.invalid = function ( form, name, message ) {
 	}
 };
 
+/**
+ * HTTP-like redirect
+ * @param url
+ */
 ajaxer.redirect = function ( url ) {
 
 	if( typeof(switcher) == 'undefined' ) {
@@ -219,26 +273,46 @@ ajaxer.redirect = function ( url ) {
 	}
 };
 
+/**
+ * Reload current page
+ */
 ajaxer.reload = function () {
 
 	window.location.reload();
 };
 
+/**
+ * Display overlay with some HTML
+ * @param html
+ */
 ajaxer.display = function ( html ) {
 
 	ajaxer.overlayShow( html );
 };
 
+/**
+ * Close overlay
+ * @param obj
+ */
 ajaxer.close = function ( obj ) {
 
 	ajaxer.overlayHide( obj );
 };
 
+/**
+ * Reset form
+ * @param form
+ */
 ajaxer.reset = function ( form ) {
 
 	$( form ).get( 0 ).reset();
 };
 
+/**
+ * Update (replace) DOM element
+ * @param target
+ * @param html
+ */
 ajaxer.load = function ( target, html ) {
 
 	var cut = $( html ).filter( target );
@@ -250,23 +324,35 @@ ajaxer.load = function ( target, html ) {
 	$( window ).resize();
 };
 
+/**
+ * Exec java script
+ * NEVER use this. It is designed to make few special things possible and should not used in any way.
+ * @param script
+ */
 ajaxer.exec = function ( script ) {
 	eval( script );
 };
 
 /**
- * Статусы элементов формы
+ * Form elements statuses
  */
-
 ajaxer.statuses = {};
 
-// инициализация статусов
+/**
+ * Init form statuses
+ */
 ajaxer.statusInit = function () {
 
 	ajaxer.statuses = {};
 };
 
-// эта функция устанавливает статус
+/**
+ * Set form element status
+ * @param form
+ * @param name
+ * @param message
+ * @param classname
+ */
 ajaxer.status = function ( form, name, message, classname ) {
 
 	ajaxer.statuses[name] = { message: message, classname: classname, used: 0 };
@@ -281,7 +367,10 @@ ajaxer.status = function ( form, name, message, classname ) {
 	 */
 };
 
-// эта функция обновляет поля статусов в соответствии со значениями, установленными через ajaxer.status()
+/**
+ * Update all form elements to match their statuses
+ * @param form
+ */
 ajaxer.statusUpdate = function ( form ) {
 
 	$( form ).find( '.status' ).each( function ( i, obj1 ) {
@@ -299,12 +388,12 @@ ajaxer.statusUpdate = function ( form ) {
 		if( !name ) {
 			return;
 		}
-		// сохраняем оригинальный текст
+		// remember original text
 		if( typeof obj.attr( 'original-text' ) == "undefined" ) {
 			obj.attr( 'original-text', obj.html() );
 		}
 		if( name in ajaxer.statuses ) {
-			// похоже, обновился статус или стиль
+			// it looks like status text or status style has updated
 			obj.animate( { opacity: 0 }, 'fast', function () {
 				if( obj.attr( 'status-class' ) ) {
 					if( obj.attr( 'status-class' ) != ajaxer.statuses[name].classname ) {
@@ -322,7 +411,7 @@ ajaxer.statusUpdate = function ( form ) {
 			} );
 			ajaxer.statuses[name].used = 1;
 		} else if( obj.attr( 'status-class' ) ) {
-			// статус был изменен, но теперь нет
+			// element has no special status anymore, restore it
 			obj.animate( { opacity: 0 }, 'fast', function () {
 				obj.removeClass( obj.attr( 'status-class' ) );
 				obj.removeAttr( 'status-class' );
@@ -331,22 +420,21 @@ ajaxer.statusUpdate = function ( form ) {
 			} );
 		}
 	} );
-	// для этих элементов статус применить не удалось
+	// warning for elements ajaxer could not find
 	for( var i in ajaxer.statuses ) {
 		//noinspection JSUnfilteredForInLoop
 		if( !ajaxer.statuses[i].used ) {
 			//noinspection JSUnfilteredForInLoop
 			console.warn( 'Status for ' + ajaxer.statuses[i].classname + ': ' + ajaxer.statuses[i].message );
-			// TODO: показывать нотифай вместо записи в лог
 			//ajaxer.notify( {}, ajaxer.statuses[i].message );
 		}
 	}
 };
 
 /**
- * Работа с оверлеем
+ * Display overlay
+ * @param content
  */
-
 ajaxer.overlayShow = function ( content ) {
 
 	$( 'body' ).append(
@@ -365,6 +453,10 @@ ajaxer.overlayShow = function ( content ) {
 	ajaxer.id++;
 };
 
+/**
+ * Hide overlay
+ * @param obj
+ */
 ajaxer.overlayHide = function ( obj ) {
 
 	var el = $( obj ).parents( '.overlay' );
@@ -378,9 +470,10 @@ ajaxer.overlayHide = function ( obj ) {
 };
 
 /**
- * Обработка сабмита форм
+ * Initiate ajax form submit
+ * @param form
+ * @param event
  */
-
 ajaxer.sendForm = function ( form, event ) {
 
 	var data = {
@@ -390,6 +483,9 @@ ajaxer.sendForm = function ( form, event ) {
 };
 
 ajaxer.submitting = false;
+/**
+ * Submit forms with .ajaxer class with ajax.
+ */
 $( document ).on( 'submit', 'form.ajaxer', function ( event ) {
 
 	if( ajaxer.submitting ) {
@@ -401,19 +497,18 @@ $( document ).on( 'submit', 'form.ajaxer', function ( event ) {
 	ajaxer.clean( form );
 	if( !form.find( 'input[type=file]' ).length ) {
 		// serialize method
-		ajaxer.sendForm( this, event );
+		ajaxer.sendForm(this, event);
 		return;
 	}
-	// iframe method
 	if( $( '#ajaxerFrame' ).length ) {
-		return;
+		return; // some progress bar overlay already exists?!
 	}
-	// генерируем uuid для прогрессбара
+	// generate UUID for progress bar
 	var uuid = '';
 	for( var i = 0; i < 32; i++ ) {
 		uuid += Math.floor( Math.random() * 16 ).toString( 16 );
 	}
-	// модифицируем форму для отправки через iframe
+	// modify form to be sent to iframe
 	form.attr( 'method', 'post' );
 	form.attr( 'enctype', 'multipart/form-data' );
 	var originalAction = form.attr( 'action' );
@@ -423,7 +518,7 @@ $( document ).on( 'submit', 'form.ajaxer', function ( event ) {
 	form.attr( 'target', 'ajaxerFrame' );
 	form.attr( 'uuid', uuid );
 	form.append( '<input type="hidden" name="_method" value="iframe"/>' );
-	// добавляем на страницу iframe
+	// add iframe for form target
 	var frame = $( '<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none" src="/iframe"></iframe>' );
 	frame.one( 'load', function ( event ) {
 		ajaxer.initIframe( form, event )
@@ -433,18 +528,19 @@ $( document ).on( 'submit', 'form.ajaxer', function ( event ) {
 } );
 
 /**
- * Отправка файлов через iframe
+ * Bind everything for iframe and progress bar overlay update and restore.
+ * @param form
+ * @param event
  */
-
 ajaxer.initIframe = function ( form, event ) {
 	var interval;
 	var frame = $( 'iframe#ajaxerFrame' );
 	event.stopPropagation();
-	// цепляем новую функцию onload на iframe
+	// bind new onLoad for iframe
 	frame.off( 'load' );
 	frame.one( 'load', function () {
 		window.clearInterval( interval );
-		// получаем данные из iframe
+		// get data from iframe
 		var rawframe = frame.get( 0 );
 		if( rawframe.contentDocument ) {
 			var val = rawframe.contentDocument.body.innerHTML;
@@ -461,7 +557,7 @@ ajaxer.initIframe = function ( form, event ) {
 			}
 		} catch( ignore ) {
 		}
-		// восстанавливаем форму в первоначальный вид и подчищаем документ
+		// restore form and clean up
 		form.attr( 'action', form.attr( 'originalAction' ) );
 		form.removeAttr( 'originalAction' );
 		form.removeAttr( 'uuid' );
@@ -475,11 +571,11 @@ ajaxer.initIframe = function ( form, event ) {
 		loading.hide();
 		ajaxer.process( val, form );
 	} );
-	// сабмиттим форму
+	// submit form
 	ajaxer.submitting = true;
 	form.submit();
 	ajaxer.submitting = false;
-	// получаем статус закачки и обновляем прогрессбар раз в секунду
+	// get status and update progress bar once a second
 	var uuid = form.attr( 'uuid' );
 	ajaxer.fetchProgress( uuid );
 	interval = window.setInterval(
@@ -490,6 +586,10 @@ ajaxer.initIframe = function ( form, event ) {
 	);
 };
 
+/**
+ * Fetch iframe upload status and update progress bar
+ * @param uuid
+ */
 ajaxer.fetchProgress = function ( uuid ) {
 
 	var res = ajaxer.httpRequest( '/progress', null, { 'X-Progress-ID': uuid } );
@@ -521,9 +621,15 @@ ajaxer.fetchProgress = function ( uuid ) {
 };
 
 /**
- * Обработка событий страницы
+ * Page events
  */
 
+/**
+ * Links with .ajaxer class will call ajaxer.query() instead of page change.
+ * That's easy way to "ping" Ajaxer.php, for example:
+ * <a href="/edit/page/75">Edit</a>
+ * will lead to Ajaxer.js request to Ajaxer.php by url /edit/page/75 and process actions as requested by Ajaxer.php.
+ */
 $( document ).on( 'click dblclick', 'a.ajaxer', function ( e ) {
 	var href = $( this ).attr( 'href' );
 	if( href && href != '#' ) {
@@ -532,6 +638,9 @@ $( document ).on( 'click dblclick', 'a.ajaxer', function ( e ) {
 	e.preventDefault();
 } );
 
+/**
+ * Let Enter key submit .ajaxer forms. It's common behavior for web applications.
+ */
 $( document ).on( 'keypress', '.ajaxer input', function ( e ) {
 	if( e.which == 13 ) {
 		$( this ).parents( 'form' ).submit();
@@ -539,16 +648,25 @@ $( document ).on( 'keypress', '.ajaxer input', function ( e ) {
 	}
 } );
 
+/**
+ * Let element with .submit class submit form.
+ */
 $( document ).on( 'click dblclick', '.submit', function ( e ) {
 	$( this ).parents( 'form' ).submit();
 	e.preventDefault();
 } );
 
+/**
+ * Let element with .reset class reset form.
+ */
 $( document ).on( 'click dblclick', '.reset', function ( e ) {
 	ajaxer.reset( $( this ).parents( 'form' ) );
 	e.preventDefault();
 } );
 
+/**
+ * Let Ajaxer.php pass actions to Ajaxer.js via cookie.
+ */
 ajaxer.watcher = function () {
 
 	var mc = $.cookie( 'query' );
@@ -573,6 +691,5 @@ ajaxer.watcher = function () {
 		}
 	}
 };
-
 $( document ).ready( ajaxer.watcher );
 $( document ).bind( 'construct', ajaxer.watcher );

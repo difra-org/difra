@@ -1,3 +1,8 @@
+/**
+ * Script for "Loading..." overlay
+ * @type {{}}
+ */
+
 var loading = {};
 
 loading.show = function () {
