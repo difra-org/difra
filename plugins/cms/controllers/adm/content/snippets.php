@@ -66,7 +66,7 @@ class AdmContentSnippetsController extends \Difra\Controller {
 		$snippet->setName( $name );
 		$snippet->setDescription( $description );
 		$snippet->setText( $text );
-		$this->ajax->redirect( '/adm/content/snippets' );
+		\Difra\Ajaxer::getInstance()->redirect('/adm/content/snippets');
 	}
 
 	/**
@@ -76,17 +76,16 @@ class AdmContentSnippetsController extends \Difra\Controller {
 	public function delAjaxAction( \Difra\Param\AnyInt $id, \Difra\Param\AjaxInt $confirm = null ) {
 
 		if( !$snippet = \Difra\Plugins\CMS\Snippet::getById( $id->val() ) ) {
-			$this->ajax->redirect( '/adm/cms/snippets' );
+			\Difra\Ajaxer::getInstance()->redirect('/adm/cms/snippets');
 		}
 		if( !$confirm ) {
-			$this->ajax->confirm( $this->locale->getXPath( 'cms/adm/snippet/del-confirm1' ) .
+			\Difra\Ajaxer::getInstance()->confirm(\Difra\Locales::get('cms/adm/snippet/del-confirm1') .
 			$snippet->getName() .
-			$this->locale->getXPath( 'cms/adm/snippet/del-confirm2' ) );
+				\Difra\Locales::get('cms/adm/snippet/del-confirm2'));
 			return;
 		}
 		$snippet->del();
-		$this->ajax->close();
-		$this->ajax->redirect( '/adm/content/snippets' );
+		\Difra\Ajaxer::getInstance()->close()->redirect('/adm/content/snippets');
 	}
 }
 

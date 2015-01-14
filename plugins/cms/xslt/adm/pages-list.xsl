@@ -27,7 +27,7 @@
 							<th>
 								<xsl:value-of select="$locale/cms/adm/hidden"/>
 							</th>
-							<th></th>
+							<th/>
 						</tr>
 					</thead>
 					<tbody>

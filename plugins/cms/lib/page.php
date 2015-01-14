@@ -29,19 +29,9 @@ class Page {
 	private $loaded = true;
 
 	/**
-	 * деструктор
-	 */
-	public function __destruct() {
-
-		// сохранение изменений
-		if( $this->modified and $this->loaded ) {
-			$this->save();
-		}
-	}
-
-	/**
-	 * Создание новой страницы
-	 * @static
+	 * Create new page
+	 *
+*@static
 	 * @return Page
 	 */
 	public static function create() {
@@ -50,9 +40,10 @@ class Page {
 	}
 
 	/**
-	 * Получение страницы по id
+	 * Get page by id
+
 	 *
-	 * @static
+*@static
 	 * @param int $id
 	 * @return Page
 	 */
@@ -65,9 +56,11 @@ class Page {
 	}
 
 	/**
-	 * Получение списка страниц
-	 * @static
-	 * @param bool|null $visible        Фильтр по видимости
+	 * Get pages list
+
+*
+*@static
+	 * @param true|false|null $visible Visibility filter
 	 * @return self[]|bool
 	 */
 	public static function getList( $visible = null ) {
@@ -105,10 +98,11 @@ class Page {
 	}
 
 	/**
-	 * Определяет, соответствует ли какая-либо страница текущему URL
+	 * Detect page matching current URL
+
 	 *
-	 * @static
-	 * @return int|bool
+*@static
+	 * @return int|false
 	 */
 	public static function find() {
 
@@ -132,42 +126,54 @@ class Page {
 		return isset( $data[$uri] ) ? $data[$uri] : false;
 	}
 
+	/**
+	 * деструктор
+	 */
+	public function __destruct() {
+
+		if($this->modified and $this->loaded) {
+			$this->save();
+		}
+	}
+
+	/**
+	 * Save data
+	 */
+	private function save() {
+
+		$db = \Difra\MySQL::getInstance();
+		if( !$this->id) {
+			$db->query('INSERT INTO `cms` SET '
+				. "`title`='" . $db->escape($this->title) . "',"
+				. "`tag`='" . $db->escape($this->uri) . "',"
+				. "`body`='" . $db->escape($this->body) . "',"
+				. "`hidden`='" . ($this->hidden ? '1' : '0') . "'"
+			);
+			$this->id = $db->getLastId();
+		} else {
+			$db->query('UPDATE `cms` SET '
+				. "`title`='" . $db->escape($this->title) . "',"
+				. "`tag`='" . $db->escape($this->uri) . "',"
+				. "`body`='" . $db->escape($this->body) . "',"
+				. "`hidden`='" . ($this->hidden ? '1' : '0') . "'"
+				. " WHERE `id`='" . $db->escape($this->id) . "'"
+			);
+			\Difra\Cache::getInstance()->remove('cms_page_' . $this->id);
+		}
+		$this->modified = false;
+		self::cleanCache();
+	}
+
+	/**
+	 * Clear cache
+	 */
 	public static function cleanCache() {
 
-		\Difra\Cache::getInstance()->remove( 'cms_tags' );
+		\Difra\Cache::getInstance()->remove('cms_tags');
 	}
 
 	/**
-	 * Загрузка данных
-	 * @return bool
-	 */
-	private function load() {
-
-		if( $this->loaded ) {
-			return true;
-		}
-		if( !$this->id ) {
-			return false;
-		}
-		$cache = \Difra\Cache::getInstance();
-		if( !$data = $cache->get( 'cms_page_' . $this->id ) ) {
-			$db = \Difra\MySQL::getInstance();
-			$data = $db->fetchRow( "SELECT * FROM `cms` WHERE `id`='" . $db->escape( $this->id ) . "'" );
-			$cache->put( 'cms_page_' . $this->id, $data );
-		}
-		if( !$data ) {
-			return false;
-		}
-		$this->title = $data['title'];
-		$this->uri = $data['tag'];
-		$this->body = $data['body'];
-		$this->hidden = $data['hidden'];
-		$this->loaded = true;
-		return true;
-	}
-
-	/**
-	 * Возвращает id страницы
+	 * Get page id
 	 *
 	 * @return int
 	 */
@@ -180,7 +186,18 @@ class Page {
 	}
 
 	/**
-	 * Изменение заголовка страницы
+	 * Get page title
+	 *
+	 * @return string
+	 */
+	public function getTitle() {
+
+		$this->load();
+		return $this->title;
+	}
+
+	/**
+	 * Set page title
 	 * @param string $title
 	 */
 	public function setTitle( $title ) {
@@ -194,17 +211,47 @@ class Page {
 	}
 
 	/**
-	 * Получение заголовка страницы
-	 * @return string
+	 * Load page data
+	 *
+	 * @return bool
 	 */
-	public function getTitle() {
+	private function load() {
 
-		$this->load();
-		return $this->title;
+		if($this->loaded) {
+			return true;
+		}
+		if(!$this->id) {
+			return false;
+		}
+		$cache = \Difra\Cache::getInstance();
+		if(!$data = $cache->get('cms_page_' . $this->id)) {
+			$db = \Difra\MySQL::getInstance();
+			$data = $db->fetchRow("SELECT * FROM `cms` WHERE `id`='" . $db->escape($this->id) . "'");
+			$cache->put('cms_page_' . $this->id, $data);
+		}
+		if(!$data) {
+			return false;
+		}
+		$this->title = $data['title'];
+		$this->uri = $data['tag'];
+		$this->body = $data['body'];
+		$this->hidden = $data['hidden'];
+		$this->loaded = true;
+		return true;
 	}
 
 	/**
-	 * Изменение содержимого страницы
+	 * Get page body
+	 * @return string
+	 */
+	public function getBody() {
+
+		$this->load();
+		return $this->body;
+	}
+
+	/**
+	 * Set page body
 	 * @param \Difra\Param\AjaxHTML|\Difra\Param\AjaxSafeHTML|string $body
 	 * @throws \Difra\Exception
 	 */
@@ -230,17 +277,18 @@ class Page {
 	}
 
 	/**
-	 * Получение содержимого страницы
+	 * Get page URI
+	 *
 	 * @return string
 	 */
-	public function getBody() {
+	public function getUri() {
 
 		$this->load();
-		return $this->body;
+		return $this->uri;
 	}
 
 	/**
-	 * Устанавливает URI страницы
+	 * Set page URI
 	 *
 	 * @param string $uri
 	 */
@@ -258,46 +306,18 @@ class Page {
 	}
 
 	/**
-	 * Возвращает URI страницы
+	 * Get page hidden status
 	 *
-	 * @return string
+	 * @return bool
 	 */
-	public function getUri() {
+	public function getHidden() {
 
 		$this->load();
-		return $this->uri;
+		return $this->hidden;
 	}
 
 	/**
-	 * Сохранение данных
-	 */
-	private function save() {
-
-		$db = \Difra\MySQL::getInstance();
-		if( !$this->id ) {
-			$db->query( 'INSERT INTO `cms` SET '
-				. "`title`='" . $db->escape( $this->title ) . "',"
-				. "`tag`='" . $db->escape( $this->uri ) . "',"
-				. "`body`='" . $db->escape( $this->body ) . "',"
-				. "`hidden`='" . ( $this->hidden ? '1' : '0' ) . "'"
-			);
-			$this->id = $db->getLastId();
-		} else {
-			$db->query( 'UPDATE `cms` SET '
-				. "`title`='" . $db->escape( $this->title ) . "',"
-				. "`tag`='" . $db->escape( $this->uri ) . "',"
-				. "`body`='" . $db->escape( $this->body ) . "',"
-				. "`hidden`='" . ( $this->hidden ? '1' : '0' ) . "'"
-				. " WHERE `id`='" . $db->escape( $this->id ) . "'"
-			);
-			\Difra\Cache::getInstance()->remove( 'cms_page_' . $this->id );
-		}
-		$this->modified = false;
-		self::cleanCache();
-	}
-
-	/**
-	 * Установка значения флага hidden
+	 * Make page hidden
 	 *
 	 * @param bool|int $hidden
 	 */
@@ -313,18 +333,7 @@ class Page {
 	}
 
 	/**
-	 * Возвращает значение флага hidden
-	 *
-	 * @return int
-	 */
-	public function getHidden() {
-
-		$this->load();
-		return $this->hidden;
-	}
-
-	/**
-	 * Возвращает данные в XML
+	 * Get page data as XML node
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 * @return bool
@@ -343,7 +352,7 @@ class Page {
 	}
 
 	/**
-	 * Удаление страницы
+	 * Delete page
 	 */
 	public function delete() {
 
@@ -357,6 +366,7 @@ class Page {
 					if( $file{0} == '.' ) {
 						continue;
 					}
+					/** @noinspection PhpUsageOfSilenceOperatorInspection */
 					@unlink( "$path/$file" );
 				}
 				rmdir( $path );

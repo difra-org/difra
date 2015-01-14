@@ -13,7 +13,7 @@ class AdmContentPagesController extends \Difra\Controller {
 	}
 
 	/**
-	 * Список страниц
+	 * Pages list
 	 */
 	public function indexAction() {
 
@@ -22,7 +22,7 @@ class AdmContentPagesController extends \Difra\Controller {
 	}
 
 	/**
-	 * Форма добавления страницы
+	 * Add page form
 	 */
 	public function addAction() {
 
@@ -30,8 +30,9 @@ class AdmContentPagesController extends \Difra\Controller {
 	}
 
 	/**
-	 * Форма редактирования страницы
-	 * @param \Difra\Param\AnyInt $id
+	 * Edit page form
+	 *
+*@param \Difra\Param\AnyInt $id
 	 */
 	public function editAction( \Difra\Param\AnyInt $id ) {
 
@@ -41,8 +42,9 @@ class AdmContentPagesController extends \Difra\Controller {
 	}
 
 	/**
-	 * Сохранение страницы
-	 * @param \Difra\Param\AjaxString $title
+	 * Save page
+	 *
+*@param \Difra\Param\AjaxString $title
 	 * @param \Difra\Param\AjaxString $tag
 	 * @param \Difra\Param\AjaxHTML   $body
 	 * @param \Difra\Param\AjaxInt    $id
@@ -64,24 +66,25 @@ class AdmContentPagesController extends \Difra\Controller {
 	}
 
 	/**
-	 * Удаление страницы
-	 * @param \Difra\Param\AnyInt       $id
+	 * Delete page
+	 *
+*@param \Difra\Param\AnyInt       $id
 	 * @param \Difra\Param\AjaxCheckbox $confirm
 	 */
 	public function deleteAjaxAction( \Difra\Param\AnyInt $id, \Difra\Param\AjaxCheckbox $confirm = null ) {
 
 		if( $confirm and $confirm->val() ) {
 			\Difra\Plugins\CMS\Page::get( $id->val() )->delete();
-			$this->ajax->close();
-			$this->ajax->redirect( '/adm/content/pages' );
+			\Difra\Ajaxer::getInstance()->close();
+			\Difra\Ajaxer::getInstance()->redirect('/adm/content/pages' );
 			return;
 		}
-		$page = \Difra\Plugins\CMS\Page::get( $id->val() );
-		$this->ajax->display(
+		$page = \Difra\Plugins\CMS\Page::get( $id->val());
+		\Difra\Ajaxer::getInstance()->display(
 			'<span>'
-			. $this->locale->getXPath( 'cms/adm/delete-page-confirm-1' )
+			. \Difra\Locales::get('cms/adm/delete-page-confirm-1' )
 			. $page->getTitle()
-			. $this->locale->getXPath( 'cms/adm/delete-page-confirm-2' )
+			. \Difra\Locales::get('cms/adm/delete-page-confirm-2' )
 			. '</span>'
 			. '<form action="/adm/content/pages/delete/' . $id . '" method="post" class="ajaxer">'
 			. '<input type="hidden" name="confirm" value="1"/>'

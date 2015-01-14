@@ -50,7 +50,6 @@
 				<no-pages>Нет доступных страниц для добавления.</no-pages>
 				<delete-item-confirm>Действительно удалить элемент меню?</delete-item-confirm>
 			</menuitem>
-
 			<snippet>
 				<title>Сниппеты</title>
 				<title-add>Добавление сниппета</title-add>

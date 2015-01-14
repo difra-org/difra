@@ -13,7 +13,7 @@ class AdmContentMenuController extends \Difra\Controller {
 	}
 
 	/**
-	 * Список меню
+	 * Menu list
 	 */
 	public function indexAction() {
 
@@ -22,8 +22,9 @@ class AdmContentMenuController extends \Difra\Controller {
 	}
 
 	/**
-	 * Список элементов меню
-	 * @param Difra\Param\AnyInt $menuId
+	 * Menu elements list
+	 *
+*@param Difra\Param\AnyInt $menuId
 	 */
 	public function viewAction( \Difra\Param\AnyInt $menuId ) {
 
@@ -36,8 +37,9 @@ class AdmContentMenuController extends \Difra\Controller {
 	}
 
 	/**
-	 * Форма добавления элемента меню
-	 * @param Difra\Param\AnyInt $menuId
+	 * Add menu element form
+	 *
+*@param Difra\Param\AnyInt $menuId
 	 */
 	public function addAction( \Difra\Param\AnyInt $menuId ) {
 
@@ -48,8 +50,9 @@ class AdmContentMenuController extends \Difra\Controller {
 	}
 
 	/**
-	 * Форма редактирования элемента меню
-	 * @param Difra\Param\AnyInt $id
+	 * Edit menu element form
+	 *
+*@param Difra\Param\AnyInt $id
 	 */
 	public function editAction( \Difra\Param\AnyInt $id ) {
 
@@ -60,7 +63,7 @@ class AdmContentMenuController extends \Difra\Controller {
 	}
 
 	/**
-	 * Сохранение страницы (как элемента меню)
+	 * Save menu element: page
 	 * @param Difra\Param\AjaxInt $menu
 	 * @param Difra\Param\AjaxInt $page
 	 * @param Difra\Param\AjaxInt $id
@@ -78,12 +81,12 @@ class AdmContentMenuController extends \Difra\Controller {
 		}
 		$item->setMenu( $menu->val() );
 		$item->setParent( $parent ? $parent->val() : null );
-		$item->setPage( $page->val() );
-		$this->ajax->redirect( '/adm/content/menu/view/' . $menu->val() );
+		$item->setPage( $page->val());
+		\Difra\Ajaxer::getInstance()->redirect('/adm/content/menu/view/' . $menu->val() );
 	}
 
 	/**
-	 * Сохранение ссылки (как элемента меню)
+	 * Save menu element: link
 	 * @param Difra\Param\AjaxInt    $menu
 	 * @param Difra\Param\AjaxString $link
 	 * @param Difra\Param\AjaxString $label
@@ -104,21 +107,21 @@ class AdmContentMenuController extends \Difra\Controller {
 		$item->setMenu( $menu->val() );
 		$item->setParent( $parent ? $parent->val() : null );
 		$item->setLink( $link );
-		$item->setLinkLabel( $label );
-		$this->ajax->redirect( '/adm/content/menu/view/' . $menu->val() );
+		$item->setLinkLabel( $label);
+		\Difra\Ajaxer::getInstance()->redirect('/adm/content/menu/view/' . $menu->val() );
 	}
 
 	/**
-	 * Удаление элемента меню
+	 * Delete menu element
 	 * @param Difra\Param\AnyInt       $id
 	 * @param Difra\Param\AjaxCheckbox $confirm
 	 */
 	public function deleteAjaxAction( \Difra\Param\AnyInt $id, \Difra\Param\AjaxCheckbox $confirm = null ) {
 
-		if( !$confirm or !$confirm->val() ) {
-			$this->ajax->display(
+		if( !$confirm or !$confirm->val()) {
+			\Difra\Ajaxer::getInstance()->display(
 				'<span>'
-				. $this->locale->getXPath( 'cms/adm/menuitem/delete-item-confirm' )
+				. \Difra\Locales::get('cms/adm/menuitem/delete-item-confirm' )
 				. '</span>'
 				. '<form action="/adm/content/menu/delete/' . $id . '" method="post" class="ajaxer">'
 				. '<input type="hidden" name="confirm" value="1"/>'
@@ -128,28 +131,28 @@ class AdmContentMenuController extends \Difra\Controller {
 			);
 		} else {
 			\Difra\Plugins\CMS\Menuitem::get( $id->val() )->delete();
-			$this->ajax->refresh();
-			$this->ajax->close();
+			\Difra\Ajaxer::getInstance()->refresh();
+			\Difra\Ajaxer::getInstance()->close();
 		}
 	}
 
 	/**
-	 * Перемещение элемента меню вверх
+	 * Move menu element up
 	 * @param Difra\Param\AnyInt $id
 	 */
 	public function upAjaxAction( \Difra\Param\AnyInt $id ) {
 
 		\Difra\Plugins\CMS\Menuitem::get( $id->val() )->moveUp();
-		$this->ajax->refresh();
+		\Difra\Ajaxer::getInstance()->refresh();
 	}
 
 	/**
-	 * Перемещение элемента меню вниз
+	 * Move menu element down
 	 * @param Difra\Param\AnyInt $id
 	 */
 	public function downAjaxAction( \Difra\Param\AnyInt $id ) {
 
 		\Difra\Plugins\CMS\Menuitem::get( $id->val() )->moveDown();
-		$this->ajax->refresh();
+		\Difra\Ajaxer::getInstance()->refresh();
 	}
 }
