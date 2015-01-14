@@ -16,7 +16,7 @@ $_SERVER['VHOST_NAME'] = trim( strtolower( $_REQUEST['vhost'] ) );
 $_SERVER['VHOST_DATA'] = null;
 
 $libPath = dirname( __FILE__ ) . '/../../../fw/lib/';
-require( $libPath . 'autoloader.php' );
+require($libPath . 'autoloader.php');
 
 $site = Difra\Site::getInstance();
 $site->init();

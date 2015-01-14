@@ -5,7 +5,7 @@
 date_default_timezone_set( 'Europe/Moscow' );
 
 $libPath = dirname( __FILE__ ) . '/../../../fw/lib/';
-require( $libPath . 'autoloader.php' );
+require($libPath . 'autoloader.php');
 
 $_SERVER['VHOST_NAME'] = 'musiq';
 

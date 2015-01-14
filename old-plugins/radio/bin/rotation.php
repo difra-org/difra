@@ -3,7 +3,7 @@
 ///////////////////////////// ротация канала
 
 $libPath = dirname( __FILE__ ) . '/../../../fw/lib/';
-require( $libPath . 'autoloader.php' );
+require($libPath . 'autoloader.php');
 
 $_SERVER['VHOST_NAME'] = 'musiq';
 
