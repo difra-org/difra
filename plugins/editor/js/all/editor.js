@@ -1,5 +1,6 @@
 /**
- * При обнаружении textarea с аттрибутом editor загружает CKEditor для этого элемента.
+ * This script loads CKEditor for textareas with editor attribute.
+ * Attribute value means editor toolbar configuration (Minimal, Medium, Full, Default)
  */
 var editor = {};
 

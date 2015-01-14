@@ -1,3 +1,4 @@
+/* Fix for CKEditor's area to let it use /css/main.css */
 html,
 body {
 	width: auto;

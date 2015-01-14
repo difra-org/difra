@@ -2,11 +2,12 @@
 
 /**
  * Class UpController
+ * Provides temporary storage mechanics for images
  */
 class UpController extends \Difra\Controller {
 
 	/**
-	 * Загрузка изображений во временное хранилище
+	 * Upload image
 	 */
 	public function indexAction() {
 
@@ -17,13 +18,13 @@ class UpController extends \Difra\Controller {
 		$funcnum = $_GET['CKEditorFuncNum'];
 		if( !isset( $_FILES['upload'] ) or ( $_FILES['upload']['error'] != UPLOAD_ERR_OK ) ) {
 			die( "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction($funcnum, '','"
-				. $this->locale->getXPath( 'editor/upload-error' ) . "');</script>" );
+				. \Difra\Locales::getInstance()->getXPath('editor/upload-error') . "');</script>");
 		}
 
 		$img = \Difra\Libs\Images::getInstance()->convert( file_get_contents( $_FILES['upload']['tmp_name'] ) );
 		if( !$img ) {
 			die( "<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction($funcnum,'','"
-				. $this->locale->getXPath( 'editor/upload-notimage' ) . "');</script>" );
+				. \Difra\Locales::getInstance()->getXPath('editor/upload-notimage') . "');</script>");
 		}
 		try {
 			$link = \Difra\Libs\Vault::add( $img );
@@ -36,9 +37,11 @@ class UpController extends \Difra\Controller {
 	}
 
 	/**
-	 * Отображение изображений из временного хранилища
-	 * @param Difra\Param\AnyInt $id
-	 * @throws Difra\View\Exception
+	 * View image
+	 *
+*@param Difra\Param\AnyInt $id
+	 *
+*@throws Difra\View\Exception
 	 */
 	public function tmpAction( \Difra\Param\AnyInt $id ) {
 
