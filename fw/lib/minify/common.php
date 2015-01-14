@@ -3,23 +3,28 @@
 namespace Difra\Minify;
 
 /**
- * Абстрактный класс для минификаторов
+ * Minification abstract adapter
  */
 abstract class Common {
 
-	/** Функция для минификации данных */
-	abstract function minify( $data );
-
 	/**
-	 * Синглтон
+	 * Singleton
 	 *
-	 * @static
+*@static
 	 * @return self
 	 */
 	static public function getInstance() {
 
-		static $_instances = array();
+		static $_instances = [];
 		$name = get_called_class();
 		return isset( $_instances[$name] ) ? $_instances[$name] : $_instances[$name] = new $name;
 	}
+
+	/**
+	 * Minification method
+	 *
+	 * @param $data
+	 * @return mixed
+	 */
+	abstract function minify($data);
 }

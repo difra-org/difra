@@ -17,6 +17,16 @@ class Cookies {
 	private $path = null;
 
 	/**
+	 * Cookies::__construct()
+	 */
+	private function __construct() {
+
+		$this->domain = \Difra\Envi::getHost(true);
+		$this->domain = (substr($this->domain, 0, 4) == 'www.') ? substr($this->domain, 3) : ('.' . $this->domain);
+		$this->path = '/';
+	}
+
+	/**
 	 * Cookies::getInstance()
 	 *
 	 * @desc Синглтон
@@ -26,16 +36,6 @@ class Cookies {
 
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
-	}
-
-	/**
-	 * Cookies::__construct()
-	 */
-	private function __construct() {
-
-		$this->domain = \Difra\Envi::getHost( true );
-		$this->domain = ( substr( $this->domain, 0, 4 ) == 'www.' ) ? substr( $this->domain, 3 ) : ( '.' . $this->domain );
-		$this->path = '/';
 	}
 
 	/**
@@ -81,24 +81,6 @@ class Cookies {
 	}
 
 	/**
-	 * Cookies::set()
-	 *
-	 * @desc Устанавливает куку
-	 *
-	 * @param string       $name
-	 * @param string|array $value
-	 *
-	 * @return boolean
-	 */
-	public function set( $name, $value ) {
-
-		if( is_array( $value ) ) {
-			$value = json_encode( $value );
-		}
-		return setrawcookie( $name, rawurlencode( $value ), $this->expireTime, $this->path, $this->domain );
-	}
-
-	/**
 	 * Cookies::remove()
 	 *
 	 * @desc Удаляет куку
@@ -121,13 +103,31 @@ class Cookies {
 	public function notify( $message, $error = false ) {
 
 		$this->set( 'notify',
-			    array(
+			    [
 				    'type' => $error ? 'error' : 'ok',
 				    'message' => (string)$message,
-				    'lang' => array(
-					    'close' => \Difra\Locales::getInstance()->getXPath( 'notifications/close' )
-				    )
-			    ) );
+				    'lang' => [
+					    'close' => \Difra\Locales::get('notifications/close')
+				    ]
+			    ] );
+	}
+
+	/**
+	 * Cookies::set()
+	 *
+	 * @desc Устанавливает куку
+	 *
+	 * @param string       $name
+	 * @param string|array $value
+	 *
+	 * @return boolean
+	 */
+	public function set($name, $value) {
+
+		if(is_array($value)) {
+			$value = json_encode($value);
+		}
+		return setrawcookie($name, rawurlencode($value), $this->expireTime, $this->path, $this->domain);
 	}
 
 	/**
@@ -139,7 +139,7 @@ class Cookies {
 	 */
 	public function query( $url ) {
 
-		$this->set( 'query', array( 'url' => $url ) );
+		$this->set( 'query', [ 'url' => $url ] );
 	}
 }
 	

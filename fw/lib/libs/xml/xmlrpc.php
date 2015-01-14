@@ -16,7 +16,7 @@ class XMLRPC {
 	static function getInstance() {
 
 		static $_instance = null;
-		if( !$_instance ) {
+		if(!$_instance) {
 			$_instance = new self;
 		}
 		return $_instance;
@@ -24,29 +24,30 @@ class XMLRPC {
 
 	/**
 	 * Обращается к удалённому серверу по протоколу XML-RPC.
-	 *
-	 * @param string $url    адрес XML-RPC сервера
+
+
+*
+*@param string $url    адрес XML-RPC сервера
 	 * @param string $method имя метода
-	 * @param        $params передаваемые параметры
-	 *
+	 * @param array  $params передаваемые параметры
 	 * @return mixed результат работы удалённой процедуры или ошибка в формате:
-	 * array( "faultString" => "server error. method not found. te1st", "faultCode" => -32601 )
+	 *                       [ "faultString" => "server error. method not found.", "faultCode" => -32601 ]
 	 */
-	public function sendRequest( $url, $method, $params ) {
+	public function sendRequest($url, $method, $params) {
 
 		// assemble POST body
-		$request = xmlrpc_encode_request( $method, $params );
+		$request = xmlrpc_encode_request($method, $params);
 
 		// make request
-		$cl = curl_init( $url );
-		curl_setopt( $cl, CURLOPT_CRLF, 1 );
-		curl_setopt( $cl, CURLOPT_POST, 1 );
-		curl_setopt( $cl, CURLOPT_POSTFIELDS, $request );
-		curl_setopt( $cl, CURLOPT_RETURNTRANSFER, 1 );
-		$contents = curl_exec( $cl );
+		$cl = curl_init($url);
+		curl_setopt($cl, CURLOPT_CRLF, 1);
+		curl_setopt($cl, CURLOPT_POST, 1);
+		curl_setopt($cl, CURLOPT_POSTFIELDS, $request);
+		curl_setopt($cl, CURLOPT_RETURNTRANSFER, 1);
+		$contents = curl_exec($cl);
 
 		// decode answer
-		$result = xmlrpc_decode( $contents );
+		$result = xmlrpc_decode($contents);
 
 		return $result;
 	}
@@ -58,23 +59,22 @@ class XMLRPC {
 	 *                            запрашиваемых методов, либо класс должен именть magic метод __call()
 	 * @param array|bool $methods список доступных методов (если не указан, класс должен иметь метод getMethods(),
 	 *                            возвращающий соответствующий список)
-	 *
 	 * @return string
 	 */
-	public function processRequest( $handler, $methods = false ) {
+	public function processRequest($handler, $methods = false) {
 
 		$server = xmlrpc_server_create();
 
-		if( !$methods ) {
+		if(!$methods) {
 			$methods = $handler->getMethods();
 		}
-		foreach( $methods as $method ) {
-			xmlrpc_server_register_method( $server, $method, array( $handler, $method ) );
+		foreach($methods as $method) {
+			xmlrpc_server_register_method($server, $method, [$handler, $method]);
 		}
-		$request = ( isset ( $HTTP_RAW_POST_DATA ) and $HTTP_RAW_POST_DATA ) ? $HTTP_RAW_POST_DATA : file_get_contents( 'php://input' );
+		$request = (isset ($HTTP_RAW_POST_DATA) and $HTTP_RAW_POST_DATA) ? $HTTP_RAW_POST_DATA : file_get_contents('php://input');
 
-		$response = xmlrpc_server_call_method( $server, $request, null );
-		xmlrpc_server_destroy( $server );
+		$response = xmlrpc_server_call_method($server, $request, null);
+		xmlrpc_server_destroy($server);
 		return $response;
 	}
 }

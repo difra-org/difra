@@ -7,109 +7,109 @@ class AjaxTest extends PHPUnit_Framework_TestCase {
 	 */
 	public function test_actions() {
 
-		$ajax = \Difra\Ajaxer::getInstance();
-		$actions = array();
+		\Difra\Ajaxer::clean();
+		$actions = [];
 
-		$ajax->notify( 'notification message' );
-		$actions[] = array( 'action' => 'notify',
+		\Difra\Ajaxer::notify('notification message');
+		$actions[] = [ 'action' => 'notify',
 				    'message' => 'notification message',
-				    'lang' => array( 'close' => \Difra\Locales::getInstance()->getXPath( 'notifications/close' ) ) );
+				    'lang' => ['close' => \Difra\Locales::get('notifications/close')]];
 
-		$ajax->display( '<span>test</span>' );
-		$actions[] = array( 'action' => 'display',
+		\Difra\Ajaxer::display('<span>test</span>');
+		$actions[] = [ 'action' => 'display',
 				    'html' => '<span>test</span>'
-		);
+		];
 
-		$ajax->error( 'error message <span>test</span>' );
-		$actions[] = array(
+		\Difra\Ajaxer::error('error message <span>test</span>');
+		$actions[] = [
 			'action' => 'error',
 			'message' => 'error message &lt;span&gt;test&lt;/span&gt;',
-			'lang' => array(
-				'close' => \Difra\Locales::getInstance()->getXPath( 'notifications/close' )
-			)
-		);
+			'lang' => [
+				'close' => \Difra\Locales::get('notifications/close')
+			]
+		];
 
-		$ajax->required( 'element' );
-		$actions[] = array(
+		\Difra\Ajaxer::required( 'element');
+		$actions[] = [
 			'action' => 'require',
 			'name' => 'element'
-		);
+		];
 
-		$ajax->invalid( 'inv1' );
-		$actions[] = array(
+		\Difra\Ajaxer::invalid( 'inv1' );
+		$actions[] = [
 			'action' => 'invalid',
 			'name' => 'inv1'
-		);
+		];
 
-		$ajax->invalid( 'inv2' );
-		$actions[] = array(
+		\Difra\Ajaxer::invalid( 'inv2' );
+		$actions[] = [
 			'action' => 'invalid',
 			'name' => 'inv2'
-		);
+		];
 
-		$ajax->status( 'field1', 'bad value', 'problem' );
-		$actions[] = array(
+		\Difra\Ajaxer::status( 'field1', 'bad value', 'problem');
+		$actions[] = [
 			'action' => 'status',
 			'name' => 'field1',
 			'message' => 'bad value',
 			'classname' => 'problem'
-		);
+		];
 
-		$ajax->redirect( '/some/page' );
-		$actions[] = array(
+		\Difra\Ajaxer::redirect( '/some/page' );
+		$actions[] = [
 			'action' => 'redirect',
 			'url' => '/some/page'
-		);
+		];
 
 		$_SERVER['HTTP_REFERER'] = '/current/page';
-		$ajax->refresh();
-		$actions[] = array(
+		\Difra\Ajaxer::refresh();
+		$actions[] = [
 			'action' => 'redirect',
-			'url' => '/current/page'
-		);
+			'url'    => '/current/page'
+		];
 
-		$ajax->reload();
-		$actions[] = array(
+		\Difra\Ajaxer::reload();
+		$actions[] = [
 			'action' => 'reload'
-		);
+		];
 
-		$ajax->load( 'someid', 'some <b>content</b>' );
-		$actions[] = array(
+		\Difra\Ajaxer::load( 'someid', 'some <b>content</b>' );
+		$actions[] = [
 			'action' => 'load',
 			'target' => 'someid',
 			'html' => 'some <b>content</b>'
-		);
+		];
 
-		$ajax->close();
-		$actions[] = array(
+		\Difra\Ajaxer::close();
+		$actions[] = [
 			'action' => 'close'
-		);
+		];
 
-		$ajax->reset();
-		$actions[] = array(
+		\Difra\Ajaxer::reset();
+		$actions[] = [
 			'action' => 'reset'
-		);
+		];
 
-		\Difra\Envi::setUri( '/current/page' );
-		$ajax->confirm( 'Are you sure?' );
-		$actions[] = array(
+		\Difra\Envi::setUri('/current/page' );
+		\Difra\Ajaxer::confirm( 'Are you sure?' );
+		$actions[] = [
 			'action' => 'display',
-			'html' => '<form action="/current/page" class="ajaxer"><input type="hidden" name="confirm" value="1"/>' .
+			'html'   => '<form action="/current/page" class="ajaxer"><input type="hidden" name="confirm" value="1"/>' .
 			'<div>Are you sure?</div>' .
-			'<input type="submit" value="' . \Difra\Locales::getInstance()->getXPath( 'ajaxer/confirm-yes' ) . '"/>' .
-			'<input type="button" value="' . \Difra\Locales::getInstance()->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
-			'</form>'
-		);
+			'<input type="submit" value="' . \Difra\Locales::get( 'ajaxer/confirm-yes' ) . '"/>' .
+				'<input type="button" value="' . \Difra\Locales::get('ajaxer/confirm-no') . '" onclick="ajaxer.close(this)"/>' .
+				'</form>'
+		];
 
-		$this->assertEquals($ajax->getResponse(), json_encode(array('actions' => $actions), \Difra\Ajaxer::getJsonFlags()));
+		$this->assertEquals(\Difra\Ajaxer::getResponse(), json_encode(['actions' => $actions], \Difra\Ajaxer::getJsonFlags()));
 
-		$ajax->clean();
-		$this->assertEquals( $ajax->getResponse(), '[]' );
-		$this->assertFalse( $ajax->hasProblem() );
+		\Difra\Ajaxer::clean();
+		$this->assertEquals(\Difra\Ajaxer::getResponse(), '[]');
+		$this->assertFalse(\Difra\Ajaxer::hasProblem());
 
-		$ajax->reload();
-		$ajax->clean( true );
-		$this->assertEquals( $ajax->getResponse(), '[]' );
-		$this->assertTrue( $ajax->hasProblem() );
+		\Difra\Ajaxer::reload();
+		\Difra\Ajaxer::clean(true);
+		$this->assertEquals(\Difra\Ajaxer::getResponse(), '[]');
+		$this->assertTrue(\Difra\Ajaxer::hasProblem());
 	}
 }

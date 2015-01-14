@@ -37,7 +37,7 @@ class Additionals {
 		$db->query( "DELETE FROM `users_fields` WHERE `id`='" . intval( $userId ) . "'" );
 
 		if( !isset( $fields['names'] ) || !isset( $fields['values'] ) ) {
-			return false;
+			return;
 		}
 
 		$Class = Storage::getClass( 'UsersFields' );

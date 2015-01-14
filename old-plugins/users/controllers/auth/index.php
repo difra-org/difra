@@ -33,7 +33,8 @@ class AuthIndexController extends Difra\Controller {
 	public function indexAjaxAction() {
 
 		if( Auth::getInstance()->isLogged() ) {
-			return $this->ajax->reload();
+			$this->ajax->reload();
+			return;
 		}
 
 		if( !isset( $_SESSION['userLoginAttempts'] ) ) {
@@ -106,7 +107,8 @@ class AuthIndexController extends Difra\Controller {
 					 Param\AjaxCheckbox $rememberMe, Param\AjaxString $capcha = null ) {
 
 		if( Auth::getInstance()->isLogged() ) {
-			return $this->ajax->reload();
+			$this->ajax->reload();
+			return;
 		}
 
 		$capcha = !is_null( $capcha ) ? $capcha->val() : null;
@@ -222,7 +224,7 @@ class AuthIndexController extends Difra\Controller {
 			return;
 		}
 
-		$fields = array( 'password' => md5( $password->val() ), 'passwordChanged' => date( 'Y-m-d H:i:s', time() ) );
+		$fields = [ 'password' => md5( $password->val() ), 'passwordChanged' => date( 'Y-m-d H:i:s', time() ) ];
 
 		Plugins\Users\User::save( Auth::getInstance()->getId(), $fields, true );
 		$this->ajax->load( '#passwordChange', '<span>' . \Difra\Locales::getInstance()->getXPath( 'changePassword/changed' ) . '</span>' );

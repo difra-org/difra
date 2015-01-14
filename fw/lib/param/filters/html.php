@@ -4,44 +4,49 @@ namespace Difra\Param\Filters;
 
 class HTML {
 
-	/** @var array Список разрешенных тэгов, параметр — массив аттрибутов и обрабочиков */
-	private $allowedTags = array(
-		'a' => array( 'href' => 'cleanLink' ),
-		'img' => array( 'src' => 'cleanLink' ),
-		'br' => array(),
-		'table' => array(),
-		'tr' => array(),
-		'td' => array( 'colspan' => 'cleanUnsignedInt', 'rowspan' => 'cleanUnsignedInt' ),
-		'div' => array(),
-		'em' => array(),
-		'li' => array(),
-		'ol' => array(),
-		'p' => array(),
-		'span' => array(),
-		'strike' => array(),
-		'u' => array(),
-		'ul' => array(),
-		'strong' => array(),
-		'sub' => array(),
-		'sup' => array(),
-		'hr' => array()
-	);
+	/** @var array Allowed tag=>parameter=>filterMethod */
+	private $allowedTags = [
+		'a'      => ['href' => 'cleanLink'],
+		'img'    => ['src' => 'cleanLink'],
+		'br'     => [],
+		'table'  => [],
+		'tr'     => [],
+		'td'     => ['colspan' => 'cleanUnsignedInt', 'rowspan' => 'cleanUnsignedInt'],
+		'div'    => [],
+		'em'     => [],
+		'li'     => [],
+		'ol'     => [],
+		'p'      => [],
+		'span'   => [],
+		'strike' => [],
+		'u'      => [],
+		'ul'     => [],
+		'strong' => [],
+		'sub'    => [],
+		'sup'    => [],
+		'hr'     => []
+	];
 
-	/** @var array Стили, разрешенные для всех тэгов и соответствующие обработчики */
-	private $allowedAttrsForAll = array(
+	/** @var array Parameters allowed for all tags, parameter=>filterMethod */
+	private $allowedAttrsForAll = [
 		'style' => 'cleanStyles',
 		'class' => 'cleanClasses'
-	);
+	];
 
-	/** @var array Список разрешенных стилей, значение — массив значений или true, если разрешено любое значение */
-	private $allowedStyles = array(
-		'font-weight' => array( 'bold', 'bolder', 'lighter', 'normal', '100', '200', '300', '400', '500', '600', '700', '800', '900' ),
-		'text-align' => array( 'left', 'center', 'right', 'start', 'end' ),
-		'color' => true,
-		'text-decoration' => array( 'line-through', 'overline', 'underline', 'none' ),
-		'font-style' => array( 'normal', 'italic', 'oblique' )
-	);
+	/** @var array Allowed styles list. Array lists values, true allows any value. */
+	private $allowedStyles = [
+		'font-weight'     => ['bold', 'bolder', 'lighter', 'normal', '100', '200', '300', '400', '500', '600', '700', '800', '900'],
+		'text-align'      => ['left', 'center', 'right', 'start', 'end'],
+		'color'           => true,
+		'text-decoration' => ['line-through', 'overline', 'underline', 'none'],
+		'font-style'      => ['normal', 'italic', 'oblique']
+	];
 
+	/**
+	 * Singleton
+	 *
+	 * @return self
+	 */
 	static public function getInstance() {
 
 		static $_instance = null;
@@ -49,15 +54,16 @@ class HTML {
 	}
 
 	/**
-	 * @param string $source      Исходный HTML
-	 * @param bool   $clean       Произвести ли чистку от говн
-	 * @param bool   $withHeaders Вернуть ли полную HTML-страницу (true) или только содержимое (false)
+	 * HTML processor
 	 *
+	 * @param string $source      Source HTML
+	 * @param bool   $clean       Perform cleaning
+	 * @param bool   $withHeaders Return full HTML page (true) or contents only (false)
 	 * @return string
 	 */
-	public function process( $source, $clean = true, $withHeaders = false ) {
+	public function process($source, $clean = true, $withHeaders = false) {
 
-		if( !trim( $source ) ) {
+		if(!trim($source)) {
 			return '';
 		}
 
@@ -67,26 +73,26 @@ class HTML {
 			return false;
 		}*/
 
-		// преобразование HTML в DOM
-		$html = new \DOMDocument( '1.0' );
-		libxml_use_internal_errors( true );
-		$html->loadHTML( '<?xml version = "1.0" encoding = "utf-8"?>' . $source );
-		libxml_use_internal_errors( false );
+		// html to dom conversion
+		$html = new \DOMDocument('1.0');
+		libxml_use_internal_errors(true);
+		$html->loadHTML('<?xml version = "1.0" encoding = "utf-8"?>' . $source);
+		libxml_use_internal_errors(false);
 		$html->normalize();
 
-		// чистка
-		if( $clean ) {
-			$bodyList = $html->documentElement->getElementsByTagName( 'body' );
-			if( $bodyList->length and $bodyList->item( 0 )->childNodes->length ) {
-				$body = $bodyList->item( 0 );
-				$replaceNodes = array();
-				foreach( $body->childNodes as $node ) {
-					$newReplaceNodes = $this->clean( $node );
-					$replaceNodes = array_merge( $replaceNodes, $newReplaceNodes );
+		// clean dom
+		if($clean) {
+			$bodyList = $html->documentElement->getElementsByTagName('body');
+			if($bodyList->length and $bodyList->item(0)->childNodes->length) {
+				$body = $bodyList->item(0);
+				$replaceNodes = [];
+				foreach($body->childNodes as $node) {
+					$newReplaceNodes = $this->clean($node);
+					$replaceNodes = array_merge($replaceNodes, $newReplaceNodes);
 				}
-				if( !empty( $replaceNodes ) ) {
-					foreach( $replaceNodes as $replaceNode ) {
-						$this->replace( $replaceNode );
+				if(!empty($replaceNodes)) {
+					foreach($replaceNodes as $replaceNode) {
+						$this->replace($replaceNode);
 					}
 				}
 			} else {
@@ -94,190 +100,188 @@ class HTML {
 			}
 		}
 
-		// преобразование DOM в HTML
-		if( $withHeaders ) {
+		// dom to html conversion
+		if($withHeaders) {
 			$output = $html->saveHTML();
 		} else {
 			$newDom = new \DOMDocument();
-			foreach( $html->documentElement->childNodes as $node ) {
-				if( $node->nodeName == 'body' ) {
-					foreach( $node->childNodes as $subNode ) {
-						$newDom->appendChild( $newDom->importNode( $subNode, true ) );
+			foreach($html->documentElement->childNodes as $node) {
+				if($node->nodeName == 'body') {
+					foreach($node->childNodes as $subNode) {
+						$newDom->appendChild($newDom->importNode($subNode, true));
 					}
 				}
 			}
 			$output = $newDom->saveHTML();
+			// TODO: convert xhtml to html5
 		}
-		return mb_convert_encoding( $output, 'UTF-8', 'HTML-ENTITIES' );
+		return mb_convert_encoding($output, 'UTF-8', 'HTML-ENTITIES');
 	}
 
 	/**
-	 * Чистка DOM-документа от недозволенного
+	 * Clean everything but allowed elements
+
 	 *
-	 * @param \DOMElement|\DOMNode $node
-	 *
+*@param \DOMElement|\DOMNode $node
 	 * @return \DOMElement[]
 	 */
-	private function clean( &$node ) {
+	private function clean(&$node) {
 
-		$replaceNodes = array();
-		switch( $node->nodeType ) {
+		$replaceNodes = [];
+		switch($node->nodeType) {
 		case XML_ELEMENT_NODE:
-			if( !isset( $this->allowedTags[$node->nodeName] ) ) {
+			if(!isset($this->allowedTags[$node->nodeName])) {
 				$replaceNodes[] = $node;
 			}
-			$this->cleanAttributes( $node, isset( $this->allowedTags[$node->nodeName] ) ? $this->allowedTags[$node->nodeName] : array() );
+			$this->cleanAttributes($node, isset($this->allowedTags[$node->nodeName]) ? $this->allowedTags[$node->nodeName] : []);
 			break;
 		case XML_TEXT_NODE:
 			break;
 		case XML_COMMENT_NODE:
-			$replaceNodes[] = $node;
+				$replaceNodes[] = $node;
 			break;
 		default:
 			$replaceNodes[] = $node;
 		}
-		if( $node->hasChildNodes() ) {
-			foreach( $node->childNodes as $child ) {
-				$newReplace = $this->clean( $child );
-				$replaceNodes = array_merge( $newReplace, $replaceNodes );
+		if($node->hasChildNodes()) {
+			foreach($node->childNodes as $child) {
+				$newReplace = $this->clean($child);
+				$replaceNodes = array_merge($newReplace, $replaceNodes);
 			}
 		}
 		return $replaceNodes;
 	}
 
 	/**
-	 * Чистка аттрибутов ноды по спискам допустимых аттрибутов
+	 * Clean all atttributes but allowed
+
 	 *
-	 * @param \DOMElement|\DOMNode $node
+*@param \DOMElement|\DOMNode $node
 	 * @param array                $attributes
 	 */
-	private function cleanAttributes( &$node, $attributes = array() ) {
+	private function cleanAttributes(&$node, $attributes = []) {
 
-		if( ( $node instanceof \DOMElement or $node instanceof \DOMNode ) and $node->attributes->length ) {
-			$delAttr = array();
-			foreach( $node->attributes as $attr ) {
-				if( isset( $attributes[$attr->name] ) ) {
+		if(($node instanceof \DOMElement or $node instanceof \DOMNode) and $node->attributes->length) {
+			$delAttr = [];
+			foreach($node->attributes as $attr) {
+				if(isset($attributes[$attr->name])) {
 					$filter = $attributes[$attr->name];
-					$node->setAttribute( $attr->name, $this->$filter( $attr->value ) );
-				} elseif( isset( $this->allowedAttrsForAll[$attr->name] ) ) {
+					$node->setAttribute($attr->name, $this->$filter($attr->value));
+				} elseif(isset($this->allowedAttrsForAll[$attr->name])) {
 					$filter = $this->allowedAttrsForAll[$attr->name];
-					$node->setAttribute( $attr->name, $this->$filter( $attr->value ) );
+					$node->setAttribute($attr->name, $this->$filter($attr->value));
 				} else {
 					$delAttr[] = $attr->name;
 				}
 			}
-			foreach( $delAttr as $da ) {
-				$node->removeAttribute( $da );
+			foreach($delAttr as $da) {
+				$node->removeAttribute($da);
 			}
 		}
 	}
 
 	/**
-	 * Замена элемента страницы на span, если он не пустой
+	 * If some disallowed element is not empty, replace it with span
 	 *
 	 * @param \DOMElement $node
 	 */
-	private function replace( &$node ) {
+	private function replace(&$node) {
 
-		if( !$node->hasChildNodes() ) {
-			$node->parentNode->removeChild( $node );
+		if(!$node->hasChildNodes()) {
+			$node->parentNode->removeChild($node);
 			return;
 		}
-		\Difra\Libs\XML\DOM::renameNode( $node, 'span' );
+		\Difra\Libs\XML\DOM::renameNode($node, 'span');
 	}
 
+	/** @noinspection PhpUnusedPrivateMethodInspection */
 	/**
-	 * Фильтр ссылок
+	 * Links filter
 	 *
 	 * @param string $link
-	 *
 	 * @return string
 	 */
-	/** @noinspection PhpUnusedPrivateMethodInspection */
-	private function cleanLink( $link ) {
+	private function cleanLink($link) {
 
-		if( \Difra\Libs\ESAPI::validateURL( $link ) ) {
-			return \Difra\Libs\ESAPI::encoder()->encodeForHTMLAttribute( $link );
+		if(\Difra\Libs\ESAPI::validateURL($link)) {
+			return \Difra\Libs\ESAPI::encoder()->encodeForHTMLAttribute($link);
 		}
-		if( mb_substr( $link, 0, 1 ) == '/' ) {
+		if(mb_substr($link, 0, 1) == '/') {
 			$newLink = 'http://' . Envi::getHost() . $link;
-			if( \Difra\Libs\ESAPI::validateURL( $newLink ) ) {
-				return \Difra\Libs\ESAPI::encoder()->encodeForHTMLAttribute( $newLink );
+			if(\Difra\Libs\ESAPI::validateURL($newLink)) {
+				return \Difra\Libs\ESAPI::encoder()->encodeForHTMLAttribute($newLink);
 			}
 		}
 		return '#';
 	}
 
+	/** @noinspection PhpUnusedPrivateMethodInspection */
 	/**
-	 * Фильтр стилей
+	 * Styles filter
 	 *
 	 * @param string $attr
-	 *
 	 * @return string
 	 */
-	/** @noinspection PhpUnusedPrivateMethodInspection */
-	private function cleanStyles( $attr ) {
+	private function cleanStyles($attr) {
 
-		$returnStyle = array();
-		$stylesSet = explode( ';', $attr );
-		foreach( $stylesSet as $value ) {
-			$styleElements = explode( ':', $value, 2 );
-			if( sizeof( $styleElements ) != 2 ) {
+		$returnStyle = [];
+		$stylesSet = explode(';', $attr);
+		foreach($stylesSet as $value) {
+			$styleElements = explode(':', $value, 2);
+			if(sizeof($styleElements) != 2) {
 				continue;
 			}
 
-			$styleElements[0] = trim( $styleElements[0] );
-			$styleElements[1] = trim( $styleElements[1] );
+			$styleElements[0] = trim($styleElements[0]);
+			$styleElements[1] = trim($styleElements[1]);
 
 			// проверяем элемент
-			if( array_key_exists( $styleElements[0], $this->allowedStyles ) ) {
+			if(array_key_exists($styleElements[0], $this->allowedStyles)) {
 
 				// проверяем значение
-				if( $this->allowedStyles[$styleElements[0]] === true ) {
-					$returnStyle[] = $styleElements[0] . ': ' . \Difra\Libs\ESAPI::encoder()->encodeForCSS( $styleElements[1] );
-				} elseif( is_array( $this->allowedStyles[$styleElements[0]] )
-					and in_array( $styleElements[1], $this->allowedStyles[$styleElements[0]] )
+				if($this->allowedStyles[$styleElements[0]] === true) {
+					$returnStyle[] = $styleElements[0] . ': ' . \Difra\Libs\ESAPI::encoder()->encodeForCSS($styleElements[1]);
+				} elseif(is_array($this->allowedStyles[$styleElements[0]])
+					and in_array($styleElements[1], $this->allowedStyles[$styleElements[0]])
 				) {
 					$returnStyle[] = $styleElements[0] . ':' . $styleElements[1];
 				}
 			}
 		}
-		return implode( ';', $returnStyle );
+		return implode(';', $returnStyle);
 	}
 
+	/** @noinspection PhpUnusedPrivateMethodInspection */
 	/**
-	 * Фильтр ссылок
+	 * Classes filter
 	 *
 	 * @param string $classes
-	 *
 	 * @return string
 	 */
-	/** @noinspection PhpUnusedPrivateMethodInspection */
-	private function cleanClasses( $classes ) {
+	private function cleanClasses($classes) {
 
-		$newClasses = array();
-		$cls = explode( ' ', $classes );
-		foreach( $cls as $cl ) {
-			// стили st-* используются для предзаданных стилей в редакторе
-			if( ( mb_substr( $cl, 0, 3 ) == 'st-' ) and ( ctype_alnum( mb_substr( $cl, 3 ) ) ) ) {
+		$newClasses = [];
+		$cls = explode(' ', $classes);
+		foreach($cls as $cl) {
+			// Classes named st-* are used for predefined WYSIWYG editor styles
+			if((mb_substr($cl, 0, 3) == 'st-') and ctype_alnum(mb_substr($cl, 3))) {
 				$newClasses[] = $cl;
 			}
 		}
-		return implode( ' ', $newClasses );
+		return implode(' ', $newClasses);
 	}
 
+	/** @noinspection PhpUnusedPrivateMethodInspection */
 	/**
-	 * Фильтр целых положительных чисел ≥1
+	 * Positive integers filter
 	 *
 	 * @param $input
-	 *
 	 * @return int|string
 	 */
-	/** @noinspection PhpUnusedPrivateMethodInspection */
-	private function cleanUnsignedInt( $input ) {
+	private function cleanUnsignedInt($input) {
 
-		$input = intval( $input );
-		if( filter_var( $input, FILTER_VALIDATE_INT, array( 'options' => array( 'min_range' => 1 ) ) ) ) {
+		$input = intval($input);
+		if(filter_var($input, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) {
 			return $input;
 		} else {
 			return '';

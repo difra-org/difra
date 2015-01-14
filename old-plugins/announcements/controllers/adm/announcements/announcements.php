@@ -37,8 +37,8 @@ class AdmAnnouncementsController extends Difra\Controller {
 						\Difra\Param\AjaxInt $maxPerGroup, \Difra\Param\AjaxInt $width,
 						\Difra\Param\AjaxInt $height ) {
 
-		$settingsArray = array( 'maxPerUser' => $maxPerUser->val(), 'maxPerGroup' => $maxPerGroup->val(),
-					'width' => $width->val(), 'height' => $height->val() );
+		$settingsArray = [ 'maxPerUser' => $maxPerUser->val(), 'maxPerGroup' => $maxPerGroup->val(),
+					'width' => $width->val(), 'height' => $height->val() ];
 
 		\Difra\Plugins\Announcements::getInstance()->saveSettings( $settingsArray );
 		$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/settingsSaved' ) );
@@ -52,8 +52,8 @@ class AdmAnnouncementsController extends Difra\Controller {
 					\Difra\Param\AjaxSafeHTML $description = null, \Difra\Param\AjaxInt $group = null,
 					\Difra\Param\AjaxString $endDate = null ) {
 
-		$data = array( 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(),
-			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'shortDescription' => $shortDescription->val() );
+		$data = [ 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(),
+			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'shortDescription' => $shortDescription->val() ];
 
 		$data['description'] = is_null( $description ) ? null : $description->val();
 		$data['group'] = is_null( $group ) ? null : $group->val();
@@ -67,7 +67,8 @@ class AdmAnnouncementsController extends Difra\Controller {
 		$eventId = $Announcements->create( $data );
 
 		if( is_null( $eventId ) ) {
-			return $this->ajax->error( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/createError' ) );
+			$this->ajax->error(\Difra\Locales::getInstance()->getXPath('announcements/adm/notify/createError'));
+			return;
 		}
 
 		// записываем картиночку
@@ -110,9 +111,9 @@ class AdmAnnouncementsController extends Difra\Controller {
 					  \Difra\Param\AjaxSafeHTML $description = null, \Difra\Param\AjaxInt $group = null,
 					  \Difra\Param\AjaxString $endDate = null, \Difra\Param\AjaxFile $eventImage = null ) {
 
-		$data = array( 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(), 'id' => $id->val(),
+		$data = [ 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(), 'id' => $id->val(),
 			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'shortDescription' => $shortDescription->val()
-		);
+		];
 
 		$data['description'] = is_null( $description ) ? null : $description->val();
 		$data['group'] = is_null( $group ) ? null : $group->val();
@@ -127,10 +128,11 @@ class AdmAnnouncementsController extends Difra\Controller {
 		$eventId = $Announcements->create( $data );
 
 		if( is_null( $eventId ) ) {
-			return $this->ajax->error( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/updateError' ) );
+			$this->ajax->error(\Difra\Locales::getInstance()->getXPath('announcements/adm/notify/updateError'));
+			return;
 		}
 
-		if( !is_null( $eventImage ) ) {
+		if(!is_null( $eventImage ) ) {
 			$Announcements->saveImage( $eventId, $eventImage->val() );
 		}
 

@@ -51,8 +51,8 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 					\Difra\Param\AjaxString $scheduleName = null, \Difra\Param\AjaxData $scheduleField = null,
 					\Difra\Param\AjaxData $scheduleValue = null, \Difra\Param\AjaxInt $location = null ) {
 
-		$data = array( 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(),
-			       'priority' => $priorityValue->val(), 'visible' => $visible->val() );
+		$data = [ 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(),
+			       'priority' => $priorityValue->val(), 'visible' => $visible->val() ];
 
 		$data['description'] = $description;
 		$data['shortDescription'] = is_null( $shortDescription ) ? null : $shortDescription->val();
@@ -73,7 +73,8 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 		$eventId = $Announcements->create( $data );
 
 		if( is_null( $eventId ) ) {
-			return $this->ajax->error( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/createError' ) );
+			$this->ajax->error(\Difra\Locales::getInstance()->getXPath('announcements/adm/notify/createError'));
+			return;
 		}
 
 		// сохраняем дополнительные поля
@@ -139,8 +140,8 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 					  \Difra\Param\AjaxData $scheduleField = null, \Difra\Param\AjaxData $scheduleValue = null,
 					  \Difra\Param\AjaxInt $location = null, Param\AjaxInt $userId = null ) {
 
-		$data = array( 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(), 'id' => $id->val(),
-			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'description' => $description );
+		$data = [ 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(), 'id' => $id->val(),
+			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'description' => $description ];
 
 		$data['shortDescription'] = is_null( $shortDescription ) ? null : $shortDescription->val();
 		$data['group'] = is_null( $group ) ? null : $group->val();
@@ -165,7 +166,8 @@ class AdmAnnouncementsIndexController extends Difra\Controller {
 		$eventId = $Announcements->create( $data );
 
 		if( is_null( $eventId ) ) {
-			return $this->ajax->error( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/updateError' ) );
+			$this->ajax->error(\Difra\Locales::getInstance()->getXPath('announcements/adm/notify/updateError'));
+			return;
 		}
 
 		// сохраняем дополнительные поля

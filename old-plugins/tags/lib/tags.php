@@ -5,15 +5,9 @@ use Difra;
 
 class Tags {
 
-	private $modules = array( 'tracks', 'posts' );
+	private $modules = [ 'tracks', 'posts' ];
 	private $maxPt = 30;
 	private $minPt = 13;
-
-	static public function getInstance() {
-
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self;
-	}
 
 	private function __construct() {
 
@@ -25,94 +19,34 @@ class Tags {
 		}
 	}
 
-	/**
-	 * Tags::saveTag()
-	 *
-	 * @desc сохраняет тег в базе и возвращает его Id
-	 *
-	 * @param string $module
-	 * @param array  $tags
-	 *
-	 * @return integer
-	 */
-	public function saveTags( $module, $tags ) {
+	static public function getInstance() {
 
-		$this->_checkModule( $module );
-		if( !is_array( $tags ) ) {
-			return false;
-		}
-		$db = Difra\MySQL::getInstance();
-
-		// забираем альясы тегов
-		$tags = $this->getAlias( $tags );
-
-		$tags        = $this->_prepareTag( $tags );
-		$tagsidArray = array();
-
-		// сохраняем теги
-
-		$query = array();
-		foreach( $tags as $tag ) {
-			$query[] = "INSERT IGNORE INTO `{$module}_tags` SET `tag`=" . $tag . ", `link`='" . $this->_makeLink( $tag ) . "'";
-		}
-		$db->query( $query );
-
-		// забираем теги
-
-		$res = $db->fetch( "SELECT `id`, `tag` FROM `{$module}_tags` WHERE `tag` IN (" . implode( ', ', $tags ) . ")" );
-		if( !empty( $res ) ) {
-			foreach( $res as $data ) {
-				$tagsidArray[] = $data['id'];
-			}
-		}
-		return !empty( $tagsidArray ) ? $tagsidArray : false;
-	}
-
-	private function _prepareTag( $tags ) {
-
-		$db = Difra\MySQL::getInstance();
-		foreach( $tags as $k => $tag ) {
-			$tag = trim( $tag );
-			$tag = mb_strtolower( $tag );
-
-			// Жестко укорачиваем название тега
-			//TODO: Может быть в будущем добавить более мягкий способ, например с расчетом пробелов между слов.
-			if( mb_strlen( $tag ) >= 25 ) {
-				$tag = mb_substr( $tag, 0, 25 );
-			}
-
-			$tag      = $db->escape( $tag );
-			$tag      = "'" . $tag . "'";
-			$tags[$k] = $tag;
-		}
-		$tags = array_unique( $tags );
-		return $tags;
+		static $_instance = null;
+		return $_instance ? $_instance : $_instance = new self;
 	}
 
 	/**
-	 * Tags::assignTags()
+	 * Возвращает XML с тегами итема
 	 *
-	 * @desc Привязывает теги к сущности
-	 *
-	 * @param string  $module
-	 * @param array   $tagsId
-	 * @param integer $itemId
-	 *
-	 * @return void
+	 * @param \DOMNode $node
+	 * @param string   $module
+	 * @param int      $itemId
 	 */
-	public function assignTags( $module, $tagsId, $itemId ) {
+	public function getXML($node, $module, $itemId) {
 
-		$this->_checkModule( $module );
-		if( !is_array( $tagsId ) ) {
-			return;
-		}
-		$db = Difra\MySQL::getInstance();
+		$tagsData = $this->get($module, $itemId);
+		if(!empty($tagsData)) {
 
-		$query = array();
-		foreach( $tagsId as $tagId ) {
-			$query[] = "INSERT IGNORE INTO `{$module}_to_tags` SET `tag_id`='" . intval( $tagId ) . "', `item_id`='" . intval( $itemId ) . "'";
+			$tagsNode = $node->appendChild($node->ownerDocument->createElement('tags'));
+
+			foreach($tagsData as $data) {
+				/** @var \DOMElement $tagItemNode */
+				$tagItemNode = $tagsNode->appendChild($node->ownerDocument->createElement('tag'));
+				foreach($data as $key => $value) {
+					$tagItemNode->setAttribute($key, $value);
+				}
+			}
 		}
-		$db->query( $query );
 	}
 
 	/**
@@ -136,27 +70,10 @@ class Tags {
 		return isset( $res[0] ) ? $res : false;
 	}
 
-	/**
-	 * Возвращает XML с тегами итема
-	 *
-	 * @param \DOMNode $node
-	 * @param string   $module
-	 * @param int      $itemId
-	 */
-	public function getXML( $node, $module, $itemId ) {
+	private function _checkModule($module) {
 
-		$tagsData = $this->get( $module, $itemId );
-		if( !empty( $tagsData ) ) {
-
-			$tagsNode = $node->appendChild( $node->ownerDocument->createElement( 'tags' ) );
-
-			foreach( $tagsData as $data ) {
-				/** @var \DOMElement $tagItemNode */
-				$tagItemNode = $tagsNode->appendChild( $node->ownerDocument->createElement( 'tag' ) );
-				foreach( $data as $key=> $value ) {
-					$tagItemNode->setAttribute( $key, $value );
-				}
-			}
+		if(!in_array($module, $this->modules)) {
+			throw new Difra\Exception("Difra\\Plugins\\Tags: Module '{$module}' not registred in config.");
 		}
 	}
 
@@ -171,7 +88,7 @@ class Tags {
 	 */
 	public function tagsFromString( $string ) {
 
-		$tagsArray = array();
+		$tagsArray = [];
 		$tags      = preg_replace( '/[^A-Za-zА-Яа-я0-9, -]/u', '', $string );
 		$s         = explode( ',', $tags );
 		$s         = array_map( 'trim', $s );
@@ -204,7 +121,7 @@ class Tags {
                             FROM `{$module}_to_tags` t2t
                             LEFT JOIN `{$module}_tags` AS `t` ON t2t.`tag_id`=t.`id`
                             WHERE t2t.`item_id` IN(" . implode( ', ', $itemsArray ) . ")" );
-		$returnArray = array();
+		$returnArray = [];
 		if( !empty( $res ) ) {
 			foreach( $res as $data ) {
 				$returnArray[$data['item_id']][] = $data['tag'];
@@ -233,10 +150,10 @@ class Tags {
                             FROM `{$module}_to_tags` t2t
                             LEFT JOIN `{$module}_tags` AS `t` ON t2t.`tag_id`=t.`id`
                             WHERE t2t.`item_id` IN(" . implode( ', ', $itemsArray ) . ")" );
-		$returnArray = array();
+		$returnArray = [];
 		if( !empty( $res ) ) {
 			foreach( $res as $data ) {
-				$returnArray[$data['item_id']][] = array( 'name' => $data['tag'], 'link' => $data['link'] );
+				$returnArray[$data['item_id']][] = [ 'name' => $data['tag'], 'link' => $data['link'] ];
 			}
 			foreach( $returnArray as $itemId => $tags ) {
 				/** @var \DOMElement $itemNode */
@@ -276,6 +193,137 @@ class Tags {
 	}
 
 	/**
+	 * Tags::saveTag()
+	 *
+	 * @desc сохраняет тег в базе и возвращает его Id
+	 *
+	 * @param string $module
+	 * @param array  $tags
+	 *
+	 * @return integer
+	 */
+	public function saveTags($module, $tags) {
+
+		$this->_checkModule($module);
+		if(!is_array($tags)) {
+			return false;
+		}
+		$db = Difra\MySQL::getInstance();
+
+		// забираем альясы тегов
+		$tags = $this->getAlias($tags);
+
+		$tags = $this->_prepareTag($tags);
+		$tagsidArray = [];
+
+		// сохраняем теги
+
+		$query = [];
+		foreach($tags as $tag) {
+			$query[] = "INSERT IGNORE INTO `{$module}_tags` SET `tag`=" . $tag . ", `link`='" . $this->_makeLink($tag) . "'";
+		}
+		$db->query($query);
+
+		// забираем теги
+
+		$res = $db->fetch("SELECT `id`, `tag` FROM `{$module}_tags` WHERE `tag` IN (" . implode(', ', $tags) . ")");
+		if(!empty($res)) {
+			foreach($res as $data) {
+				$tagsidArray[] = $data['id'];
+			}
+		}
+		return !empty($tagsidArray) ? $tagsidArray : false;
+	}
+
+	/**
+	 * Tags::getAlias()
+	 *
+	 * @desc Возвращает альясы на массив тегов для сохранения
+	 * @param array   $tags
+	 * @param integer $limit
+	 * @return array
+	 */
+	public function getAlias($tags, $limit = 10) {
+
+		$db = Difra\MySQL::getInstance();
+		$returnArray = [];
+		$pTags = $this->_prepareTag($tags);
+		$aliases = [];
+		$res =
+			$db->fetch("SELECT `tag`, `alias` FROM `tags_aliases` WHERE `tag` IN (" . implode(', ', $pTags) . ") LIMIT "
+				. $limit);
+		if(!empty($res)) {
+			foreach($res as $data) {
+				$aliases[$data['tag']] = $data['alias'];
+			}
+		}
+
+		foreach($tags as $k => $tag) {
+			$returnArray[$k] = isset($aliases[$tag]) ? $aliases[$tag] : $tag;
+		}
+		return !empty($returnArray) ? $returnArray : false;
+	}
+
+	private function _prepareTag($tags) {
+
+		$db = Difra\MySQL::getInstance();
+		foreach($tags as $k => $tag) {
+			$tag = trim($tag);
+			$tag = mb_strtolower($tag);
+
+			// Жестко укорачиваем название тега
+			//TODO: Может быть в будущем добавить более мягкий способ, например с расчетом пробелов между слов.
+			if(mb_strlen($tag) >= 25) {
+				$tag = mb_substr($tag, 0, 25);
+			}
+
+			$tag = $db->escape($tag);
+			$tag = "'" . $tag . "'";
+			$tags[$k] = $tag;
+		}
+		$tags = array_unique($tags);
+		return $tags;
+	}
+
+	private function _makeLink($string) {
+
+		$link = '';
+		$num = preg_match_all('/[A-Za-zА-Яа-я0-9]*/u', $string, $matches);
+		if($num and !empty($matches[0])) {
+			$matches = array_filter($matches[0], 'strlen');
+			$link = implode('-', $matches);
+		}
+		if($link == '') {
+			$link = '-';
+		}
+		return $link;
+	}
+
+	/**
+	 * Tags::assignTags()
+	 *
+	 * @desc Привязывает теги к сущности
+	 * @param string  $module
+	 * @param array   $tagsId
+	 * @param integer $itemId
+	 * @return void
+	 */
+	public function assignTags($module, $tagsId, $itemId) {
+
+		$this->_checkModule($module);
+		if(!is_array($tagsId)) {
+			return;
+		}
+		$db = Difra\MySQL::getInstance();
+
+		$query = [];
+		foreach($tagsId as $tagId) {
+			$query[] = "INSERT IGNORE INTO `{$module}_to_tags` SET `tag_id`='" . intval($tagId) . "', `item_id`='" . intval($itemId) . "'";
+		}
+		$db->query($query);
+	}
+
+	/**
 	 * Tags::suggest()
 	 *
 	 * @desc Подсказывает тэги юзеру
@@ -289,7 +337,7 @@ class Tags {
 	public function suggest( $module, $tag, $limit = 20 ) {
 
 		$db          = Difra\MySQL::getInstance();
-		$returnArray = array();
+		$returnArray = [];
 		$this->_checkModule( $module );
 
 		$res =
@@ -330,7 +378,7 @@ class Tags {
 	public function getSuggestAlias( $tag, $limit = 10 ) {
 
 		$db          = Difra\MySQL::getInstance();
-		$returnArray = array();
+		$returnArray = [];
 		$res         =
 			$db->fetch( "SELECT `tag`, `alias` FROM `tags_aliases` WHERE `tag` LIKE '" . $db->escape( $tag ) . "%' LIMIT "
 				    . $limit );
@@ -340,37 +388,6 @@ class Tags {
 			}
 		}
 		return $returnArray;
-	}
-
-	/**
-	 * Tags::getAlias()
-	 *
-	 * @desc Возвращает альясы на массив тегов для сохранения
-	 *
-	 * @param array   $tags
-	 * @param integer $limit
-	 *
-	 * @return array
-	 */
-	public function getAlias( $tags, $limit = 10 ) {
-
-		$db          = Difra\MySQL::getInstance();
-		$returnArray = array();
-		$pTags       = $this->_prepareTag( $tags );
-		$aliases     = array();
-		$res         =
-			$db->fetch( "SELECT `tag`, `alias` FROM `tags_aliases` WHERE `tag` IN (" . implode( ', ', $pTags ) . ") LIMIT "
-				    . $limit );
-		if( !empty( $res ) ) {
-			foreach( $res as $data ) {
-				$aliases[$data['tag']] = $data['alias'];
-			}
-		}
-
-		foreach( $tags as $k => $tag ) {
-			$returnArray[$k] = isset( $aliases[$tag] ) ? $aliases[$tag] : $tag;
-		}
-		return !empty( $returnArray ) ? $returnArray : false;
 	}
 
 	/**
@@ -395,27 +412,6 @@ class Tags {
 			return true;
 		}
 		return false;
-	}
-
-	private function _makeLink( $string ) {
-
-		$link = '';
-		$num  = preg_match_all( '/[A-Za-zА-Яа-я0-9]*/u', $string, $matches );
-		if( $num and !empty( $matches[0] ) ) {
-			$matches = array_filter( $matches[0], 'strlen' );
-			$link    = implode( '-', $matches );
-		}
-		if( $link == '' ) {
-			$link = '-';
-		}
-		return $link;
-	}
-
-	private function _checkModule( $module ) {
-
-		if( !in_array( $module, $this->modules ) ) {
-			throw new Difra\Exception( "Difra\\Plugins\\Tags: Module '{$module}' not registred in config." );
-		}
 	}
 
 	/**
@@ -480,7 +476,7 @@ class Tags {
 							LEFT JOIN `{$module}_tags` AS `tt` ON tt.`id`=t.`tag_id`
 							WHERE tt.`link`='" . $db->escape( $tagLink ) . "'" );
 		if( !empty( $res ) ) {
-			$returnArray = array();
+			$returnArray = [];
 			foreach( $res as $data ) {
 				$returnArray[] = $data['item_id'];
 			}
@@ -514,7 +510,7 @@ class Tags {
 	public function getAllTagsXML( \DOMNode $node, $limit = null ) {
 
 		if( empty( $this->modules ) ) {
-			return false;
+			return;
 		}
 
 		$db = Difra\MySQL::getInstance();
@@ -575,7 +571,7 @@ class Tags {
 		$this->_checkModule( $module );
 		$db = \Difra\MySQL::getInstance();
 
-		$tagData = $this->_prepareTag( array( $tag ) );
+		$tagData = $this->_prepareTag( [ $tag ] );
 
 		$query = "UPDATE `{$module}_tags` SET `tag` = " . $tagData[0] . ", `link`='" .
 			 $db->escape( $this->_makeLink( $tagData[0] ) ) . "' WHERE `id`='" . intval( $tagId ) . "'";
@@ -608,11 +604,11 @@ class Tags {
 		$db  = \Difra\MySQL::getInstance();
 		$res = $db->fetch( "SELECT * FROM `tags_aliases` ORDER BY `alias` ASC" );
 		if( !empty( $res ) ) {
-			$aliasesArray = array();
+			$aliasesArray = [];
 
 			// собираем массив с альясами
 			foreach( $res as $data ) {
-				$aliasesArray[$data['alias']][] = array( 'id' => $data['id'], 'tag' => $data['tag'] );
+				$aliasesArray[$data['alias']][] = [ 'id' => $data['id'], 'tag' => $data['tag'] ];
 			}
 
 			// собираем xml

@@ -25,8 +25,9 @@ class AdmAnnouncementsCategoryController extends Difra\Controller {
 		if( is_null( $catId ) || $originalAlias->val() != $categoryAlias->val() ) {
 
 			if( \Difra\Plugins\Announcements\Category::checkName( $categoryAlias->val() ) ) {
-				return $this->ajax->invalid( 'categoryAlias',
+				$this->ajax->invalid('categoryAlias',
 					\Difra\Locales::getInstance()->getXPath( 'announcements/adm/category/duplicateName' ) );
+				return;
 			}
 		}
 
