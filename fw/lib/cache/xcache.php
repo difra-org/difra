@@ -3,10 +3,11 @@
 namespace Difra\Cache;
 
 /**
- * Реализация кэширования через расширение xcache
+ * XCache adapter
  * Class XCache
+
  *
- * @package Difra\Cache
+*@package Difra\Cache
  */
 class XCache extends Common {
 

@@ -3,43 +3,29 @@
 namespace Difra\Cache;
 
 /**
- * Абстрактный класс для реализаций кэширования
+ * Abstract cache adapter class
  * Class Common
+
  *
- * @package Difra\Cache
+*@package Difra\Cache
  */
 abstract class Common {
 
 	//abstract static public function isAvailable();
 
+	const SESS_PREFIX = 'session:';
 	/** @var string */
 	public $adapter = null;
 
 	/**
-	 * Получить данные из бэкэнда
-	 *
-	 * @param string $id
-	 * @param bool   $doNotTestCacheValidity
-	 *
-	 * @return mixed|null
+	 * Конструктор
 	 */
-	abstract public function realGet( $id, $doNotTestCacheValidity = false );
+	public function __construct() {
 
-	/**
-	 * Добавить запись в бэкэнд
-	 *
-	 * @param string $id
-	 * @param mixed  $data
-	 * @param bool   $specificLifetime
-	 */
-	abstract public function realPut( $id, $data, $specificLifetime = false );
-
-	/**
-	 * Удаление записи из бэкэнда
-	 *
-	 * @param string $id
-	 */
-	abstract public function realRemove( $id );
+		if(!method_exists($this, 'isAvailable') or !$this::isAvailable()) {
+			throw new \Difra\Exception(__CLASS__ . ' requested, but that cache is not available!');
+		}
+	}
 
 	/**
 	 * Проверить наличие записи в кэше
@@ -60,13 +46,13 @@ abstract class Common {
 	abstract public function isAutomaticCleaningAvailable();
 
 	/**
-	 * Конструктор
+	 * @deprecated
+	 * @param $key
+	 * @return null
 	 */
-	public function __construct() {
+	public function smartGet($key) {
 
-		if( !method_exists( $this, 'isAvailable' ) or !$this::isAvailable() ) {
-			throw new \Difra\Exception( __CLASS__ . ' requested, but that cache is not available!' );
-		}
+		return $this->get($key);
 	}
 
 	/**
@@ -86,6 +72,27 @@ abstract class Common {
 	}
 
 	/**
+	 * Получить данные из бэкэнда
+	 *
+	 * @param string $id
+	 * @param bool   $doNotTestCacheValidity
+	 *
+	 * @return mixed|null
+	 */
+	abstract public function realGet($id, $doNotTestCacheValidity = false);
+
+	/**
+	 * @deprecated
+	 * @param     $key
+	 * @param     $data
+	 * @param int $ttl
+	 */
+	public function smartPut($key, $data, $ttl = 300) {
+
+		$this->put($key, $data, $ttl);
+	}
+
+	/**
 	 * Добавить запись в кэш
 	 *
 	 * @param string $key
@@ -102,50 +109,40 @@ abstract class Common {
 	}
 
 	/**
+	 * Добавить запись в бэкэнд
+	 *
+	 * @param string $id
+	 * @param mixed  $data
+	 * @param bool   $specificLifetime
+	 */
+	abstract public function realPut($id, $data, $specificLifetime = false);
+
+	/**
+	 * @deprecated
+	 *
+	 * @param $key
+	 */
+	public function smartRemove($key) {
+
+		$this->remove($key);
+	}
+
+	/**
 	 * Удалить запись из кэша
 	 *
 	 * @param string $key
 	 */
-	public function remove( $key ) {
+	public function remove($key) {
 
-		$this->realRemove( \Difra\Envi::getSite() . '_' . $key );
+		$this->realRemove(\Difra\Envi::getSite() . '_' . $key);
 	}
 
 	/**
-	 * @deprecated
+	 * Удаление записи из бэкэнда
 	 *
-	 * @param $key
-	 *
-	 * @return null
+	 * @param string $id
 	 */
-	public function smartGet( $key ) {
-
-		return $this->get( $key );
-	}
-
-	/**
-	 * @deprecated
-	 *
-	 * @param     $key
-	 * @param     $data
-	 * @param int $ttl
-	 */
-	public function smartPut( $key, $data, $ttl = 300 ) {
-
-		$this->put( $key, $data, $ttl );
-	}
-
-	/**
-	 * @deprecated
-	 *
-	 * @param $key
-	 */
-	public function smartRemove( $key ) {
-
-		$this->remove( $key );
-	}
-
-	const SESS_PREFIX = 'session:';
+	abstract public function realRemove($id );
 
 	/**
 	 * Set session handler in current cache, if available

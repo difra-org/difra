@@ -16,7 +16,7 @@ class Localemanage {
 	}
 
 	/**
-	 * @param \DOMElement $node
+	 * @param \DOMElement|\DOMNode $node
 	 */
 	public function getLocalesTreeXML($node) {
 

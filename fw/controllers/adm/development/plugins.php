@@ -24,9 +24,9 @@ class AdmDevelopmentPluginsController extends \Difra\Controller {
 	public function enableAjaxAction( \Difra\Param\AnyString $name ) {
 
 		if( !\Difra\Plugger::turnOn( $name->val() ) ) {
-			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'adm/plugins/failed' ) );
+			\Difra\Ajaxer::getInstance()->notify(\Difra\Locales::get('adm/plugins/failed'));
 		}
-		$this->ajax->refresh();
+		\Difra\Ajaxer::getInstance()->refresh();
 	}
 
 	/**
@@ -37,8 +37,8 @@ class AdmDevelopmentPluginsController extends \Difra\Controller {
 	public function disableAjaxAction( \Difra\Param\AnyString $name ) {
 
 		if( !\Difra\Plugger::turnOff( $name->val() ) ) {
-			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'adm/plugins/failed' ) );
+			\Difra\Ajaxer::getInstance()->notify(\Difra\Locales::get('adm/plugins/failed'));
 		}
-		$this->ajax->refresh();
+		\Difra\Ajaxer::getInstance()->refresh();
 	}
 }

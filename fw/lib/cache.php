@@ -3,10 +3,11 @@
 namespace Difra;
 
 /**
- * Абстрактная фабрика классов кэширования
+ * Cache factory
  * Class Cache
+
  *
- * @package Difra
+*@package Difra
  */
 class Cache {
 

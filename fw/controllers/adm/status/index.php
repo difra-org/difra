@@ -39,6 +39,7 @@ class AdmStatusIndexController extends Difra\Controller {
 		$statusNode->setAttribute( 'disabledPlugins', implode( ', ', $disabledPlugins ) );
 
 		// stats/mysql
+		/** @var \DOMElement $mysqlNode */
 		$mysqlNode = $statusNode->appendChild( $this->xml->createElement( 'mysql' ) );
 		try {
 			\Difra\MySQL\Parser::getStatusXML( $mysqlNode );

@@ -3,19 +3,19 @@
 namespace Difra\Cache;
 
 /**
- * Реализация кэширования через расширение memcached
+ * Memcached (memcached module) adapter
  * Class MemCached
+
  *
- * @package Difra\Cache
+*@package Difra\Cache
  */
 class MemCached extends Common {
-
-	public $adapter = \Difra\Cache::INST_MEMCACHED;
 
 	/** @var \Memcached */
 	private static $_memcache = null;
 	private static $_serialize = true;
 	private static $_lifetime = 0;
+	public $adapter = \Difra\Cache::INST_MEMCACHED;
 
 	/**
 	 * Определение работоспособности расширения

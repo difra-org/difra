@@ -3,10 +3,11 @@
 namespace Difra\Cache;
 
 /**
- * Реализация отсутствия кэша
+ * Stub cache adapter
  * Class None
+
  *
- * @package Difra\Cache
+*@package Difra\Cache
  */
 class None extends Common {
 

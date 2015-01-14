@@ -3,25 +3,26 @@
 namespace Difra\Cache;
 
 /**
- * Реализация кэширования в SharedMemory
- * TODO: Этот функионал давно не использовался и требует проверки.
+ * SharedMemory caching
+ * TODO: It wasn't used for a while, test and fix it before use
  * Class SharedMemory
+
  *
- * @package Difra\Cache
+*@package Difra\Cache
  */
 class SharedMemory extends Common {
-
-	public $adapter = \Difra\Cache::INST_SHAREDMEM;
 
 	const SHM_BLOCK_ID = 0x2648;
 	const SHM_BLOCK_INDEX_SIZE = 40960;
 	const SHM_BLOCK_SEGMENT_SIZE = 655360;
 	const SHM_BLOCK_PERMS = 0666;
+	public $adapter = \Difra\Cache::INST_SHAREDMEM;
 
 	/**
-	 * Проверка доступности
+	 * is shm available?
+
 	 *
-	 * @return bool
+*@return bool
 	 */
 	public static function isAvailable() {
 
@@ -30,11 +31,12 @@ class SharedMemory extends Common {
 	}
 
 	/**
-	 * Получение данных из кэша
+	 * Get cached data
+
 	 *
-	 * @param string  $id
+*@param string  $id
 	 * @param boolean $doNotTestCacheValidity
-	 *
+
 	 * @return string
 	 */
 	public function realGet( $id, $doNotTestCacheValidity = false ) {
@@ -68,10 +70,11 @@ class SharedMemory extends Common {
 	}
 
 	/**
-	 * Проверка существования ключа
+	 * Test if cache record exists
+
 	 *
-	 * @param string $id
-	 *
+*@param string $id
+
 	 * @return boolean
 	 */
 	public function test( $id ) {
@@ -81,12 +84,13 @@ class SharedMemory extends Common {
 	}
 
 	/**
-	 * Сохранение данных в кэше
+	 * Save data record
+
 	 *
-	 * @param string   $id
+*@param string   $id
 	 * @param string   $data
 	 * @param bool|int $specificLifetime
-	 *
+
 	 * @return bool
 	 */
 	public function realPut( $id, $data, $specificLifetime = false ) {
@@ -171,10 +175,11 @@ class SharedMemory extends Common {
 	}
 
 	/**
-	 * Удаление данных
+	 * Remove cache record
+
 	 *
-	 * @param string $id
-	 *
+*@param string $id
+
 	 * @return boolean
 	 */
 	public function realRemove( $id ) {
@@ -239,10 +244,11 @@ class SharedMemory extends Common {
 	}
 
 	/**
-	 * Очистка кэша
+	 * Clean cache
+
 	 *
-	 * @param string $mode
-	 *
+*@param string $mode
+
 	 * @return boolean true if no problem
 	 */
 	public function clean( $mode = '' ) {
@@ -252,9 +258,10 @@ class SharedMemory extends Common {
 	}
 
 	/**
-	 * Получение информации о Shared Memory
+	 * Get info about Shared Memory
+
 	 *
-	 * @return array|bool
+*@return array|bool
 	 */
 	public function cacheInfo() {
 
@@ -283,9 +290,10 @@ class SharedMemory extends Common {
 	}
 
 	/**
-	 * Определяет наличие автоматической подчистки кэша
+	 * Defines if automatic cache cleaning is available.
+
 	 *
-	 * @return boolean
+*@return boolean
 	 */
 	public function isAutomaticCleaningAvailable() {
 

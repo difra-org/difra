@@ -3,12 +3,13 @@
 namespace Difra;
 
 /**
- * Реализация абстрактного контроллера
+ * Abstract controller
  * Class Controller
+
  *
- * @package Difra
+*@package Difra
  */
-class Controller {
+abstract class Controller {
 
 	/** Значение по умолчанию */
 	const DEFAULT_CACHE = 60;

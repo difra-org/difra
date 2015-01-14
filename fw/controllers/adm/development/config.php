@@ -12,21 +12,20 @@ class AdmDevelopmentConfigController extends \Difra\Controller {
 
 	public function indexAction() {
 
-		if( !\Difra\Debugger::isEnabled() ) {
-			throw new \Difra\View\Exception( 404 );
+		if(!\Difra\Debugger::isEnabled()) {
+			throw new \Difra\View\Exception(404);
 		}
 		$config = \Difra\Config::getInstance();
 		/** @var \DOMElement $configNode */
-		$configNode = $this->root->appendChild( $this->xml->createElement( 'configuration' ) );
+		$configNode = $this->root->appendChild($this->xml->createElement('configuration'));
 		$conf = $config->getConfig();
-		$configNode->setAttribute( 'current', var_export( $conf, true ) );
-		$configNode->setAttribute( 'diff', $config->getTxtDiff() );
+		$configNode->setAttribute('current', var_export($conf, true));
+		$configNode->setAttribute('diff', var_export($config->getDiff(), true));
 	}
 
 	public function resetAjaxAction() {
 
 		\Difra\Config::getInstance()->reset();
-		$this->ajax->notify( $this->locale->getXPath( 'adm/config/reset-done' ) );
-		$this->ajax->refresh();
+		\Difra\Ajaxer::getInstance()->notify(\Difra\Locales::get('adm/config/reset-done'))->refresh();
 	}
 }
