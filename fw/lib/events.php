@@ -34,49 +34,65 @@ class Events {
 	private static $events = null;
 
 	/**
+	 * Вызывает все события в нужном порядке
+	 */
+	public static function run() {
+
+		self::init();
+		foreach(self::$events as $type => $foo) {
+			Debugger::addEventLine('Event ' . $type . ' started');
+			self::start($type);
+		}
+
+		Debugger::addLine('Done running events');
+		if(Envi::getMode() == 'web') {
+			Debugger::checkSlow();
+		}
+	}
+
+	/**
 	 * Базовый набор событий для работы движка
 	 */
 	public static function init() {
 
 		static $initDone = false;
-		if( $initDone ) {
+		if($initDone) {
 			return;
 		}
 		$initDone = true;
 
-		foreach( self::$types as $type ) {
+		foreach(self::$types as $type) {
 			self::$events[$type] = array();
 		}
 
-		self::register( 'core-init', 'Difra\\Debugger', 'init' );
-		self::register( 'core-init', 'Difra\\Envi\\Setup', 'run' );
-		self::register( 'core-init', 'Difra\\Envi\\Session', 'init' );
-		self::register( 'plugins-load', 'Difra\\Plugger', 'init' );
-		if( Envi::getMode() == 'web' ) {
-			self::register( 'action-find', 'Difra\\Controller', 'init' );
-			self::register( 'action-run', 'Difra\\Controller', 'run' );
-			self::register( 'render-run', 'Difra\\Controller', 'render' );
+		self::register('core-init', 'Difra\\Debugger', 'init');
+		self::register('core-init', 'Difra\\Envi\\Setup', 'run');
+		self::register('core-init', 'Difra\\Envi\\Session', 'init');
+		self::register('plugins-load', 'Difra\\Plugger', 'init');
+		if(Envi::getMode() == 'web') {
+			self::register('action-find', 'Difra\\Controller', 'init');
+			self::register('action-run', 'Difra\\Controller', 'run');
+			self::register('render-run', 'Difra\\Controller', 'render');
 		}
-		if( file_exists( $initPHP = ( DIR_ROOT . '/lib/init.php' ) ) ) {
+		if(file_exists($initPHP = (DIR_ROOT . '/lib/init.php'))) {
 			/** @noinspection PhpIncludeInspection */
-			include_once( $initPHP );
+			include_once($initPHP);
 		}
 	}
 
 	/**
 	 * Зарегистрировать обработчик события (статический вариант)
 	 *
-	 * @param             $type          Имя события
-	 * @param             $class         Класс обработчика (должен содержать синглтон getInstance)
-	 * @param bool|string $method        Метод обработчика (если false, будет вызван только getInstance)
-	 *
+	 * @param string      $type   Имя события
+	 * @param string      $class  Класс обработчика (должен содержать синглтон getInstance)
+	 * @param bool|string $method Метод обработчика (если false, будет вызван только getInstance)
 	 * @throws Exception
 	 */
-	public static function register( $type, $class, $method = false ) {
+	public static function register($type, $class, $method = false) {
 
 		self::init();
-		if( !in_array( $type, self::$types ) ) {
-			throw new Exception( 'Invalid event type: ' . $type );
+		if(!in_array($type, self::$types)) {
+			throw new Exception('Invalid event type: ' . $type);
 		}
 		self::$events[$type][] = array(
 			'class' => $class,
@@ -85,37 +101,20 @@ class Events {
 	}
 
 	/**
-	 * Вызывает все события в нужном порядке
-	 */
-	public static function run() {
-
-		self::init();
-		foreach( self::$events as $type => $foo ) {
-			Debugger::addEventLine( 'Event ' . $type . ' started' );
-			self::start( $type );
-		}
-
-		Debugger::addLine( 'Done running events' );
-		if( Envi::getMode() == 'web' ) {
-			Debugger::checkSlow();
-		}
-	}
-
-	/**
 	 * Вызывает обрабочики указанного события
 	 *
 	 * @param $event
 	 */
-	private static function start( $event ) {
+	private static function start($event) {
 
 		$handlers = self::$events[$event];
-		if( empty( $handlers ) ) {
+		if(empty($handlers)) {
 			return;
 		}
-		foreach( $handlers as $handler ) {
-			Debugger::addEventLine( 'Handler for ' . $event . ': ' . $handler['class'] . '->' . ( $handler['method']
-							? $handler['method'] : 'getInstance' ) . ' started' );
-			call_user_func( array( $handler['class'], $handler['method'] ) );
+		foreach($handlers as $handler) {
+			Debugger::addEventLine('Handler for ' . $event . ': ' . $handler['class'] . '->' . ($handler['method']
+					? $handler['method'] : 'getInstance') . ' started');
+			call_user_func(array($handler['class'], $handler['method']));
 		}
 	}
 }
