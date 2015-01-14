@@ -2,22 +2,19 @@
 
 namespace Difra;
 
+use Difra\Envi\Request;
+
 /**
  * Abstract controller
  * Class Controller
-
  *
-*@package Difra
+ * @package Difra
  */
 abstract class Controller {
 
 	/** Значение по умолчанию */
 	const DEFAULT_CACHE = 60;
-	protected static $parameters = array();
-	/** @deprecated */
-	public $locale;
-	/** @deprecated */
-	public $ajax;
+	protected static $parameters = [];
 	/** @var bool */
 	public $isAjaxAction = false;
 	/** @var bool|int Кэширование страницы на стороне веб-сервера (в секундах) */
@@ -28,8 +25,6 @@ abstract class Controller {
 	public $root;
 	/** @var \DOMElement */
 	public $realRoot;
-	/** @deprecated */
-	protected $auth;
 	/** @var string */
 	protected $method = null;
 	/** @var string */
@@ -39,25 +34,22 @@ abstract class Controller {
 
 	/**
 	 * Конструктор
+	 *
+	 * @param array $parameters Parameters from url (passed from \Difra\Envi\Action)
 	 */
-	final public function __construct( $parameters = array() ) {
+	final public function __construct($parameters = []) {
 
 		self::$parameters = $parameters;
 
-		// загрузка основных классов
-		$this->locale = Locales::getInstance();
-		$this->auth = Auth::getInstance();
-		$this->ajax = Ajaxer::getInstance();
-
 		// создание xml с данными
 		$this->xml = new \DOMDocument;
-		$this->realRoot = $this->xml->appendChild( $this->xml->createElement( 'root' ) );
-		$this->root = $this->realRoot->appendChild( $this->xml->createElement( 'content' ) );
+		$this->realRoot = $this->xml->appendChild($this->xml->createElement('root'));
+		$this->root = $this->realRoot->appendChild($this->xml->createElement('content'));
 
 		// запуск диспатчера
-		Debugger::addLine( 'Started controller dispatcher' );
+		Debugger::addLine('Started controller dispatcher');
 		$this->dispatch();
-		Debugger::addLine( 'Finished controller dispatcher' );
+		Debugger::addLine('Finished controller dispatcher');
 	}
 
 	/**
@@ -96,12 +88,12 @@ abstract class Controller {
 
 		$controller = self::getInstance();
 		$controller->chooseAction();
-		if( !$controller->method ) {
-			throw new Exception( 'Controller failed to choose action method' );
+		if(!$controller->method) {
+			throw new Exception('Controller failed to choose action method');
 		}
-		Debugger::addLine( 'Started action ' . \Difra\Envi\Action::$method );
+		Debugger::addLine('Started action ' . \Difra\Envi\Action::$method);
 		$controller->callAction();
-		Debugger::addLine( 'Finished action ' . \Difra\Envi\Action::$method );
+		Debugger::addLine('Finished action ' . \Difra\Envi\Action::$method);
 	}
 
 	/**
@@ -110,21 +102,21 @@ abstract class Controller {
 	private function chooseAction() {
 
 		$method = null;
-		if( $this->ajax->isAjax and \Difra\Envi\Action::$methodAjaxAuth and $this->auth->logged ) {
+		if(Request::isAjax() and \Difra\Envi\Action::$methodAjaxAuth and Auth::getInstance()->logged) {
 			$this->isAjaxAction = true;
 			$method = 'methodAjaxAuth';
-		} elseif( $this->ajax->isAjax and \Difra\Envi\Action::$methodAjax ) {
+		} elseif(Request::isAjax() and \Difra\Envi\Action::$methodAjax) {
 			$this->isAjaxAction = true;
 			$method = 'methodAjax';
-		} elseif( \Difra\Envi\Action::$methodAuth and $this->auth->logged ) {
+		} elseif(\Difra\Envi\Action::$methodAuth and Auth::getInstance()->logged) {
 			$method = 'methodAuth';
-		} elseif( \Difra\Envi\Action::$method ) {
+		} elseif(\Difra\Envi\Action::$method) {
 			$method = 'method';
-		} elseif( \Difra\Envi\Action::$methodAuth or \Difra\Envi\Action::$methodAjaxAuth ) {
-			self::$parameters = array();
-			throw new View\Exception( 401 );
+		} elseif(\Difra\Envi\Action::$methodAuth or \Difra\Envi\Action::$methodAjaxAuth) {
+			self::$parameters = [];
+			throw new View\Exception(401);
 		} else {
-			throw new View\Exception( 404 );
+			throw new View\Exception(404);
 		}
 		$this->method = $method;
 	}
@@ -136,83 +128,83 @@ abstract class Controller {
 
 		$method = $this->method;
 		$actionMethod = \Difra\Envi\Action::${$method};
-		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
+		$actionReflection = new \ReflectionMethod($this, $actionMethod);
 		$actionParameters = $actionReflection->getParameters();
 
 		// у выбранного метода нет параметров
-		if( empty( $actionParameters ) ) {
-			call_user_func( array( $this, $actionMethod ) );
+		if(empty($actionParameters)) {
+			call_user_func([$this, $actionMethod]);
 			return;
 		}
 
 		// получаем имена именованных REQUEST_URI параметров
-		$namedParameters = array();
-		foreach( $actionParameters as $parameter ) {
+		$namedParameters = [];
+		foreach($actionParameters as $parameter) {
 			$class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
-			if( call_user_func( array( "$class", "getSource" ) ) == 'query' and call_user_func( array( "$class", "isNamed" ) )
+			if(call_user_func(["$class", "getSource"]) == 'query' and call_user_func(["$class", "isNamed"])
 			) {
 				$namedParameters[] = $parameter->getName();
 			}
 		}
 
 		// получаем значения параметров
-		$callParameters = array();
-		foreach( $actionParameters as $parameter ) {
+		$callParameters = [];
+		foreach($actionParameters as $parameter) {
 			$name = $parameter->getName();
 			$class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
-			switch( call_user_func( array( "$class", "getSource" ) ) ) {
-			case 'query':
-				// параметр из query — нужно соблюдать очередность параметров
-				if( call_user_func( array( "$class", "isNamed" ) ) ) {
-					// именованный параметр
-					if( sizeof( self::$parameters ) >= 2 and self::$parameters[0] == $name ) {
-						array_shift( self::$parameters );
-						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
-							throw new View\Exception( 404 );
+			switch(call_user_func(["$class", "getSource"])) {
+				case 'query':
+					// параметр из query — нужно соблюдать очередность параметров
+					if(call_user_func(["$class", "isNamed"])) {
+						// именованный параметр
+						if(sizeof(self::$parameters) >= 2 and self::$parameters[0] == $name) {
+							array_shift(self::$parameters);
+							if(!call_user_func(["$class", 'verify'], self::$parameters[0])) {
+								throw new View\Exception(404);
+							}
+							$callParameters[$parameter->getName()] =
+								new $class(array_shift(self::$parameters));
+						} elseif(!$parameter->isOptional()) {
+							throw new View\Exception(404);
+						} else {
+							$callParameters[$parameter->getName()] = null;
 						}
-						$callParameters[$parameter->getName()] =
-							new $class( array_shift( self::$parameters ) );
-					} elseif( !$parameter->isOptional() ) {
-						throw new View\Exception( 404 );
+						array_shift($namedParameters);
 					} else {
-						$callParameters[$parameter->getName()] = null;
-					}
-					array_shift( $namedParameters );
-				} else {
-					if( !empty( self::$parameters ) and ( !$parameter->isOptional() or
-							empty( $namedParameters ) or
-							self::$parameters[0] != $namedParameters[0] )
-					) {
-						if( !call_user_func( array( "$class", 'verify' ), self::$parameters[0] ) ) {
-							throw new View\Exception( 404 );
+						if(!empty(self::$parameters) and (!$parameter->isOptional() or
+								empty($namedParameters) or
+								self::$parameters[0] != $namedParameters[0])
+						) {
+							if(!call_user_func(["$class", 'verify'], self::$parameters[0])) {
+								throw new View\Exception(404);
+							}
+							$callParameters[$name] = new $class(array_shift(self::$parameters));
+						} elseif(!$parameter->isOptional()) {
+							throw new View\Exception(404);
+						} else {
+							$callParameters[$parameter->getName()] = null;
 						}
-						$callParameters[$name] = new $class( array_shift( self::$parameters ) );
-					} elseif( !$parameter->isOptional() ) {
-						throw new View\Exception( 404 );
+					}
+					break;
+				case 'ajax':
+					$value = Request::getParam($name);
+					if(!is_null($value) and $value !== '') {
+						if(!call_user_func(["$class", "verify"], $value)) {
+							Ajaxer::getInstance()->invalid($name);
+							continue;
+						}
+						$callParameters[$name] = new $class($value);
+					} elseif(call_user_func(["$class", 'isAuto'])) {
+						$callParameters[$name] = new $class;
+					} elseif(!$parameter->isOptional()) {
+						Ajaxer::getInstance()->required($name);
 					} else {
-						$callParameters[$parameter->getName()] = null;
+						$callParameters[$name] = null;
 					}
-				}
-				break;
-			case 'ajax':
-				$value = $this->ajax->getParam( $name );
-				if( !is_null( $value ) and $value !== '' ) {
-					if( !call_user_func( array( "$class", "verify" ), $value ) ) {
-						$this->ajax->invalid( $name );
-						continue;
-					}
-					$callParameters[$name] = new $class( $value );
-				} elseif( call_user_func( array( "$class", 'isAuto' ) ) ) {
-					$callParameters[$name] = new $class;
-				} elseif( !$parameter->isOptional() ) {
-					$this->ajax->required( $name );
-				} else {
-					$callParameters[$name] = null;
-				}
 			}
 		}
-		if( !$this->ajax->hasProblem() ) {
-			call_user_func_array( array( $this, $actionMethod ), $callParameters );
+		if(!Ajaxer::getInstance()->hasProblem()) {
+			call_user_func_array([$this, $actionMethod], $callParameters);
 		}
 	}
 
@@ -239,10 +231,10 @@ abstract class Controller {
 			$controller->xml->encoding = 'utf-8';
 			echo rawurldecode($controller->xml->saveXML());
 			View::$rendered = true;
-		} elseif(!View::$rendered and $controller->ajax->isAjax) {
+		} elseif(!View::$rendered and Request::isAjax()) {
 			$controller->putExpires();
 			header('Content-type: text/plain'); // тут нужен application/json, но тогда опера предлагает сохранить файл
-			echo($controller->ajax->getResponse());
+			echo(Ajaxer::getInstance()->getResponse());
 			View::$rendered = true;
 		} elseif(!View::$rendered) {
 			$controller->putExpires();
@@ -287,70 +279,71 @@ abstract class Controller {
 	 * @param \DOMDocument|null $xml
 	 * @param null              $instance
 	 */
-	public function fillXML( &$xml = null, $instance = null ) {
+	public function fillXML(&$xml = null, $instance = null) {
 
-		if( is_null( $xml ) ) {
+		if(is_null($xml)) {
 			$xml = $this->xml;
 			$node = $this->realRoot;
 		} else {
 			$node = $xml->documentElement;
 		}
-		Debugger::addLine( 'Filling XML data for render: Started' );
-		$node->setAttribute( 'lang', $this->locale->locale );
-		$node->setAttribute( 'site', Envi::getSite() );
-		$node->setAttribute( 'host', $host = Envi::getHost() );
-		$node->setAttribute( 'mainhost', $mainhost = Envi::getHost( true ) );
-		$node->setAttribute( 'instance', $instance ? $instance : View::$instance );
-		$node->setAttribute( 'uri', Envi::getUri() );
-		$node->setAttribute( 'controllerUri', \Difra\Envi\Action::getControllerUri() );
-		if( $host != $mainhost ) {
-			$node->setAttribute( 'urlprefix', 'http://' . $mainhost );
+		Debugger::addLine('Filling XML data for render: Started');
+		// TODO: sync this with Envi::getState()
+		$node->setAttribute('lang', Envi\Setup::getLocale());
+		$node->setAttribute('site', Envi::getSubsite());
+		$node->setAttribute('host', $host = Envi::getHost());
+		$node->setAttribute('mainhost', $mainhost = Envi::getHost(true));
+		$node->setAttribute('instance', $instance ? $instance : View::$instance);
+		$node->setAttribute('uri', Envi::getUri());
+		$node->setAttribute('controllerUri', \Difra\Envi\Action::getControllerUri());
+		if($host != $mainhost) {
+			$node->setAttribute('urlprefix', 'http://' . $mainhost);
 		}
 		// get user agent
-		Envi\UserAgent::getUserAgentXML( $node );
+		Envi\UserAgent::getUserAgentXML($node);
 		// ajax flag
-		$node->setAttribute( 'ajax',
-				     ( $this->ajax->isAjax or ( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-						     $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ) ? '1'
-					     : '0' );
-		$node->setAttribute( 'switcher',
-				     ( !$this->cache and isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and
-					     $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage' ) ? '1' : '0' );
+		$node->setAttribute('ajax',
+			(Request::isAjax() or (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and
+					$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage')) ? '1'
+				: '0');
+		$node->setAttribute('switcher',
+			(!$this->cache and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and
+				$_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage') ? '1' : '0');
 		// build number
-		$node->setAttribute( 'build', \Difra\Envi\Version::getBuild() );
+		$node->setAttribute('build', \Difra\Envi\Version::getBuild());
 		// date
 		/** @var $dateNode \DOMElement */
-		$dateNode = $node->appendChild( $xml->createElement( 'date' ) );
-		$dateKeys = array( 'd', 'e', 'A', 'a', 'm', 'B', 'b', 'Y', 'y', 'c', 'x', 'H', 'M', 'S' );
-		$dateValues = explode( '|', strftime( '%' . implode( '|%', $dateKeys ) ) );
-		$dateCombined = array_combine( $dateKeys, $dateValues );
-		foreach( $dateCombined as $k => $v ) {
-			$dateNode->setAttribute( $k, $v );
+		$dateNode = $node->appendChild($xml->createElement('date'));
+		$dateKeys = ['d', 'e', 'A', 'a', 'm', 'B', 'b', 'Y', 'y', 'c', 'x', 'H', 'M', 'S'];
+		$dateValues = explode('|', strftime('%' . implode('|%', $dateKeys)));
+		$dateCombined = array_combine($dateKeys, $dateValues);
+		foreach($dateCombined as $k => $v) {
+			$dateNode->setAttribute($k, $v);
 		}
 		// debug flag
-		$node->setAttribute( 'debug', Debugger::isEnabled() ? '1' : '0' );
+		$node->setAttribute('debug', Debugger::isEnabled() ? '1' : '0');
 		// config values (for js variable)
-		$configNode = $node->appendChild( $xml->createElement( 'config' ) );
-		Envi::getConfigXML( $configNode );
+		$configNode = $node->appendChild($xml->createElement('config'));
+		Envi::getStateXML($configNode);
 		// menu
-		if( $menuResource = Resourcer::getInstance( 'menu' )->compile( View::$instance ) ) {
+		if($menuResource = Resourcer::getInstance('menu')->compile(View::$instance)) {
 			$menuXML = new \DOMDocument();
-			$menuXML->loadXML( $menuResource );
-			$node->appendChild( $xml->importNode( $menuXML->documentElement, true ) );
+			$menuXML->loadXML($menuResource);
+			$node->appendChild($xml->importNode($menuXML->documentElement, true));
 		}
 		// auth
-		$this->auth->getAuthXML( $node );
+		Auth::getInstance()->getAuthXML($node);
 		// locale
-		$this->locale->getLocaleXML( $node );
+		Locales::getInstance()->getLocaleXML($node);
 		// Добавление объекта config для js
-		$config = Envi::getConfig();
+		$config = Envi::getState();
 		$confJS = '';
-		foreach( $config as $k => $v ) {
-			$confJS .= "config.{$k}='" . addslashes( $v ) . "';";
+		foreach($config as $k => $v) {
+			$confJS .= "config.{$k}='" . addslashes($v) . "';";
 		}
-		$node->setAttribute( 'jsConfig', $confJS );
-		Debugger::addLine( 'Filling XML data for render: Done' );
-		Debugger::debugXML( $node );
+		$node->setAttribute('jsConfig', $confJS);
+		Debugger::addLine('Filling XML data for render: Done');
+		Debugger::debugXML($node);
 	}
 
 	/**
@@ -360,19 +353,19 @@ abstract class Controller {
 	 */
 	public function checkReferer() {
 
-		if( empty( $_SERVER['HTTP_REFERER'] ) ) {
-			throw new Exception( 'Bad referer' );
+		if(empty($_SERVER['HTTP_REFERER'])) {
+			throw new Exception('Bad referer');
 		}
-		if( ( substr( $_SERVER['HTTP_REFERER'], 0, 7 ) != 'http://' ) and (
-				substr( $_SERVER['HTTP_REFERER'], 0, 8 ) != 'https://' )
+		if((substr($_SERVER['HTTP_REFERER'], 0, 7) != 'http://') and (
+				substr($_SERVER['HTTP_REFERER'], 0, 8) != 'https://')
 		) {
-			throw new Exception( 'Bad referer' );
+			throw new Exception('Bad referer');
 		}
-		$domain = explode( '://', $_SERVER['HTTP_REFERER'], 2 );
-		$domain = explode( '/', $domain[1] );
+		$domain = explode('://', $_SERVER['HTTP_REFERER'], 2);
+		$domain = explode('/', $domain[1]);
 		$domain = $domain[0] . '/';
-		if( false === strpos( $domain, Envi::getHost( true ) ) ) {
-			throw new Exception( 'Bad referer' );
+		if(false === strpos($domain, Envi::getHost(true))) {
+			throw new Exception('Bad referer');
 		}
 	}
 }

@@ -22,24 +22,25 @@ class AdmAnnouncementsAdditionalsController extends Difra\Controller {
 
 		if( is_null( $id ) || $originalAlias->val() != $alias->val() ) {
 			if( \Difra\Plugins\Announcements\Additionals::checkAlias( $alias->val() ) ) {
-				return $this->ajax->invalid( 'alias', \Difra\Locales::getInstance()->getXPath( 'announcements/adm/additionals/duplicateName' ) );
+				\Difra\Ajaxer::getInstance()->invalid('alias', \Difra\Locales::getInstance()->getXPath('announcements/adm/additionals/duplicateName'));
+				return;
 			}
 		}
 
 		\Difra\Plugins\Announcements::getInstance()->saveAdditionalField( $name->val(), $alias->val(), $id );
 
 		if( is_null( $id ) ) {
-			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/additionals/added' ) );
+			\Difra\Ajaxer::getInstance()->notify(\Difra\Locales::getInstance()->getXPath('announcements/adm/additionals/added'));
 		} else {
-			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/additionals/updated' ) );
+			\Difra\Ajaxer::getInstance()->notify(\Difra\Locales::getInstance()->getXPath('announcements/adm/additionals/updated'));
 		}
-		$this->ajax->refresh();
+		\Difra\Ajaxer::getInstance()->refresh();
 	}
 
 	public function deleteAction( \Difra\Param\AnyInt $id ) {
 
 		\Difra\Plugins\Announcements\Additionals::delete( $id->val() );
-		$this->ajax->refresh();
+		\Difra\Ajaxer::getInstance()->refresh();
 	}
 
 }

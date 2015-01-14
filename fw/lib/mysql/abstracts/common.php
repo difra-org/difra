@@ -3,186 +3,45 @@
 namespace Difra\MySQL\Abstracts;
 
 /**
- * Абстрактный класс для реализации адаптеров к MySQL
+ * Abstract MySQL adapter
  * Class Common
+
  *
- * @package Difra\MySQL
+*@package Difra\MySQL
  */
 abstract class Common {
 
+	/** @var int */
+	public $queries = 0;
 	/** @var array|null */
 	protected $config = null;
 	/** @var bool */
 	protected $connected = null;
 	/** @var string|null */
 	protected $error = null;
-	/** @var int */
-	public $queries = 0;
 
 	/**
-	 * Абстрактные методы
-
+	 * Constructor
 	 */
+	public function __construct() {
 
-	/**
-	 * Инициализация соединения с базой
-	 */
-	abstract protected function realConnect();
-
-	/**
-	 * Отправка запроса в базу
-	 *
-	 * @param string $query
-	 */
-	abstract protected function realQuery( $query );
-
-	/**
-	 * Получение данных из базы
-	 *
-	 * @param string $query
-	 * @param bool   $replica
-	 *
-	 * @return array|null
-	 */
-	abstract protected function realFetch( $query, $replica = false );
-
-	/**
-	 * Обезопасивает строку для помещения в SQL-запрос
-	 *
-	 * @param $string
-	 *
-	 * @return string
-	 */
-	abstract protected function realEscape( $string );
-
-	/**
-	 * Возвращает id (primary key) последней вставленной строки
-	 *
-	 * @return int
-	 */
-	abstract protected function getLastId();
-
-	/**
-	 * Возвращает количество строк, затронутых последним запросом
-	 *
-	 * @return int
-	 */
-	abstract protected function getAffectedRows();
-
-	/**
-	 * Начать транзакцию
-	 */
-	protected function transactionStart() {
-	}
-
-	/**
-	 * Закончить транзакцию
-	 */
-	protected function transactionCommit() {
-	}
-
-	/**
-	 * Отменить транзакцию
-	 */
-	protected function transactionCancel() {
-	}
-
-	/**
-	 * Функционал
-
-	 */
-
-	/**
-	 * Устанавливает соединение с базой
-	 *
-	 * @throws \Difra\Exception
-	 * @return void
-	 */
-	protected function connect() {
-
-		if( $this->connected === true ) {
-			return;
-		} elseif( $this->connected === false ) {
-			throw new \Difra\Exception( 'MySQL connection is not available' );
+		$this->config = \Difra\Config::getInstance()->get('db');
+		if(empty($this->config['hostname'])) {
+			$this->config['hostname'] = '';
 		}
-		$this->connected = false;
-		try {
-			$this->realConnect();
-		} catch( \Difra\Exception $ex ) {
-			$ex->notify();
-			throw new \Difra\Exception( 'MySQL connection is not available: ' . $ex->getMessage() );
+		if(empty($this->config['username'])) {
+			$this->config['username'] = \Difra\Envi::getSubsite();
 		}
-		$this->connected = true;
-	}
-
-	/**
-	 * Сделать запрос в базу
-	 *
-	 * @throws \Difra\Exception
-	 *
-	 * @param string|array $query SQL-запрос
-	 *
-	 * @return void
-	 */
-	public function query( $query ) {
-
-		if( !is_array( $query ) ) {
-			$this->connect();
-			$this->realQuery( $query );
-			$this->queries++;
-			\Difra\Debugger::addDBLine( 'MySQL', $query );
-		} else {
-			try {
-				$this->transactionStart();
-				foreach( $query as $subQuery ) {
-					$this->query( $subQuery );
-				}
-				$this->transactionCommit();
-			} catch( \Difra\Exception $ex ) {
-				$this->transactionCancel();
-				throw new \Difra\Exception( 'MySQL transaction failed because of ' . $ex->getMessage() );
-			}
+		if(empty($this->config['password'])) {
+			$this->config['password'] = '';
+		}
+		if(empty($this->config['database'])) {
+			$this->config['database'] = \Difra\Envi::getSubsite();
 		}
 	}
 
 	/**
-	 * Возвращает результат запроса
-	 *
-	 * @param string $query   SQL-запрос
-	 * @param bool   $replica Позволить читать данные из реплики
-	 *
-	 * @return array
-	 */
-	public function fetch( $query, $replica = false ) {
-
-		$this->connect();
-		\Difra\Debugger::addDBLine( 'MySQL', $query );
-		$this->queries++;
-		return $this->realFetch( $query, $replica );
-	}
-
-	/**
-	 * Безопасно «обернуть» строку для SQL-запроса
-	 *
-	 * @param string|array $data Строка или массив строк
-	 *
-	 * @return string|array
-	 */
-	public function escape( $data ) {
-
-		$this->connect();
-		if( !is_array( $data ) ) {
-			return $this->realEscape( (string)$data );
-		}
-		$t = array();
-		foreach( $data as $k => $v ) {
-			$t[$this->escape( $k )] = $this->escape( (string)$v );
-		}
-		return $t;
-	}
-
-	/**
-	 * Определение, доступен ли модуль
+	 * Detect if this MySQL adapter is useable
 	 *
 	 * @return bool
 	 */
@@ -192,27 +51,117 @@ abstract class Common {
 	}
 
 	/**
-	 * Конструктор
+	 * Query database
+	 * If array is passed as a parameter, queries from array will be commited in single transaction. If any query
+	 * fail during transaction, all transaction will be cancelled.
+	 *
+	 * @throws \Difra\Exception
+	 * @param string|array $query
+	 * @return void
 	 */
-	public function __construct() {
+	public function query($query) {
 
-		$this->config = \Difra\Config::getInstance()->get( 'db' );
-		if( empty( $this->config['hostname'] ) ) {
-			$this->config['hostname'] = '';
-		}
-		if( empty( $this->config['username'] ) ) {
-			$this->config['username'] = \Difra\Envi::getSite();
-		}
-		if( empty( $this->config['password'] ) ) {
-			$this->config['password'] = '';
-		}
-		if( empty( $this->config['database'] ) ) {
-			$this->config['database'] = \Difra\Envi::getSite();
+		if(!is_array($query)) {
+			$this->connect();
+			$this->realQuery($query);
+			$this->queries++;
+			\Difra\Debugger::addDBLine('MySQL', $query);
+		} else {
+			try {
+				$this->transactionStart();
+				foreach($query as $subQuery) {
+					$this->query($subQuery);
+				}
+				$this->transactionCommit();
+			} catch(\Difra\Exception $ex) {
+				$this->transactionCancel();
+				throw new \Difra\Exception('MySQL transaction failed because of ' . $ex->getMessage());
+			}
 		}
 	}
 
 	/**
-	 * Проверка наличия соединения с базой
+	 * Connect to database
+	 *
+	 * @throws \Difra\Exception
+	 * @return void
+	 */
+	protected function connect() {
+
+		if($this->connected === true) {
+			return;
+		} elseif($this->connected === false) {
+			throw new \Difra\Exception('MySQL connection is not available');
+		}
+		$this->connected = false;
+		try {
+			$this->realConnect();
+		} catch(\Difra\Exception $ex) {
+			$ex->notify();
+			throw new \Difra\Exception('MySQL connection is not available: ' . $ex->getMessage());
+		}
+		$this->connected = true;
+	}
+
+	/**
+	 * Initiate database connection
+	 */
+	abstract protected function realConnect();
+
+	/**
+	 * Do query
+	 *
+	 * @param string $query
+	 */
+	abstract protected function realQuery($query);
+
+	/**
+	 * Start transaction
+	 */
+	protected function transactionStart() {
+	}
+
+	/**
+	 * Commit transaction
+	 */
+	protected function transactionCommit() {
+	}
+
+	/**
+	 * Cancel transaction
+	 */
+	protected function transactionCancel() {
+	}
+
+	/**
+	 * Escape string(s) for SQL safety
+	 *
+	 * @param string|array $data
+	 * @return string|array
+	 */
+	public function escape($data) {
+
+		$this->connect();
+		if(!is_array($data)) {
+			return $this->realEscape((string)$data);
+		}
+		$t = [];
+		foreach($data as $k => $v) {
+			$t[$this->escape($k)] = $this->escape((string)$v);
+		}
+		return $t;
+	}
+
+	/**
+	 * Escapes string for safe SQL usage
+	 *
+	 * @param $string
+	 * @return string
+	 */
+	abstract protected function realEscape($string);
+
+	/**
+	 * Test connection to MySQL server
 	 *
 	 * @return bool
 	 */
@@ -220,14 +169,14 @@ abstract class Common {
 
 		try {
 			$this->connect();
-		} catch( \Difra\Exception $ex ) {
+		} catch(\Difra\Exception $ex) {
 			return false;
 		}
 		return $this->connected ? true : false;
 	}
 
 	/**
-	 * Возврат текста ошибки
+	 * Get MySQL error text
 	 *
 	 * @return string|null
 	 */
@@ -237,22 +186,21 @@ abstract class Common {
 	}
 
 	/**
-	 * Возвращает результаты запроса в ассоциативном массиве id => row
+	 * Fetch data from MySQL and put into id=>row array.
 	 *
-	 * @param string $query   SQL-запрос
-	 * @param bool   $replica Позволить читать данные из реплики
-	 *
+	 * @param string $query   SQL-query
+	 * @param bool   $replica Allow reading data from MySQL replica
 	 * @return array
 	 */
-	public function fetchWithId( $query,
+	public function fetchWithId($query,
 		/** @noinspection PhpUnusedParameterInspection */
-				     $replica = false ) {
+				    $replica = false) {
 
 		$this->connect();
-		$result = $this->fetch( $query );
-		$sorted = array();
-		if( !empty( $result ) ) {
-			foreach( $result as $row ) {
+		$result = $this->fetch($query);
+		$sorted = [];
+		if(!empty($result)) {
+			foreach($result as $row) {
 				$sorted[$row['id']] = $row;
 			}
 		}
@@ -260,113 +208,146 @@ abstract class Common {
 	}
 
 	/**
-	 * Берет значения из массива и возвращает их в виде дерева XML
+	 * Fetch data from database
+	 *
+	 * @param string $query
+	 * @param bool   $replica Allow reading data from db replica
+	 * @return array
+	 */
+	public function fetch($query, $replica = false) {
+
+		$this->connect();
+		\Difra\Debugger::addDBLine('MySQL', $query);
+		$this->queries++;
+		return $this->realFetch($query, $replica);
+	}
+
+	/**
+	 * Fetch data from database
+	 *
+	 * @param string $query
+	 * @param bool   $replica
+	 * @return array|null
+	 */
+	abstract protected function realFetch($query, $replica = false);
+
+	/**
+	 * Fetch data as XML tree
+	 *
+	 * @param \DOMNode $node    XML Node
+	 * @param string   $query   query
+	 * @param bool     $replica Позволить читать данные из реплики
+	 * @return bool
+	 */
+	public function fetchXML($node, $query, $replica = false) {
+
+		$data = $this->fetch($query, $replica);
+		if(empty($data)) {
+			return false;
+		}
+		foreach($data as $row) {
+			$subnode = $node->appendChild($node->ownerDocument->createElement('item'));
+			$this->getRowAsXML($subnode, $row);
+		}
+		return true;
+	}
+
+	/**
+	 * Get result row as array and put it to DOM
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 * @param                      $row
-	 *
 	 * @return bool
 	 */
-	private function getRowAsXML( $node, $row ) {
+	private function getRowAsXML($node, $row) {
 
-		if( empty( $row ) ) {
+		if(empty($row)) {
 			return false;
 		}
-		foreach( $row as $k => $v ) {
-			if( trim( $v ) and preg_match( '/^(i|s|a|o|d)(.*);/si', $v ) ) { // serialize!
-				$arr = @unserialize( $v );
-				$subnode = $node->appendChild( $node->ownerDocument->createElement( $k ) );
-				$this->getRowAsXML( $subnode, $arr );
+		foreach($row as $k => $v) {
+			if(trim($v) and preg_match('/^(i|s|a|o|d)(.*);/si', $v)) { // serialize!
+				$arr = @unserialize($v);
+				$subnode = $node->appendChild($node->ownerDocument->createElement($k));
+				$this->getRowAsXML($subnode, $arr);
 			} else {
-				$node->setAttribute( $k, $v );
+				$node->setAttribute($k, $v);
 			}
 		}
 		return true;
 	}
 
 	/**
-	 * Возвращает одну строку результатов запроса
-	 *
-	 * @param string $query   SQL-запрос
-	 * @param bool   $replica Позволить читать данные из реплики
-	 *
-	 * @return array|bool
-	 */
-	public function fetchRow( $query, $replica = false ) {
-
-		$data = $this->fetch( $query, $replica );
-		return isset( $data[0] ) ? $data[0] : false;
-	}
-
-	/**
-	 * Возвращает одно значение из результатов запроса
-	 *
-	 * @param string $query   SQL-запрос
-	 * @param bool   $replica Позволить читать данные из реплики
-	 *
-	 * @return mixed|null
-	 */
-	public function fetchOne( $query, $replica = false ) {
-
-		$data = $this->fetchRow( $query, $replica );
-		return !empty( $data ) ? array_shift( $data ) : null;
-	}
-
-	/**
-	 * Возвращает результат SQL-запроса в виде дерева XML
-	 *
-	 * @param \DOMNode $node    XML-Нода
-	 * @param string   $query   Запрос
-	 * @param bool     $replica Позволить читать данные из реплики
-	 *
-	 * @return bool
-	 */
-	public function fetchXML( $node, $query, $replica = false ) {
-
-		$data = $this->fetch( $query, $replica );
-		if( empty( $data ) ) {
-			return false;
-		}
-		foreach( $data as $row ) {
-			$subnode = $node->appendChild( $node->ownerDocument->createElement( 'item' ) );
-			$this->getRowAsXML( $subnode, $row );
-		}
-		return true;
-	}
-
-	/**
-	 * Возвращает строку из базы данных в XML
+	 * Fetch single row as XML
 	 *
 	 * @param \DOMElement $node
 	 * @param string      $query
 	 * @param bool        $replica
-	 *
 	 * @return bool
 	 */
-	public function fetchRowXML( $node, $query, $replica = false ) {
+	public function fetchRowXML($node, $query, $replica = false) {
 
-		$row = $this->fetchRow( $query, $replica );
-		return $this->getRowAsXML( $node, $row );
+		$row = $this->fetchRow($query, $replica);
+		return $this->getRowAsXML($node, $row);
 	}
 
 	/**
-	 * Возвращает found_rows()
+	 * Fetch single row from MySQL
+	 *
+	 * @param string $query   SQL-query
+	 * @param bool   $replica Allow reading data from MySQL replica
+	 * @return array|bool
+	 */
+	public function fetchRow($query, $replica = false) {
+
+		$data = $this->fetch($query, $replica);
+		return isset($data[0]) ? $data[0] : false;
+	}
+
+	/**
+	 * Get found_rows()
 	 *
 	 * @return int
 	 */
 	public function getFoundRows() {
 
-		return $this->fetchOne( "SELECT FOUND_ROWS()" );
+		return $this->fetchOne("SELECT FOUND_ROWS()");
 	}
 
 	/**
-	 * Определяет доступность mysqlnd
+	 * Fetch single cell from MySQL
+	 *
+	 * @param string $query   SQL-query
+	 * @param bool   $replica Allow reading data from MySQL replica
+	 * @return mixed|null
+	 */
+	public function fetchOne($query, $replica = false) {
+
+		$data = $this->fetchRow($query, $replica);
+		return !empty($data) ? array_shift($data) : null;
+	}
+
+	/**
+	 * Get last auto_increment value for last inserted row
+	 *
+	 * @return int
+	 */
+	abstract protected function getLastId();
+
+	/**
+	 * Get affected rows number
+	 *
+	 * @return int
+	 */
+	abstract protected function getAffectedRows();
+
+	/**
+	 * Detect if mysqlnd is available
 	 *
 	 * @return bool
 	 */
 	protected function isND() {
 
 		static $nd = null;
-		return $nd ? $nd : $nd = extension_loaded( 'mysqlnd' );
+		return $nd ? $nd : $nd = extension_loaded('mysqlnd');
 	}
 }

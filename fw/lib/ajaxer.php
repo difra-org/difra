@@ -4,149 +4,10 @@ namespace Difra;
 
 class Ajaxer {
 
-	public $isAjax = false;
-	public $isIframe = false;
-	public $parameters = array();
-	public $response = array();
-	private $actions = array();
-	private $problem = false;
+	private static $response = [];
+	private static $actions = [];
+	private static $problem = false;
 
-	/**
-	 * Constructor
-	 */
-	public function __construct() {
-
-		if( isset( $_SERVER['HTTP_X_REQUESTED_WITH'] ) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'XMLHttpRequest' ) {
-			// Ajaxer request
-			$this->isAjax = true;
-			$parameters = $this->getRequest();
-			if( empty( $parameters ) ) {
-				return;
-			}
-			try {
-				foreach( $parameters as $k => $v ) {
-					if( $k == 'form' ) {
-						foreach( $v as $elem ) {
-							$this->parseParam( $this->parameters, $elem['name'], $elem['value'] );
-						}
-					} else {
-						$this->parseParam( $this->parameters, $k, $v );
-					}
-				}
-			} catch( Exception $ex ) {
-				throw new \Difra\View\Exception( 400 );
-			}
-		} elseif( isset( $_POST['_method'] ) and $_POST['_method'] == 'iframe' ) {
-			// Form came via IFrame
-			$this->isAjax = true;
-			$this->isIframe = true;
-			$this->parameters = $_POST;
-			unset( $this->parameters['method_'] );
-			if( !empty( $_FILES ) ) {
-				foreach( $_FILES as $k => $files ) {
-					if( isset( $files['error'] ) and $files['error'] == UPLOAD_ERR_NO_FILE ) {
-						continue;
-					}
-					if( isset( $files['name'] ) and !is_array( $files['name'] ) ) {
-						$this->parseParam( $this->parameters, $k, $files );
-						continue;
-					}
-					if( substr( $k, -2 ) != '[]' ) {
-						$k = $k . '[]';
-					}
-					if( isset( $files['name'] ) and is_array( $files['name'] ) ) {
-						$files2 = $files;
-						$files = array();
-						foreach( $files2['name'] as $k2 => $v2 ) {
-							$files[] = array(
-								'name' => $v2,
-								'type' => $files2['type'][$k2],
-								'tmp_name' => $files2['tmp_name'][$k2],
-								'error' => $files2['error'][$k2],
-								'size' => $files2['size'][$k2]
-							);
-						}
-					}
-					foreach( $files as $file ) {
-						if( $file['error'] == UPLOAD_ERR_NO_FILE ) {
-							continue;
-						}
-						$this->parseParam( $this->parameters, $k, $file );
-					}
-				}
-			}
-		}
-	}
-
-	/**
-	 * Get data from ajaxer
-	 *
-	 * @return array
-	 */
-	private function getRequest() {
-
-		$res = array();
-		if(!empty($_POST['json'])) {
-			$res = json_decode($_POST['json'], true);
-		}
-		return $res;
-	}
-
-	/**
-	 * Parses parameter and puts it into $arr.
-	 * Subroutine for constructor.
-	 * Supports parameters like name[abc][]
-	 *
-	 * @param array  $arr Working array
-	 * @param string $k   Parameter key
-	 * @param mixed  $v   Parameter value
-	 */
-	private function parseParam(&$arr, $k, $v) {
-
-		$keys = explode('[', $k);
-		if(sizeof($keys) == 1) {
-			$arr[$k] = $v;
-			return;
-		}
-		for($i = 1; $i < sizeof($keys); $i++) {
-			if($keys[$i]{strlen($keys[$i]) - 1} == ']') {
-				$keys[$i] = substr($keys[$i], 0, -1);
-			}
-		}
-		$this->putParam($arr, $keys, $v);
-	}
-
-	/**
-	 * Recursively put parameters to array.
-	 * Subroutine for parseParam().
-	 *
-	 * @param array $arr
-	 * @param array $keys
-	 * @param mixed $v
-	 *
-	 * @throws Exception
-	 */
-	private function putParam(&$arr, $keys, $v) {
-
-		if(!is_array($arr)) {
-			throw new Exception('Ajax->putParam expects array');
-		}
-		if(empty($keys)) {
-			$arr = $v;
-			return;
-		}
-		$k = array_shift($keys);
-		if($k) {
-			if(!isset($arr[$k])) {
-				$arr[$k] = array();
-			}
-			$this->putParam($arr[$k], $keys, $v);
-		} else {
-			$arr[] = array();
-			end($arr);
-			$this->putParam($arr[key($arr)], $keys, $v);
-		}
-	}
 
 	/**
 	 * Singleton
@@ -157,18 +18,6 @@ class Ajaxer {
 
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
-	}
-
-	/**
-	 * Get parameter value
-	 *
-	 * @param string $name Parameter name
-	 *
-	 * @return mixed
-	 */
-	public function getParam( $name ) {
-
-		return isset( $this->parameters[$name] ) ? $this->parameters[$name] : null;
 	}
 
 	/**
@@ -184,37 +33,40 @@ class Ajaxer {
 			}
 			$this->load('#debug', Debugger::debugHTML(false));
 		}
-		if(!empty($this->actions)) {
-			$this->setResponse('actions', $this->actions);
+		if(!empty(self::$actions)) {
+			$this->setResponse('actions', self::$actions);
 		}
-		return json_encode($this->response, self::getJsonFlags());
-	}
-
-	/**
-	 * Adds ajax reply.
-	 *
-	 * @param string $param Parameter name
-	 * @param mixed  $value Parameter value
-	 *
-	 * @return void
-	 */
-	public function setResponse($param, $value) {
-
-		$this->response[$param] = $value;
+		return json_encode(self::$response, self::getJsonFlags());
 	}
 
 	/**
 	 * Clean ajax answer data
 	 *
 	 * @param bool $problem
-	 *
 	 * @return $this
 	 */
 	public function clean($problem = false) {
 
-		$this->actions = array();
-		$this->response = array();
-		$this->problem = $problem;
+		self::$actions = [];
+		self::$response = [];
+		self::$problem = $problem;
+		return $this;
+	}
+
+	/**
+	 * Write $html contents to element $target
+	 *
+	 * @param string $target jQuery element selector (e.g. '#targetId')
+	 * @param string $html   Content for innerHTML
+	 * @return $this
+	 */
+	public function load($target, $html) {
+
+		$this->addAction([
+			'action' => 'load',
+			'target' => $target,
+			'html'   => $html
+		]);
 		return $this;
 	}
 
@@ -223,34 +75,27 @@ class Ajaxer {
 	 */
 
 	/**
-	 * Write $html contents to element $target
-	 *
-	 * @param string $target jQuery element selector (e.g. '#targetId')
-	 * @param string $html   Content for innerHTML
-	 *
-	 * @return $this
-	 */
-	public function load($target, $html) {
-
-		$this->addAction(array(
-			'action' => 'load',
-			'target' => $target,
-			'html'   => $html
-		));
-		return $this;
-	}
-
-	/**
 	 * Adds ajaxer action to ajax reply data.
 	 *
 	 * @param array $action Ajaxer actions array.
-	 *
 	 * @return $this
 	 */
 	private function addAction($action) {
 
-		$this->actions[] = $action;
+		self::$actions[] = $action;
 		return $this;
+	}
+
+	/**
+	 * Adds ajax reply.
+	 *
+	 * @param string $param Parameter name
+	 * @param mixed  $value Parameter value
+	 * @return void
+	 */
+	public function setResponse($param, $value) {
+
+		self::$response[$param] = $value;
 	}
 
 	public static function getJsonFlags() {
@@ -273,25 +118,24 @@ class Ajaxer {
 	 */
 	public function hasProblem() {
 
-		return $this->problem;
+		return self::$problem;
 	}
 
 	/**
 	 * Display notification message.
 	 *
 	 * @param string $message Message text
-	 *
 	 * @return $this
 	 */
 	public function notify($message) {
 
-		$this->addAction( array(
-			'action' => 'notify',
-					  'message' => htmlspecialchars( $message, ENT_IGNORE, 'UTF-8' ),
-					  'lang' => array(
-						  'close' => Locales::getInstance()->getXPath( 'notifications/close' )
-					  )
-				  ) );
+		$this->addAction([
+			'action'  => 'notify',
+			'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
+			'lang'    => [
+				'close' => Locales::get('notifications/close')
+			]
+		]);
 		return $this;
 	}
 
@@ -299,18 +143,17 @@ class Ajaxer {
 	 * Display error message.
 	 *
 	 * @param string $message Error message text.
-	 *
 	 * @return $this
 	 */
 	public function error($message) {
 
-		$this->addAction( array(
+		$this->addAction([
 			'action'  => 'error',
 			'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
-			'lang'    => array(
-				'close' => Locales::getInstance()->getXPath('notifications/close')
-			)
-				  ) );
+			'lang' => [
+				'close' => Locales::get('notifications/close')
+			]
+		]);
 		return $this;
 	}
 
@@ -319,16 +162,15 @@ class Ajaxer {
 	 * Adds .problem class.
 	 *
 	 * @param string $name Form field name
-	 *
 	 * @return $this
 	 */
 	public function required($name) {
 
-		$this->problem = true;
-		$this->addAction(array(
+		self::$problem = true;
+		$this->addAction([
 			'action' => 'require',
 			'name'   => $name
-		));
+		]);
 		return $this;
 	}
 
@@ -336,13 +178,12 @@ class Ajaxer {
 	 * Set incorrect field status for form element
 	 *
 	 * @param string $name Form element name
-	 *
 	 * @return $this
 	 */
 	public function invalid($name) {
 
-		$this->problem = true;
-		$action = array('action' => 'invalid', 'name' => $name);
+		self::$problem = true;
+		$action = ['action' => 'invalid', 'name' => $name];
 		$this->addAction($action);
 		return $this;
 	}
@@ -359,17 +200,16 @@ class Ajaxer {
 	 * @param string $name    Form element name
 	 * @param string $message Message to display in .status element
 	 * @param string $class   Class name to add to element
-	 *
 	 * @return $this
 	 */
 	public function status($name, $message, $class) {
 
-		$this->addAction( array(
+		$this->addAction([
 			'action'    => 'status',
 			'name'      => $name,
 			'message'   => $message,
 			'classname' => $class
-				  ) );
+		]);
 		return $this;
 	}
 
@@ -380,7 +220,7 @@ class Ajaxer {
 	 */
 	public function refresh() {
 
-		$this->redirect( $_SERVER['HTTP_REFERER'] );
+		$this->redirect($_SERVER['HTTP_REFERER']);
 		return $this;
 	}
 
@@ -388,15 +228,14 @@ class Ajaxer {
 	 * Redirect
 	 *
 	 * @param string $url
-	 *
 	 * @return $this
 	 */
 	public function redirect($url) {
 
-		$this->addAction( array(
+		$this->addAction([
 			'action' => 'redirect',
 			'url'    => $url
-				  ) );
+		]);
 		return $this;
 	}
 
@@ -407,9 +246,9 @@ class Ajaxer {
 	 */
 	public function reload() {
 
-		$this->addAction( array(
+		$this->addAction([
 			'action' => 'reload'
-				  ) );
+		]);
 		return $this;
 	}
 
@@ -417,15 +256,14 @@ class Ajaxer {
 	 * Show html content in overlay
 	 *
 	 * @param string $html innerHTML content
-	 *
 	 * @return $this
 	 */
 	public function display($html) {
 
-		$this->addAction( array(
+		$this->addAction([
 			'action' => 'display',
-					  'html' => $html
-				  ) );
+			'html' => $html
+		]);
 		return $this;
 	}
 
@@ -436,9 +274,9 @@ class Ajaxer {
 	 */
 	public function close() {
 
-		$this->addAction( array(
-					  'action' => 'close'
-				  ) );
+		$this->addAction([
+			'action' => 'close'
+		]);
 		return $this;
 	}
 
@@ -449,9 +287,9 @@ class Ajaxer {
 	 */
 	public function reset() {
 
-		$this->addAction( array(
-					  'action' => 'reset'
-				  ) );
+		$this->addAction([
+			'action' => 'reset'
+		]);
 		return $this;
 	}
 
@@ -459,23 +297,22 @@ class Ajaxer {
 	 * Display confirmation window (Are you sure? [Yes] [No])
 	 *
 	 * @param $text
-	 *
 	 * @return $this
 	 */
-	public function confirm( $text ) {
+	public function confirm($text) {
 
-		$this->addAction( array(
-					  'action' => 'display',
-					  'html' =>
-						  '<form action="' . Envi::getUri() . '" class="ajaxer">' .
-						  '<input type="hidden" name="confirm" value="1"/>' .
-						  '<div>' . $text . '</div>' .
-						  '<input type="submit" value="' . Locales::getInstance()->getXPath( 'ajaxer/confirm-yes' )
-						  . '"/>' .
-						  '<input type="button" value="' . Locales::getInstance()
-											  ->getXPath( 'ajaxer/confirm-no' ) . '" onclick="ajaxer.close(this)"/>' .
-						  '</form>'
-				  ) );
+		$this->addAction([
+			'action' => 'display',
+			'html'   =>
+				'<form action="' . Envi::getUri() . '" class="ajaxer">' .
+				'<input type="hidden" name="confirm" value="1"/>' .
+				'<div>' . $text . '</div>' .
+				'<input type="submit" value="' . Locales::get('ajaxer/confirm-yes')
+				. '"/>' .
+				'<input type="button" value="' . Locales::get('ajaxer/confirm-no')
+				. '" onclick="ajaxer.close(this)"/>' .
+				'</form>'
+		]);
 		return $this;
 	}
 
@@ -484,15 +321,14 @@ class Ajaxer {
 	 * This is dangerous! Don't use it if there is another way.
 	 *
 	 * @param $script
-	 *
 	 * @return $this
 	 */
-	public function exec( $script ) {
+	public function exec($script) {
 
-		$this->addAction( array(
-					  'action' => 'exec',
-					  'script' => $script
-				  ) );
+		$this->addAction([
+			'action' => 'exec',
+			'script' => $script
+		]);
 		return $this;
 	}
 }

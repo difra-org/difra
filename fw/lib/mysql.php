@@ -3,10 +3,11 @@
 namespace Difra;
 
 /**
- * Абстрактная фабрика для MySQL-адаптеров
+ * Factory for MySQL
  * Class MySQL
+
  *
- * @package Difra
+*@package Difra
  */
 class MySQL {
 

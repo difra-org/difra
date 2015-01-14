@@ -9,47 +9,37 @@ namespace Difra;
  */
 class Envi {
 
-	/**
-	 * Режим работы (web, cli, include)
-
-	 */
-
-	/** @var string Режим работы (web, cli, include) */
+	/** @var string Environment mode (web, cli, include) */
 	protected static $mode = 'include';
-	/** @var string|null Кастомный URI (в основном, для тестов) */
+	/** @var string|null Custom URI (useful for unit testing) */
 	private static $customUri = null;
-	/** @var string|null Определённый и почищенный URI */
+	/** @var string|null Current URI */
 	private static $requestedUri = null;
-
-	/**
-	 * Домен и подсайты
-
-	 */
-	/** @var string|null Определённый и почищенный URI без urldecode() */
+	/** @var string|null Current URI without urldecode() */
 	private static $requestedUriRaw = null;
 
-	/** Получить режим работы */
+	/**
+	 * Get environment mode
+	 */
 	public static function getMode() {
 
 		return self::$mode;
 	}
 
 	/**
-	 * URI
-
+	 * Set environment mode
+	 *
+	 * @param $mode
 	 */
-
-	/** Установить режим работы */
 	public static function setMode($mode) {
 
 		self::$mode = $mode;
 	}
 
 	/**
-	 * Возвращает текущий URI
+	 * Get current URI
 	 *
-	 * @param bool $raw Не делать urldecode
-	 *
+	 * @param bool $raw Don't urldecode() URI
 	 * @return string
 	 */
 	public static function getUri($raw = false) {
@@ -75,9 +65,10 @@ class Envi {
 	}
 
 	/**
-	 * Устанавливает текущий URI
+	 * Set current URI
+
 	 *
-	 * @param string $uri
+*@param string $uri
 	 */
 	public static function setUri($uri) {
 
@@ -87,46 +78,43 @@ class Envi {
 	}
 
 	/**
-	 * Возвращает текущие настройки в XML
-	 *
-	 * @param \DOMElement|\DOMNode $node
-	 */
-	public static function getConfigXML($node) {
+	 * Get current environment state as XML node attributes
 
-		$config = self::getConfig();
+	 *
+*@param \DOMElement|\DOMNode $node
+	 */
+	public static function getStateXML($node) {
+
+		$config = self::getState();
 		foreach($config as $k => $v) {
 			$node->setAttribute($k, $v);
 		}
 	}
 
 	/**
-	 * Возвращает массив текущих настроек
+	 * Get current environment state as array
 	 */
-	public static function getConfig() {
+	public static function getState() {
 
-		return array(
+		return [
 			'locale'   => Envi\Setup::getLocale(),
-			'host'     => self::getSite(),
+			'host'     => self::getSubsite(),
 			'hostname' => self::getHost(),
 			'mainhost' => self::getHost(true)
-		);
+		];
 	}
 
 	/**
-	 * Environment data getters
-
-	 */
-
-	/**
-	 * Определяет имя папки в sites в следующем порядке:
-	 * 1. Переменная VHOST_NAME, передаваемая от сервера.
-	 * 2. Имя хоста в по алгоритму sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
+	 * Detects subsite:
+	 * 1. By server variable VHOST_NAME.
+	 * 2. By Host names sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
 	 *    www.subdomain.domain.com domain.com www.domain.com.
-	 * 3. "default".
+	 * 3. "default" subsite name.
+
 	 *
-	 * @return string|bool
+*@return string|bool
 	 */
-	public static function getSite() {
+	public static function getSubsite() {
 
 		static $site = null;
 		if(!is_null($site)) {
@@ -159,10 +147,9 @@ class Envi {
 	}
 
 	/**
-	 * Получить имя хоста (домена)
+	 * Get host name from request
 	 *
-	 * @param bool $main Получить имя «главного» хоста (нужно в случае, если у сайта есть поддомены)
-	 *
+	 * @param bool $main Get "main" host name (for subdomains)
 	 * @return string
 	 */
 	public static function getHost($main = false) {

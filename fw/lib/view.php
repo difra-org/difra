@@ -21,7 +21,6 @@ class View {
 	 * @param bool         $dontFillXML
 	 *
 	 * @throws Exception
-	 * @internal param bool|string $instance
 	 * @return bool|string
 	 */
 	public static function render( &$xml, $specificInstance = false, $dontEcho = false, $dontFillXML = false ) {
@@ -77,6 +76,16 @@ class View {
 		return true;
 	}
 
+	public static function normalize($htmlDoc) {
+
+		$normalizerXml = View\Normalizer::getXML();
+		$normalizerDoc = new \DOMDocument();
+		$normalizerDoc->loadXML($normalizerXml);
+		$normalizerProc = new \XSLTProcessor();
+		$normalizerProc->importStylesheet($normalizerDoc);
+		return $normalizerProc->transformToXML($htmlDoc);
+	}
+
 	/**
 	 * Редирект
 	 *
@@ -100,15 +109,5 @@ class View {
 		if( isset( $SERVER['SERVER_SOFTWARE'] ) and substr( $_SERVER['SERVER_SOFTWARE'], 0, 5 ) == 'nginx' ) {
 			header( 'X-Accel-Expires: ' . ( $ttl ? $ttl : 'off' ) );
 		}
-	}
-
-	public static function normalize( $htmlDoc ) {
-
-		$normalizerXml = View\Normalizer::getXML();
-		$normalizerDoc = new \DOMDocument();
-		$normalizerDoc->loadXML( $normalizerXml );
-		$normalizerProc = new \XSLTProcessor();
-		$normalizerProc->importStylesheet( $normalizerDoc );
-		return $normalizerProc->transformToXML( $htmlDoc );
 	}
 }
