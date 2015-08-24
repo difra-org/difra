@@ -2,11 +2,21 @@
 
 namespace Difra\View;
 
-class Normalizer {
-
-	public static function getXML() {
-
-		return <<<NORMALIZER
+/**
+ * Class Normalizer
+ *
+ * @package Difra\View
+ */
+class Normalizer
+{
+    /**
+     * Get normalizer template as string
+     *
+     * @return string
+     */
+    public static function getXML()
+    {
+        return <<<NORMALIZER
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml">
 	<xsl:output method="html" encoding="utf-8" omit-xml-declaration="yes" indent="yes"/>
@@ -60,5 +70,5 @@ class Normalizer {
 	</xsl:template>
 </xsl:stylesheet>
 NORMALIZER;
-	}
+    }
 }

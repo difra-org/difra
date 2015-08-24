@@ -7,8 +7,8 @@ namespace Difra\Resourcer;
  *
  * @package Difra\Resourcer
  */
-class XSLT extends Abstracts\XSLT {
-
-	protected $type = 'xslt';
-	protected $printable = false;
+class XSLT extends Abstracts\XSLT
+{
+    protected $type = 'xslt';
+    protected $printable = false;
 }

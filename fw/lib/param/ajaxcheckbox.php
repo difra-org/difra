@@ -7,15 +7,15 @@ namespace Difra\Param;
  *
  * @package Difra\Param
  */
-class AjaxCheckbox extends Common {
+class AjaxCheckbox extends Common
+{
+    const source = 'ajax';
+    const type = 'string';
+    const named = true;
+    const auto = true;
 
-	const source = 'ajax';
-	const type = 'string';
-	const named = true;
-	const auto = true;
-
-	public function __construct( $value = '' ) {
-
-		$this->value = $value ? true : false;
-	}
+    public function __construct($value = '')
+    {
+        $this->value = $value ? true : false;
+    }
 }

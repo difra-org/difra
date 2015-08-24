@@ -7,9 +7,9 @@ namespace Difra\Param;
  *
  * @package Difra\Param
  */
-class AnyString extends Common {
-
-	const source = 'query';
-	const type = 'string';
-	const named = false;
+class AnyString extends Common
+{
+    const source = 'query';
+    const type = 'string';
+    const named = false;
 }

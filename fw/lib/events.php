@@ -7,114 +7,116 @@ namespace Difra;
  *
  * @package Difra
  */
-class Events {
-
+class Events
+{
 	/** @var array */
-	private static $types = array(
-		'core-init', // загрузка нужных классов
-		'plugins-load', // загрузка плагинов
-		'config', // загрузка полных настроек
-		'plugins-init', // инициализация плагинов
+	private static $types = [
+		'core-init', // init some classes
+		'plugins-load', // load plugins
+		'config', // load configuration
+		'plugins-init', // init plugins
 
-		'pre-action', // событие, позволяющее переопределить стандартный поиск действия
-		'action-find', // стандартный поиск действия
-		'init-done', // выход из состояния инициализации сайта
+		'pre-action', // this event lets you define controller and action
+		'action-find', // default controller and action detect
+		'init-done', // event between controller+action detection and action run
 
-		'action-run', // выполнение найденного действия
+		'action-run', // run action
 
-		'dispatch', // выполнение диспатчеров
+		'dispatch', // run dispatchers
 
-		'render-init', // подготовка к рендеру
-		'render-run', // рендер
+		'render-init', // init view
+		'render-run', // render view
 
-		'done' // статистика и прочее
-	);
-
+		'done' // after page render
+	];
 	/** @var array */
 	private static $events = null;
 
 	/**
-	 * Вызывает все события в нужном порядке
+	 * Trigger all events one by one
 	 */
-	public static function run() {
-
+	public static function run()
+	{
 		self::init();
-		foreach(self::$events as $type => $foo) {
+		foreach (self::$events as $type => $foo) {
 			Debugger::addEventLine('Event ' . $type . ' started');
 			self::start($type);
 		}
 
 		Debugger::addLine('Done running events');
-		if(Envi::getMode() == 'web') {
+		if (Envi::getMode() == 'web') {
 			Debugger::checkSlow();
 		}
 	}
 
 	/**
-	 * Базовый набор событий для работы движка
+	 * Register framework event handlers
 	 */
-	public static function init() {
-
+	public static function init()
+	{
 		static $initDone = false;
-		if($initDone) {
+		if ($initDone) {
 			return;
 		}
 		$initDone = true;
 
-		foreach(self::$types as $type) {
-			self::$events[$type] = array();
+		foreach (self::$types as $type) {
+			self::$events[$type] = [];
 		}
 
 		self::register('core-init', 'Difra\\Debugger', 'init');
 		self::register('core-init', 'Difra\\Envi\\Setup', 'run');
 		self::register('core-init', 'Difra\\Envi\\Session', 'init');
 		self::register('plugins-load', 'Difra\\Plugger', 'init');
-		if(Envi::getMode() == 'web') {
+		if (Envi::getMode() == 'web') {
 			self::register('action-find', 'Difra\\Controller', 'init');
 			self::register('action-run', 'Difra\\Controller', 'run');
 			self::register('render-run', 'Difra\\Controller', 'render');
 		}
-		if(file_exists($initPHP = (DIR_ROOT . '/lib/init.php'))) {
+		if (file_exists($initPHP = (DIR_ROOT . '/lib/init.php'))) {
 			/** @noinspection PhpIncludeInspection */
 			include_once($initPHP);
 		}
 	}
 
 	/**
-	 * Зарегистрировать обработчик события (статический вариант)
+	 * Register event handler
+	 * TODO: replace class and method with unnamed functions as a handlers
 	 *
-	 * @param string      $type   Имя события
-	 * @param string      $class  Класс обработчика (должен содержать синглтон getInstance)
-	 * @param bool|string $method Метод обработчика (если false, будет вызван только getInstance)
+	 * @param string      $type   Event name
+	 * @param string      $class  Handler class (should contain getInstance() singleton method)
+	 * @param bool|string $method Handler method (if false, only getInstance() will be called)
 	 * @throws Exception
 	 */
-	public static function register($type, $class, $method = false) {
-
+	public static function register($type, $class, $method = false)
+	{
 		self::init();
-		if(!in_array($type, self::$types)) {
+		if (!in_array($type, self::$types)) {
 			throw new Exception('Invalid event type: ' . $type);
 		}
-		self::$events[$type][] = array(
-			'class' => $class,
+		self::$events[$type][] = [
+			'class'  => $class,
 			'method' => $method
-		);
+		];
 	}
 
 	/**
-	 * Вызывает обрабочики указанного события
+	 * Call registered handlers for an event
 	 *
 	 * @param $event
 	 */
-	private static function start($event) {
-
+	private static function start($event)
+	{
 		$handlers = self::$events[$event];
-		if(empty($handlers)) {
+		if (empty($handlers)) {
 			return;
 		}
-		foreach($handlers as $handler) {
-			Debugger::addEventLine('Handler for ' . $event . ': ' . $handler['class'] . '->' . ($handler['method']
-					? $handler['method'] : 'getInstance') . ' started');
-			call_user_func(array($handler['class'], $handler['method']));
+		foreach ($handlers as $handler) {
+			Debugger::addEventLine(
+				'Handler for ' . $event . ': ' . $handler['class'] . '->' . ($handler['method']
+					? $handler['method'] : 'getInstance') . ' started'
+			);
+			call_user_func([$handler['class'], $handler['method']]);
 		}
 	}
 }

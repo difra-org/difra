@@ -7,35 +7,34 @@ namespace Difra;
  *
  * @package Difra
  */
-class Exception extends \exception {
+class Exception extends \exception
+{
+    /**
+     * Wrapper for sending e-mails about exceptions which should never happen.
+     * Just call $exception->notify() in catch section.
+     */
+    public function notify()
+    {
+        self::notifyObj($this);
+    }
 
-	/**
-	 * Использование: в случае, если ловим исключение, которое мы не должны были поймать,
-	 * вызываем $ex->notify() и на почту errors@a-jam.ru отправляется письмо с информацией об ошибке.
-	 */
-	public function notify() {
+    /**
+     * @static
+     * @param \Difra\Exception|\exception $exception
+     */
+    static private function notifyObj($exception = null)
+    {
+        if (Envi::getMode() == 'web' and !Debugger::isConsoleEnabled()) {
+            $date = date('r');
+            $server = print_r($_SERVER, true);
+            $post = print_r($_POST, true);
+            $cookie = print_r($_COOKIE, true);
+            $user = Auth::getInstance()->data['email'];
 
-		self::notifyObj( $this );
-	}
+            $uri = !empty($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '-';
+            $host = !empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '-';
 
-	/**
-	 * @static
-	 *
-	 * @param \Difra\Exception|\exception $exception
-	 */
-	static public function notifyObj( $exception = null ) {
-
-		if( Envi::getMode() == 'web' and !Debugger::isConsoleEnabled() ) {
-			$date = date( 'r' );
-			$server = print_r( $_SERVER, true );
-			$post = print_r( $_POST, true );
-			$cookie = print_r( $_COOKIE, true );
-			$user = Auth::getInstance()->data['email'];
-
-			$uri = !empty( $_SERVER['REQUEST_URI'] ) ? $_SERVER['REQUEST_URI'] : '-';
-			$host = !empty( $_SERVER['HTTP_HOST'] ) ? $_SERVER['HTTP_HOST'] : '-';
-
-			$text = <<<MSG
+            $text = <<<MSG
 {$exception->getMessage()}
 
 Page:	$uri
@@ -56,9 +55,11 @@ $post
 \$_COOKIE:
 $cookie
 MSG;
-
-			mail( 'errors@a-jam.ru', $host . ': ' . $exception->getMessage(), $text );
-		} else {
-		}
-	}
+            /**
+             * TODO: move exceptions e-mail address to configuration and enable this again.
+             * mail( 'errors@a-jam.ru', $host . ': ' . $exception->getMessage(), $text );
+             */
+        } else {
+        }
+    }
 }

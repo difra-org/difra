@@ -2,63 +2,63 @@
 
 namespace Difra;
 
+use Difra\MySQL\Abstracts\MySQLi;
+use Difra\MySQL\Abstracts\None;
+
 /**
  * Factory for MySQL
  * Class MySQL
-
  *
-*@package Difra
+ * @package Difra
  */
-class MySQL {
+class MySQL
+{
+    /** Auto detect adapter */
+    const INST_AUTO = 'auto';
+    /** MySQLi */
+    const INST_MySQLi = 'MySQLi';
+    /** Stub */
+    const INST_NONE = 'none';
+    /** Default adapter */
+    const INST_DEFAULT = self::INST_AUTO;
+    private static $adapters = [];
 
-	/** Автоматическое определение адатера */
-	const INST_AUTO = 'auto';
-	/** MySQLi */
-	const INST_MySQLi = 'MySQLi';
-	/** Заглушка на случай, когда не доступно ни одного адаптера */
-	const INST_NONE = 'none';
-	/** Адаптер по умолчанию */
-	const INST_DEFAULT = self::INST_AUTO;
+    /**
+     * @param string $adapter
+     * @param bool   $new
+     * @return MySQL\Abstracts\MySQLi|MySQL\Abstracts\None
+     */
+    public static function getInstance($adapter = self::INST_DEFAULT, $new = false)
+    {
+        if ($adapter == self::INST_AUTO) {
+            static $auto = null;
+            if (!is_null($auto)) {
+                return self::getInstance($auto, $new);
+            }
 
-	private static $adapters = array();
+            if (MySQLi::isAvailable()) {
+                Debugger::addLine("MySQL module: MySQLi");
+                return self::getInstance($auto = self::INST_MySQLi, $new);
+            } else {
+                Debugger::addLine("No suitable MySQL module detected");
+                return self::getInstance($auto = self::INST_NONE, $new);
+            }
+        }
 
-	/**
-	 * @param string $adapter
-	 * @param bool   $new
-	 *
-	 * @return MySQL\Abstracts\MySQLi|MySQL\Abstracts\None
-	 */
-	public static function getInstance( $adapter = self::INST_DEFAULT, $new = false ) {
+        if (!$new and isset(self::$adapters[$adapter])) {
+            return self::$adapters[$adapter];
+        }
 
-		if( $adapter == self::INST_AUTO ) {
-			static $auto = null;
-			if( !is_null( $auto ) ) {
-				return self::getInstance( $auto, $new );
-			}
-
-			if( \Difra\MySQL\Abstracts\MySQLi::isAvailable() ) {
-				Debugger::addLine( "MySQL module: MySQLi" );
-				return self::getInstance( $auto = self::INST_MySQLi, $new );
-			} else {
-				Debugger::addLine( "No suitable MySQL module detected" );
-				return self::getInstance( $auto = self::INST_NONE, $new );
-			}
-		}
-
-		if( !$new and isset( self::$adapters[$adapter] ) ) {
-			return self::$adapters[$adapter];
-		}
-
-		switch( $adapter ) {
-		case self::INST_MySQLi:
-			$obj = new \Difra\MySQL\Abstracts\MySQLi();
-			break;
-		default:
-			$obj = new \Difra\MySQL\Abstracts\None();
-		}
-		if( !$new ) {
-			self::$adapters[$adapter] = $obj;
-		}
-		return $obj;
-	}
+        switch ($adapter) {
+            case self::INST_MySQLi:
+                $obj = new MySQLi();
+                break;
+            default:
+                $obj = new None();
+        }
+        if (!$new) {
+            self::$adapters[$adapter] = $obj;
+        }
+        return $obj;
+    }
 }

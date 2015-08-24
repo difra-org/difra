@@ -2,15 +2,18 @@
 
 namespace Difra;
 
+use Difra\Envi\Session;
+
 /**
- * Адаптер для аутентификации
- * Сохраняет информацию об авторизации в сессиях, производит логин и логаут пользователя
  * Class Auth
+ * Auth adapter. User logins, logouts and user sessions.
+ * This is a layer between actual auth and framework code.
+ * It allows to write any auth plugins without direct calls to them and without registering multiple boring handlers.
  *
  * @package Difra
  */
-class Auth {
-
+class Auth
+{
 	public $logged = false;
 	public $id = null;
 	public $data = null;
@@ -19,59 +22,59 @@ class Auth {
 	public $type = 'user';
 
 	/**
-	 * Синглтон
+	 * Singleton
 	 *
 	 * @return Auth
 	 */
-	static public function getInstance() {
-
+	static public function getInstance()
+	{
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
 	}
 
 	/**
-	 * Конструктор
+	 * Constructor
 	 */
-	public function __construct() {
-
+	public function __construct()
+	{
 		$this->load();
 	}
 
 	/**
-	 * Дополнение XML информацией об авторизации
+	 * Get auth data as XML node
 	 *
 	 * @param \DOMNode|\DOMElement $node
 	 */
-	public function getAuthXML( $node ) {
-
-		$authNode = $node->appendChild( $node->ownerDocument->createElement( 'auth' ) );
-		if( !$this->logged ) {
-			$authNode->appendChild( $node->ownerDocument->createElement( 'unauthorized' ) );
+	public function getAuthXML($node)
+	{
+		$authNode = $node->appendChild($node->ownerDocument->createElement('auth'));
+		if (!$this->logged) {
+			$authNode->appendChild($node->ownerDocument->createElement('unauthorized'));
 			return;
 		} else {
 			/** @var \DOMElement $subNode */
-			$subNode = $authNode->appendChild( $node->ownerDocument->createElement( 'authorized' ) );
-			$subNode->setAttribute( 'id', $this->id );
-			$subNode->setAttribute( 'userid', $this->getId() );
-			$subNode->setAttribute( 'moderator', $this->moderator );
-			$subNode->setAttribute( 'type', $this->type );
-			if( !empty( $this->additionals ) ) {
-				foreach( $this->additionals as $k => $v ) {
-					$subNode->setAttribute( $k, $v );
+			$subNode = $authNode->appendChild($node->ownerDocument->createElement('authorized'));
+			$subNode->setAttribute('id', $this->id);
+			$subNode->setAttribute('userid', $this->getId());
+			$subNode->setAttribute('moderator', $this->moderator);
+			$subNode->setAttribute('type', $this->type);
+			if (!empty($this->additionals)) {
+				foreach ($this->additionals as $k => $v) {
+					$subNode->setAttribute($k, $v);
 				}
 			}
 		}
 	}
 
 	/**
-	 * Логин
+	 * Log in
 	 *
 	 * @param int   $userId
 	 * @param array $data
 	 * @param array $additionals
 	 */
-	public function login( $userId, $data = null, $additionals = null ) {
-
+	public function login($userId, $data = null, $additionals = null)
+	{
 		$this->id = $userId;
 		$this->data = $data;
 		$this->additionals = $additionals;
@@ -80,128 +83,130 @@ class Auth {
 	}
 
 	/**
-	 * Логаут
+	 * Log out
 	 */
-	public function logout() {
-
+	public function logout()
+	{
 		$this->id = $this->data = $this->additionals = null;
 		$this->logged = false;
 		$this->save();
 	}
 
 	/**
-	 * Обновление информации о пользователе в сессии
+	 * Update user session
 	 */
-	public function update() {
-
+	public function update()
+	{
 		$this->save();
 	}
 
 	/**
-	 * Сохранение текущего состояния авторизации в сессии
+	 * Save auth data in session
 	 */
-	private function save() {
-
-		\Difra\Envi\Session::start();
-		if( $this->logged ) {
-			$_SESSION['auth'] = array(
-				'id' => $this->id,
-				'data' => $this->data,
+	private function save()
+	{
+        Session::start();
+		if ($this->logged) {
+			$_SESSION['auth'] = [
+				'id'          => $this->id,
+				'data'        => $this->data,
 				'additionals' => $this->additionals
-			);
+			];
 		} else {
-			if( isset( $_SESSION['auth'] ) ) {
-				unset( $_SESSION['auth'] );
+			if (isset($_SESSION['auth'])) {
+				unset($_SESSION['auth']);
 			}
 		}
 	}
 
 	/**
-	 * Загрузка информации об авторизации из сессии
+	 * Get auth data from session
 	 *
 	 * @return bool
 	 */
-	private function load() {
-
-		if( !isset( $_SESSION['auth'] ) ) {
+	private function load()
+	{
+		if (!isset($_SESSION['auth'])) {
 			return false;
 		}
 		$this->id = $_SESSION['auth']['id'];
 		$this->data = $_SESSION['auth']['data'];
 		$this->additionals = $_SESSION['auth']['additionals'];
-		$this->moderator = ( $_SESSION['auth']['data']['moderator'] == 1 ) ? true : false;
-		$this->type = isset( $_SESSION['auth']['data']['type'] ) ? $_SESSION['auth']['data']['type'] : 'user';
+		$this->moderator = ($_SESSION['auth']['data']['moderator'] == 1) ? true : false;
+		$this->type = isset($_SESSION['auth']['data']['type']) ? $_SESSION['auth']['data']['type'] : 'user';
 		return $this->logged = true;
 	}
 
 	/**
-	 * Возвращает id текущего пользователя или null
+	 * Get current user's id. Or null if user is not authorized.
 	 *
 	 * @return int|null
 	 */
-	public function getId() {
-
-		return isset( $this->data['id'] ) ? $this->data['id'] : null;
+	public function getId()
+	{
+		return isset($this->data['id']) ? $this->data['id'] : null;
 	}
 
 	/**
-	 * Возвращает тип пользователя
+	 * Get user type
 	 *
 	 * @return string|null
 	 */
-	public function getType() {
-
+	public function getType()
+	{
 		return $this->type;
 	}
 
 	/**
-	 * Определяет, авторизован ли пользователь
+	 * Is user authorized?
 	 *
 	 * @return bool
 	 */
-	public function isLogged() {
-
+	public function isLogged()
+	{
 		return $this->logged;
 	}
 
 	/**
-	 * Бросает exception, если пользователь не авторизован
+	 * Throws exception if user is not authorized.
+	 * For fast authorization check in methods, when methodnameAuthAction is not what you want.
 	 */
-	public function required() {
-
-		if( !$this->logged ) {
-			throw new exception( 'Authorization required' );
+	public function required()
+	{
+		if (!$this->logged) {
+			throw new exception('Authorization required');
 		}
 	}
 
 	/**
-	 * Устанавливает дополнительные поля информации о пользователе
+	 * Set user data
 	 *
 	 * @param array $additionals
 	 */
-	public function setAdditionals( $additionals ) {
-
+	public function setAdditionals($additionals)
+	{
 		$this->additionals = $additionals;
 		$this->save();
 	}
 
 	/**
-	 * Возвращает дополнительные поля информации о пользователе
+	 * Get user data
 	 *
 	 * @return array
 	 */
-	public function getAdditionals() {
-
+	public function getAdditionals()
+	{
 		return $this->additionals;
 	}
 
 	/**
-	 * Определяет, является ли пользователь модераторо
+	 * Is user a moderator?
+	 * TODO: remove this.
 	 *
 	 * @return bool
 	 */
-	public function isModerator() {
-
+	public function isModerator()
+	{
 		return $this->moderator;
 	}
 }

@@ -8,42 +8,39 @@ namespace Difra\MySQL\SQL;
  * @package Difra\MySQL\SQL
  * @deprecated
  */
-abstract class Common {
+abstract class Common
+{
+    /** @var self[] If objects are named (e.g. tables), store them here */
+    protected static $list = [];
+    /**
+     * Create object from chopped SQL
+     *
+     * @param array $chunks
+     * @return mixed
+     */
+    //abstract public static function create( $chunks = null );
 
-	/** @var self[] Если объекты в базе именованные (например, таблицы), то добавляем их в этот массив в виде: имя => объект */
-	protected static $list = array();
+    /**
+     * Get list of loaded objects
+     *
+     * @return array
+     */
+    public static function getList()
+    {
+        return self::$list;
+    }
 
-	/**
-	 * Создание объекта из чанков
-	 *
-	 * @param array $chunks
-	 *
-	 * @return mixed
-	 */
-	//abstract public static function create( $chunks = null );
-
-	/**
-	 * Возвращает массив всех загруженных в данный момент объектов данного типа
-	 *
-	 * @return array
-	 */
-	public static function getList() {
-
-		return self::$list;
-	}
-
-	/**
-	 * Возвращает имя из чанка (при необходимости убирает `)
-	 *
-	 * @param $name
-	 *
-	 * @return string
-	 */
-	public static function chunk2name( $name ) {
-
-		if( mb_substr( $name, 0, 1 ) == '`' and mb_substr( $name, -1 ) == '`' ) {
-			$name = mb_substr( $name, 1, strlen( $name ) - 2 );
-		}
-		return $name;
-	}
+    /**
+     * Get name from chunk
+     *
+     * @param $name
+     * @return string
+     */
+    public static function chunk2name($name)
+    {
+        if (mb_substr($name, 0, 1) == '`' and mb_substr($name, -1) == '`') {
+            $name = mb_substr($name, 1, strlen($name) - 2);
+        }
+        return $name;
+    }
 }

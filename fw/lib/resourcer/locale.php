@@ -7,8 +7,8 @@ namespace Difra\Resourcer;
  *
  * @package Difra\Resourcer
  */
-class Locale extends Abstracts\XML {
-
-	protected $type = 'locale';
-	protected $printable = false;
+class Locale extends Abstracts\XML
+{
+    protected $type = 'locale';
+    protected $printable = false;
 }

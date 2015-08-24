@@ -7,9 +7,9 @@ namespace Difra\Param;
  *
  * @package Difra\Param
  */
-class AjaxFile extends Common {
-
-	const source = 'ajax';
-	const type = 'file';
-	const named = true;
+class AjaxFile extends Common
+{
+    const source = 'ajax';
+    const type = 'file';
+    const named = true;
 }

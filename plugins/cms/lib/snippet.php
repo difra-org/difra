@@ -11,8 +11,8 @@ namespace Difra\Plugins\CMS;
  *
  * @package Difra\Plugins\CMS
  */
-class Snippet {
-
+class Snippet
+{
 	const CACHE_KEY = 'snippets';
 	/** @var int */
 	private $id = null;
@@ -28,12 +28,12 @@ class Snippet {
 	/**
 	 * Get snippet by id
 	 *
-*@static
+	 * @static
 	 * @param int $id
 	 * @return self|null
 	 */
-	static public function getById($id) {
-
+	static public function getById($id)
+	{
 		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetchRow('SELECT * FROM `cms_snippets` WHERE `id`=\'' . $db->escape($id) . "'");
 		return self::data2obj($data);
@@ -42,13 +42,13 @@ class Snippet {
 	/**
 	 * Convert snippets array[] to Snippet[]
 	 *
-*@static
+	 * @static
 	 * @param array $data
 	 * @return Snippet|null
 	 */
-	static private function data2obj($data) {
-
-		if(empty($data)) {
+	static private function data2obj($data)
+	{
+		if (empty($data)) {
 			return null;
 		}
 		$snippet = new self;
@@ -66,8 +66,8 @@ class Snippet {
 	 * @param string $name
 	 * @return Snippet|null
 	 */
-	static public function getByName($name) {
-
+	static public function getByName($name)
+	{
 		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetchRow('SELECT * FROM `cms_snippets` WHERE `name`=\'' . $db->escape($name) . "'");
 		return self::data2obj($data);
@@ -75,25 +75,24 @@ class Snippet {
 
 	/**
 	 * Get all snippets as XML nodes
-
 	 *
-*@static
+	 * @static
 	 * @param \DOMNode $node
 	 */
-	static public function getAllXML($node) {
-
+	static public function getAllXML($node)
+	{
 		$cache = \Difra\Cache::getInstance();
 		$res = $cache->get(self::CACHE_KEY);
-		if(!is_array($res)) {
+		if (!is_array($res)) {
 			try {
 				$db = \Difra\MySQL::getInstance();
 				$res = $db->fetch("SELECT `id`, `name`, `text` FROM `cms_snippets`");
-				$cache->put(self::CACHE_KEY, $res ? $res : array());
-			} catch(\Difra\Exception $ex) {
+				$cache->put(self::CACHE_KEY, $res ? $res : []);
+			} catch (\Difra\Exception $ex) {
 			}
 		}
-		if(!empty($res)) {
-			foreach($res as $data) {
+		if (!empty($res)) {
+			foreach ($res as $data) {
 				/** @var \DOMElement $sNode */
 				$sNode = $node->appendChild($node->ownerDocument->createElement($data['name'], $data['text']));
 				$sNode->setAttribute('id', $data['id']);
@@ -104,16 +103,16 @@ class Snippet {
 	/**
 	 * Get snippets list
 	 *
-*@static
+	 * @static
 	 * @return self[]
 	 */
-	static public function getList() {
-
+	static public function getList()
+	{
 		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetch('SELECT * FROM `cms_snippets`');
-		$res = array();
-		if(!empty($data)) {
-			foreach($data as $snip) {
+		$res = [];
+		if (!empty($data)) {
+			foreach ($data as $snip) {
 				$res[] = self::data2obj($snip);
 			}
 		}
@@ -123,11 +122,11 @@ class Snippet {
 	/**
 	 * Create snippet
 	 *
-*@static
+	 * @static
 	 * @return Snippet
 	 */
-	static public function create() {
-
+	static public function create()
+	{
 		return new self;
 	}
 
@@ -136,20 +135,24 @@ class Snippet {
 	 *
 	 * @throws \Difra\Exception
 	 */
-	public function __destruct() {
-
-		if(!$this->isModified) {
+	public function __destruct()
+	{
+		if (!$this->isModified) {
 			return;
 		}
 		$db = \Difra\MySQL::getInstance();
-		if($this->id) {
-			$db->query('UPDATE `cms_snippets` SET `name`=\'' . $db->escape($this->name) . "',`text`='"
+		if ($this->id) {
+			$db->query(
+				'UPDATE `cms_snippets` SET `name`=\'' . $db->escape($this->name) . "',`text`='"
 				. $db->escape($this->text) . "',
-			`description`='" . $db->escape($this->description) . "' WHERE `id`='" . $db->escape($this->id) . "'");
+			`description`='" . $db->escape($this->description) . "' WHERE `id`='" . $db->escape($this->id) . "'"
+			);
 		} else {
-			$db->query('INSERT INTO `cms_snippets` SET `name`=\'' . $db->escape($this->name) . "',`text`='"
+			$db->query(
+				'INSERT INTO `cms_snippets` SET `name`=\'' . $db->escape($this->name) . "',`text`='"
 				. $db->escape($this->text) . "',
-			 `description`='" . $db->escape($this->description) . "'");
+			 `description`='" . $db->escape($this->description) . "'"
+			);
 		}
 		$this->cleanCache();
 	}
@@ -157,8 +160,8 @@ class Snippet {
 	/**
 	 * Clear cache
 	 */
-	static public function cleanCache() {
-
+	static public function cleanCache()
+	{
 		\Difra\Cache::getInstance()->remove(self::CACHE_KEY);
 	}
 
@@ -167,8 +170,8 @@ class Snippet {
 	 *
 	 * @return int
 	 */
-	public function getId() {
-
+	public function getId()
+	{
 		return $this->id;
 	}
 
@@ -177,8 +180,8 @@ class Snippet {
 	 *
 	 * @return string
 	 */
-	public function getName() {
-
+	public function getName()
+	{
 		return $this->name;
 	}
 
@@ -187,9 +190,9 @@ class Snippet {
 	 *
 	 * @param string $name
 	 */
-	public function setName($name) {
-
-		if($name !== $this->name) {
+	public function setName($name)
+	{
+		if ($name !== $this->name) {
 			$this->name = $name;
 			$this->isModified = true;
 		}
@@ -200,8 +203,8 @@ class Snippet {
 	 *
 	 * @return string
 	 */
-	public function getText() {
-
+	public function getText()
+	{
 		return $this->text;
 	}
 
@@ -210,9 +213,9 @@ class Snippet {
 	 *
 	 * @param string $text
 	 */
-	public function setText($text) {
-
-		if($text !== $this->text) {
+	public function setText($text)
+	{
+		if ($text !== $this->text) {
 			$this->text = $text;
 			$this->isModified = true;
 		}
@@ -223,8 +226,8 @@ class Snippet {
 	 *
 	 * @param \DOMNode $node
 	 */
-	public function getXML($node) {
-
+	public function getXML($node)
+	{
 		/** @var \DOMElement $sub */
 		$sub = $node->appendChild($node->ownerDocument->createElement('snippet', $this->text));
 		$sub->setAttribute('id', $this->id);
@@ -237,8 +240,8 @@ class Snippet {
 	 *
 	 * @return string
 	 */
-	public function getDescription() {
-
+	public function getDescription()
+	{
 		return $this->description;
 	}
 
@@ -247,9 +250,9 @@ class Snippet {
 	 *
 	 * @param $description
 	 */
-	public function setDescription($description) {
-
-		if($this->description !== $description) {
+	public function setDescription($description)
+	{
+		if ($this->description !== $description) {
 			$this->description = $description;
 			$this->isModified = true;
 		}
@@ -260,8 +263,8 @@ class Snippet {
 	 *
 	 * @throws \Difra\Exception
 	 */
-	public function del() {
-
+	public function del()
+	{
 		$this->isModified = false;
 		$db = \Difra\MySQL::getInstance();
 		$db->query('DELETE FROM `cms_snippets` WHERE `id`=\'' . $db->escape($this->id) . "'");

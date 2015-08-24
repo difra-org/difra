@@ -2,6 +2,9 @@
 
 namespace Difra\Libs;
 
+use Difra\Envi;
+use Difra\Locales;
+
 /**
  * Cookies
  *
@@ -10,136 +13,121 @@ namespace Difra\Libs;
  * @version 0.1
  * @access  public
  */
-class Cookies {
+class Cookies
+{
+    private $expireTime = 0;
+    private $domain = null;
+    private $path = null;
 
-	private $expireTime = 0;
-	private $domain = null;
-	private $path = null;
+    /**
+     * Constructor
+     */
+    private function __construct()
+    {
+        $this->domain = Envi::getHost(true);
+        $this->domain = (substr($this->domain, 0, 4) == 'www.') ? substr($this->domain, 3) : ('.' . $this->domain);
+        $this->path = '/';
+    }
 
-	/**
-	 * Cookies::__construct()
-	 */
-	private function __construct() {
+    /**
+     * Singleton
+     *
+     * @return Cookies
+     */
+    static public function getInstance()
+    {
+        static $_instance = null;
+        return $_instance ? $_instance : $_instance = new self;
+    }
 
-		$this->domain = \Difra\Envi::getHost(true);
-		$this->domain = (substr($this->domain, 0, 4) == 'www.') ? substr($this->domain, 3) : ('.' . $this->domain);
-		$this->path = '/';
-	}
+    /**
+     * Set cookies path
+     *
+     * @param string $path
+     * @return void
+     */
+    public function setPath($path)
+    {
+        $this->path = $path;
+    }
 
-	/**
-	 * Cookies::getInstance()
-	 *
-	 * @desc Синглтон
-	 * @return Cookies
-	 */
-	static public function getInstance() {
+    /**
+     * Set cookies domain
+     *
+     * @param string $domain
+     * @return void
+     */
+    public function setDomain($domain)
+    {
+        $this->domain = $domain;
+    }
 
-		static $_instance = null;
-		return $_instance ? $_instance : $_instance = new self;
-	}
+    /**
+     * Set cookies expire time
+     *
+     * @param integer $expireTime
+     * @return void
+     */
+    public function setExpire($expireTime)
+    {
+        $this->expireTime = $expireTime;
+    }
 
-	/**
-	 * Cookies::setPath()
-	 *
-	 * @desc Устанавливает путь
-	 *
-	 * @param string $path
-	 *
-	 * @return void
-	 */
-	public function setPath( $path ) {
+    /**
+     * Remove cookie
+     *
+     * @param string $name
+     * @return boolean
+     */
+    public function remove($name)
+    {
+        return setrawcookie($name, '', time() - 108000, $this->path, $this->domain);
+    }
 
-		$this->path = $path;
-	}
+    /**
+     * Sets cookie that makes Ajaxer show notification popup
+     *
+     * @param      $message
+     * @param bool $error
+     */
+    public function notify($message, $error = false)
+    {
+        $this->set(
+            'notify',
+            [
+                'type'    => $error ? 'error' : 'ok',
+                'message' => (string)$message,
+                'lang'    => [
+                    'close' => Locales::get('notifications/close')
+                ]
+            ]
+        );
+    }
 
-	/**
-	 * Cookies::setDomain()
-	 *
-	 * @desc Устанавливает домен
-	 *
-	 * @param string $domain
-	 *
-	 * @return void
-	 */
-	public function setDomain( $domain ) {
+    /**
+     * Set cookie
+     *
+     * @param string       $name
+     * @param string|array $value
+     * @return boolean
+     */
+    public function set($name, $value)
+    {
+        if (is_array($value)) {
+            $value = json_encode($value);
+        }
+        return setrawcookie($name, rawurlencode($value), $this->expireTime, $this->path, $this->domain);
+    }
 
-		$this->domain = $domain;
-	}
-
-	/**
-	 * Cookies::setExpire()
-	 *
-	 * @desc Устанавливает время жизни
-	 *
-	 * @param integer $expireTime
-	 *
-	 * @return void
-	 */
-	public function setExpire( $expireTime ) {
-
-		$this->expireTime = $expireTime;
-	}
-
-	/**
-	 * Cookies::remove()
-	 *
-	 * @desc Удаляет куку
-	 *
-	 * @param string $name
-	 *
-	 * @return boolean
-	 */
-	public function remove( $name ) {
-
-		return setrawcookie( $name, '', time() - 108000, $this->path, $this->domain );
-	}
-
-	/**
-	 * Sets cookie that makes Ajaxer show notification popup.
-	 *
-	 * @param      $message
-	 * @param bool $error
-	 */
-	public function notify( $message, $error = false ) {
-
-		$this->set( 'notify',
-			    [
-				    'type' => $error ? 'error' : 'ok',
-				    'message' => (string)$message,
-				    'lang' => [
-					    'close' => \Difra\Locales::get('notifications/close')
-				    ]
-			    ] );
-	}
-
-	/**
-	 * Cookies::set()
-	 *
-	 * @desc Устанавливает куку
-	 *
-	 * @param string       $name
-	 * @param string|array $value
-	 *
-	 * @return boolean
-	 */
-	public function set($name, $value) {
-
-		if(is_array($value)) {
-			$value = json_encode($value);
-		}
-		return setrawcookie($name, rawurlencode($value), $this->expireTime, $this->path, $this->domain);
-	}
-
-	/**
-	 * Sets cookie that makes Ajaxer request some URL.
-	 *
-	 * @param $url
-	 *
-	 * @return void
-	 */
-	public function query( $url ) {
-
-		$this->set( 'query', [ 'url' => $url ] );
-	}
+    /**
+     * Set Ajaxer.js request cookie
+     *
+     * @param $url
+     * @return void
+     */
+    public function query($url)
+    {
+        $this->set('query', ['url' => $url]);
+    }
 }
 	

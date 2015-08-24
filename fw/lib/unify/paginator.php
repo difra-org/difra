@@ -2,120 +2,130 @@
 
 namespace Difra\Unify;
 
+use Difra\Envi\Action;
+use Difra\Exception;
+
 /**
- * Пагинатор
+ * Paginator
  * Class Paginator
  *
  * @package Difra\Unify
  */
-class Paginator {
+class Paginator
+{
+    /** @var int Items per page */
+    protected $perpage = 20;
+    /** @var int|null Current page */
+    protected $page = null;
+    /** @var int Total items number */
+    protected $total = null;
+    /** @var int Pages number */
+    protected $pages = null;
+    /** @var string Link prefix */
+    protected $linkPrefix = '';
+    /** @var string|bool Character for get parameter */
+    protected $get = false;
 
-	/** @var int Количество записей на страницу */
-	protected $perpage = 20;
+    /**
+     * Constructor
+     */
+    public function __construct()
+    {
+        $this->linkPrefix = Action::getControllerUri();
+    }
 
-	/** @var int|null Номер текущей страницы */
-	protected $page = null;
+    /**
+     * Return LIMIT values for SQL
+     *
+     * @return string
+     */
+    public function getPaginatorLimit()
+    {
+        return [($this->page - 1) * $this->perpage, $this->perpage];
+    }
 
-	/** @var int Количество найденных элементов */
-	protected $total = null;
+    /**
+     * Set total elements number
+     *
+     * @param int $count
+     */
+    public function setTotal($count)
+    {
+        $this->total = $count;
+        $this->pages = floor(($count - 1) / $this->perpage) + 1;
+    }
 
-	/** @var int Количество страниц */
-	protected $pages = null;
+    /**
+     * Get pages number
+     *
+     * @return int
+     */
+    public function getPages()
+    {
+        return $this->pages;
+    }
 
-	/** @var string Префикс для ссылки */
-	protected $linkPrefix = '';
+    /**
+     * Add paginator node to XML
+     *
+     * @param \DOMNode $node
+     */
+    public function getPaginatorXML($node)
+    {
+        /** @var \DOMElement $pNode */
+        $pNode = $node->appendChild($node->ownerDocument->createElement('paginator'));
+        $pNode->setAttribute('page', $this->page);
+        $pNode->setAttribute('pages', $this->pages);
+        $pNode->setAttribute('link', $this->linkPrefix);
+        $pNode->setAttribute('get', $this->get);
+    }
 
-	/** @var string|bool Символ для формирования get-параметра, например '?' -> $linkPrefix?page=$page, иначе ссылка будет вида $linkPrefix/page/$page */
-	protected $get = false;
+    /**
+     * Set current page
 
-	public function __construct() {
+     *
+*@param $page
+     * @throws Exception
+     */
+    public function setPage($page)
+    {
+        if (!ctype_digit((string)"$page") or $page < 1) {
+            throw new Exception("Expected page number as parameter");
+        }
+        $this->page = (int)$page;
+    }
 
-		$this->linkPrefix = \Difra\Envi\Action::getControllerUri();
-	}
+    /**
+     * Set GET character
+     * false -> $linkPrefix/page/$page
+     * '?' -> $linkPrefix?page=$page
+     * '&' -> $linkPrefix&page=$page
+     * etc.
+     *
+     * @param string|false $get
+     */
+    public function setGet($get)
+    {
+        $this->get = $get;
+    }
 
-	/**
-	 * Возвращает строку для LIMIT
-	 *
-	 * @return string
-	 */
-	public function getPaginatorLimit() {
+    /**
+     * Links prefix
+     *
+     * @param string $linkPrefix
+     */
+    public function setLinkPrefix($linkPrefix)
+    {
+        $this->linkPrefix = $linkPrefix;
+    }
 
-		return array( ( $this->page - 1 ) * $this->perpage, $this->perpage );
-	}
-
-	/**
-	 * Установка общего количества элементов
-	 *
-	 * @param int $count
-	 */
-	public function setTotal( $count ) {
-
-		$this->total = $count;
-		$this->pages = floor( ( $count - 1 ) / $this->perpage ) + 1;
-	}
-
-	public function getPages() {
-
-		return $this->pages;
-	}
-
-	/**
-	 * Добавляет ноду пагинатора в XML
-	 *
-	 * @param \DOMNode $node
-	 */
-	public function getPaginatorXML( $node ) {
-
-		/** @var \DOMElement $pNode */
-		$pNode = $node->appendChild( $node->ownerDocument->createElement( 'paginator' ) );
-		$pNode->setAttribute( 'page', $this->page );
-		$pNode->setAttribute( 'pages', $this->pages );
-		$pNode->setAttribute( 'link', $this->linkPrefix );
-		$pNode->setAttribute( 'get', $this->get );
-	}
-
-	/**
-	 * Установить текущую страницу
-	 *
-	 * @param $page
-	 *
-	 * @throws \Difra\Exception
-	 */
-	public function setPage( $page ) {
-
-		if( !ctype_digit( (string)"$page" ) or $page < 1 ) {
-			throw new \Difra\Exception( "Expected page number as parameter" );
-		}
-		$this->page = (int)$page;
-	}
-
-	/**
-	 * Установить символ для get-параметра
-	 *
-	 * @param string $get
-	 */
-	public function setGet( $get ) {
-
-		$this->get = $get;
-	}
-
-	/**
-	 * Префикс для ссылки
-	 *
-	 * @param string $linkPrefix
-	 */
-	public function setLinkPrefix( $linkPrefix ) {
-
-		$this->linkPrefix = $linkPrefix;
-	}
-
-	/**
-	 * Установка количества выводимых элементов на страницу результата
-	 *
-	 * @param int $perpage
-	 */
-	public function setPerpage( $perpage ) {
-
-		$this->perpage = $perpage;
-	}
+    /**
+     * Set items number per page
+     *
+     * @param int $perpage
+     */
+    public function setPerpage($perpage)
+    {
+        $this->perpage = $perpage;
+    }
 }

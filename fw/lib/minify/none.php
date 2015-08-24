@@ -3,19 +3,18 @@
 namespace Difra\Minify;
 
 /**
- * Класс-заглушка для минификации
+ * Minify stub
  */
-class None extends Common {
-
-	/**
-	 * Функция-заглушка для минификации
-	 *
-	 * @param string $data
-	 *
-	 * @return string
-	 */
-	public function minify( $data ) {
-
-		return $data;
-	}
+class None extends Common
+{
+    /**
+     * Stub
+     *
+     * @param string $data
+     * @return string
+     */
+    public function minify($data)
+    {
+        return $data;
+    }
 }

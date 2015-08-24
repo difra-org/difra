@@ -7,9 +7,9 @@ namespace Difra\Param;
  *
  * @package Difra\Param
  */
-class NamedInt extends Common {
-
-	const source = 'query';
-	const type = 'int';
-	const named = true;
+class NamedInt extends Common
+{
+    const source = 'query';
+    const type = 'int';
+    const named = true;
 }

@@ -7,10 +7,10 @@ namespace Difra\Resourcer\Abstracts;
  *
  * @package Difra\Resourcer\Abstracts
  */
-abstract class XSLT extends Common {
-
-	protected function processData( $instance ) {
-
+abstract class XSLT extends Common
+{
+	protected function processData($instance)
+	{
 		/*
 		<!DOCTYPE xsl:stylesheet [
 			<!ENTITY % lat1 PUBLIC "-//W3C//ENTITIES Latin 1 for XHTML//EN" "' . DIR_ROOT . 'fw/xslt/xhtml-lat1.ent">
@@ -22,7 +22,7 @@ abstract class XSLT extends Common {
 		]>
 		*/
 
-		$files = $this->getFiles( $instance );
+		$files = $this->getFiles($instance);
 		$template = '<' . '?xml version="1.0" encoding="UTF-8"?' . '>
 				<!DOCTYPE xsl:stylesheet>
 				<xsl:stylesheet
@@ -35,45 +35,45 @@ abstract class XSLT extends Common {
 					<xsl:template match="/root/locale"/>
 				</xsl:stylesheet>';
 		$dom = new \DOMDocument();
-		$dom->loadXML( $template );
-		$usedNames = array();
-		$usedMatches = array();
-		foreach( $files as $filename ) {
+		$dom->loadXML($template);
+		$usedNames = [];
+		$usedMatches = [];
+		foreach ($files as $filename) {
 			$template = new \DOMDocument();
-			$template->load( $filename['raw'] );
+			$template->load($filename['raw']);
 			/** @var \DOMElement $child */
-			foreach( $template->documentElement->childNodes as $child ) {
-				switch( $child->nodeType ) {
-				case XML_TEXT_NODE:
-				case XML_COMMENT_NODE:
-					continue 2;
+			foreach ($template->documentElement->childNodes as $child) {
+				switch ($child->nodeType) {
+					case XML_TEXT_NODE:
+					case XML_COMMENT_NODE:
+						continue 2;
 				}
-				if( $child->nodeName == 'xsl:template' ) {
-					if( $child->hasAttribute( 'match' ) ) {
-						$m = $child->getAttribute( 'match' );
-						if( $child->hasAttribute( 'mode' ) ) {
-							$m .= ':' . $child->getAttribute( 'mode' );
+				if ($child->nodeName == 'xsl:template') {
+					if ($child->hasAttribute('match')) {
+						$m = $child->getAttribute('match');
+						if ($child->hasAttribute('mode')) {
+							$m .= ':' . $child->getAttribute('mode');
 						}
-						if( in_array( $m, $usedMatches ) ) {
+						if (in_array($m, $usedMatches)) {
 							continue;
 						}
 						$usedMatches[] = $m;
-					} elseif( $child->hasAttribute( 'name' ) ) {
-						$n = $child->getAttribute( 'name' );
-						if( $child->hasAttribute( 'mode' ) ) {
-							$n .= ':' . $child->getAttribute( 'mode' );
+					} elseif ($child->hasAttribute('name')) {
+						$n = $child->getAttribute('name');
+						if ($child->hasAttribute('mode')) {
+							$n .= ':' . $child->getAttribute('mode');
 						}
-						if( in_array( $n, $usedNames ) ) {
+						if (in_array($n, $usedNames)) {
 							continue;
 						}
 						$usedNames[] = $n;
 					} else {
 						continue;
 					}
-				} elseif( $child->nodeName == 'xsl:output' ) {
+				} elseif ($child->nodeName == 'xsl:output') {
 					continue;
 				}
-				$dom->documentElement->appendChild( $dom->importNode( $child, true ) );
+				$dom->documentElement->appendChild($dom->importNode($child, true));
 			}
 		}
 		return $dom->saveXML();

@@ -1,42 +1,53 @@
 <?php
 
 /**
- * This software cannot be used, distributed or modified, completely or partially, without written permission by copyright holder.
- *
- * @copyright © A-Jam Studio
- * @license   http://ajamstudio.com/difra/license
+ * Class AdmStatusUnifyController
+ * Controller for Unify object tables actions.
  */
-class AdmStatusUnifyController extends Difra\Controller {
+class AdmStatusUnifyController extends Difra\Controller
+{
+    /**
+     * Dispatcher
+     */
+    public function dispatch()
+    {
+        \Difra\View::$instance = 'adm';
+    }
 
-	public function dispatch() {
+    /**
+     * Create table for Unify object
+     *
+     * @param \Difra\Param\AnyString $name
+     */
+    public function createAjaxAction(\Difra\Param\AnyString $name)
+    {
+        try {
+            /** @var \Difra\Unify\Item $class */
+            $class = \Difra\Unify\Storage::getClass($name->val());
+            $class::createDb();
+        } catch (\Difra\Exception $ex) {
+            \Difra\Ajaxer::notify($ex->getMessage());
+        }
+        \Difra\Ajaxer::refresh();
+    }
 
-		\Difra\View::$instance = 'adm';
-	}
-
-	public function createAjaxAction( \Difra\Param\AnyString $name ) {
-
-		try {
-			/** @var \Difra\Unify\Item $class */
-			$class = \Difra\Unify\Storage::getClass( $name->val() );
-			$class::createDb();
-		} catch( \Difra\Exception $ex ) {
-			\Difra\Ajaxer::getInstance()->notify($ex->getMessage());
-		}
-		\Difra\Ajaxer::getInstance()->refresh();
-	}
-
-	public function alterAjaxAction( \Difra\Param\AnyString $name ) {
-
-		try {
-			/** @var \Difra\Unify\Item $class */
-			$class = \Difra\Unify\Storage::getClass( $name->val() );
-			$status = $class::getObjDbStatus();
-			if( $status['status'] == 'alter' ) {
-				\Difra\MySQL::getInstance()->query( $status['sql'] );
-			}
-		} catch( \Difra\Exception $ex ) {
-			\Difra\Ajaxer::getInstance()->notify($ex->getMessage());
-		}
-		\Difra\Ajaxer::getInstance()->refresh();
-	}
+    /**
+     * Alter table for Unify object
+     *
+     * @param \Difra\Param\AnyString $name
+     */
+    public function alterAjaxAction(\Difra\Param\AnyString $name)
+    {
+        try {
+            /** @var \Difra\Unify\Item $class */
+            $class = \Difra\Unify\Storage::getClass($name->val());
+            $status = $class::getObjDbStatus();
+            if ($status['status'] == 'alter') {
+                \Difra\MySQL::getInstance()->query($status['sql']);
+            }
+        } catch (\Difra\Exception $ex) {
+            \Difra\Ajaxer::notify($ex->getMessage());
+        }
+        \Difra\Ajaxer::refresh();
+    }
 }

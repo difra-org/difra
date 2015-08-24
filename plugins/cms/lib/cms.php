@@ -7,14 +7,14 @@ namespace Difra\Plugins;
  *
  * @package Difra\Plugins\CMS
  */
-class CMS {
-
+class CMS
+{
 	/**
 	 * @static
 	 * @return CMS
 	 */
-	static public function getInstance() {
-
+	static public function getInstance()
+	{
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
 	}
@@ -22,19 +22,19 @@ class CMS {
 	/**
 	 * Detect if CMS page is requested
 	 */
-	public static function run() {
-
-		if($page = \Difra\Plugins\CMS\Page::find()) {
-			\Difra\Envi\Action::setCustomAction('\Difra\Plugins\CMS\Controller', 'pageAction', array($page));
+	public static function run()
+	{
+		if ($page = \Difra\Plugins\CMS\Page::find()) {
+			\Difra\Envi\Action::setCustomAction('\Difra\Plugins\CMS\Controller', 'pageAction', [$page]);
 		}
 	}
 
 	/**
 	 * Add menus to output XML
 	 */
-	public static function addMenuXML() {
-
-		if(\Difra\View::$instance == 'adm') {
+	public static function addMenuXML()
+	{
+		if (\Difra\View::$instance == 'adm') {
 			return;
 		}
 		$controller = \Difra\Controller::getInstance();
@@ -47,13 +47,13 @@ class CMS {
 	 * @param \DOMElement $node
 	 * @return bool
 	 */
-	public static function getMenuXML($node) {
-
+	public static function getMenuXML($node)
+	{
 		$data = \Difra\Plugins\CMS\Menu::getList();
-		if(empty($data)) {
+		if (empty($data)) {
 			return false;
 		}
-		foreach($data as $menu) {
+		foreach ($data as $menu) {
 			/** @var \DOMElement $menuNode */
 			$menuNode = $node->appendChild($node->ownerDocument->createElement('CMSMenu'));
 			$menu->getXML($menuNode);
@@ -67,16 +67,15 @@ class CMS {
 	 *
 	 * @param \DOMNode $node
 	 * @param          $menuId
-
 	 * @return bool
 	 */
-	public static function getMenuItemsXML($node, $menuId) {
-
+	public static function getMenuItemsXML($node, $menuId)
+	{
 		$data = \Difra\Plugins\CMS\Menuitem::getList($menuId);
-		if(empty($data)) {
+		if (empty($data)) {
 			return false;
 		}
-		foreach($data as $item) {
+		foreach ($data as $item) {
 			/** @var $itemNode \DOMElement */
 			$itemNode = $node->appendChild($node->ownerDocument->createElement('menuitem'));
 			$item->getXML($itemNode);
@@ -87,9 +86,9 @@ class CMS {
 	/**
 	 * Add text snippets to output XML
 	 */
-	public static function addSnippetsXML() {
-
-		if(\Difra\View::$instance != 'main') {
+	public static function addSnippetsXML()
+	{
+		if (\Difra\View::$instance != 'main') {
 			return;
 		}
 
@@ -100,19 +99,20 @@ class CMS {
 
 	/**
 	 * Get URL list for sitemap
+	 *
 	 * @return array
 	 */
-	public static function getSitemap() {
-
+	public static function getSitemap()
+	{
 		$db = \Difra\MySQL::getInstance();
 		$data = $db->fetch('SELECT `tag` FROM `cms`');
-		$res = array();
-		if(empty($data)) {
+		$res = [];
+		if (empty($data)) {
 			return false;
 		}
 		$host = 'http://' . \Difra\Envi::getHost();
-		foreach($data as $t) {
-			$res[] = array('loc' => $host . $t['tag']);
+		foreach ($data as $t) {
+			$res[] = ['loc' => $host . $t['tag']];
 		}
 		return $res;
 	}
@@ -122,16 +122,15 @@ class CMS {
 	 *
 	 * @param \DOMElement|\DOMNode $node
 	 * @param bool|int             $visible
-
 	 * @return bool
 	 */
-	public function getListXML($node, $visible = null) {
-
+	public function getListXML($node, $visible = null)
+	{
 		$data = \Difra\Plugins\CMS\Page::getList($visible);
-		if(empty($data)) {
+		if (empty($data)) {
 			return false;
 		}
-		foreach($data as $page) {
+		foreach ($data as $page) {
 			$pageNode = $node->appendChild($node->ownerDocument->createElement('page'));
 			$page->getXML($pageNode);
 		}
@@ -142,16 +141,15 @@ class CMS {
 	 * Get menu list
 	 *
 	 * @param \DOMNode $node
-
 	 * @return bool
 	 */
-	public function getMenuListXML($node) {
-
+	public function getMenuListXML($node)
+	{
 		$data = \Difra\Plugins\CMS\Menu::getList();
-		if(empty($data)) {
+		if (empty($data)) {
 			return false;
 		}
-		foreach($data as $menu) {
+		foreach ($data as $menu) {
 			/** @var \DOMElement $menuNode */
 			$menuNode = $node->appendChild($node->ownerDocument->createElement('menuobj'));
 			$menu->getXML($menuNode);
@@ -165,8 +163,8 @@ class CMS {
 	 * @param \DOMElement $node
 	 * @param int         $id
 	 */
-	public function getMenuItemXML($node, $id) {
-
+	public function getMenuItemXML($node, $id)
+	{
 		\Difra\Plugins\CMS\Menuitem::get($id)->getXML($node);
 	}
 
@@ -176,8 +174,8 @@ class CMS {
 	 * @param \DOMElement $node
 	 * @param int         $id
 	 */
-	public function getAvailablePagesForItemXML($node, $id) {
-
+	public function getAvailablePagesForItemXML($node, $id)
+	{
 		$item = \Difra\Plugins\CMS\Menuitem::get($id);
 		$this->getAvailablePagesXML($node, $item->getMenuId());
 	}
@@ -188,19 +186,19 @@ class CMS {
 	 * @param \DOMElement $node
 	 * @param int         $menuId
 	 */
-	public function getAvailablePagesXML($node, $menuId) {
-
+	public function getAvailablePagesXML($node, $menuId)
+	{
 		$current = \Difra\Plugins\CMS\Menuitem::getList($menuId);
-		$currentIds = array();
-		if(!empty($current)) {
-			foreach($current as $item) {
+		$currentIds = [];
+		if (!empty($current)) {
+			foreach ($current as $item) {
 				$currentIds[] = $item->getPage();
 			}
 		}
 		$all = \Difra\Plugins\CMS\Page::getList(true);
-		if(!empty($all)) {
-			foreach($all as $item) {
-				if(in_array($item->getId(), $currentIds)) {
+		if (!empty($all)) {
+			foreach ($all as $item) {
+				if (in_array($item->getId(), $currentIds)) {
 					continue;
 				}
 				/** @var $pageNode \DOMElement */
