@@ -55,10 +55,8 @@ $post
 \$_COOKIE:
 $cookie
 MSG;
-            /**
-             * TODO: move exceptions e-mail address to configuration and enable this again.
-             * mail( 'errors@a-jam.ru', $host . ': ' . $exception->getMessage(), $text );
-             */
+            // TODO: move exceptions e-mail address to configuration
+            mail('errors@ajamstudio.com', $host . ': ' . $exception->getMessage(), $text);
         } else {
         }
     }
