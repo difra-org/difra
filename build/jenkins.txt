@@ -1,0 +1,3 @@
+1. Add job: cat jenkins.xml | java -jar jenkins-cli.jar -s http://localhost:8080 create-job Difra
+2. Configure SCM
+3. Configure Schedule

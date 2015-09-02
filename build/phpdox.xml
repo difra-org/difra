@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<phpdox xmlns="http://phpdox.de/config">
-	<project name="difra" source="${basedir}/.." workdir="${basedir}/phpdox">
+<phpdox xmlns="http://phpdox.net/config">
+	<project name="Difra" source="${basedir}/.." workdir="${basedir}/phpdox">
 		<collector publiconly="false">
 			<include mask="*.php"/>
 			<exclude mask="**/fw/lib/libs/esapi/**"/>
@@ -9,7 +9,9 @@
 		</collector>
 
 		<generator output="${basedir}">
-			<build engine="html" enabled="true" output="api"/>
+			<build engine="html" enabled="true" output="api">
+				<file extension="html" />
+			</build>
 		</generator>
 	</project>
 </phpdox>
