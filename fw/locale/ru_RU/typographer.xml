@@ -36,11 +36,13 @@
 			<spaceBeforeLastWord>Неразрывный пробел перед последним словом предложения</spaceBeforeLastWord>
 			<lengthLastWord>Длина последнего слова</lengthLastWord>
 			<spaceAfterNum>Пробел после знака «№»</spaceAfterNum>
-			<spaceBeforeParticles>Неразрывный пробел перед частицами &#8212; ли, же, бы</spaceBeforeParticles>
+			<spaceBeforeParticles>Неразрывный пробел перед частицами &#8212; ли, же, бы
+			</spaceBeforeParticles>
 			<delRepeatSpace>Удалять повторяющиеся пробелы</delRepeatSpace>
 			<delSpaceBeforePunctuation>Удалять пробел перед знаками препинания</delSpaceBeforePunctuation>
 			<delSpaceBeforeProcent>Удалять пробел перед знаком процента</delSpaceBeforeProcent>
-			<doReplaceBefore>Делать замену символов перед типографированием. (символы: ®, ©, ™, ±)</doReplaceBefore>
+			<doReplaceBefore>Делать замену символов перед типографированием. (символы: ®, ©, ™, ±)
+			</doReplaceBefore>
 			<doReplaceAfter>Делать замену символов после типографирования</doReplaceAfter>
 			<doMacros>Использователь макросы при типографировании (ГРАД(), ЕВРО(), СТРЛ() и др.)</doMacros>
 		</typograph>

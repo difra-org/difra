@@ -82,9 +82,8 @@ class Paginator
 
     /**
      * Set current page
-
      *
-*@param $page
+     * @param $page
      * @throws Exception
      */
     public function setPage($page)

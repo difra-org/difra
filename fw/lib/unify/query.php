@@ -31,9 +31,8 @@ class Query extends Paginator
 
     /**
      * Constructor
-
      *
-*@param string $objKey Unify object name
+     * @param string $objKey Unify object name
      * @throws Exception
      */
     public function __construct($objKey)
@@ -221,9 +220,8 @@ class Query extends Paginator
 
     /**
      * Add search condition as key->value array
-
      *
-*@param array $conditions
+     * @param array $conditions
      * @throws Exception
      */
     public function addConditions($conditions)
@@ -241,9 +239,8 @@ class Query extends Paginator
 
     /**
      * Add search condition as key->value
-
      *
-*@param string $column
+     * @param string $column
      * @param string $value
      * @throws Exception
      */
@@ -271,9 +268,8 @@ class Query extends Paginator
 
     /**
      * Add Unify Object or Unify Query to JOIN
-
      *
-*@param string|self $query
+     * @param string|self $query
      * @throws Exception
      */
     public function join($query)

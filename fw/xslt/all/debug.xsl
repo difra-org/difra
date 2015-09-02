@@ -48,7 +48,8 @@
 							<span class="tab-title">Все</span>
 							<div class="tab-content">
 								<table>
-									<xsl:apply-templates select="*" mode="debugLine"/>
+									<xsl:apply-templates select="*"
+											     mode="debugLine"/>
 								</table>
 							</div>
 						</li>
@@ -56,7 +57,9 @@
 							<span class="tab-title">Сообщения</span>
 							<div class="tab-content">
 								<table>
-									<xsl:apply-templates select="*[@class='messages']" mode="debugLine"/>
+									<xsl:apply-templates
+										select="*[@class='messages']"
+										mode="debugLine"/>
 								</table>
 							</div>
 						</li>
@@ -67,7 +70,8 @@
 							<span class="tab-title">Ошибки</span>
 							<div class="tab-content">
 								<table>
-									<xsl:apply-templates select="*[@class='errors']" mode="debugLine"/>
+									<xsl:apply-templates select="*[@class='errors']"
+											     mode="debugLine"/>
 								</table>
 							</div>
 						</li>
@@ -75,7 +79,8 @@
 							<span class="tab-title">События</span>
 							<div class="tab-content">
 								<table>
-									<xsl:apply-templates select="*[@class='events']" mode="debugLine"/>
+									<xsl:apply-templates select="*[@class='events']"
+											     mode="debugLine"/>
 								</table>
 							</div>
 						</li>
@@ -83,7 +88,8 @@
 							<span class="tab-title">База данных</span>
 							<div class="tab-content">
 								<table>
-									<xsl:apply-templates select="*[@class='db']" mode="debugLine"/>
+									<xsl:apply-templates select="*[@class='db']"
+											     mode="debugLine"/>
 								</table>
 							</div>
 						</li>
@@ -147,7 +153,8 @@
 										<xsl:value-of select="@function"/>
 										<xsl:for-each select="args">
 											<xsl:text>(</xsl:text>
-											<xsl:call-template name="debug_args"/>
+											<xsl:call-template
+												name="debug_args"/>
 											<xsl:text>)</xsl:text>
 										</xsl:for-each>
 									</td>

@@ -71,7 +71,8 @@ class XMLRPC
             xmlrpc_server_register_method($server, $method, [$handler, $method]);
         }
         $request = (isset ($HTTP_RAW_POST_DATA) and $HTTP_RAW_POST_DATA)
-            ? $HTTP_RAW_POST_DATA : file_get_contents(
+            ? $HTTP_RAW_POST_DATA
+            : file_get_contents(
                 'php://input'
             );
 

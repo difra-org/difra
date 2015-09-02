@@ -36,7 +36,8 @@ abstract class XML extends Common
 
     /**
      * Recursively merge two XML trees
-     * @param \SimpleXMLElement $xml1
+     *
+*@param \SimpleXMLElement $xml1
      * @param \SimpleXMLElement $xml2
      * @param string            $filename
      */

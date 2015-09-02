@@ -1,11 +1,15 @@
 CREATE TABLE `config` (
-  `config` longblob
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+  `config` LONGBLOB
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;
 
 CREATE TABLE `vault` (
-  `id` int(11) NOT NULL AUTO_INCREMENT,
-  `created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  `data` longblob,
+  `id`      INT(11)   NOT NULL AUTO_INCREMENT,
+  `created` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `data`    LONGBLOB,
   PRIMARY KEY (`id`),
   KEY `created` (`created`)
-) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+)
+  ENGINE = InnoDB
+  DEFAULT CHARSET = utf8;

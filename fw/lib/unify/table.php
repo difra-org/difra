@@ -37,9 +37,8 @@ class Table extends Storage
 
     /**
      * Chops namespace and class into parts without common pieces
-
      *
-*@return array
+     * @return array
      * @throws Exception
      */
     protected static function getClassParts()

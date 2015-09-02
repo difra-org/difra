@@ -304,9 +304,8 @@ class DBAPI extends Table
 
     /**
      * Generates SQL string for key create/alter
-
      *
-*@param $name
+     * @param $name
      * @param $prop
      * @return string
      * @throws Exception

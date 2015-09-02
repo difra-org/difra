@@ -84,7 +84,8 @@
 								</xsl:for-each>
 							</xsl:when>
 							<xsl:otherwise>
-								<xsl:value-of select="$locale/adm/stats/permissions-ok"/>
+								<xsl:value-of
+									select="$locale/adm/stats/permissions-ok"/>
 							</xsl:otherwise>
 						</xsl:choose>
 					</td>
@@ -102,7 +103,8 @@
 			<tbody>
 				<tr>
 					<th>
-						<xsl:value-of select="$locale/adm/stats/extensions/required-extensions"/>
+						<xsl:value-of
+							select="$locale/adm/stats/extensions/required-extensions"/>
 					</th>
 					<td>
 						<xsl:choose>
@@ -118,7 +120,8 @@
 				<xsl:if test="not(extensions/@required='')">
 					<tr>
 						<th>
-							<xsl:value-of select="$locale/adm/stats/extensions/missing-extensions"/>
+							<xsl:value-of
+								select="$locale/adm/stats/extensions/missing-extensions"/>
 						</th>
 						<td style="color:red">
 							<xsl:value-of select="extensions/@required"/>
@@ -152,7 +155,8 @@
 					<xsl:value-of select="stats/mysql/@error"/>
 				</div>
 			</xsl:when>
-			<xsl:when test="count(stats/mysql/table[@diff=1])=0 and count(stats/mysql/table[@nodef=1])=0 and count(stats/mysql/table[@nogoal=1])=0">
+			<xsl:when
+				test="count(stats/mysql/table[@diff=1])=0 and count(stats/mysql/table[@nodef=1])=0 and count(stats/mysql/table[@nogoal=1])=0">
 				<div class="message">
 					<xsl:value-of select="$locale/adm/stats/database/status-ok"/>
 				</div>
@@ -262,10 +266,13 @@
 						<xsl:choose>
 							<xsl:when test="@status='ok'">ok</xsl:when>
 							<xsl:when test="@status='missing'">
-								<a href="/adm/status/unify/create/{name()}" class="ajaxer">create</a>
+								<a href="/adm/status/unify/create/{name()}"
+								   class="ajaxer">create
+								</a>
 							</xsl:when>
 							<xsl:when test="@status='alter'">
-								<a href="/adm/status/unify/alter/{name()}" class="ajaxer">
+								<a href="/adm/status/unify/alter/{name()}"
+								   class="ajaxer">
 									<xsl:text>alter table (</xsl:text>
 									<xsl:value-of select="@action"/>
 									<xsl:text>): </xsl:text>

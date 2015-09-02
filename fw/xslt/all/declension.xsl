@@ -14,7 +14,8 @@
 		<xsl:param name="nominative" select="$locale/declension/*[name()=$dec_node_name]/nominative"/>
 
 		<!-- Родительный падеж, единственное число (пользователя) -->
-		<xsl:param name="genitive_singular" select="$locale/declension/*[name()=$dec_node_name]/genitive_singular"/>
+		<xsl:param name="genitive_singular"
+			   select="$locale/declension/*[name()=$dec_node_name]/genitive_singular"/>
 
 		<!-- Родительный падеж, множественное число (пользователей) -->
 		<xsl:param name="genitive_plural" select="$locale/declension/*[name()=$dec_node_name]/genitive_plural"/>

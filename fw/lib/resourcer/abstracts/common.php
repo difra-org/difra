@@ -48,9 +48,8 @@ abstract class Common
 
     /**
      * Validate instance name
-
      *
-*@param $instance
+     * @param $instance
      * @return bool
      * @throws Exception
      */
@@ -64,9 +63,8 @@ abstract class Common
 
     /**
      * Output resource
-
      *
-*@param $instance
+     * @param $instance
      * @return bool
      * @throws Exception
      */
@@ -259,9 +257,8 @@ abstract class Common
 
     /**
      * Compile resource
-
      *
-*@param string $instance
+     * @param string $instance
      * @param bool   $withSources
      * @throws Exception
      * @return string

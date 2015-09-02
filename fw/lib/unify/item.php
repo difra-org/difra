@@ -136,9 +136,8 @@ abstract class Item extends DBAPI
 
     /**
      * Save object data
-
      *
-*@param bool $replace Make replace instead of insert
+     * @param bool $replace Make replace instead of insert
      * @throws Exception
      */
     public function save($replace = false)
@@ -247,9 +246,8 @@ abstract class Item extends DBAPI
 
     /**
      * Chops namespace and class into parts without common pieces
-
      *
-*@return array
+     * @return array
      * @throws Exception
      */
     protected static function getClassParts()
@@ -273,9 +271,8 @@ abstract class Item extends DBAPI
 
     /**
      * Get field value
-
      *
-*@param $name
+     * @param $name
      * @return mixed
      * @throws Exception
      */
@@ -338,9 +335,8 @@ abstract class Item extends DBAPI
 
     /**
      * Load element by field value (for getByField())
-
      *
-*@param string $field
+     * @param string $field
      * @param mixed  $value
      * @param bool   $full
      * @throws Exception

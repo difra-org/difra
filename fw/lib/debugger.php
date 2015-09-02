@@ -76,7 +76,10 @@ class Debugger
             self::$enabled = self::DEBUG_ENABLED;
         }
         // is console disabled by a cookie?
-        if (!self::$enabled or (isset($_COOKIE['debugConsole']) and !$_COOKIE['debugConsole']) or !extension_loaded('xsl')) {
+        if (!self::$enabled or
+            (isset($_COOKIE['debugConsole']) and !$_COOKIE['debugConsole']) or
+            !extension_loaded('xsl')
+        ) {
             self::$console = self::CONSOLE_DISABLED;
         } else {
             self::$console = self::CONSOLE_ENABLED;
@@ -186,9 +189,8 @@ class Debugger
 
     /**
      * Callback for exceptions
-
      *
-*@static
+     * @static
      * @param Exception $exception
      * @return bool
      */

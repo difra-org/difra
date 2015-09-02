@@ -86,10 +86,10 @@ final class Images
     /**
      * Resizes image from binary string to given resolution keeping aspect ratio
      *
-     * @param string|AjaxFile $data binary string with image in it
-     * @param int                          $maxWidth  maximum height of thumbnail
-     * @param int                          $maxHeight maximum width of thumbnail
-     * @param string                       $type      resulting image type
+     * @param string|AjaxFile $data      binary string with image in it
+     * @param int             $maxWidth  maximum height of thumbnail
+     * @param int             $maxHeight maximum width of thumbnail
+     * @param string          $type      resulting image type
      * @return string
      */
     public function createThumbnail($data, $maxWidth, $maxHeight, $type = 'png')

@@ -30,7 +30,8 @@
 							<xsl:when test="@pseudoHref=/root/@controllerUri">
 								<text>2</text>
 							</xsl:when>
-							<xsl:when test="substring(/root/@controllerUri,1,string-length(@pseudoHref))=@pseudoHref">
+							<xsl:when
+								test="substring(/root/@controllerUri,1,string-length(@pseudoHref))=@pseudoHref">
 								<text>1</text>
 							</xsl:when>
 							<xsl:otherwise>
@@ -66,8 +67,10 @@
 								<xsl:otherwise>
 									<xsl:variable name="id" select="@id"/>
 									<xsl:choose>
-										<xsl:when test="$locale/menu/*[name()=$instance]/*[name()=$id]">
-											<xsl:value-of select="$locale/menu/*[name()=$instance]/*[name()=$id]"/>
+										<xsl:when
+											test="$locale/menu/*[name()=$instance]/*[name()=$id]">
+											<xsl:value-of
+												select="$locale/menu/*[name()=$instance]/*[name()=$id]"/>
 										</xsl:when>
 										<xsl:otherwise>
 											<xsl:value-of select="name()"/>

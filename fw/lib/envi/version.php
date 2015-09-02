@@ -27,8 +27,9 @@ class Version
     public static function getBuild()
     {
         static $revision = null;
-        if(!is_null($revision))
+        if (!is_null($revision)) {
             return $revision;
+        }
         return $revision = self::VERSION . '.' . self::REVISION . self::PREVERSION;
     }
 }

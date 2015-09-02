@@ -148,9 +148,10 @@ class HTML
                 if (!isset($this->allowedTags[$node->nodeName])) {
                     $replaceNodes[] = $node;
                 }
-                $this->cleanAttributes($node,
-                                       isset($this->allowedTags[$node->nodeName]) ? $this->allowedTags[$node->nodeName]
-                                           : []
+                $this->cleanAttributes(
+                    $node,
+                    isset($this->allowedTags[$node->nodeName]) ? $this->allowedTags[$node->nodeName]
+                        : []
                 );
                 break;
             case XML_TEXT_NODE:

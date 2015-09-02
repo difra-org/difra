@@ -37,9 +37,8 @@ abstract class Storage
 
     /**
      * Get object by name and primary key
-
      *
-*@param string $objKey
+     * @param string $objKey
      * @param mixed  $primary
      * @return mixed
      * @throws Exception
@@ -66,9 +65,8 @@ abstract class Storage
 
     /**
      * Create new item object by name
-
      *
-*@param string $objKey
+     * @param string $objKey
      * @return static
      * @throws Exception
      */
