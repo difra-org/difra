@@ -1,9 +1,10 @@
 <ruleset name="A-Jam">
 	<description>Description of your coding standard</description>
 
-	<rule ref="PSR2">
+	<rule ref="PSR1">
 		<exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
 	</rule>
+	<rule ref="PSR2"/>
 
 	<exclude-pattern>../fw/lib/libs/esapi</exclude-pattern>
 	<exclude-pattern>../fw/lib/libs/less</exclude-pattern>
