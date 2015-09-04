@@ -2,7 +2,13 @@
 
 namespace Difra\Plugins;
 
+use Difra\Auth;
+use Difra\Config;
 use Difra\Envi;
+use Difra\Exception;
+use Difra\Libs\Images;
+use Difra\MySQL;
+use Difra\Param\AjaxFile;
 
 class Announcements
 {
@@ -11,33 +17,30 @@ class Announcements
      * @var array
      */
     private $settings = [
-        'on'          => 0,
-        'maxPerUser'  => 5,
+        'on' => 0,
+        'maxPerUser' => 5,
         'maxPerGroup' => 5,
-        'width'       => 200,
-        'height'      => 180,
-        'perPage'     => 40
+        'width' => 200,
+        'height' => 180,
+        'perPage' => 40
     ];
     private $imagePath = null;
 
     static public function getInstance()
     {
-
         static $_self = null;
         return $_self ? $_self : $_self = new self;
     }
 
     public function __construct()
     {
-
         $this->_getSettings();
         $this->imagePath = DIR_DATA . 'announcements';
     }
 
     private function _getSettings()
     {
-
-        $settings = \Difra\Config::getInstance()->get('announcements');
+        $settings = Config::getInstance()->get('announcements');
         if (!empty($settings)) {
             $this->settings = $settings;
         }
@@ -45,11 +48,10 @@ class Announcements
 
     /**
      * Возвращает настройки плагина в xml
-     * @param \DOMNode $node
+     * @param \DOMNode|\DOMElement $node
      */
     public function getSettingsXml($node)
     {
-
         foreach ($this->settings as $key => $value) {
             $node->setAttribute($key, $value);
         }
@@ -61,52 +63,51 @@ class Announcements
      */
     public function saveSettings($data)
     {
-
-        \Difra\Config::getInstance()->set('announcements', $data);
+        Config::getInstance()->set('announcements', $data);
     }
 
     /**
      * Сохраняет в нужном месте картинку анонса
      * @param $id
      * @param $fileData
+     * @throws Exception
      */
     public function saveImage($id, $fileData)
     {
-
         @mkdir($this->imagePath, 0777, true);
 
         if (!is_writeable($this->imagePath)) {
-            throw new \Difra\Exception('Directory is no writeable!');
+            throw new Exception('Directory is not writeable!');
         }
 
-        $Images = \Difra\Libs\Images::getInstance();
+        $Images = Images::getInstance();
 
-        $img = $fileData instanceof \Difra\Param\AjaxFile ? $fileData->val() : $fileData;
+        $img = $fileData instanceof AjaxFile ? $fileData->val() : $fileData;
 
         try {
             $rawImg = $Images->data2image($img);
 
             $newImg = $Images->scaleAndCrop($rawImg, $this->settings['width'], $this->settings['height'], 'png');
             $bigImg = $Images->scaleAndCrop($rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png');
-        } catch (\Difra\Exception $ex) {
-            throw new \Difra\Exception('Bad image format. ' . $ex->getMessage());
+        } catch (Exception $ex) {
+            throw new Exception('Bad image format. ' . $ex->getMessage());
         }
 
         try {
             file_put_contents($this->imagePath . '/' . $id . '.png', $newImg);
             file_put_contents($this->imagePath . '/' . $id . '-big.png', $bigImg);
-        } catch (\Difra\Exception $ex) {
-            throw new \Difra\Exception("Can't save image");
+        } catch (Exception $ex) {
+            throw new Exception("Can't save image");
         }
     }
 
     /**
      * Создаёт или апдейтит анонс события и возвращает id
      * @param array $data
+     * @return int
      */
     public function create($data)
     {
-
         $Event = Announcements\Announcement::create();
         $Event->setUser($data['user']);
         $Event->setGroup($data['group']);
@@ -140,27 +141,27 @@ class Announcements
 
     /**
      * Возвращает в xml все анонсы событий
-     *
      * @param \DOMNode $node
      * @param bool $onlyVisible
+     * @param bool $withArchive
+     * @param null $perPage
+     * @throws Exception
      */
     public function getAllEventsXML($node, $onlyVisible = false, $withArchive = false, $perPage = null)
     {
-
         if (!is_null($perPage)) {
             $perPageLimit = intval($perPage);
         } else {
-            $perPageLimit = \Difra\Config::getInstance()->getValue('announcements', 'perPage');
+            $perPageLimit = Config::getInstance()->getValue('announcements', 'perPage');
         }
 
         if (empty($perPageLimit) || $perPageLimit == 0) {
-            throw new \Difra\Exception('No page limit! Reconfigure Announcements plugin.');
+            throw new Exception('No page limit! Reconfigure Announcements plugin.');
         }
 
         $events = Announcements\Announcement::getAll($onlyVisible, $withArchive, $perPageLimit);
         if (!empty($events)) {
-
-            foreach ($events as $k => $object) {
+            foreach ($events as $object) {
                 $object->getXML($node);
             }
         }
@@ -168,8 +169,8 @@ class Announcements
 
     /**
      * Возвращает массив объектов с анонсами
-     *
      * @param bool $onlyVisible
+     * @param bool $withArchive
      * @return Announcements\Announcement[]
      */
     public function getAllEvents($onlyVisible = false, $withArchive = false)
@@ -179,14 +180,11 @@ class Announcements
 
     /**
      * Возвращает массив ссылок на анонсы для карты сайта
-     *
-     * @static
      * @return array
      */
     public static function getMap()
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $where = " `visible`=1 ";
         $query = "SELECT `id`, `link`, UNIX_TIMESTAMP( `modified` ) AS `mod` FROM `announcements` WHERE " .
                  $where .
@@ -208,15 +206,13 @@ class Announcements
 
     /**
      * Устанавливает приоритет анонса события
-     *
-     * @static
      * @param $id
      * @param $priority
+     * @return bool
      */
     public static function setPriority($id, $priority)
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $db->query(
             "UPDATE `announcements` SET `priority`='" . intval($priority) . "' WHERE `id`='" . intval($id) . "'"
         );
@@ -225,14 +221,12 @@ class Announcements
 
     /**
      * Удаляет анонс события и все его картинки
-     *
      * @param $id
      * @return bool
      */
     public function delete($id)
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $db->query("DELETE FROM `announcements` WHERE `id`='" . intval($id) . "'");
         @unlink($this->imagePath . '/' . intval($id) . '.png');
         @unlink($this->imagePath . '/' . intval($id) . '-big.png');
@@ -253,36 +247,33 @@ class Announcements
 
     /**
      * Возвращает в xml данные анонса события
-     *
      * @param int $id
      * @param \DOMNode $node
      */
     public function getByIdXML($id, $node)
     {
-
         $eventObject = Announcements\Announcement::getById($id);
         $eventObject->getXML($node);
     }
 
     /**
      * Проверяет возможности создания анонса для текущего юзера или группы
-     *
      * @return bool
      */
     public function checkCreateLimits()
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $groupId = null;
-        $userId = \Difra\Auth::getInstance()->getId();
+        $userId = Auth::getInstance()->getId();
 
-        if (\Difra\Plugger::getInstance()->isEnabled('blogs')) {
-
+        /*
+        if (Plugger::isEnabled('blogs')) {
             $currentGroup = \Difra\Plugins\Blogs\Group::current();
             if (!is_null($currentGroup)) {
                 $groupId = $currentGroup->getId();
             }
         }
+        */
 
         if (!is_null($groupId)) {
 
@@ -304,18 +295,17 @@ class Announcements
 
     /**
      * Проверяет является ли пользователь владельцем анонса
-     *
      * @param $eventId
      * @param $userId
+     * @return bool
      */
     public function checkOnwer($eventId, $userId)
     {
-
-        if (\Difra\Auth::getInstance()->isModerator()) {
+        if (Auth::getInstance()->isModerator()) {
             return true;
         }
 
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $query = "SELECT `id` FROM `announcements` WHERE `id`='" .
                  intval($eventId) .
                  "' AND `user`='" .
@@ -327,22 +317,19 @@ class Announcements
 
     /**
      * Возвращает в xml данные анонса события по его ссылке
-     *
      * @deprecated
      * @param string $link
-     * @param \DOMNode $node
+     * @param \DOMNode|\DOMElement $node
+     * @return bool|Announcements\Announcement
      */
     public function getByLinkXML($link, $node)
     {
-
         // ищем в ссылке idшник
         $regs = explode('-', $link);
 
         if (isset($regs[0]) && intval($regs[0]) != 0) {
-
             $Event = Announcements\Announcement::getById(intval($regs[0]));
             if ($Event) {
-
                 $Event->getXML($node);
                 $node->parentNode->setAttribute('title', $Event->getHumanizedTitle());
                 return $Event;
@@ -354,12 +341,11 @@ class Announcements
 
     /**
      * Возвращает объект анонса по ссылке
-     *
      * @param $link
+     * @return bool|Announcements\Announcement
      */
     public function getByLink($link)
     {
-
         // ищем в ссылке idшник
         $regs = explode('-', $link);
 
@@ -376,13 +362,11 @@ class Announcements
 
     /**
      * Возвращает в xml список анонсов событий для выбранного приоритета или больше его
-     *
      * @param \DOMNode $node
      * @param int $priority
      */
     public function getByPriorityXML($node, $priority = 100)
     {
-
         $Events = Announcements\Announcement::getByPriority($priority);
         if (!empty($Events)) {
             foreach ($Events as $k => $obj) {
@@ -393,20 +377,24 @@ class Announcements
 
     /**
      * Возвращает текущие анонсы по их категории
-     *
      * @param     $categoryId
      * @param int $limit
+     * @return bool|Announcements\Announcement[]
      */
     public function getByCategory($categoryId, $limit = 3)
     {
-
         return $Events = Announcements\Announcement::getByCategory($categoryId, $limit);
     }
 
+    /**
+     * @param $categoryId
+     * @param \DOMElement $node
+     * @param int $page
+     * @return bool
+     */
     public function getByCategoryWithPagerXML($categoryId, $node, $page = 1)
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
 
         // считаем общее количество в категории
         $all = $db->fetchRow(
@@ -415,7 +403,6 @@ class Announcements
         );
 
         if ($all['acount'] > 0) {
-
             $perPage = $this->settings['perPage'];
             $pages = floor(($all['acount'] - 1) / $perPage) + 1;
             $node->setAttribute('pages', $pages);
@@ -433,14 +420,12 @@ class Announcements
 
     /**
      * Возвращает в xml все события группы
-     *
      * @param int $groupId
-     * @param \DOMNode $node
+     * @param \DOMNode|\DOMElement $node
      * @param bool $withArchive
      */
     public function getByGroupXML($groupId, $node, $withArchive = false)
     {
-
         $Events = Announcements\Announcement::getByGroup($groupId, $withArchive);
         if (!empty($Events)) {
             foreach ($Events as $k => $obj) {
@@ -451,40 +436,36 @@ class Announcements
 
     /**
      * Добавляет категорию или обновляет категорию
-     *
-     * @param string $name
+     * @param $techAlias
+     * @param $categoryName
      * @param int $id
      */
     public function saveCategory($techAlias, $categoryName, $id = null)
     {
-
-        $Category = \Difra\Plugins\Announcements\Category::create($id);
+        $Category = Announcements\Category::create($id);
         $Category->setTextName($categoryName);
         $Category->setCategory($techAlias);
     }
 
     /**
      * Проверяет есть ли уже такая категория
-     *
      * @param $name
+     * @return bool
      */
     public function checkCategoryName($name)
     {
-
-        return \Difra\Plugins\Announcements\Category::checkName($name);
+        return Announcements\Category::checkName($name);
     }
 
     public function saveAdditionalField($name, $alias, $id = null)
     {
-
-        $A = \Difra\Plugins\Announcements\Additionals::create($id);
+        $A = Announcements\Additionals::create($id);
         $A->setName($name);
         $A->setAlias($alias);
     }
 
     /**
      * Сохраняет расписание
-     *
      * @param       $id
      * @param       $name
      * @param array $names
@@ -492,8 +473,7 @@ class Announcements
      */
     public function saveSchedules($id, $name, $names, $values)
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $scheduleArray = null;
         if (!empty($names) && !empty($values)) {
             foreach ($names as $num => $data) {
@@ -522,26 +502,22 @@ class Announcements
 
     /**
      * Возвращает локации в xml
-     *
      * @param \DOMNode $node
      */
     public function getLocationsXML($node)
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $db->fetchXML($node, "SELECT `id`, `name` FROM `anouncements_locations`");
     }
 
     /**
      * Добавляет или обновлят локацию
-     *
      * @param array $data
      * @param int $id
      */
     public function saveLocation($data, $id = null)
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $saveArray = serialize($data);
 
         if (!is_null($id)) {
@@ -560,25 +536,21 @@ class Announcements
 
     /**
      * Удаляет локацию
-     *
      * @param int $id
      */
     public function deleteLocation($id)
     {
-
-        \Difra\MySQL::getInstance()->query("DELETE FROM `anouncements_locations` WHERE `id`='" . intval($id) . "'");
+        MySQL::getInstance()->query("DELETE FROM `anouncements_locations` WHERE `id`='" . intval($id) . "'");
     }
 
     /**
      * Возвращает локацию по её id
-     *
-     * @param          $id
-     * @param \DOMNode $node
+     * @param int $id
+     * @param \DOMNode|\DOMElement $node
      */
     public function getLocationByIdXML($id, $node)
     {
-
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $res = $db->fetchRow("SELECT `locationData` FROM `anouncements_locations` WHERE `id`='" . intval($id) . "'");
         if (!empty($res)) {
             $data = unserialize($res['locationData']);
@@ -590,12 +562,12 @@ class Announcements
 
     /**
      * Возвращает владельца ивента из базы данных
-     *
-     * @param $eventId
+     * @param int $eventId
+     * @return int|false
      */
     public function getOwner($eventId)
     {
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $query = "SELECT `user` FROM `announcements` WHERE `id`='" . intval($eventId) . "'";
         $res = $db->fetchOne($query);
         return !empty($res) ? $res : false;
@@ -606,22 +578,19 @@ class Announcements
      */
     public function getForExport()
     {
-
         $returnArray = [];
         $eventsArray = Announcements\Announcement::getForExport();
         if (!is_null($eventsArray)) {
+            foreach ($eventsArray as $event) {
+                $title = $event->getTitle();
 
-            foreach ($eventsArray as $key => $Event) {
-
-                $title = $Event->getTitle();
-
-                $link = 'http://' . Envi::getHost() . '/events/' . $Event->getId();
+                $link = 'http://' . Envi::getHost() . '/events/' . $event->getId();
 
                 if (mb_strlen($title) >= 130) {
                     $title = mb_substr($title, 0, 130) . '...';
                 }
 
-                $returnArray[$Event->getId()] = $title . ' ' . $link;
+                $returnArray[$event->getId()] = $title . ' ' . $link;
             }
         }
 
@@ -630,15 +599,13 @@ class Announcements
 
     /**
      * Устанавливает флаг экспорта для массива id анонсов
-     *
      * @param array $exportIds
      */
     public function setExported(array $exportIds)
     {
-
         $exportIds = array_map('intval', $exportIds);
 
-        $db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
         $query = "UPDATE `announcements` SET `exported`=1 WHERE `id` IN (" . implode(', ', $exportIds) . ")";
         $db->query($query);
     }

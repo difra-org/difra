@@ -2,192 +2,204 @@
 
 namespace Difra\Plugins\Announcements;
 
-Class Category {
+use Difra\Cache;
+use Difra\MySQL;
 
-	private $id = null;
-	private $textName = null;
-	private $category = null;
+Class Category
+{
+    private $id = null;
+    private $textName = null;
+    private $category = null;
+    private $loaded = true;
+    private $modified = false;
 
-	private $loaded = true;
-	private $modified = false;
+    public static function create($id = null)
+    {
+        $Categoty = new self;
+        $Categoty->id = $id;
+        return $Categoty;
+    }
 
-	public static function create( $id = null ) {
+    /**
+     * Чистит кэш
+     * @static
+     */
+    private static function cleanCache()
+    {
+        Cache::getInstance()->remove('announcements_category');
+    }
 
-		$Categoty = new self;
-		$Categoty->id = $id;
-		return $Categoty;
-	}
+    /**
+     * Проверяет есть ли уже такая категория
+     * @param $category
+     * @return bool
+     */
+    public static function checkName($category)
+    {
+        $res = Cache::getInstance()->get('announcements_category');
+        if ($res) {
+            foreach ($res as $k => $data) {
+                if ($data['category'] == $category) {
+                    return true;
+                }
+            }
+            return false;
+        } else {
+            $db = MySQL::getInstance();
+            $res = $db->fetchOne(
+                "SELECT `id` FROM `announcements_category` WHERE `category`='" . $db->escape($category) . "'"
+            );
+            return !empty($res) ? true : false;
+        }
+    }
 
-	/**
-	 * Чистит кэш
-	 * @static
-	 */
-	private static function cleanCache() {
+    /**
+     * Возвращает категорию по её ссылке
+     * @param $categoryLink
+     * @return bool|Category
+     */
+    public static function getNameByLink($categoryLink)
+    {
 
-		\Difra\Cache::getInstance()->remove( 'announcements_category' );
-	}
+        $res = Cache::getInstance()->get('announcements_category');
+        if ($res) {
+            foreach ($res as $k => $data) {
+                if ($data['category'] == $categoryLink) {
+                    $Category = new self;
+                    $Category->id = $data['id'];
+                    $Category->textName = $data['categoryText'];
+                    $Category->category = $data['category'];
+                    $Category->modified = false;
+                    return $Category;
+                }
+            }
+        } else {
+            $db = MySQL::getInstance();
+            $res = $db->fetchRow(
+                "SELECT * FROM `announcements_category` WHERE `category`='" . $db->escape($categoryLink) . "'"
+            );
+            if (!empty($res)) {
+                $Category = new self;
+                $Category->id = $res['id'];
+                $Category->textName = $res['categoryText'];
+                $Category->category = $res['category'];
+                $Category->modified = false;
+                return $Category;
+            }
+        }
+        return false;
+    }
 
-	/**
-	 * Проверяет есть ли уже такая категория
-	 * @static
-	 *
-	 * @param $name
-	 */
-	public static function checkName( $category ) {
+    /**
+     * Возвращает название категории
+     */
+    public function getName()
+    {
+        return $this->textName;
+    }
 
-		$res = \Difra\Cache::getInstance()->get( 'announcements_category' );
-		if( $res ) {
-			foreach( $res as $k => $data ) {
-				if( $data['category'] == $category ) {
-					return true;
-				}
-			}
-			return false;
-		} else {
-			$db = \Difra\MySQL::getInstance();
-			$res = $db->fetchOne( "SELECT `id` FROM `announcements_category` WHERE `category`='" . $db->escape( $category ) . "'" );
-			return !empty( $res ) ? true : false;
-		}
-	}
+    /**
+     * Возвращает id категории
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 
-	/**
-	 * Возвращает категорию по её ссылке
-	 * @param $categoryLink
-	 */
-	public static function getNameByLink( $categoryLink ) {
+    /**
+     * Устанавливает текстовое название категории
+     * @param $name
+     */
+    public function setTextName($name)
+    {
 
-		$res = \Difra\Cache::getInstance()->get( 'announcements_category' );
-		if( $res ) {
-			foreach( $res as $k=>$data ) {
-				if( $data['category'] == $categoryLink ) {
-					$Category = new self;
-					$Category->id = $data['id'];
-					$Category->textName = $data['categoryText'];
-					$Category->category = $data['category'];
-					$Category->modified = false;
-					return $Category;
-				}
-			}
-		} else {
-			$db = \Difra\MySQL::getInstance();
-			$res = $db->fetchRow( "SELECT * FROM `announcements_category` WHERE `category`='" . $db->escape( $categoryLink ) . "'" );
-			if( !empty( $res ) ) {
-				$Category = new self;
-				$Category->id = $res['id'];
-				$Category->textName = $res['categoryText'];
-				$Category->category = $res['category'];
-				$Category->modified = false;
-				return $Category;
-			}
-		}
-		return false;
-	}
+        $this->textName = trim($name);
+        $this->modified = true;
+    }
 
-	/**
-	 * Возвращает название категории
-	 */
-	public function getName() {
-		return $this->textName;
-	}
+    /**
+     * Устанавливает категорию анонса
+     * @param $category
+     */
+    public function setCategory($category)
+    {
 
-	/**
-	 * Возвращает id категории
-	 */
-	public function getId() {
-		return $this->id;
-	}
+        $this->category = trim($category);
+        $this->modified = true;
+    }
 
-	/**
-	 * Устанавливает текстовое название категории
-	 * @param $name
-	 */
-	public function setTextName( $name ) {
+    /**
+     * Сохраняет или апдейтит категорию
+     */
+    private function save()
+    {
 
-		$this->textName = trim( $name );
-		$this->modified = true;
-	}
+        $db = MySQL::getInstance();
 
-	/**
-	 * Устанавливает категорию анонса
-	 * @param $category
-	 */
-	public function setCategory( $category ) {
+        if (!is_null($this->id)) {
+            // update
+            $query = "UPDATE `announcements_category` SET `category`='" . $db->escape($this->category) .
+                     "', `categoryText`='" . $db->escape($this->textName) . "' WHERE `id`='" . intval($this->id) . "'";
+        } else {
+            // insert
+            $query = "INSERT INTO `announcements_category` SET `category`='" . $db->escape($this->category) .
+                     "', `categoryText`='" . $db->escape($this->textName) . "'";
+        }
 
-		$this->category = trim( $category );
-		$this->modified = true;
-	}
+        $db->query($query);
+    }
 
-	/**
-	 * Сохраняет или апдейтит категорию
-	 */
-	private function save() {
+    /**
+     * Возвращает в xml список всех категорий
+     * @static
+     * @param \DOMNode|\DOMElement $node
+     */
+    public static function getList($node)
+    {
 
-		$db = \Difra\MySQL::getInstance();
+        $Cache = Cache::getInstance();
 
-		if( !is_null( $this->id ) ) {
-			// update
-			$query = "UPDATE `announcements_category` SET `category`='" . $db->escape( $this->category ) .
-				"', `categoryText`='" . $db->escape( $this->textName ) . "' WHERE `id`='" . intval( $this->id ) . "'";
+        $res = $Cache->get('announcements_category');
 
-		} else {
-			// insert
-			$query = "INSERT INTO `announcements_category` SET `category`='" . $db->escape( $this->category ) .
-				"', `categoryText`='" . $db->escape( $this->textName ) . "'";
-		}
+        if (!$res) {
+            $db = MySQL::getInstance();
+            $query = "SELECT * FROM `announcements_category`";
+            $res = $db->fetch($query);
+        } else {
+            $node->setAttribute('cached', true);
+        }
 
-		$db->query( $query );
-	}
+        if (!empty($res)) {
+            $saveToCache = null;
+            foreach ($res as $k => $data) {
+                $catNode = $node->appendChild($node->ownerDocument->createElement('category'));
+                $catNode->setAttribute('id', $data['id']);
+                $catNode->setAttribute('category', $data['category']);
+                $catNode->setAttribute('name', $data['categoryText']);
+                $saveToCache[$data['id']] = $data;
+            }
+            $Cache->put('announcements_category', $saveToCache, 10800);
+        }
+    }
 
-	/**
-	 * Возвращает в xml список всех категорий
-	 * @static
-	 *
-	 * @param \DOMNode $node
-	 */
-	public static function getList( $node ) {
+    /**
+     * Удаляет категорию
+     * @static
+     * @param $id
+     */
+    public static function delete($id)
+    {
 
-		$Cache = \Difra\Cache::getInstance();
+        MySQL::getInstance()->query("DELETE FROM `announcements_category` WHERE `id`='" . intval($id) . "'");
+        self::cleanCache();
+    }
 
-		$res = $Cache->get( 'announcements_category' );
+    public function __destruct()
+    {
 
-		if( !$res ) {
-			$db = \Difra\MySQL::getInstance();
-			$query = "SELECT * FROM `announcements_category`";
-			$res = $db->fetch( $query );
-		} else {
-			$node->setAttribute( 'cached', true );
-		}
-
-		if( !empty( $res ) ) {
-			$saveToCache = null;
-			foreach( $res as $k => $data ) {
-				$catNode = $node->appendChild( $node->ownerDocument->createElement( 'category' ) );
-				$catNode->setAttribute( 'id', $data['id'] );
-				$catNode->setAttribute( 'category', $data['category'] );
-				$catNode->setAttribute( 'name', $data['categoryText'] );
-				$saveToCache[$data['id']] = $data;
-			}
-			$Cache->put( 'announcements_category', $saveToCache, 10800 );
-		}
-	}
-
-	/**
-	 * Удаляет категорию
-	 * @static
-	 *
-	 * @param $id
-	 */
-	public static function delete( $id ) {
-
-		\Difra\MySQL::getInstance()->query( "DELETE FROM `announcements_category` WHERE `id`='" . intval( $id ) . "'" );
-		self::cleanCache();
-	}
-
-	public function __destruct() {
-
-		if( $this->modified && $this->loaded ) {
-			$this->save();
-			self::cleanCache();
-		}
-	}
+        if ($this->modified && $this->loaded) {
+            $this->save();
+            self::cleanCache();
+        }
+    }
 }
