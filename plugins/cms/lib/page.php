@@ -2,8 +2,11 @@
 
 namespace Difra\Plugins\CMS;
 
+use Difra\Cache;
 use Difra\Envi;
 use Difra\Exception;
+use Difra\MySQL;
+use Difra\Param;
 
 /**
  * Class Page
@@ -67,7 +70,7 @@ class Page
 			$where[] = '`hidden`=' . ($visible ? '0' : '1');
 		}
 		try {
-			$db = \Difra\MySQL::getInstance();
+            $db = MySQL::getInstance();
 			$data =
 				$db->fetch(
 					'SELECT * FROM `cms`' . (
@@ -78,7 +81,7 @@ class Page
 				return false;
 			}
 			$res = [];
-			$cache = \Difra\Cache::getInstance();
+            $cache = Cache::getInstance();
 			foreach ($data as $pageData) {
 				$cache->put('cms_page_' . $pageData['id'], $pageData);
 				$page = new self;
@@ -105,10 +108,10 @@ class Page
 	public static function find()
 	{
 		$uri = Envi::getUri();
-		$cache = \Difra\Cache::getInstance();
+        $cache = Cache::getInstance();
 		if (!$data = $cache->get('cms_tags')) {
 			try {
-				$db = \Difra\MySQL::getInstance();
+                $db = MySQL::getInstance();
 				$data1 = $db->fetch('SELECT `id`,`tag` FROM `cms` WHERE `hidden`=0');
 			} catch (Exception $ex) {
 				return false;
@@ -139,7 +142,7 @@ class Page
 	 */
 	private function save()
 	{
-		$db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
 		if (!$this->id) {
 			$db->query(
 				'INSERT INTO `cms` SET '
@@ -158,7 +161,7 @@ class Page
 				. "`hidden`='" . ($this->hidden ? '1' : '0') . "'"
 				. " WHERE `id`='" . $db->escape($this->id) . "'"
 			);
-			\Difra\Cache::getInstance()->remove('cms_page_' . $this->id);
+            Cache::getInstance()->remove('cms_page_' . $this->id);
 		}
 		$this->modified = false;
 		self::cleanCache();
@@ -169,7 +172,7 @@ class Page
 	 */
 	public static function cleanCache()
 	{
-		\Difra\Cache::getInstance()->remove('cms_tags');
+        Cache::getInstance()->remove('cms_tags');
 	}
 
 	/**
@@ -224,9 +227,9 @@ class Page
 		if (!$this->id) {
 			return false;
 		}
-		$cache = \Difra\Cache::getInstance();
+        $cache = Cache::getInstance();
 		if (!$data = $cache->get('cms_page_' . $this->id)) {
-			$db = \Difra\MySQL::getInstance();
+            $db = MySQL::getInstance();
 			$data = $db->fetchRow("SELECT * FROM `cms` WHERE `id`='" . $db->escape($this->id) . "'");
 			$cache->put('cms_page_' . $this->id, $data);
 		}
@@ -261,7 +264,7 @@ class Page
 	public function setBody($body)
 	{
 		$this->load();
-		if ($body instanceof \Difra\Param\AjaxHTML or $body instanceof \Difra\Param\AjaxSafeHTML) {
+        if ($body instanceof Param\AjaxHTML or $body instanceof Param\AjaxSafeHTML) {
 			if (!$this->id) {
 				$this->save();
 			}
@@ -375,7 +378,7 @@ class Page
 				rmdir($path);
 			}
 		}
-		$db = \Difra\MySQL::getInstance();
+        $db = MySQL::getInstance();
 		$db->query("DELETE FROM `cms` WHERE `id`='" . $db->escape($this->id) . "'");
 		self::cleanCache();
 	}

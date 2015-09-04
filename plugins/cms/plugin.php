@@ -2,9 +2,11 @@
 
 namespace Difra\Plugins\CMS;
 
+use Difra\Events;
+use Difra\Plugins\CMS;
+
 /**
  * Class Plugin
- *
  * @package Difra\Plugins\CMS
  */
 class Plugin extends \Difra\Plugin
@@ -18,9 +20,9 @@ class Plugin extends \Difra\Plugin
 
     public function init()
     {
-        \Difra\Events::register('pre-action', '\Difra\Plugins\CMS', 'run');
-        \Difra\Events::register('dispatch', '\Difra\Plugins\CMS', 'addMenuXML');
-        \Difra\Events::register('dispatch', '\Difra\Plugins\CMS', 'addSnippetsXML');
+        Events::register('pre-action', '\Difra\Plugins\CMS', 'run');
+        Events::register('dispatch', '\Difra\Plugins\CMS', 'addMenuXML');
+        Events::register('dispatch', '\Difra\Plugins\CMS', 'addSnippetsXML');
     }
 
     /**
@@ -28,6 +30,6 @@ class Plugin extends \Difra\Plugin
      */
     public function getSitemap()
     {
-        return \Difra\Plugins\CMS::getSitemap();
+        return CMS::getSitemap();
     }
 }

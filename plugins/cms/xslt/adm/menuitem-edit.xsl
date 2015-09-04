@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
-
 	<xsl:template match="CMSMenuItemAdd">
 		<h2>
 			<a href="/adm/content/menu">
@@ -127,7 +126,8 @@
 						<input type="hidden" name="menu" value="{@menu}"/>
 						<input type="hidden" name="id" value="{@id}"/>
 						<xsl:if test="not(@page)">
-							<script type="text/javascript">cms.switchItemForm('link');</script>
+							<script type="text/javascript">cms.switchItemForm('link');
+							</script>
 						</xsl:if>
 					</xsl:when>
 				</xsl:choose>

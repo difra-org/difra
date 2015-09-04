@@ -6,6 +6,10 @@
 
 namespace Difra\Plugins\CMS;
 
+use Difra\Cache;
+use Difra\Exception;
+use Difra\MySQL;
+
 /**
  * Class Snippet
  *
@@ -34,7 +38,7 @@ class Snippet
 	 */
 	static public function getById($id)
 	{
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		$data = $db->fetchRow('SELECT * FROM `cms_snippets` WHERE `id`=\'' . $db->escape($id) . "'");
 		return self::data2obj($data);
 	}
@@ -68,7 +72,7 @@ class Snippet
 	 */
 	static public function getByName($name)
 	{
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		$data = $db->fetchRow('SELECT * FROM `cms_snippets` WHERE `name`=\'' . $db->escape($name) . "'");
 		return self::data2obj($data);
 	}
@@ -81,14 +85,14 @@ class Snippet
 	 */
 	static public function getAllXML($node)
 	{
-		$cache = \Difra\Cache::getInstance();
+		$cache = Cache::getInstance();
 		$res = $cache->get(self::CACHE_KEY);
 		if (!is_array($res)) {
 			try {
-				$db = \Difra\MySQL::getInstance();
+				$db = MySQL::getInstance();
 				$res = $db->fetch("SELECT `id`, `name`, `text` FROM `cms_snippets`");
 				$cache->put(self::CACHE_KEY, $res ? $res : []);
-			} catch (\Difra\Exception $ex) {
+			} catch (Exception $ex) {
 			}
 		}
 		if (!empty($res)) {
@@ -108,7 +112,7 @@ class Snippet
 	 */
 	static public function getList()
 	{
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		$data = $db->fetch('SELECT * FROM `cms_snippets`');
 		$res = [];
 		if (!empty($data)) {
@@ -132,15 +136,14 @@ class Snippet
 
 	/**
 	 * Destructor
-	 *
-	 * @throws \Difra\Exception
+	 * @throws Exception
 	 */
 	public function __destruct()
 	{
 		if (!$this->isModified) {
 			return;
 		}
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		if ($this->id) {
 			$db->query(
 				'UPDATE `cms_snippets` SET `name`=\'' . $db->escape($this->name) . "',`text`='"
@@ -162,7 +165,7 @@ class Snippet
 	 */
 	static public function cleanCache()
 	{
-		\Difra\Cache::getInstance()->remove(self::CACHE_KEY);
+		Cache::getInstance()->remove(self::CACHE_KEY);
 	}
 
 	/**
@@ -260,13 +263,12 @@ class Snippet
 
 	/**
 	 * Delete snippet
-	 *
-	 * @throws \Difra\Exception
+	 * @throws Exception
 	 */
 	public function del()
 	{
 		$this->isModified = false;
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		$db->query('DELETE FROM `cms_snippets` WHERE `id`=\'' . $db->escape($this->id) . "'");
 	}
 }

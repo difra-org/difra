@@ -2,6 +2,11 @@
 
 namespace Difra\Plugins;
 
+use Difra\Controller;
+use Difra\Envi;
+use Difra\MySQL;
+use Difra\View;
+
 /**
  * Class CMS
  *
@@ -24,8 +29,8 @@ class CMS
 	 */
 	public static function run()
 	{
-		if ($page = \Difra\Plugins\CMS\Page::find()) {
-			\Difra\Envi\Action::setCustomAction('\Difra\Plugins\CMS\Controller', 'pageAction', [$page]);
+		if ($page = CMS\Page::find()) {
+			Envi\Action::setCustomAction('\Difra\Plugins\CMS\Controller', 'pageAction', [$page]);
 		}
 	}
 
@@ -34,11 +39,11 @@ class CMS
 	 */
 	public static function addMenuXML()
 	{
-		if (\Difra\View::$instance == 'adm') {
+		if (View::$instance == 'adm') {
 			return;
 		}
-		$controller = \Difra\Controller::getInstance();
-		self::getMenuXML($controller->realRoot, true);
+		$controller = Controller::getInstance();
+		self::getMenuXML($controller->realRoot);
 	}
 
 	/**
@@ -49,7 +54,7 @@ class CMS
 	 */
 	public static function getMenuXML($node)
 	{
-		$data = \Difra\Plugins\CMS\Menu::getList();
+		$data = CMS\Menu::getList();
 		if (empty($data)) {
 			return false;
 		}
@@ -71,7 +76,7 @@ class CMS
 	 */
 	public static function getMenuItemsXML($node, $menuId)
 	{
-		$data = \Difra\Plugins\CMS\Menuitem::getList($menuId);
+		$data = CMS\Menuitem::getList($menuId);
 		if (empty($data)) {
 			return false;
 		}
@@ -88,13 +93,13 @@ class CMS
 	 */
 	public static function addSnippetsXML()
 	{
-		if (\Difra\View::$instance != 'main') {
+		if (View::$instance != 'main') {
 			return;
 		}
 
-		$controller = \Difra\Controller::getInstance();
+		$controller = Controller::getInstance();
 		$snippetNode = $controller->realRoot->appendChild($controller->xml->createElement('snippets'));
-		\Difra\Plugins\CMS\Snippet::getAllXML($snippetNode);
+		CMS\Snippet::getAllXML($snippetNode);
 	}
 
 	/**
@@ -104,13 +109,13 @@ class CMS
 	 */
 	public static function getSitemap()
 	{
-		$db = \Difra\MySQL::getInstance();
+		$db = MySQL::getInstance();
 		$data = $db->fetch('SELECT `tag` FROM `cms`');
 		$res = [];
 		if (empty($data)) {
 			return false;
 		}
-		$host = 'http://' . \Difra\Envi::getHost();
+		$host = 'http://' . Envi::getHost();
 		foreach ($data as $t) {
 			$res[] = ['loc' => $host . $t['tag']];
 		}
@@ -126,7 +131,7 @@ class CMS
 	 */
 	public function getListXML($node, $visible = null)
 	{
-		$data = \Difra\Plugins\CMS\Page::getList($visible);
+		$data = CMS\Page::getList($visible);
 		if (empty($data)) {
 			return false;
 		}
@@ -145,7 +150,7 @@ class CMS
 	 */
 	public function getMenuListXML($node)
 	{
-		$data = \Difra\Plugins\CMS\Menu::getList();
+		$data = CMS\Menu::getList();
 		if (empty($data)) {
 			return false;
 		}
@@ -165,7 +170,7 @@ class CMS
 	 */
 	public function getMenuItemXML($node, $id)
 	{
-		\Difra\Plugins\CMS\Menuitem::get($id)->getXML($node);
+		CMS\Menuitem::get($id)->getXML($node);
 	}
 
 	/**
@@ -176,7 +181,7 @@ class CMS
 	 */
 	public function getAvailablePagesForItemXML($node, $id)
 	{
-		$item = \Difra\Plugins\CMS\Menuitem::get($id);
+		$item = CMS\Menuitem::get($id);
 		$this->getAvailablePagesXML($node, $item->getMenuId());
 	}
 
@@ -188,14 +193,14 @@ class CMS
 	 */
 	public function getAvailablePagesXML($node, $menuId)
 	{
-		$current = \Difra\Plugins\CMS\Menuitem::getList($menuId);
+		$current = CMS\Menuitem::getList($menuId);
 		$currentIds = [];
 		if (!empty($current)) {
 			foreach ($current as $item) {
 				$currentIds[] = $item->getPage();
 			}
 		}
-		$all = \Difra\Plugins\CMS\Page::getList(true);
+		$all = CMS\Page::getList(true);
 		if (!empty($all)) {
 			foreach ($all as $item) {
 				if (in_array($item->getId(), $currentIds)) {

@@ -1,5 +1,6 @@
 <?php
 
+use Difra\Ajaxer;
 use Difra\Plugins\CMS;
 
 /**
@@ -63,7 +64,7 @@ class AdmContentPagesController extends \Difra\Controller
         $page->setTitle($title->val());
         $page->setUri($tag->val());
         $page->setBody($body);
-        \Difra\Ajaxer::getInstance()->redirect('/adm/content/pages');
+        Ajaxer::redirect('/adm/content/pages');
     }
 
     /**
@@ -76,12 +77,12 @@ class AdmContentPagesController extends \Difra\Controller
     {
         if ($confirm and $confirm->val()) {
             \Difra\Plugins\CMS\Page::get($id->val())->delete();
-            \Difra\Ajaxer::getInstance()->close();
-            \Difra\Ajaxer::getInstance()->redirect('/adm/content/pages');
+            Ajaxer::close();
+            Ajaxer::redirect('/adm/content/pages');
             return;
         }
         $page = \Difra\Plugins\CMS\Page::get($id->val());
-        \Difra\Ajaxer::getInstance()->display(
+        Ajaxer::display(
             '<span>'
             . \Difra\Locales::get('cms/adm/delete-page-confirm-1')
             . $page->getTitle()
