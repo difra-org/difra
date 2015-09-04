@@ -28,7 +28,8 @@
 					<div class="required" style="display:none">
 						<div class="arrow"/>
 						<div class="field-description errorIcon-back">
-							<xsl:value-of select="$locale/auth/forms/errors/passwordRequired"/>
+							<xsl:value-of
+								select="$locale/auth/forms/errors/passwordRequired"/>
 						</div>
 					</div>
 					<div class="invalid" style="display:none">

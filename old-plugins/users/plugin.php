@@ -2,15 +2,18 @@
 
 namespace Difra\Plugins\Users;
 
-class Plugin extends \Difra\Plugin {
+use Difra\Events;
 
-	protected $provides = 'auth';
-	protected $require = 'mysql';
-	protected $version = '4';
-	protected $description = 'User accounts';
+class Plugin extends \Difra\Plugin
+{
+    protected $provides = 'auth';
+    protected $require = 'mysql';
+    protected $version = '4';
+    protected $description = 'User accounts';
 
-	public function init() {
+    public function init()
+    {
 
-		\Difra\Events::register( 'config', '\Difra\Plugins\Users', 'checkLongSession' );
-	}
+        Events::register('config', '\Difra\Plugins\Users', 'checkLongSession');
+    }
 }

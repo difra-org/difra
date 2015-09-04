@@ -23,7 +23,7 @@
 							<col style="width: 250px"/>
 							<col/>
 						</colgroup>
-					<tbody>
+						<tbody>
 							<tr>
 								<th>
 									<xsl:value-of select="$locale/auth/adm/email"/>
@@ -42,7 +42,8 @@
 									</label>
 								</th>
 								<td>
-									<input type="checkbox" name="change_pw" id="changePw"
+									<input type="checkbox" name="change_pw"
+									       id="changePw"
 									       onchange="changePassEnabler()"/>
 								</td>
 							</tr>
@@ -72,17 +73,27 @@
 								<col/>
 							</colgroup>
 							<tr>
-								<th><xsl:value-of select="$locale/auth/adm/fieldName"/></th>
-								<th><xsl:value-of select="$locale/auth/adm/fieldValue"/></th>
+								<th>
+									<xsl:value-of
+										select="$locale/auth/adm/fieldName"/>
+								</th>
+								<th>
+									<xsl:value-of
+										select="$locale/auth/adm/fieldValue"/>
+								</th>
 							</tr>
 
 							<xsl:for-each select="addon_fields/field">
 								<tr>
 									<td>
-										<input type="text" name="fieldName[]" value="{@name}" class="full-width"/>
+										<input type="text" name="fieldName[]"
+										       value="{@name}"
+										       class="full-width"/>
 									</td>
 									<td>
-										<input type="text" name="fieldValue[]" value="{@value}" class="full-width"/>
+										<input type="text" name="fieldValue[]"
+										       value="{@value}"
+										       class="full-width"/>
 									</td>
 								</tr>
 							</xsl:for-each>

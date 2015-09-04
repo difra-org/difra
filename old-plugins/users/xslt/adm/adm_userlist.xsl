@@ -93,8 +93,10 @@
 								</td>
 								<td class="actions">
 									<xsl:if test="@active=0">
-										<a href="/adm/users/list/activate/{@id}" class="button ajaxer">
-											<xsl:value-of select="$locale/auth/adm/activate"/>
+										<a href="/adm/users/list/activate/{@id}"
+										   class="button ajaxer">
+											<xsl:value-of
+												select="$locale/auth/adm/activate"/>
 										</a>
 									</xsl:if>
 
@@ -130,7 +132,8 @@
 											</a>
 										</xsl:otherwise>
 									</xsl:choose>
-									<a href="/adm/users/list/edit/{@id}" class="action edit"/>
+									<a href="/adm/users/list/edit/{@id}"
+									   class="action edit"/>
 								</td>
 							</tr>
 						</xsl:for-each>
