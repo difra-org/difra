@@ -75,7 +75,8 @@
 				<include name="**/*.php"/>
 				<exclude name="**/fw/lib/libs/esapi/**"/>
 				<exclude name="**/fw/lib/libs/less/**"/>
-				<exclude name="**/tests/***"/>
+				<exclude name="**/old-plugins/**"/>
+				<exclude name="**/tests/**"/>
 				<modified/>
 			</fileset>
 		</apply>
@@ -93,6 +94,8 @@
 			<arg value="${basedir}/../fw/lib/libs/less/"/>
 			<arg value="--exclude"/>
 			<arg value="${basedir}/../tests/"/>
+			<arg value="--exclude"/>
+			<arg value="${basedir}/../old-plugins/"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 		<property name="phploc.done" value="true"/>
@@ -112,6 +115,8 @@
 			<arg value="${basedir}/../fw/lib/libs/less/"/>
 			<arg value="--exclude"/>
 			<arg value="${basedir}/../tests/"/>
+			<arg value="--exclude"/>
+			<arg value="${basedir}/../old-plugins/"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 		<property name="phploc.done" value="true"/>
@@ -125,7 +130,7 @@
 			<arg value="--jdepend-xml=${basedir}/logs/jdepend.xml"/>
 			<arg value="--jdepend-chart=${basedir}/pdepend/dependencies.svg"/>
 			<arg value="--overview-pyramid=${basedir}/pdepend/overview-pyramid.svg"/>
-			<arg value="--ignore=fw/lib/libs/esapi,fw/lib/libs/less,tests"/>
+			<arg value="--ignore=fw/lib/libs/esapi,fw/lib/libs/less,tests,old-plugins"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 		<property name="pdepend.done" value="true"/>
@@ -139,7 +144,7 @@
 			<arg value="text"/>
 			<arg value="${basedir}/phpmd.xml"/>
 			<arg value="--exclude"/>
-			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less,{$basedir}/tests"/>
+			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less,${basedir}/../tests,${basedir}/../old-plugins/"/>
 		</exec>
 		<property name="phpmd.done" value="true"/>
 	</target>
@@ -155,7 +160,7 @@
 			<arg value="--reportfile"/>
 			<arg value="${basedir}/logs/pmd.xml"/>
 			<arg value="--exclude"/>
-			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less,${basedir}/../tests"/>
+			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less,${basedir}/../tests,${basedir}/../old-plugins"/>
 		</exec>
 		<property name="phpmd.done" value="true"/>
 	</target>
@@ -195,6 +200,8 @@
 			<arg value="fw/lib/libs/less"/>
 			<arg value="--exclude"/>
 			<arg value="tests"/>
+			<arg value="--exclude"/>
+			<arg value="old-plugins"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 		<property name="phpcpd.done" value="true"/>
@@ -213,6 +220,8 @@
 			<arg value="fw/lib/libs/less"/>
 			<arg value="--exclude"/>
 			<arg value="tests"/>
+			<arg value="--exclude"/>
+			<arg value="old-plugins"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 		<property name="phpcpd.done" value="true"/>
