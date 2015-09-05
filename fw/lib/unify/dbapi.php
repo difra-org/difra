@@ -7,14 +7,12 @@ use Difra\MySQL;
 
 /**
  * Class DBAPI
- *
  * @package Difra\Unify
  */
 class DBAPI extends Table
 {
     /**
      * Get status of database table for Unify Object
-     *
      * @return array
      */
     public static function getObjDbStatus()
@@ -57,7 +55,7 @@ class DBAPI extends Table
                 return [
                     'status' => 'alter',
                     'action' => 'drop column',
-                    'sql'    =>
+                    'sql' =>
                         'ALTER TABLE `' .
                         $db->escape($table) .
                         '` DROP COLUMN `' .
@@ -70,7 +68,7 @@ class DBAPI extends Table
                 return [
                     'status' => 'alter',
                     'action' => 'add column',
-                    'sql'    => 'ALTER TABLE `' . $db->escape($table) . '` ADD COLUMN ' . self::getColumnDefinition(
+                    'sql' => 'ALTER TABLE `' . $db->escape($table) . '` ADD COLUMN ' . self::getColumnDefinition(
                             $goalName,
                             $goalColumn
                         ) . ($previousColumn ? ' AFTER `' . $db->escape($previousColumn) . '`' : ' FIRST')
@@ -81,7 +79,7 @@ class DBAPI extends Table
                 return [
                     'status' => 'alter',
                     'action' => 'move column',
-                    'sql'    => 'ALTER TABLE `' . $db->escape($table) . '` MODIFY COLUMN ' . self::getColumnDefinition(
+                    'sql' => 'ALTER TABLE `' . $db->escape($table) . '` MODIFY COLUMN ' . self::getColumnDefinition(
                             $goalName,
                             $goalColumn
                         ) . ($previousColumn ? ' AFTER `' . $db->escape($previousColumn) . '`' : ' FIRST')
@@ -94,7 +92,7 @@ class DBAPI extends Table
                 return [
                     'status' => 'alter',
                     'action' => 'modify column',
-                    'sql'    => 'ALTER TABLE `' . $db->escape($table) . '` MODIFY COLUMN ' . self::getColumnDefinition(
+                    'sql' => 'ALTER TABLE `' . $db->escape($table) . '` MODIFY COLUMN ' . self::getColumnDefinition(
                             $goalName,
                             $goalColumn
                         ) . ($previousColumn ? ' AFTER `' . $db->escape($previousColumn) . '`' : ' FIRST')
@@ -115,7 +113,7 @@ class DBAPI extends Table
                     return [
                         'status' => 'alter',
                         'action' => 'drop key',
-                        'sql'    =>
+                        'sql' =>
                             'ALTER TABLE `' .
                             $db->escape($table) .
                             '` DROP KEY `' .
@@ -133,7 +131,7 @@ class DBAPI extends Table
                     return [
                         'status' => 'alter',
                         'action' => 'add key',
-                        'sql'    => 'ALTER TABLE `' . $db->escape($table) . '` ADD ' . self::getIndexDefinition(
+                        'sql' => 'ALTER TABLE `' . $db->escape($table) . '` ADD ' . self::getIndexDefinition(
                                 $goalName,
                                 $goalIndex
                             )
@@ -148,7 +146,7 @@ class DBAPI extends Table
                     return [
                         'status' => 'alter',
                         'action' => 'drop key',
-                        'sql'    =>
+                        'sql' =>
                             'ALTER TABLE `' .
                             $db->escape($table) .
                             '` DROP KEY `' .
@@ -164,7 +162,6 @@ class DBAPI extends Table
 
     /**
      * Get status of database table in XML
-     *
      * @param \DOMElement|\DOMNode $node
      */
     public static function getObjDbStatusXML($node)
@@ -177,7 +174,6 @@ class DBAPI extends Table
 
     /**
      * Get string for Primary Key create/alter
-     *
      * @return bool|string
      */
     private static function getCreatePrimary()
@@ -199,23 +195,21 @@ class DBAPI extends Table
 
     /**
      * Alias types
-     *
      * @var array[]
      */
     private static $typeAliases = [
-        'bool'    => [
-            'type'   => 'tinyint',
+        'bool' => [
+            'type' => 'tinyint',
             'length' => 1
         ],
         'boolean' => [
-            'type'   => 'tinyint',
+            'type' => 'tinyint',
             'length' => 1
         ]
     ];
 
     /**
      * Preprocess $propertiesList definitions
-     *
      * @param mixed $prop
      * @return array
      */
@@ -236,8 +230,7 @@ class DBAPI extends Table
 
     /**
      * Generates SQL string for column create/alter
-     *
-     * @param string       $name Column name
+     * @param string $name Column name
      * @param string|array $prop Type or properties array
      * @return string
      */
@@ -273,7 +266,6 @@ class DBAPI extends Table
 
     /**
      * Generates SQL string for column create/alter
-     *
      * @param array $desc Row from DESC `table` answer
      * @return string
      */
@@ -304,7 +296,6 @@ class DBAPI extends Table
 
     /**
      * Generates SQL string for key create/alter
-     *
      * @param $name
      * @param $prop
      * @return string
@@ -352,7 +343,6 @@ class DBAPI extends Table
 
     /**
      * Get keys from current database table
-     *
      * @return array
      */
     private static function getCurrentIndexes()
@@ -387,7 +377,7 @@ class DBAPI extends Table
                         $type = 'index';
                     }
                     $result[$row['Key_name']] = [
-                        'type'    => $type,
+                        'type' => $type,
                         'columns' => [
                             $row['Seq_in_index'] => $row['Column_name']
                         ]
@@ -403,10 +393,10 @@ class DBAPI extends Table
             foreach ($foreignKeys as $foreign) {
                 if (!isset($result[$foreign['constraint_name']])) {
                     $result[$foreign['constraint_name']] = [
-                        'type'   => 'foreign',
+                        'type' => 'foreign',
                         'source' => (array)$foreign['column_name'],
                         'target' => $foreign['referenced_table_name'],
-                        'keys'   => (array)$foreign['referenced_column_name']
+                        'keys' => (array)$foreign['referenced_column_name']
                     ];
                 } else {
                     $result[$foreign['constraint_name']]['column_name'][] = $foreign['column_name'];
@@ -420,7 +410,6 @@ class DBAPI extends Table
 
     /**
      * Returns default size for SQL type, e.g. f('int') == (11)
-     *
      * @param string $type
      * @return string
      */
@@ -436,7 +425,6 @@ class DBAPI extends Table
 
     /**
      * Get string for CREATE TABLE SQL command
-     *
      * @throws Exception
      * @return string
      */
@@ -468,7 +456,6 @@ class DBAPI extends Table
 
     /**
      * Get tables state as XML
-     *
      * @param \DOMElement|\DOMNode $node
      */
     final public static function getDbStatusXML($node)

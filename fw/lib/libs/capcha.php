@@ -98,21 +98,21 @@ class Capcha
                         $i = $order[$n];
                         $draw->setFont(DIR_FW . 'lib/libs/capcha/DejaVuSans.ttf');
                         $draw->setFontSize(
-                                $j
-                                        ? rand($sizeY * 3 / 5, $sizeY * 5 / 6)
-                                        : rand(
-                                        $sizeY * 4 / 6,
-                                        $sizeY * 5 / 6
-                                )
+                            $j
+                                ? rand($sizeY * 3 / 5, $sizeY * 5 / 6)
+                                : rand(
+                                $sizeY * 4 / 6,
+                                $sizeY * 5 / 6
+                            )
                         );
                         $draw->setFontWeight(rand(100, 900));
                         $draw->setGravity(\imagick::GRAVITY_CENTER);
                         $image->annotateImage(
-                                $draw,
-                                ($i - strlen($text) / 2) * $sizeX / (strlen($text) + 2.3),
-                                0,
-                                rand(-25, 25),
-                                $text{$i}
+                            $draw,
+                            ($i - strlen($text) / 2) * $sizeX / (strlen($text) + 2.3),
+                            0,
+                            rand(-25, 25),
+                            $text{$i}
                         );
                         $image->gaussianBlurImage(1, 1);
                     }
@@ -136,27 +136,27 @@ class Capcha
         }
         // exclude some character sequences from result
         $bad = [
-                'mm',
-                'ww',
-                'mw',
-                'wm',
-                'huy',
-                'fuck',
-                'suka',
-                'huj',
-                'hui',
-                'blya',
-                'blia',
-                'blja',
-                'pidor',
-                'sex',
-                'suck',
-                'cyka',
-                'pee',
-                'pizd',
-                'pi3d',
-                'nu3g',
-                'fukk'
+            'mm',
+            'ww',
+            'mw',
+            'wm',
+            'huy',
+            'fuck',
+            'suka',
+            'huj',
+            'hui',
+            'blya',
+            'blia',
+            'blja',
+            'pidor',
+            'sex',
+            'suck',
+            'cyka',
+            'pee',
+            'pizd',
+            'pi3d',
+            'nu3g',
+            'fukk'
         ];
         $upA = strtolower($a);
         foreach ($bad as $b) {

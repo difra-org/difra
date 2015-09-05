@@ -4,7 +4,6 @@ namespace Difra\Param;
 
 /**
  * Class AjaxEmail
- *
  * @package Difra\Param
  */
 class AjaxEmail extends Common

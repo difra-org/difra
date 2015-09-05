@@ -11,30 +11,30 @@ use Difra\Libs\XML\DOM;
 class UserAgent
 {
     private static $agents = [
-            'OPR' => 'Opera',
-            'Chrome' => 'Chrome',
-            'CriOS' => 'Chrome',
-            'Firefox' => 'Firefox',
-            'Opera' => 'Opera',
-            'Safari' => 'Safari',
-            'Trident' => 'IE'
+        'OPR' => 'Opera',
+        'Chrome' => 'Chrome',
+        'CriOS' => 'Chrome',
+        'Firefox' => 'Firefox',
+        'Opera' => 'Opera',
+        'Safari' => 'Safari',
+        'Trident' => 'IE'
     ];
     private static $engines = [
-            'AppleWebKit' => 'WebKit',
-            'Gecko' => 'Gecko',
-            'Presto' => 'Presto',
-            'Trident' => 'Trident'
+        'AppleWebKit' => 'WebKit',
+        'Gecko' => 'Gecko',
+        'Presto' => 'Presto',
+        'Trident' => 'Trident'
     ];
     private static $oses = [
-            'Windows' => 'Windows',
-            'Macintosh' => 'Macintosh',
-            'iPad' => 'iOS',
-            'iPod' => 'iOS',
-            'iPhone' => 'iOS',
-            'Android' => 'Android',
-            'BlackBerry' => 'BlackBerry',
-            'MeeGo' => 'MeeGo',
-            'Linux' => 'Linux'
+        'Windows' => 'Windows',
+        'Macintosh' => 'Macintosh',
+        'iPad' => 'iOS',
+        'iPod' => 'iOS',
+        'iPhone' => 'iOS',
+        'Android' => 'Android',
+        'BlackBerry' => 'BlackBerry',
+        'MeeGo' => 'MeeGo',
+        'Linux' => 'Linux'
     ];
 
     /**
@@ -63,11 +63,11 @@ class UserAgent
             return self::$userAgent;
         }
         return self::$userAgent = [
-                'agent' => self::getAgent(),
-                'version' => self::getVersion(),
-                'os' => self::getOS(),
-                'engine' => self::getEngine(),
-                'device' => self::getDevice()
+            'agent' => self::getAgent(),
+            'version' => self::getVersion(),
+            'os' => self::getOS(),
+            'engine' => self::getEngine(),
+            'device' => self::getDevice()
         ];
     }
 

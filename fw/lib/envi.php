@@ -90,10 +90,10 @@ class Envi
     public static function getState()
     {
         return [
-                'locale' => Envi\Setup::getLocale(),
-                'host' => self::getSubsite(),
-                'hostname' => self::getHost(),
-                'mainhost' => self::getHost(true)
+            'locale' => Envi\Setup::getLocale(),
+            'host' => self::getSubsite(),
+            'hostname' => self::getHost(),
+            'mainhost' => self::getHost(true)
         ];
     }
 

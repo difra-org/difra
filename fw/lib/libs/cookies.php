@@ -86,14 +86,14 @@ class Cookies
     public function notify($message, $error = false)
     {
         $this->set(
-                'notify',
-                [
-                        'type' => $error ? 'error' : 'ok',
-                        'message' => (string)$message,
-                        'lang' => [
-                                'close' => Locales::get('notifications/close')
-                        ]
+            'notify',
+            [
+                'type' => $error ? 'error' : 'ok',
+                'message' => (string)$message,
+                'lang' => [
+                    'close' => Locales::get('notifications/close')
                 ]
+            ]
         );
     }
 

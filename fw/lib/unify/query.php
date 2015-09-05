@@ -8,7 +8,6 @@ use Difra\Unify;
 
 /**
  * Class Query
- *
  * @package Difra\Unify
  */
 class Query extends Paginator
@@ -31,7 +30,6 @@ class Query extends Paginator
 
     /**
      * Constructor
-     *
      * @param string $objKey Unify object name
      * @throws Exception
      */
@@ -48,7 +46,6 @@ class Query extends Paginator
 
     /**
      * Do query
-     *
      * @return Unify[]|null
      */
     public function doQuery()
@@ -78,7 +75,6 @@ class Query extends Paginator
 
     /**
      * Get SQL query string
-     *
      * @return string
      */
     public function getQuery()
@@ -103,7 +99,6 @@ class Query extends Paginator
 
     /**
      * Get select fields list for SQL
-     *
      * @throws Exception
      * @return string
      */
@@ -127,7 +122,6 @@ class Query extends Paginator
 
     /**
      * Get WHERE for SQL
-     *
      * @return string
      */
     public function getWhere()
@@ -152,7 +146,6 @@ class Query extends Paginator
 
     /**
      * Get ORDER for SQL
-     *
      * @return string
      */
     public function getOrder()
@@ -178,9 +171,8 @@ class Query extends Paginator
      * Set sort order
      * Example: $columns = ['price','date','views'], $desc = ['date'] will produce:
      *        'ORDER BY `price`,`date` DESC,`views`
-     *
      * @param string|string[] $columns List of columns for sort
-     * @param string|string[] $desc    Which columns should sort descending
+     * @param string|string[] $desc Which columns should sort descending
      */
     public function setOrder($columns = [], $desc = [])
     {
@@ -194,7 +186,6 @@ class Query extends Paginator
 
     /**
      * Get LIMIT string for request
-     *
      * @return string
      */
     public function getLimit()
@@ -220,7 +211,6 @@ class Query extends Paginator
 
     /**
      * Add search condition as key->value array
-     *
      * @param array $conditions
      * @throws Exception
      */
@@ -239,7 +229,6 @@ class Query extends Paginator
 
     /**
      * Add search condition as key->value
-     *
      * @param string $column
      * @param string $value
      * @throws Exception
@@ -252,7 +241,6 @@ class Query extends Paginator
     /**
      * Add search condition as string
      * String can contain complex conditions, but you should escape() all data yourself.
-     *
      * @param string|string[] $condition
      */
     public function addCustomConditions($condition)
@@ -268,7 +256,6 @@ class Query extends Paginator
 
     /**
      * Add Unify Object or Unify Query to JOIN
-     *
      * @param string|self $query
      * @throws Exception
      */

@@ -10,7 +10,6 @@ use Difra\Exception;
 /**
  * Abstract MySQL adapter
  * Class Common
- *
  * @package Difra\MySQL
  */
 abstract class Common
@@ -46,7 +45,6 @@ abstract class Common
 
     /**
      * Detect if this MySQL adapter is useable
-     *
      * @return bool
      */
     public static function isAvailable()
@@ -58,7 +56,6 @@ abstract class Common
      * Query database
      * If array is passed as a parameter, queries from array will be commited in single transaction. If any query
      * fail during transaction, all transaction will be cancelled.
-     *
      * @throws Exception
      * @param string|array $query
      * @return void
@@ -86,7 +83,6 @@ abstract class Common
 
     /**
      * Connect to database
-     *
      * @throws Exception
      * @return void
      */
@@ -114,7 +110,6 @@ abstract class Common
 
     /**
      * Do query
-     *
      * @param string $query
      */
     abstract protected function realQuery($query);
@@ -142,7 +137,6 @@ abstract class Common
 
     /**
      * Escape string(s) for SQL safety
-     *
      * @param string|array $data
      * @return string|array
      */
@@ -161,7 +155,6 @@ abstract class Common
 
     /**
      * Escapes string for safe SQL usage
-     *
      * @param $string
      * @return string
      */
@@ -169,7 +162,6 @@ abstract class Common
 
     /**
      * Test connection to MySQL server
-     *
      * @return bool
      */
     public function isConnected()
@@ -184,7 +176,6 @@ abstract class Common
 
     /**
      * Get MySQL error text
-     *
      * @return string|null
      */
     public function getError()
@@ -194,9 +185,8 @@ abstract class Common
 
     /**
      * Fetch data from MySQL and put into id=>row array.
-     *
-     * @param string $query   SQL-query
-     * @param bool   $replica Allow reading data from MySQL replica
+     * @param string $query SQL-query
+     * @param bool $replica Allow reading data from MySQL replica
      * @return array
      */
     public function fetchWithId(
@@ -217,9 +207,8 @@ abstract class Common
 
     /**
      * Fetch data from database
-     *
      * @param string $query
-     * @param bool   $replica Allow reading data from db replica
+     * @param bool $replica Allow reading data from db replica
      * @return array
      */
     public function fetch($query, $replica = false)
@@ -232,19 +221,17 @@ abstract class Common
 
     /**
      * Fetch data from database
-     *
      * @param string $query
-     * @param bool   $replica
+     * @param bool $replica
      * @return array|null
      */
     abstract protected function realFetch($query, $replica = false);
 
     /**
      * Fetch data as XML tree
-     *
-     * @param \DOMNode $node    XML Node
-     * @param string   $query   query
-     * @param bool     $replica Позволить читать данные из реплики
+     * @param \DOMNode $node XML Node
+     * @param string $query query
+     * @param bool $replica Позволить читать данные из реплики
      * @return bool
      */
     public function fetchXML($node, $query, $replica = false)
@@ -262,7 +249,6 @@ abstract class Common
 
     /**
      * Get result row as array and put it to DOM
-     *
      * @param \DOMElement|\DOMNode $node
      * @param                      $row
      * @return bool
@@ -286,10 +272,9 @@ abstract class Common
 
     /**
      * Fetch single row as XML
-     *
      * @param \DOMElement $node
-     * @param string      $query
-     * @param bool        $replica
+     * @param string $query
+     * @param bool $replica
      * @return bool
      */
     public function fetchRowXML($node, $query, $replica = false)
@@ -300,9 +285,8 @@ abstract class Common
 
     /**
      * Fetch single row from MySQL
-     *
-     * @param string $query   SQL-query
-     * @param bool   $replica Allow reading data from MySQL replica
+     * @param string $query SQL-query
+     * @param bool $replica Allow reading data from MySQL replica
      * @return array|bool
      */
     public function fetchRow($query, $replica = false)
@@ -313,7 +297,6 @@ abstract class Common
 
     /**
      * Get found_rows()
-     *
      * @return int
      */
     public function getFoundRows()
@@ -323,9 +306,8 @@ abstract class Common
 
     /**
      * Fetch single cell from MySQL
-     *
-     * @param string $query   SQL-query
-     * @param bool   $replica Allow reading data from MySQL replica
+     * @param string $query SQL-query
+     * @param bool $replica Allow reading data from MySQL replica
      * @return mixed|null
      */
     public function fetchOne($query, $replica = false)
@@ -336,21 +318,18 @@ abstract class Common
 
     /**
      * Get last auto_increment value for last inserted row
-     *
      * @return int
      */
     abstract protected function getLastId();
 
     /**
      * Get affected rows number
-     *
      * @return int
      */
     abstract protected function getAffectedRows();
 
     /**
      * Detect if mysqlnd is available
-     *
      * @return bool
      */
     protected function isND()

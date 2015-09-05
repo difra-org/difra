@@ -74,8 +74,8 @@ abstract class Common
     public function put($key, $data, $ttl = 300)
     {
         $data = [
-                'expires' => time() + $ttl,
-                'data' => $data
+            'expires' => time() + $ttl,
+            'data' => $data
         ];
         $this->realPut(Envi::getSubsite() . '_' . $key, $data, $ttl);
     }
@@ -118,33 +118,33 @@ abstract class Common
 
         session_set_save_handler(
         // open
-                function ($s, $n) {
-                    return true;
-                },
-                // close
-                function () {
-                    return true;
-                },
-                // read
-                function ($id) {
-                    return Cache::getInstance()->get(self::SESS_PREFIX . $id) ?: '';
-                },
-                // write
-                function ($id, $data) {
-                    if (!$data) {
-                        return false;
-                    }
-                    Cache::getInstance()->put(self::SESS_PREFIX . $id, $data, 86400); // 24h
-                    return true;
-                },
-                // destroy
-                function ($id) {
-                    Cache::getInstance()->remove(self::SESS_PREFIX . $id);
-                },
-                // garbage collector
-                function ($expire) {
-                    return true;
+            function ($s, $n) {
+                return true;
+            },
+            // close
+            function () {
+                return true;
+            },
+            // read
+            function ($id) {
+                return Cache::getInstance()->get(self::SESS_PREFIX . $id) ?: '';
+            },
+            // write
+            function ($id, $data) {
+                if (!$data) {
+                    return false;
                 }
+                Cache::getInstance()->put(self::SESS_PREFIX . $id, $data, 86400); // 24h
+                return true;
+            },
+            // destroy
+            function ($id) {
+                Cache::getInstance()->remove(self::SESS_PREFIX . $id);
+            },
+            // garbage collector
+            function ($expire) {
+                return true;
+            }
         );
         $set = true;
     }

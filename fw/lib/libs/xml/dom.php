@@ -4,7 +4,6 @@ namespace Difra\Libs\XML;
 
 /**
  * Class DOM
- *
  * @deprecated
  *          TODO: maybe clean it and remove @deprecated
  * @package Difra\Libs
@@ -13,7 +12,6 @@ class DOM
 {
     /**
      * for array2xml
-     *
      * @deprecated
      * @static
      * @return DOM
@@ -26,9 +24,8 @@ class DOM
 
     /**
      * Rename DOMNode
-     *
      * @param \DOMNode $node
-     * @param string   $newName
+     * @param string $newName
      */
     public static function renameNode($node, $newName)
     {
@@ -46,9 +43,8 @@ class DOM
 
     /**
      * Create DOM tree from array
-     *
      * @param \DOMNode $node
-     * @param array    $array
+     * @param array $array
      */
     public static function array2dom(&$node, &$array)
     {
@@ -66,11 +62,10 @@ class DOM
 
     /**
      * Add dom attributes from array
-     *
      * @static
      * @param \DOMElement|\DOMNode $node
-     * @param array                $array
-     * @param bool                 $verbal
+     * @param array $array
+     * @param bool $verbal
      */
     public static function array2domAttr(&$node, $array, $verbal = false)
     {

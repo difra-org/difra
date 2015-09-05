@@ -4,7 +4,6 @@ namespace Difra\Resourcer\Abstracts;
 
 /**
  * Class XSLT
- *
  * @package Difra\Resourcer\Abstracts
  */
 abstract class XSLT extends Common

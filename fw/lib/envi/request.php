@@ -164,11 +164,11 @@ class Request
                     $files = [];
                     foreach ($files2['name'] as $k2 => $v2) {
                         $files[] = [
-                                'name' => $v2,
-                                'type' => $files2['type'][$k2],
-                                'tmp_name' => $files2['tmp_name'][$k2],
-                                'error' => $files2['error'][$k2],
-                                'size' => $files2['size'][$k2]
+                            'name' => $v2,
+                            'type' => $files2['type'][$k2],
+                            'tmp_name' => $files2['tmp_name'][$k2],
+                            'error' => $files2['error'][$k2],
+                            'size' => $files2['size'][$k2]
                         ];
                     }
                 }

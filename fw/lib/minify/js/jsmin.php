@@ -176,13 +176,13 @@ class JSMin
     protected function isAlphaNum($c)
     {
         return
-                ('a' <= $c and $c <= 'z') or
-                ($c >= 'A' and $c <= 'Z') or
-                ($c >= '0' and $c <= '9') or
-                $c == '_' or
-                $c == '$' or
-                $c > '~' or
-                $c == '\\';
+            ('a' <= $c and $c <= 'z') or
+            ($c >= 'A' and $c <= 'Z') or
+            ($c >= '0' and $c <= '9') or
+            $c == '_' or
+            $c == '$' or
+            $c > '~' or
+            $c == '\\';
     }
 
     /**

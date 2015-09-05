@@ -104,9 +104,9 @@ class Auth
         Session::start();
         if ($this->logged) {
             $_SESSION['auth'] = [
-                    'id' => $this->id,
-                    'data' => $this->data,
-                    'additionals' => $this->additionals
+                'id' => $this->id,
+                'data' => $this->data,
+                'additionals' => $this->additionals
             ];
         } else {
             if (isset($_SESSION['auth'])) {

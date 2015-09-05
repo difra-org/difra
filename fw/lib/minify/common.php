@@ -9,7 +9,6 @@ abstract class Common
 {
     /**
      * Singleton
-     *
      * @static
      * @return self
      */
@@ -22,7 +21,6 @@ abstract class Common
 
     /**
      * Minification method
-     *
      * @param $data
      * @return mixed
      */

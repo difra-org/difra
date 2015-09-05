@@ -61,8 +61,8 @@ class Debugger
             ini_set('display_errors', 'On');
             ini_set('error_reporting', E_ALL);
             ini_set(
-                    'html_errors',
-                    (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On'
+                'html_errors',
+                (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On'
             );
             self::$enabled = self::CONSOLE_DISABLED;
             self::$console = self::CONSOLE_NONE;
@@ -133,9 +133,9 @@ class Debugger
     public static function addLine($line)
     {
         self::$output[] = [
-                'class' => 'messages',
-                'message' => $line,
-                'timer' => self::getTimer()
+            'class' => 'messages',
+            'message' => $line,
+            'timer' => self::getTimer()
         ];
     }
 
@@ -155,9 +155,9 @@ class Debugger
     public static function addEventLine($line)
     {
         self::$output[] = [
-                'class' => 'events',
-                'message' => $line,
-                'timer' => self::getTimer()
+            'class' => 'events',
+            'message' => $line,
+            'timer' => self::getTimer()
         ];
     }
 
@@ -172,10 +172,10 @@ class Debugger
             return;
         }
         self::$output[] = [
-                'class' => 'db',
-                'type' => $type,
-                'message' => $line,
-                'timer' => self::getTimer()
+            'class' => 'db',
+            'type' => $type,
+            'message' => $line,
+            'timer' => self::getTimer()
         ];
     }
 
@@ -189,12 +189,12 @@ class Debugger
     {
         self::init();
         $err = [
-                'class' => 'errors',
-                'stage' => 'exception',
-                'message' => $msg = $exception->getMessage(),
-                'file' => $file = $exception->getFile(),
-                'line' => $line = $exception->getLine(),
-                'traceback' => $exception->getTrace()
+            'class' => 'errors',
+            'stage' => 'exception',
+            'message' => $msg = $exception->getMessage(),
+            'file' => $file = $exception->getFile(),
+            'line' => $line = $exception->getLine(),
+            'traceback' => $exception->getTrace()
         ];
         self::$handledByException = "$msg in $file:$line";
         self::addLineAsArray($err);
@@ -244,13 +244,13 @@ class Debugger
             return false;
         }
         $err = [
-                'class' => 'errors',
-                'type' => $type,
-                'error' => Libs\Debug\ErrorConstants::getInstance()->getVerbalError($type),
-                'message' => $message,
-                'file' => $file,
-                'line' => $line,
-                'stage' => 'normal'
+            'class' => 'errors',
+            'type' => $type,
+            'error' => Libs\Debug\ErrorConstants::getInstance()->getVerbalError($type),
+            'message' => $message,
+            'file' => $file,
+            'line' => $line,
+            'stage' => 'normal'
         ];
         $err['traceback'] = debug_backtrace();
         array_shift($err['traceback']);

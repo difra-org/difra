@@ -6,14 +6,12 @@ use Difra\Unify;
 
 /**
  * Class Search
- *
  * @package Difra\Unify
  */
 class Search extends Query
 {
     /**
      * Get list
-     *
      * @return Unify[]
      */
     public function getList()
@@ -38,7 +36,6 @@ class Search extends Query
 
     /**
      * Add list as XML
-     *
      * @param \DOMNode $toNode
      */
     public function getListXML($toNode)

@@ -6,7 +6,6 @@ use Difra\Debugger;
 
 /**
  * Class Menu
- *
  * @package Difra\Resourcer
  */
 class Menu extends Abstracts\XML
@@ -16,7 +15,7 @@ class Menu extends Abstracts\XML
 
     /**
      * @param \SimpleXMLElement $xml
-     * @param string            $instance
+     * @param string $instance
      */
     protected function postprocess($xml, $instance)
     {
@@ -33,9 +32,9 @@ class Menu extends Abstracts\XML
 
     /**
      * @param \SimpleXMLElement $node
-     * @param string            $href
-     * @param string            $prefix
-     * @param string            $instance
+     * @param string $href
+     * @param string $prefix
+     * @param string $instance
      * @internal param string $url
      */
     private function _recursiveProcessor($node, $href, $prefix, $instance)

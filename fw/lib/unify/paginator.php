@@ -8,7 +8,6 @@ use Difra\Exception;
 /**
  * Paginator
  * Class Paginator
- *
  * @package Difra\Unify
  */
 class Paginator
@@ -36,7 +35,6 @@ class Paginator
 
     /**
      * Return LIMIT values for SQL
-     *
      * @return string
      */
     public function getPaginatorLimit()
@@ -46,7 +44,6 @@ class Paginator
 
     /**
      * Set total elements number
-     *
      * @param int $count
      */
     public function setTotal($count)
@@ -57,7 +54,6 @@ class Paginator
 
     /**
      * Get pages number
-     *
      * @return int
      */
     public function getPages()
@@ -67,7 +63,6 @@ class Paginator
 
     /**
      * Add paginator node to XML
-     *
      * @param \DOMNode $node
      */
     public function getPaginatorXML($node)
@@ -82,7 +77,6 @@ class Paginator
 
     /**
      * Set current page
-     *
      * @param $page
      * @throws Exception
      */
@@ -100,7 +94,6 @@ class Paginator
      * '?' -> $linkPrefix?page=$page
      * '&' -> $linkPrefix&page=$page
      * etc.
-     *
      * @param string|false $get
      */
     public function setGet($get)
@@ -110,7 +103,6 @@ class Paginator
 
     /**
      * Links prefix
-     *
      * @param string $linkPrefix
      */
     public function setLinkPrefix($linkPrefix)
@@ -120,7 +112,6 @@ class Paginator
 
     /**
      * Set items number per page
-     *
      * @param int $perpage
      */
     public function setPerpage($perpage)

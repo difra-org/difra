@@ -4,7 +4,6 @@ namespace Difra\Param;
 
 /**
  * Class AnyString
- *
  * @package Difra\Param
  */
 class AnyString extends Common

@@ -6,7 +6,6 @@ include_once(DIR_FW . 'lib/libs/esapi/trunk/src/ESAPI.php');
 
 /**
  * Class ESAPI
- *
  * @package Difra\Libs
  * @deprecated
  */
@@ -39,7 +38,6 @@ class ESAPI
 
     /**
      * Validate URL
-     *
      * @param $url
      * @return bool
      */

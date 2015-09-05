@@ -61,11 +61,11 @@ class Ajaxer
     public static function load($target, $html)
     {
         self::addAction(
-                [
-                        'action' => 'load',
-                        'target' => $target,
-                        'html' => $html
-                ]
+            [
+                'action' => 'load',
+                'target' => $target,
+                'html' => $html
+            ]
         );
     }
 
@@ -112,13 +112,13 @@ class Ajaxer
     public static function notify($message)
     {
         self::addAction(
-                [
-                        'action' => 'notify',
-                        'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
-                        'lang' => [
-                                'close' => Locales::get('notifications/close')
-                        ]
+            [
+                'action' => 'notify',
+                'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
+                'lang' => [
+                    'close' => Locales::get('notifications/close')
                 ]
+            ]
         );
     }
 
@@ -129,13 +129,13 @@ class Ajaxer
     public static function error($message)
     {
         self::addAction(
-                [
-                        'action' => 'error',
-                        'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
-                        'lang' => [
-                                'close' => Locales::get('notifications/close')
-                        ]
+            [
+                'action' => 'error',
+                'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
+                'lang' => [
+                    'close' => Locales::get('notifications/close')
                 ]
+            ]
         );
     }
 
@@ -148,10 +148,10 @@ class Ajaxer
     {
         self::$problem = true;
         self::addAction(
-                [
-                        'action' => 'require',
-                        'name' => $name
-                ]
+            [
+                'action' => 'require',
+                'name' => $name
+            ]
         );
     }
 
@@ -180,12 +180,12 @@ class Ajaxer
     public static function status($name, $message, $class)
     {
         self::addAction(
-                [
-                        'action' => 'status',
-                        'name' => $name,
-                        'message' => $message,
-                        'classname' => $class
-                ]
+            [
+                'action' => 'status',
+                'name' => $name,
+                'message' => $message,
+                'classname' => $class
+            ]
         );
     }
 
@@ -204,10 +204,10 @@ class Ajaxer
     public static function redirect($url)
     {
         self::addAction(
-                [
-                        'action' => 'redirect',
-                        'url' => $url
-                ]
+            [
+                'action' => 'redirect',
+                'url' => $url
+            ]
         );
     }
 
@@ -217,9 +217,9 @@ class Ajaxer
     public static function reload()
     {
         self::addAction(
-                [
-                        'action' => 'reload'
-                ]
+            [
+                'action' => 'reload'
+            ]
         );
     }
 
@@ -230,10 +230,10 @@ class Ajaxer
     public static function display($html)
     {
         self::addAction(
-                [
-                        'action' => 'display',
-                        'html' => $html
-                ]
+            [
+                'action' => 'display',
+                'html' => $html
+            ]
         );
     }
 
@@ -243,9 +243,9 @@ class Ajaxer
     public static function close()
     {
         self::addAction(
-                [
-                        'action' => 'close'
-                ]
+            [
+                'action' => 'close'
+            ]
         );
     }
 
@@ -255,9 +255,9 @@ class Ajaxer
     public static function reset()
     {
         self::addAction(
-                [
-                        'action' => 'reset'
-                ]
+            [
+                'action' => 'reset'
+            ]
         );
     }
 
@@ -268,18 +268,18 @@ class Ajaxer
     public static function confirm($text)
     {
         self::addAction(
-                [
-                        'action' => 'display',
-                        'html' =>
-                                '<form action="' . Envi::getUri() . '" class="ajaxer">' .
-                                '<input type="hidden" name="confirm" value="1"/>' .
-                                '<div>' . $text . '</div>' .
-                                '<input type="submit" value="' . Locales::get('ajaxer/confirm-yes')
-                                . '"/>' .
-                                '<input type="button" value="' . Locales::get('ajaxer/confirm-no')
-                                . '" onclick="ajaxer.close(this)"/>' .
-                                '</form>'
-                ]
+            [
+                'action' => 'display',
+                'html' =>
+                    '<form action="' . Envi::getUri() . '" class="ajaxer">' .
+                    '<input type="hidden" name="confirm" value="1"/>' .
+                    '<div>' . $text . '</div>' .
+                    '<input type="submit" value="' . Locales::get('ajaxer/confirm-yes')
+                    . '"/>' .
+                    '<input type="button" value="' . Locales::get('ajaxer/confirm-no')
+                    . '" onclick="ajaxer.close(this)"/>' .
+                    '</form>'
+            ]
         );
     }
 
@@ -291,10 +291,10 @@ class Ajaxer
     public static function exec($script)
     {
         self::addAction(
-                [
-                        'action' => 'exec',
-                        'script' => $script
-                ]
+            [
+                'action' => 'exec',
+                'script' => $script
+            ]
         );
     }
 }

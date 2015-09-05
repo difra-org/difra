@@ -38,10 +38,10 @@ class Action
     public static $methodAjaxAuth = null;
     /** @var array */
     public static $methodTypes = [
-            ['', ''],
-            ['', 'Auth'],
-            ['Ajax', ''],
-            ['Ajax', 'Auth']
+        ['', ''],
+        ['', 'Auth'],
+        ['Ajax', ''],
+        ['Ajax', 'Auth']
     ];
 
     /**
@@ -66,9 +66,9 @@ class Action
             throw new ViewException(404);
         }
         self::$controllerUri =
-                '/' .
-                implode('/',
-                        sizeof($parts) ? array_slice($controllerUriParts, 0, -sizeof($parts)) : $controllerUriParts);
+            '/' .
+            implode('/',
+                sizeof($parts) ? array_slice($controllerUriParts, 0, -sizeof($parts)) : $controllerUriParts);
 
         /** @noinspection PhpIncludeInspection */
         include_once(self::$controllerFile);
@@ -116,13 +116,13 @@ class Action
         if ($result != '404') {
             // save main variables
             $match = [
-                    'vars' => [
-                            'controllerClass' => self::$controllerClass,
-                            'controllerFile' => self::$controllerFile,
-                            'controllerUri' => self::$controllerUri,
-                            'parameters' => self::$parameters
-                    ],
-                    'result' => $result
+                'vars' => [
+                    'controllerClass' => self::$controllerClass,
+                    'controllerFile' => self::$controllerFile,
+                    'controllerUri' => self::$controllerUri,
+                    'parameters' => self::$parameters
+                ],
+                'result' => $result
             ];
             // save action types variables
             foreach (self::$methodTypes as $methodType) {
@@ -131,7 +131,7 @@ class Action
             }
         } else {
             $match = [
-                    'result' => '404'
+                'result' => '404'
             ];
         }
 
@@ -287,8 +287,8 @@ class Action
         foreach ($methodNames as $methodTmp) {
             foreach (self::$methodTypes as $methodType) {
                 if (method_exists(
-                        self::$controllerClass,
-                        $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1]
+                    self::$controllerClass,
+                    $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1]
                 )) {
                     $foundMethod = $methodTmp;
                     $methodVar = "method{$methodType[0]}{$methodType[1]}";

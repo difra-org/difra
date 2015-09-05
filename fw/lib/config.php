@@ -15,14 +15,14 @@ class Config
     private $modified = false;
     /** @var array Default configuration */
     private $defaultConfig = [
-            'instances' => [
-                    'main' => [
-                            'withAll' => true
-                    ],
-                    'adm' => [
-                            'withAll' => true
-                    ]
+        'instances' => [
+            'main' => [
+                'withAll' => true
+            ],
+            'adm' => [
+                'withAll' => true
             ]
+        ]
     ];
 
     /**

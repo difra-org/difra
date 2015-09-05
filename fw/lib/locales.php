@@ -205,7 +205,7 @@ class Locales
 
         if ($withTime) {
             return $this->getDateTime(
-                    mktime($date[1][0], $date[1][1], $date[1][2], $date[0][1], $date[0][2], $date[0][0])
+                mktime($date[1][0], $date[1][1], $date[1][2], $date[0][1], $date[0][2], $date[0][0])
             );
         }
         return $this->getDate(mktime($date[1][0], $date[1][1], $date[1][2], $date[0][1], $date[0][2], $date[0][0]));

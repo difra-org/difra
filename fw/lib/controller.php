@@ -170,7 +170,7 @@ abstract class Controller
                                 throw new View\Exception(404);
                             }
                             $callParameters[$parameter->getName()] =
-                                    new $class(array_shift(self::$parameters));
+                                new $class(array_shift(self::$parameters));
                         } elseif (!$parameter->isOptional()) {
                             throw new View\Exception(404);
                         } else {
@@ -310,17 +310,17 @@ abstract class Controller
         Envi\UserAgent::getUserAgentXML($node);
         // ajax flag
         $node->setAttribute(
-                'ajax',
-                (
-                        Request::isAjax()
-                        or
-                        (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage')
-                ) ? '1' : '0'
+            'ajax',
+            (
+                Request::isAjax()
+                or
+                (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage')
+            ) ? '1' : '0'
         );
         $node->setAttribute(
-                'switcher',
-                (!$this->cache and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and
-                                   $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage') ? '1' : '0'
+            'switcher',
+            (!$this->cache and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and
+                               $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage') ? '1' : '0'
         );
         // build number
         $node->setAttribute('build', Version::getBuild());
@@ -370,7 +370,7 @@ abstract class Controller
             throw new Exception('Bad referer');
         }
         if ((substr($_SERVER['HTTP_REFERER'], 0, 7) != 'http://') and (
-                        substr($_SERVER['HTTP_REFERER'], 0, 8) != 'https://')
+                substr($_SERVER['HTTP_REFERER'], 0, 8) != 'https://')
         ) {
             throw new Exception('Bad referer');
         }

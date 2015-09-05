@@ -7,7 +7,6 @@ use Difra\Libs\ESAPI;
 
 /**
  * Class Common
- *
  * @package Difra\Param
  */
 abstract class Common

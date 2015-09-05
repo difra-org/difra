@@ -7,14 +7,12 @@ use Difra\Exception;
 /**
  * Адаптер MySQLi
  * Class MySQLi
- *
  * @package Difra\MySQL
  */
 class MySQLi extends Common
 {
     /**
      * Возвращает доступность модуля
-     *
      * @return bool
      */
     public static function isAvailable()
@@ -24,14 +22,12 @@ class MySQLi extends Common
 
     /**
      * Объект соединения
-     *
      * @var \mysqli
      */
     public $db = null;
 
     /**
      * Реализация установки соединения с базой
-     *
      * @throws Exception
      */
     protected function realConnect()
@@ -53,7 +49,6 @@ class MySQLi extends Common
 
     /**
      * Реализация запроса в базу
-     *
      * @param string $query
      * @throws Exception
      */
@@ -67,9 +62,8 @@ class MySQLi extends Common
 
     /**
      * Реализация получения данных из базы
-     *
      * @param string $query
-     * @param bool   $replica
+     * @param bool $replica
      * @return array|mixed|null
      * @throws Exception
      */
@@ -119,7 +113,6 @@ class MySQLi extends Common
 
     /**
      * Реализация обезопасивания строки
-     *
      * @param $string
      * @return string
      */
@@ -130,7 +123,6 @@ class MySQLi extends Common
 
     /**
      * Реализация last_insert_id()
-     *
      * @return int
      */
     public function getLastId()
@@ -140,7 +132,6 @@ class MySQLi extends Common
 
     /**
      * Реализация affected_rows()
-     *
      * @return int
      */
     public function getAffectedRows()

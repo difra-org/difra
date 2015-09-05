@@ -4,7 +4,6 @@ namespace Difra\MySQL\Abstracts;
 
 /**
  * Class None
- *
  * @package Difra\MySQL
  */
 class None extends Common
@@ -16,7 +15,6 @@ class None extends Common
 
     /**
      * Заглушка для realQuery
-     *
      * @param string $query
      */
     protected function realQuery($query)
@@ -25,9 +23,8 @@ class None extends Common
 
     /**
      * Заглушка для realFetch
-     *
      * @param string $query
-     * @param bool   $replica
+     * @param bool $replica
      * @return array|null
      */
     protected function realFetch($query, $replica = false)
@@ -37,7 +34,6 @@ class None extends Common
 
     /**
      * Заглушка для getAffectedRows
-     *
      * @return int
      */
     protected function getAffectedRows()
@@ -47,7 +43,6 @@ class None extends Common
 
     /**
      * Заглушка для getLastId
-     *
      * @return int
      */
     protected function getLastId()
@@ -57,7 +52,6 @@ class None extends Common
 
     /**
      * Заглушка для realEscape
-     *
      * @param $string
      * @return string
      */

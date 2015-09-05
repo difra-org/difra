@@ -78,18 +78,18 @@ class Vault
     {
         // when using AjaxSafeHTML, characters inside src= are encoded using ESAPI
         $html =
-                str_replace(
-                        'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . '&#x2f;up&#x2f;tmp&#x2f;',
-                        'src="/up/tmp/',
-                        $html
-                );
+            str_replace(
+                'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . '&#x2f;up&#x2f;tmp&#x2f;',
+                'src="/up/tmp/',
+                $html
+            );
         $html = str_replace('src="&#x2f;up&#x2f;tmp&#x2f;', 'src="/up/tmp/', $html);
         $html =
-                str_replace(
-                        'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . str_replace('/', '&#x2f;', "$urlPrefix/"),
-                        'src="' . $urlPrefix . '/',
-                        $html
-                );
+            str_replace(
+                'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . str_replace('/', '&#x2f;', "$urlPrefix/"),
+                'src="' . $urlPrefix . '/',
+                $html
+            );
         $html = str_replace('src="' . str_replace('/', '&#x2f;', $urlPrefix . '/'), 'src="' . $urlPrefix . '/', $html);
 
         preg_match_all('/src=\"\/up\/tmp\/([0-9]+)\"/', $html, $newImages);

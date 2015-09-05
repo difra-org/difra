@@ -6,7 +6,6 @@ use Difra\Exception;
 
 /**
  * Class Table
- *
  * @package Difra\Unify
  */
 class Table extends Storage
@@ -20,7 +19,6 @@ class Table extends Storage
 
     /**
      * Returns table name
-     *
      * @return string
      */
     public static function getTable()
@@ -37,7 +35,6 @@ class Table extends Storage
 
     /**
      * Chops namespace and class into parts without common pieces
-     *
      * @return array
      * @throws Exception
      */
@@ -59,7 +56,6 @@ class Table extends Storage
 
     /**
      * Returns column name or list of column names for Primary Key
-     *
      * @return string|string[]
      */
     public static function getPrimary()
@@ -95,7 +91,6 @@ class Table extends Storage
 
     /**
      * Get list of columns from self::$propertiesList
-     *
      * @return array
      */
     protected static function getColumns()
@@ -116,7 +111,6 @@ class Table extends Storage
 
     /**
      * Get list of indexes from self::$propertiesList
-     *
      * @return array
      */
     protected static function getIndexes()
@@ -150,7 +144,6 @@ class Table extends Storage
 
     /**
      * Get properties definitions
-     *
      * @return array
      */
     public static function getPropertiesList()

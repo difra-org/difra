@@ -9,7 +9,6 @@ use Difra\View;
 
 /**
  * Class Sitemap
- *
  * @package Difra\Libs\XML
  */
 class Sitemap
@@ -21,7 +20,6 @@ class Sitemap
 
     /**
      * Collect sitemap data from plugins
-     *
      * @return array
      */
     public static function getSitemap()
@@ -43,9 +41,8 @@ class Sitemap
     /**
      * Get sitemap.xml
      * Null page means index for sitemap pages
-     *
      * @param int|null $page
-     * @param bool     $autoIndex
+     * @param bool $autoIndex
      * @return bool|string
      */
     public static function getXML($page = null, $autoIndex = true)
@@ -119,7 +116,6 @@ class Sitemap
 
     /**
      * Create index sitemap.xml
-     *
      * @param int $pages
      * @return string
      */
@@ -137,7 +133,6 @@ class Sitemap
 
     /**
      * Create sitemap page
-     *
      * @param array $urls
      * @return string
      */
@@ -163,7 +158,6 @@ class Sitemap
 
     /**
      * Get sitemap.html
-     *
      * @param int|null $page
      * @return bool|null|string
      * @throws \Difra\Exception
@@ -190,7 +184,6 @@ class Sitemap
 
     /**
      * Get output XML index for sitemap.html pages
-     *
      * @return bool|null|string
      */
     public static function getXMLforHTML()

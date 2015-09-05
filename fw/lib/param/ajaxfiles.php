@@ -4,7 +4,6 @@ namespace Difra\Param;
 
 /**
  * Class AjaxFiles
- *
  * @package Difra\Param
  */
 class AjaxFiles extends Common

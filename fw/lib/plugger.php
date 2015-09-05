@@ -24,7 +24,7 @@ class Plugger
     {
         self::$provisions = [];
         self::$provisions['mysql'] =
-                ['available' => MySQL::getInstance()->isConnected(), 'url' => '/test', 'source' => 'core'];
+            ['available' => MySQL::getInstance()->isConnected(), 'url' => '/test', 'source' => 'core'];
         self::smartPluginsEnable();
     }
 
@@ -98,14 +98,14 @@ class Plugger
         foreach ($plugins as $name => $plugin) {
             $info = $plugin->getInfo();
             self::$pluginsData[$name] = [
-                    'enabled' =>
-                            in_array($name, $enabledPlugins, true) or
-                            (isset($enabledPlugins[$name]) and $enabledPlugins[$name]),
-                    'loaded' => false,
-                    'require' => $info['requires'],
-                    'provides' => $info['provides'],
-                    'version' => $info['version'],
-                    'description' => $info['description']
+                'enabled' =>
+                    in_array($name, $enabledPlugins, true) or
+                    (isset($enabledPlugins[$name]) and $enabledPlugins[$name]),
+                'loaded' => false,
+                'require' => $info['requires'],
+                'provides' => $info['provides'],
+                'version' => $info['version'],
+                'description' => $info['description']
             ];
             $provs = array_merge([$name], $info['provides']);
             foreach ($provs as $prov) {
@@ -117,8 +117,8 @@ class Plugger
                     }
                 } else {
                     self::$provisions[$prov] = [
-                            'available' => false,
-                            'source' => $name
+                        'available' => false,
+                        'source' => $name
                     ];
                 }
             }

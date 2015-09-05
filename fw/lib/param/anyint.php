@@ -4,7 +4,6 @@ namespace Difra\Param;
 
 /**
  * Class AnyInt
- *
  * @package Difra\Param
  */
 class AnyInt extends Common

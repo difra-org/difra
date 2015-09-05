@@ -49,11 +49,11 @@ class Mailer
         }
 
         $headers = [
-                "Mime-Version: 1.0",
-                "Content-Type: text/html; charset=\"UTF-8\"",
-                "Date: " . date('r'),
-                "Message-Id: <" . md5(microtime()) . '-' . md5($fromMail . $email) . '@' . Envi::getHost(true) . '>',
-                'Content-Transfer-Encoding: 8bit'
+            "Mime-Version: 1.0",
+            "Content-Type: text/html; charset=\"UTF-8\"",
+            "Date: " . date('r'),
+            "Message-Id: <" . md5(microtime()) . '-' . md5($fromMail . $email) . '@' . Envi::getHost(true) . '>',
+            'Content-Transfer-Encoding: 8bit'
         ];
 
         // Encode non-ascii text strings to base64

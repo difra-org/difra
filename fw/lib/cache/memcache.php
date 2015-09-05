@@ -32,8 +32,8 @@ class MemCache extends Common
             return true;
         }
         $serverList = [
-                ['unix:///tmp/memcache', 0],
-                ['127.0.0.1', 11211],
+            ['unix:///tmp/memcache', 0],
+            ['127.0.0.1', 11211],
         ];
         self::$memcache = new \MemCache;
         foreach ($serverList as $serv) {
@@ -68,10 +68,10 @@ class MemCache extends Common
     public function realPut($id, $data, $specificLifetime = false)
     {
         return self::$memcache->set(
-                $id,
-                self::$serialize ? serialize($data) : $data,
-                MEMCACHE_COMPRESSED,
-                $specificLifetime !== false ? $specificLifetime : self::$lifetime
+            $id,
+            self::$serialize ? serialize($data) : $data,
+            MEMCACHE_COMPRESSED,
+            $specificLifetime !== false ? $specificLifetime : self::$lifetime
         );
     }
 

@@ -4,7 +4,6 @@ namespace Difra\Libs;
 
 /**
  * Class Diff
- *
  * @deprecated
  * @package Difra\Libs
  */
@@ -12,7 +11,6 @@ class Diff
 {
     /**
      * Get diff for two arrays of strings as if it is a text files
-     *
      * @param string[] $array1
      * @param string[] $array2
      * @return bool
@@ -25,13 +23,12 @@ class Diff
 
     /**
      * diffArrays() recursive implementation
-     *
      * @param string[] $array1
      * @param string[] $array2
-     * @param array    $result
-     * @param int      $i1
-     * @param int      $i2
-     * @param int      $depth
+     * @param array $result
+     * @param int $i1
+     * @param int $i2
+     * @param int $depth
      * @return array
      */
     private static function diffArraysSub($array1, $array2, $result = [], $i1 = 0, $i2 = 0, $depth = 0)
