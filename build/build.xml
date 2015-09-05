@@ -179,6 +179,7 @@
 			<arg value="--report=checkstyle"/>
 			<arg value="--report-file=${basedir}/logs/checkstyle.xml"/>
 			<arg value="--standard=${basedir}/phpcs.xml"/>
+			<arg value="--extensions=php"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 		<property name="phpcs.done" value="true"/>
