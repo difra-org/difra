@@ -2,6 +2,9 @@
 
 namespace Difra\Plugins\Twitter;
 
+use Difra\Config;
+use Difra\Exception;
+
 class Oauth
 {
 	private $accessToken = null;
@@ -18,11 +21,12 @@ class Oauth
 	/**
 	 * Создаёт и возвращает объект авторизации для конкретного запроса
 	 * @param $requestUrl
+	 * @param string $method
 	 * @return Oauth
+	 * @throws Exception
 	 */
 	public static function build($requestUrl, $method = 'POST')
 	{
-
 		$OAuth = new self;
 		$OAuth->_getConfig();
 		$OAuth->url = $requestUrl;
@@ -50,15 +54,14 @@ class Oauth
 
 	/**
 	 * Получаем конфиг авторизации OAuth
-	 * @throws \Difra\Exception
+	 * @throws Exception
 	 */
 	private function _getConfig()
 	{
-
-		$config = \Difra\Config::getInstance()->get('oAuth');
+		$config = Config::getInstance()->get('oAuth');
 
 		if (empty($config)) {
-			throw new \Difra\Exception('No OAuth config.');
+			throw new Exception('No OAuth config.');
 		}
 
 		$this->consumerKey = $config['consumerKey'];
@@ -74,7 +77,6 @@ class Oauth
 	 */
 	private function _getBaseString($oAuthParams)
 	{
-
 		$returnArray = [];
 		ksort($oAuthParams);
 
@@ -92,11 +94,10 @@ class Oauth
 	 */
 	private function _getRequestHeader()
 	{
-
 		$header = 'Authorization: OAuth ';
 		$values = [];
 		if (empty($this->oAuthArray)) {
-			throw new \Difra\Exception('The OAuth is not built.');
+			throw new Exception('The OAuth is not built.');
 		}
 
 		foreach ($this->oAuthArray as $key => $value) {
@@ -111,7 +112,6 @@ class Oauth
 	 */
 	public function getHeader()
 	{
-
 		return [$this->header, 'Expect:'];
 	}
 }
