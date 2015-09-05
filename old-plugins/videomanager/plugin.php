@@ -2,13 +2,14 @@
 
 namespace Difra\Plugins\VideoManager;
 
-class Plugin extends \Difra\Plugin {
+class Plugin extends \Difra\Plugin
+{
+    protected $version = 3.1;
+    protected $description = 'Video library management';
 
-	protected $version = 3.1;
-	protected $description = 'Video library management';
+    public function init()
+    {
 
-	public function init() {
-
-		\Difra\Events::register( 'dispatch', '\Difra\Plugins\videoManager', 'getHttpPath' );
-	}
+        \Difra\Events::register('dispatch', '\Difra\Plugins\videoManager', 'getHttpPath');
+    }
 }

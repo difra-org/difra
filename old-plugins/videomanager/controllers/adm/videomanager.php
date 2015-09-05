@@ -2,111 +2,125 @@
 
 use Difra\Plugins\VideoManager;
 
-class AdmVideomanagerController extends Difra\Controller {
+class AdmVideomanagerController extends Difra\Controller
+{
+    public function dispatch()
+    {
 
-	public function dispatch() {
+        $this->view->instance = 'adm';
+    }
 
-		$this->view->instance = 'adm';
-	}
+    public function indexAction()
+    {
 
-	public function indexAction() {
+        $videoXml = $this->root->appendChild($this->xml->createElement('video-manager'));
+        $VM = \Difra\Plugins\videoManager::getInstance();
 
-		$videoXml = $this->root->appendChild( $this->xml->createElement( 'video-manager' ) );
-		$VM = \Difra\Plugins\videoManager::getInstance();
+        $inNode = $videoXml->appendChild($this->xml->createElement('videoIn'));
+        $VM->getInVideosXML($inNode);
 
-		$inNode = $videoXml->appendChild( $this->xml->createElement( 'videoIn' ) );
-		$VM->getInVideosXML( $inNode );
+        $outNode = $videoXml->appendChild($this->xml->createElement('videoOut'));
+        $VM->getAddedVideosXML($outNode);
+    }
 
+    public function deleteAjaxAction(\Difra\Param\NamedString $name)
+    {
 
-		$outNode = $videoXml->appendChild( $this->xml->createElement( 'videoOut' ) );
-		$VM->getAddedVideosXML( $outNode );
-	}
+        $Locale = \Difra\Locales::getInstance();
 
-	public function deleteAjaxAction( \Difra\Param\NamedString $name ) {
+        if (\Difra\Plugins\videoManager::getInstance()->deleteFile($name->val())) {
 
-		$Locale = \Difra\Locales::getInstance();
+            $this->ajax->display($Locale->getXPath('videoManager/adm/notify/deleted') .
+                                 '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
+                                 $Locale->getXPath('videoManager/adm/close') . '</a>');
+        } else {
+            $this->ajax->display($Locale->getXPath('videoManager/adm/errors/noDeleter')
+                                 . '<br/><br/><a class="button" href="#" onclick="ajaxer.close( this );">' .
+                                 $Locale->getXPath('videoManager/adm/close')
+                                 . '</a>');
+        }
+    }
 
-		if( \Difra\Plugins\videoManager::getInstance()->deleteFile( $name->val() ) ) {
+    public function addvideoAjaxAction(
+        \Difra\Param\AjaxString $filename,
+        \Difra\Param\AjaxString $name,
+        \Difra\Param\AjaxFile $poster = null
+    ) {
 
-			$this->ajax->display( $Locale->getXPath( 'videoManager/adm/notify/deleted' ) .
-				'<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
-				$Locale->getXPath( 'videoManager/adm/close' ) . '</a>' );
+        $poster = !is_null($poster) ? $poster->val() : null;
+        $Locale = \Difra\Locales::getInstance();
+        $res = \Difra\Plugins\videoManager::getInstance()->addVideo($filename->val(), $name->val(), $poster);
 
-		} else {
-			$this->ajax->display( $Locale->getXPath( 'videoManager/adm/errors/noDeleter' )
-				. '<br/><br/><a class="button" href="#" onclick="ajaxer.close( this );">' . $Locale->getXPath( 'videoManager/adm/close' )
-				. '</a>' );
-		}
-	}
+        if ($res === true) {
+            $this->ajax->display($Locale->getXPath('videoManager/adm/notify/added')
+                                 . '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
+                                 $Locale->getXPath('videoManager/adm/close')
+                                 . '</a>');
+        } else {
+            $this->ajax->display($Locale->getXPath('videoManager/adm/errors/' . $res)
+                                 . '<br/><br/><a class="button" href="#" onclick="ajaxer.close( this );">' .
+                                 $Locale->getXPath('videoManager/adm/close')
+                                 . '</a>');
+        }
+    }
 
-	public function addvideoAjaxAction( \Difra\Param\AjaxString $filename, \Difra\Param\AjaxString $name, \Difra\Param\AjaxFile $poster = null ) {
+    public function encodeAjaxAction(\Difra\Param\AnyInt $id)
+    {
 
-		$poster = !is_null( $poster ) ? $poster->val() : null;
-		$Locale = \Difra\Locales::getInstance();
-		$res = \Difra\Plugins\videoManager::getInstance()->addVideo( $filename->val(), $name->val(), $poster );
+        \Difra\Plugins\videoManager::getInstance()->changeStatus($id->val(), 1);
 
-		if( $res === true ) {
-			$this->ajax->display( $Locale->getXPath( 'videoManager/adm/notify/added' )
-				. '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' . $Locale->getXPath( 'videoManager/adm/close' )
-				. '</a>' );
-		} else {
-			$this->ajax->display( $Locale->getXPath( 'videoManager/adm/errors/' . $res )
-				. '<br/><br/><a class="button" href="#" onclick="ajaxer.close( this );">' . $Locale->getXPath( 'videoManager/adm/close' )
-				. '</a>' );
-		}
-	}
+        $Locale = \Difra\Locales::getInstance();
+        $this->ajax->display($Locale->getXPath('videoManager/adm/notify/addEncode')
+                             . '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
+                             $Locale->getXPath('videoManager/adm/close')
+                             . '</a>');
+    }
 
-	public function encodeAjaxAction( \Difra\Param\AnyInt $id ) {
+    public function deleteaddedAjaxAction(\Difra\Param\AnyInt $id)
+    {
 
-		\Difra\Plugins\videoManager::getInstance()->changeStatus( $id->val(), 1 );
+        $Locale = \Difra\Locales::getInstance();
+        if (\Difra\Plugins\videoManager::getInstance()->deleteAddedVideo($id->val())) {
 
-		$Locale = \Difra\Locales::getInstance();
-		$this->ajax->display( $Locale->getXPath( 'videoManager/adm/notify/addEncode' )
-			. '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' . $Locale->getXPath( 'videoManager/adm/close' )
-			. '</a>' );
-	}
+            $this->ajax->display($Locale->getXPath('videoManager/adm/notify/videoDeleted')
+                                 . '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
+                                 $Locale->getXPath('videoManager/adm/close')
+                                 . '</a>');
+        } else {
 
-	public function deleteaddedAjaxAction( \Difra\Param\AnyInt $id ) {
+            $this->ajax->display($Locale->getXPath('videoManager/adm/errors/noDelete')
+                                 . '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
+                                 $Locale->getXPath('videoManager/adm/close')
+                                 . '</a>');
+        }
+    }
 
-		$Locale = \Difra\Locales::getInstance();
-		if( \Difra\Plugins\videoManager::getInstance()->deleteAddedVideo( $id->val() ) ) {
+    public function changeposterAjaxAction(\Difra\Param\AjaxString $videoHash, \Difra\Param\AjaxFile $poster)
+    {
 
-			$this->ajax->display( $Locale->getXPath( 'videoManager/adm/notify/videoDeleted' )
-				. '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' . $Locale->getXPath( 'videoManager/adm/close' )
-				. '</a>' );
+        $Locale = \Difra\Locales::getInstance();
+        $res = \Difra\Plugins\videoManager::getInstance()->savePoster($videoHash->val(), $poster->val());
+        if ($res === true) {
 
-		} else {
+            $this->ajax->display($Locale->getXPath('videoManager/adm/notify/posterAdded')
+                                 . '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
+                                 $Locale->getXPath('videoManager/adm/close')
+                                 . '</a>');
+        } else {
+            $this->ajax->display(
+                $Locale->getXPath('videoManager/adm/errors/' . $res) .
+                '<br/><br/><a class="button" href="#" onclick="ajaxer.close( this );">'
+                . $Locale->getXPath('videoManager/adm/close') . '</a>');
+        }
+    }
 
-			$this->ajax->display( $Locale->getXPath( 'videoManager/adm/errors/noDelete' )
-				. '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' . $Locale->getXPath( 'videoManager/adm/close' )
-				. '</a>' );
-		}
-	}
+    public function changenameAjaxAction(\Difra\Param\AjaxInt $videoId, \Difra\Param\AjaxString $name)
+    {
 
-	public function changeposterAjaxAction( \Difra\Param\AjaxString $videoHash, \Difra\Param\AjaxFile $poster ) {
-
-		$Locale = \Difra\Locales::getInstance();
-		$res = \Difra\Plugins\videoManager::getInstance()->savePoster( $videoHash->val(), $poster->val() );
-		if( $res===true ) {
-
-			$this->ajax->display( $Locale->getXPath( 'videoManager/adm/notify/posterAdded' )
-				. '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' . $Locale->getXPath( 'videoManager/adm/close' )
-				. '</a>' );
-		} else {
-			$this->ajax->display(
-				$Locale->getXPath( 'videoManager/adm/errors/' . $res ) . '<br/><br/><a class="button" href="#" onclick="ajaxer.close( this );">'
-					. $Locale->getXPath( 'videoManager/adm/close' ) . '</a>' );
-		}
-
-	}
-
-	public function changenameAjaxAction( \Difra\Param\AjaxInt $videoId, \Difra\Param\AjaxString $name ) {
-
-		$Locale = \Difra\Locales::getInstance();
-		\Difra\Plugins\videoManager::getInstance()->changeName( $videoId->val(), $name->val() );
-		$this->ajax->display( $Locale->getXPath( 'videoManager/adm/notify/nameChanged' ) .
-					'<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
-					$Locale->getXPath( 'videoManager/adm/close' ) . '</a>' );
-	}
-
+        $Locale = \Difra\Locales::getInstance();
+        \Difra\Plugins\videoManager::getInstance()->changeName($videoId->val(), $name->val());
+        $this->ajax->display($Locale->getXPath('videoManager/adm/notify/nameChanged') .
+                             '<br/><br/><a class="button" href="#" onclick="window.location.reload();">' .
+                             $Locale->getXPath('videoManager/adm/close') . '</a>');
+    }
 }

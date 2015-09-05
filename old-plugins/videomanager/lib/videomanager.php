@@ -1,14 +1,15 @@
 <?php
 
 namespace Difra\Plugins;
+
 use Difra;
+
 /**
  * Статусы:
  * 0 - не обработан
  * 1 - в очереди
  * 2 - обрабатывается
  * 3 - готов
- *
  * Папки:
  * dirIn - входящие видео файлы
  * dirOut - перекодированные видео файлы
@@ -16,31 +17,30 @@ use Difra;
  * postersDir - папка с постерами
  * httpThumbs - url превьющек видео
  * httpPosters - url с постерами
- *
  * Пути можно комбинировать, например thumbsDir и postersDir могут находится в одном месте
- *
- */
-class videoManager {
 
+ */
+class videoManager
+{
 	// пути к папкам
 	private $dirIn = null;
 	private $dirOut = null;
-
 	private $thumbsDir = null;
 	private $postersDir = null;
 	private $httpThumbs = null;
 	private $httpPosters = null;
+	private $videoSizes = ['720', '480'];
+	private $videoExtensions = ['avi', 'mpg', 'mpeg', 'flv', 'mp4', 'mov', 'mp2', 'm4v', 'mkv', 'dv'];
+	private $videoOutExtensions = ['webm', 'ogv', 'm4v', 'mp4', 'flv'];
 
-	private $videoSizes = array( '720', '480' );
-	private $videoExtensions = array( 'avi', 'mpg', 'mpeg', 'flv', 'mp4', 'mov', 'mp2', 'm4v', 'mkv', 'dv' );
-	private $videoOutExtensions = array( 'webm', 'ogv', 'm4v', 'mp4', 'flv' );
-
-	static public function getInstance() {
+	static public function getInstance()
+	{
 		static $_instance = null;
 		return $_instance ? $_instance : $_instance = new self;
 	}
 
-	private function __construct() {
+	private function __construct()
+	{
 
 		//TODO: Сделать полноценную конфигурацию когда появится определенность с настройками
 
@@ -57,23 +57,25 @@ class videoManager {
 	/**
 	 * Устанавливает ноду с данными о том где лежат постеры и превьющки
 	 */
-	public function getHttpPath() {
+	public function getHttpPath()
+	{
 
 		$rootNode = \Difra\Action::getInstance()->controller->root;
-		$videoManagerNode = $rootNode->appendChild( $rootNode->ownerDocument->createElement( 'video-preview' ) );
-		$videoManagerNode->setAttribute( 'thumbs', '/' . $this->httpThumbs );
-		$videoManagerNode->setAttribute( 'posters', '/' . $this->httpPosters );
+		$videoManagerNode = $rootNode->appendChild($rootNode->ownerDocument->createElement('video-preview'));
+		$videoManagerNode->setAttribute('thumbs', '/' . $this->httpThumbs);
+		$videoManagerNode->setAttribute('posters', '/' . $this->httpPosters);
 	}
 
 	/**
 	 * Удаляет из входящей папки файл
 	 * @param $name
 	 */
-	public function deleteFile( $name ) {
+	public function deleteFile($name)
+	{
 
-		if( file_exists( $this->dirIn . '/' . $name ) ) {
+		if (file_exists($this->dirIn . '/' . $name)) {
 
-			return unlink( $this->dirIn . '/' . $name );
+			return unlink($this->dirIn . '/' . $name);
 		}
 		return false;
 	}
@@ -82,30 +84,31 @@ class videoManager {
 	 * Возвращает XML с данными видео во входящей папке
 	 * @param \DOMNode $node
 	 */
-	public function getInVideosXML( $node ) {
+	public function getInVideosXML($node)
+	{
 
-		if( !is_dir( $this->dirIn ) ) {
+		if (!is_dir($this->dirIn)) {
 
-			$errorNode = $node->appendChild( $node->ownerDocument->createElement( 'error' ) );
-			$errorNode->setAttribute( 'type', 'badInDir' );
+			$errorNode = $node->appendChild($node->ownerDocument->createElement('error'));
+			$errorNode->setAttribute('type', 'badInDir');
 			return;
 		}
 
 		// возможно и не нужно чистить кэш, но у меня переодически наблюдались некие глюки при чтении директории.
 		clearstatcache();
-		$dh = dir( $this->dirIn );
+		$dh = dir($this->dirIn);
 
-		while( false !== ( $file = $dh->read() ) ) {
+		while (false !== ($file = $dh->read())) {
 
-			if( $file!='.' && $file!='..' ) {
+			if ($file != '.' && $file != '..') {
 
-				$fileNode = $node->appendChild( $node->ownerDocument->createElement( 'file' ) );
-				$fileNode->setAttribute( 'name', $file );
-				$tmp = pathinfo( $this->dirIn . '/' . $file );
-				if( !in_array( $tmp['extension'], $this->videoExtensions ) ) {
-					$fileNode->setAttribute( 'trash', true );
+				$fileNode = $node->appendChild($node->ownerDocument->createElement('file'));
+				$fileNode->setAttribute('name', $file);
+				$tmp = pathinfo($this->dirIn . '/' . $file);
+				if (!in_array($tmp['extension'], $this->videoExtensions)) {
+					$fileNode->setAttribute('trash', true);
 				}
-				$fileNode->setAttribute( 'size', sprintf( "%.2f", filesize( $this->dirIn . '/' . $file ) / 1048576 ) );
+				$fileNode->setAttribute('size', sprintf("%.2f", filesize($this->dirIn . '/' . $file) / 1048576));
 			}
 		}
 		$dh->close();
@@ -115,19 +118,20 @@ class videoManager {
 	 * Возвращает XML с добавленными в базу видео
 	 * @param \DOMNOde $node
 	 */
-	public function getAddedVideosXML( $node ) {
+	public function getAddedVideosXML($node)
+	{
 
-		if( ! is_dir( $this->dirOut ) ) {
+		if (!is_dir($this->dirOut)) {
 
-			$errorNode = $node->appendChild( $node->ownerDocument->createElement( 'error' ) );
-			$errorNode->setAttribute( 'type', 'badOutDir' );
+			$errorNode = $node->appendChild($node->ownerDocument->createElement('error'));
+			$errorNode->setAttribute('type', 'badOutDir');
 			return;
 		}
 
 		$db = \Difra\MySQL::getInstance();
 		$query = "SELECT `id`, `video`, `status`, `name`, `date`, `thumbs`, `length`, `hasPoster`, `original_file` FROM `videos`
 				WHERE `site`='" . \Difra\Site::getInstance()->getHost() . "' ORDER BY `date` ASC";
-		$db->fetchXML( $node, $query );
+		$db->fetchXML($node, $query);
 	}
 
 	/**
@@ -137,40 +141,42 @@ class videoManager {
 	 * @param null $poster
 	 * @return bool|string
 	 */
-	public function addVideo( $file, $name, $poster = null ) {
+	public function addVideo($file, $name, $poster = null)
+	{
 
 		$hasPoster = 0;
 		$db = \Difra\MySQL::getInstance();
-		$videoHash = sha1( uniqid() );
+		$videoHash = sha1(uniqid());
 
-		if( !is_null( $poster ) ) {
+		if (!is_null($poster)) {
 			$hasPoster = 1;
 
-			if( !is_dir( $this->postersDir ) ) {
+			if (!is_dir($this->postersDir)) {
 				return 'badPosterDir';
 			}
 
-			foreach( $this->videoSizes as $size ) {
+			foreach ($this->videoSizes as $size) {
 
-				$res = @file_put_contents( $this->postersDir . '/' . $videoHash . '_' . $size . '_0' . '.png',
-								\Difra\Libs\Images::getInstance()->createThumbnail( $poster, $size, $size, 'png' ) );
-				if( $res === false ) {
+				$res = @file_put_contents($this->postersDir . '/' . $videoHash . '_' . $size . '_0' . '.png',
+					\Difra\Libs\Images::getInstance()->createThumbnail($poster, $size, $size, 'png'));
+				if ($res === false) {
 					return 'badPosterSave';
 				}
 			}
 
 			// отдельно сохраняем маленькую превьюшку для админки
-			$res = @file_put_contents( $this->postersDir . '/' . $videoHash . '_thumb.png',
-							\Difra\Libs\Images::getInstance()->createThumbnail( $poster, 78, 78, 'png' ) );
-			if( $res === false ) {
+			$res = @file_put_contents($this->postersDir . '/' . $videoHash . '_thumb.png',
+				\Difra\Libs\Images::getInstance()->createThumbnail($poster, 78, 78, 'png'));
+			if ($res === false) {
 				return 'badPosterSave';
 			}
 		}
 
 		$query = "INSERT INTO `videos` (`video`, `site`, `name`, `original_file`, `date`, `status`, `hasPoster`)
-				VALUES ('" . $videoHash . "', '" . \Difra\Site::getInstance()->getHost() . "', '" . $db->escape( $name ) . "', '" .
-						$db->escape( $file ) . "', NOW(), 0, '" . intval( $hasPoster ) . "')";
-		$db->query( $query );
+				VALUES ('" . $videoHash . "', '" . \Difra\Site::getInstance()->getHost() . "', '" . $db->escape($name) .
+				 "', '" .
+				 $db->escape($file) . "', NOW(), 0, '" . intval($hasPoster) . "')";
+		$db->query($query);
 		return true;
 	}
 
@@ -178,54 +184,55 @@ class videoManager {
 	 * Удаляет уже добавленное видео в базу
 	 * @param $id
 	 */
-	public function deleteAddedVideo( $id ) {
+	public function deleteAddedVideo($id)
+	{
 
 		$db = \Difra\MySQL::getInstance();
-		$videoData = $db->fetchRow( "SELECT `video`, `original_file`, `status`, `thumbs` FROM `videos` WHERE `id`='" . intval( $id ) . "'" );
-		if( empty( $videoData ) ) {
+		$videoData = $db->fetchRow("SELECT `video`, `original_file`, `status`, `thumbs` FROM `videos` WHERE `id`='" .
+								   intval($id) . "'");
+		if (empty($videoData)) {
 			return false;
 		}
 
-		if( $videoData['status']<2 ) {
+		if ($videoData['status'] < 2) {
 			// статус - не обработан, в очереди
 
-			unlink( $this->dirIn .'/' . $videoData['original_file'] );
-
-		}elseif( $videoData['status']>2 ) {
+			unlink($this->dirIn . '/' . $videoData['original_file']);
+		} elseif ($videoData['status'] > 2) {
 			// статус - обработан
 
-			if( $videoData['thumbs']>0 ) {
+			if ($videoData['thumbs'] > 0) {
 
 				// удаляем превьюшки
-				for( $i=1; $i<=$videoData['thumbs']; $i++ ) {
-					if( file_exists( $this->thumbsDir . '/' . $videoData['video'] . '_' . $i . '.png' ) ) {
+				for ($i = 1; $i <= $videoData['thumbs']; $i++) {
+					if (file_exists($this->thumbsDir . '/' . $videoData['video'] . '_' . $i . '.png')) {
 
-						unlink( $this->thumbsDir . '/' . $videoData['video'] . '_' . $i . '.png' );
+						unlink($this->thumbsDir . '/' . $videoData['video'] . '_' . $i . '.png');
 					}
 				}
 			}
 
 			// удаляем результирующее видео
 			//TODO: возможно будет другая структура папок в videoOut
-			$vOutDir = '/' . substr( $videoData['video'], 0, 2 ) . '/';
-			foreach( $this->videoOutExtensions as $ext ) {
-				foreach( $this->videoSizes as $size ) {
-					if( file_exists( $this->dirOut . $vOutDir . $videoData['video'] . '_' . $size . '.' . $ext ) ) {
-						unlink( $this->dirOut . $vOutDir . $videoData['video'] . '_' . $size . '.' . $ext );
+			$vOutDir = '/' . substr($videoData['video'], 0, 2) . '/';
+			foreach ($this->videoOutExtensions as $ext) {
+				foreach ($this->videoSizes as $size) {
+					if (file_exists($this->dirOut . $vOutDir . $videoData['video'] . '_' . $size . '.' . $ext)) {
+						unlink($this->dirOut . $vOutDir . $videoData['video'] . '_' . $size . '.' . $ext);
 					}
 				}
 			}
 		}
 
 		// удаляем постер
-		if( file_exists( $this->postersDir . '/' . $videoData['video'] . '_720_0.png' ) ) {
-			foreach( $this->videoSizes as $size ) {
-				unlink( $this->postersDir . '/' . $videoData['video'] . '_' . $size . '_0.png' );
+		if (file_exists($this->postersDir . '/' . $videoData['video'] . '_720_0.png')) {
+			foreach ($this->videoSizes as $size) {
+				unlink($this->postersDir . '/' . $videoData['video'] . '_' . $size . '_0.png');
 			}
-			unlink( $this->postersDir . '/' . $videoData['video'] . '_thumb.png' );
+			unlink($this->postersDir . '/' . $videoData['video'] . '_thumb.png');
 		}
 
-		$db->query( "DELETE FROM `videos` WHERE `id`='" . intval( $id ) . "'" );
+		$db->query("DELETE FROM `videos` WHERE `id`='" . intval($id) . "'");
 		return true;
 	}
 
@@ -234,10 +241,11 @@ class videoManager {
 	 * @param $id
 	 * @param $status
 	 */
-	public function changeStatus( $id, $status ) {
+	public function changeStatus($id, $status)
+	{
 
 		$db = \Difra\MySQL::getInstance();
-		$db->query( "UPDATE `videos` SET `status`='" . intval( $status ) . "' WHERE `id`='" . intval( $id ) . "'" );
+		$db->query("UPDATE `videos` SET `status`='" . intval($status) . "' WHERE `id`='" . intval($id) . "'");
 	}
 
 	/**
@@ -245,32 +253,35 @@ class videoManager {
 	 * @param $video
 	 * @param $poster
 	 */
-	public function savePoster( $video, $poster ) {
+	public function savePoster($video, $poster)
+	{
 
 		$db = \Difra\MySQL::getInstance();
-		$video = $db->escape( $video );
+		$video = $db->escape($video);
 
-		if( ! is_dir( $this->postersDir ) ) {
+		if (!is_dir($this->postersDir)) {
 			return 'badPosterDir';
 		}
 
-		foreach( $this->videoSizes as $size ) {
+		foreach ($this->videoSizes as $size) {
 
-			$res = @file_put_contents( $this->postersDir . '/' . $video . '_' . $size . '_0' . '.png', \Difra\Libs\Images::getInstance()
-					->createThumbnail( $poster, $size, $size, 'png' ) );
-			if( $res === false ) {
+			$res = @file_put_contents($this->postersDir . '/' . $video . '_' . $size . '_0' . '.png',
+				\Difra\Libs\Images::getInstance()
+								  ->createThumbnail($poster, $size, $size, 'png'));
+			if ($res === false) {
 				return 'badPosterSave';
 			}
 		}
 
 		// отдельно сохраняем маленькую превьюшку для админки
 		$res = @file_put_contents(
-			$this->postersDir . '/' . $video . '_thumb.png', \Difra\Libs\Images::getInstance()->createThumbnail( $poster, 78, 78, 'png' ) );
-		if( $res === false ) {
+			$this->postersDir . '/' . $video . '_thumb.png',
+			\Difra\Libs\Images::getInstance()->createThumbnail($poster, 78, 78, 'png'));
+		if ($res === false) {
 			return 'badPosterSave';
 		}
 
-		$db->query( "UPDATE `videos` SET `hasPoster`=1 WHERE `video`='" . $video . "'" );
+		$db->query("UPDATE `videos` SET `hasPoster`=1 WHERE `video`='" . $video . "'");
 		return true;
 	}
 
@@ -279,10 +290,11 @@ class videoManager {
 	 * @param $id
 	 * @param $name
 	 */
-	public function changeName( $id, $name ) {
+	public function changeName($id, $name)
+	{
 
 		$db = \Difra\MySQL::getInstance();
-		$db->query( "UPDATE `videos` SET `name`='" . $db->escape( $name ) . "' WHERE `id`='" . intval( $id ) . "'" );
+		$db->query("UPDATE `videos` SET `name`='" . $db->escape($name) . "' WHERE `id`='" . intval($id) . "'");
 	}
 }
 

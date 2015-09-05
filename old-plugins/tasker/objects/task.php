@@ -4,42 +4,41 @@ namespace Difra\Plugins\Tasker\Objects;
 
 /**
  * Class Task
- *
  * @package Difra\Plugins\Tasker\Objects
  */
-class Task extends \Difra\Unify {
-
+class Task extends \Difra\Unify
+{
 	static public $objKey = 'task';
 	static protected $table = 'tasks';
-	static protected $propertiesList = array(
-		'id' => array(
+	static protected $propertiesList = [
+		'id' => [
 			'type' => 'int',
 			'options' => 'auto_increment'
-		),
+		],
 		'project' => 'foreign',
 		'priority' => 'foreign',
-		'parent' => array(
+		'parent' => [
 			'type' => 'foreign',
 			'object' => 'task'
-		),
+		],
 		// state
 		// create date
-		'author' => array(
+		'author' => [
 			'type' => 'foreign',
 			'object' => 'employee',
 			'ondelete' => 'null'
-		),
+		],
 		'department' => 'foreign',
-		'assignee' => array(
+		'assignee' => [
 			'type' => 'foreign',
 			'object' => 'employee',
 			'ondelete' => 'null'
-		),
-		'title' => array(
+		],
+		'title' => [
 			'type' => 'varchar',
 			'length' => 1000,
 			'required' => true
-		),
+		],
 		//'stage' => 'foreign',
 		//'subsystem' => 'foreign'
 		// affected versions
@@ -47,6 +46,6 @@ class Task extends \Difra\Unify {
 		// tester
 		// verified
 		// updated by / versions ???
-	);
+	];
 	static protected $primary = 'id';
 }

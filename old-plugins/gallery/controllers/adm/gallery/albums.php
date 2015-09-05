@@ -1,55 +1,67 @@
 <?php
 
-class AdmGalleryAlbumsController extends \Difra\Controller {
+class AdmGalleryAlbumsController extends \Difra\Controller
+{
+    public function dispatch()
+    {
 
-	public function dispatch() {
+        \Difra\View::$instance = 'adm';
+    }
 
-		\Difra\View::$instance = 'adm';
-	}
+    public function indexAction()
+    {
 
-	public function indexAction() {
+        $listNode = $this->root->appendChild($this->xml->createElement('GalleryAlbumList'));
+        \Difra\Plugins\Gallery::getInstance()->getAlbumsListXML($listNode);
+    }
 
-		$listNode = $this->root->appendChild( $this->xml->createElement( 'GalleryAlbumList' ) );
-		\Difra\Plugins\Gallery::getInstance()->getAlbumsListXML( $listNode );
-	}
+    public function addAction()
+    {
 
-	public function addAction() {
+        $this->root->appendChild($this->xml->createElement('GalleryAlbumAdd'));
+    }
 
-		$this->root->appendChild( $this->xml->createElement( 'GalleryAlbumAdd' ) );
-	}
+    public function editAction(\Difra\Param\AnyInt $id)
+    {
 
-	public function editAction( \Difra\Param\AnyInt $id ) {
+        $editNode = $this->root->appendChild($this->xml->createElement('GalleryAlbumEdit'));
+        \Difra\Plugins\Gallery::getInstance()->getAlbumXML($editNode, $id->val());
+    }
 
-		$editNode = $this->root->appendChild( $this->xml->createElement( 'GalleryAlbumEdit' ) );
-		\Difra\Plugins\Gallery::getInstance()->getAlbumXML( $editNode, $id->val() );
-	}
+    public function saveAjaxAction(
+        \Difra\Param\AjaxString $name,
+        \Difra\Param\AjaxString $description,
+        \Difra\Param\AjaxCheckbox $hidden,
+        \Difra\Param\AjaxInt $id = null
+    ) {
 
-	public function saveAjaxAction( \Difra\Param\AjaxString $name, \Difra\Param\AjaxString $description, \Difra\Param\AjaxCheckbox $hidden,
-					\Difra\Param\AjaxInt $id = null ) {
+        if ($id) {
+            \Difra\Plugins\Gallery::getInstance()
+                                  ->albumUpdate($id->val(), $name->val(), $description->val(), !$hidden->val());
+        } else {
+            \Difra\Plugins\Gallery::getInstance()->albumAdd($name->val(), $description->val(), !$hidden->val());
+        }
+        $this->ajax->redirect('/adm/gallery/albums/');
+    }
 
-		if( $id ) {
-			\Difra\Plugins\Gallery::getInstance()->albumUpdate( $id->val(), $name->val(), $description->val(), !$hidden->val() );
-		} else {
-			\Difra\Plugins\Gallery::getInstance()->albumAdd( $name->val(), $description->val(), !$hidden->val() );
-		}
-		$this->ajax->redirect( '/adm/gallery/albums/' );
-	}
+    public function deleteAjaxAction(\Difra\Param\AnyInt $id)
+    {
 
-	public function deleteAjaxAction( \Difra\Param\AnyInt $id ) {
+        \Difra\Plugins\Gallery::getInstance()->albumDelete($id->val());
+        $this->ajax->redirect('/adm/gallery/albums/');
+    }
 
-		\Difra\Plugins\Gallery::getInstance()->albumDelete( $id->val() );
-		$this->ajax->redirect( '/adm/gallery/albums/' );
-	}
+    public function upAjaxAction(\Difra\Param\AnyInt $id)
+    {
 
-	public function upAjaxAction( \Difra\Param\AnyInt $id ) {
+        \Difra\Plugins\Gallery::getInstance()->albumUp($id->val());
+        $this->ajax->redirect('/adm/gallery/albums/');
+    }
 
-		\Difra\Plugins\Gallery::getInstance()->albumUp( $id->val() );
-		$this->ajax->redirect( '/adm/gallery/albums/' );
-	}
+    public function downAjaxAction(\Difra\Param\AnyInt $id)
+    {
 
-	public function downAjaxAction( \Difra\Param\AnyInt $id ) {
-
-		\Difra\Plugins\Gallery::getInstance()->albumDown( $id->val() );
-		$this->ajax->redirect( '/adm/gallery/albums/' );
-	}
+        \Difra\Plugins\Gallery::getInstance()->albumDown($id->val());
+        $this->ajax->redirect('/adm/gallery/albums/');
+    }
 }

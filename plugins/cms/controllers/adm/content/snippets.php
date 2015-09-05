@@ -47,7 +47,7 @@ class AdmContentSnippetsController extends \Difra\Controller
     /**
      * @param \Difra\Param\AjaxString $name
      * @param \Difra\Param\AjaxString $text
-     * @param \Difra\Param\AjaxInt    $id
+     * @param \Difra\Param\AjaxInt $id
      * @param \Difra\Param\AjaxString $description
      * @throws Difra\Exception
      */
@@ -71,7 +71,7 @@ class AdmContentSnippetsController extends \Difra\Controller
     }
 
     /**
-     * @param \Difra\Param\AnyInt  $id
+     * @param \Difra\Param\AnyInt $id
      * @param \Difra\Param\AjaxInt $confirm
      */
     public function delAjaxAction(\Difra\Param\AnyInt $id, \Difra\Param\AjaxInt $confirm = null)

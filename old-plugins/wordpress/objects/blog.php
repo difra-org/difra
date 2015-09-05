@@ -4,16 +4,16 @@ namespace Difra\Libs\Objects;
 
 /**
  * Class Blog
- *
  * @package Difra\Libs\Objects
  * @deprecated
  */
-class Blog {
+class Blog
+{
+	public $posts = [];
+	public $pages = [];
 
-	public $posts = array();
-	public $pages = array();
-
-	public function addPost( $post ) {
+	public function addPost($post)
+	{
 
 		$this->posts[] = $post;
 	}

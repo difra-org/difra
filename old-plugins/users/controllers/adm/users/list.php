@@ -30,8 +30,12 @@ class AdmUsersListController extends Difra\Controller
     }
 
     public function saveAjaxAction(
-        Param\AnyInt $id, Param\AjaxEmail $email, Param\AjaxCheckbox $change_pw,
-        Param\AjaxString $new_pw = null, Param\AjaxData $fieldName = null, Param\AjaxData $fieldValue = null
+        Param\AnyInt $id,
+        Param\AjaxEmail $email,
+        Param\AjaxCheckbox $change_pw,
+        Param\AjaxString $new_pw = null,
+        Param\AjaxData $fieldName = null,
+        Param\AjaxData $fieldValue = null
     ) {
         $userData = ['email' => $email->val(), 'change_pw' => $change_pw->val()];
         $userData['new_pw'] = !is_null($new_pw) ? $new_pw->val() : null;

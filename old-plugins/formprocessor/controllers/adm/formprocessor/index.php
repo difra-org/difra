@@ -2,94 +2,120 @@
 
 use Difra\Plugins\FormProcessor;
 
-class AdmFormprocessorIndexController extends \Difra\Controller {
+class AdmFormprocessorIndexController extends \Difra\Controller
+{
+    public function dispatch()
+    {
 
-	public function dispatch() {
+        $this->view->instance = 'adm';
+    }
 
-		$this->view->instance = 'adm';
-	}
+    public function manageAction()
+    {
 
-	public function manageAction() {
+        $rootNode = $this->root->appendChild($this->xml->createElement('FP_manage'));
+        $formsNode = $rootNode->appendChild($this->xml->createElement('forms'));
+        \Difra\Plugins\FormProcessor::getInstance()->getListXML($formsNode);
+    }
 
-		$rootNode = $this->root->appendChild($this->xml->createElement('FP_manage'));
-		$formsNode = $rootNode->appendChild($this->xml->createElement('forms'));
-		\Difra\Plugins\FormProcessor::getInstance()->getListXML($formsNode);
-	}
+    public function addAction()
+    {
 
-	public function addAction() {
+        $rootNode = $this->root->appendChild($this->xml->createElement('FP_create'));
+    }
 
-		$rootNode = $this->root->appendChild($this->xml->createElement('FP_create'));
-	}
+    public function saveformAjaxAction(
+        \Difra\Param\AjaxString $name,
+        \Difra\Param\AjaxString $uri,
+        \Difra\Param\AjaxString $notify,
+        \Difra\Param\AjaxString $button,
+        \Difra\Param\AjaxHTML $description = null,
+        \Difra\Param\AjaxData $fieldType = null,
+        \Difra\Param\AjaxData $fieldName = null,
+        \Difra\Param\AjaxData $fieldDescription = null,
+        \Difra\Param\AjaxData $fieldMandatory = null,
+        \Difra\Param\AjaxData $selectVariants = null,
+        \Difra\Param\AjaxInt $formId = null,
+        \Difra\Param\AjaxString $originalUri = null
+    ) {
 
-	public function saveformAjaxAction(\Difra\Param\AjaxString $name, \Difra\Param\AjaxString $uri,
-					   \Difra\Param\AjaxString $notify, \Difra\Param\AjaxString $button, \Difra\Param\AjaxHTML $description = null,
-					   \Difra\Param\AjaxData $fieldType = null, \Difra\Param\AjaxData $fieldName = null,
-					   \Difra\Param\AjaxData $fieldDescription = null, \Difra\Param\AjaxData $fieldMandatory = null,
-					   \Difra\Param\AjaxData $selectVariants = null,
-					   \Difra\Param\AjaxInt $formId = null, \Difra\Param\AjaxString $originalUri = null) {
+        if (is_null($fieldType) || is_null($fieldName)) {
+            return $this->ajax->notify(\Difra\Locales::getInstance()
+                                                     ->getXPath('formProcessor/adm/create/noFieldsNotify'));
+        }
 
-		if(is_null($fieldType) || is_null($fieldName)) {
-			return $this->ajax->notify(\Difra\Locales::getInstance()->getXPath('formProcessor/adm/create/noFieldsNotify'));
-		}
+        $FP = \Difra\Plugins\FormProcessor::getInstance();
+        $uri = $uri->val();
+        $originalUri = !is_null($originalUri) ? $originalUri->val() : null;
 
-		$FP = \Difra\Plugins\FormProcessor::getInstance();
-		$uri = $uri->val();
-		$originalUri = !is_null($originalUri) ? $originalUri->val() : null;
+        if (is_null($formId) && $uri != $originalUri) {
+            if ($FP->checkDupUri($uri)) {
+                return $this->ajax->invalid('uri',
+                    \Difra\Locales::getInstance()->getXPath('formProcessor/adm/create/duplicateUri'));
+            }
+        }
 
-		if(is_null($formId) && $uri != $originalUri) {
-			if($FP->checkDupUri($uri)) {
-				return $this->ajax->invalid('uri', \Difra\Locales::getInstance()->getXPath('formProcessor/adm/create/duplicateUri'));
-			}
-		}
+        $errorField = $FP->checkEmptyNameFields($fieldType, $fieldName);
+        if ($errorField !== true) {
+            return $this->ajax->notify($errorField);
+        }
 
-		$errorField = $FP->checkEmptyNameFields($fieldType, $fieldName);
-		if($errorField !== true) {
-			return $this->ajax->notify($errorField);
-		}
+        $mainFieldsArray = [
+            'title' => $name->val(),
+            'uri' => $uri,
+            'answer' => $notify->val(),
+            'submit' => $button->val(),
+            'description' => $description
+        ];
 
-		$mainFieldsArray = ['title'  => $name->val(), 'uri' => $uri, 'answer' => $notify->val(),
-				    'submit' => $button->val(), 'description' => $description];
+        $fieldMandatory = !is_null($fieldMandatory) ? $fieldMandatory->val() : null;
+        $selectVariants = !is_null($selectVariants) ? $selectVariants->val() : null;
 
-		$fieldMandatory = !is_null($fieldMandatory) ? $fieldMandatory->val() : null;
-		$selectVariants = !is_null($selectVariants) ? $selectVariants->val() : null;
+        $formFieldsArray = [
+            'names' => $fieldName->val(),
+            'mandatory' => $fieldMandatory,
+            'types' => $fieldType->val(),
+            'descriptions' => $fieldDescription->val(),
+            'variants' => $selectVariants
+        ];
 
-		$formFieldsArray = ['names'        => $fieldName->val(), 'mandatory' => $fieldMandatory, 'types' => $fieldType->val(),
-				    'descriptions' => $fieldDescription->val(), 'variants' => $selectVariants];
+        if (!is_null($formId)) {
 
-		if(!is_null($formId)) {
+            if (!$FP->updateForm($formId->val(), $mainFieldsArray, $formFieldsArray)) {
+                return $this->ajax->notify(\Difra\Locales::getInstance()->getXPath('formProcessor/adm/edit/idError'));
+            }
+            \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
+                                                                     ->getXPath('formProcessor/adm/edit/formUpdated'));
+        } else {
+            $FP->createForm($mainFieldsArray, $formFieldsArray);
+            \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
+                                                                     ->getXPath('formProcessor/adm/create/formAdded'));
+        }
 
-			if(!$FP->updateForm($formId->val(), $mainFieldsArray, $formFieldsArray)) {
-				return $this->ajax->notify(\Difra\Locales::getInstance()->getXPath('formProcessor/adm/edit/idError'));
-			}
-			\Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()->getXPath('formProcessor/adm/edit/formUpdated'));
+        $this->ajax->redirect('/adm/formprocessor/manage');
+    }
 
-		} else {
-			$FP->createForm($mainFieldsArray, $formFieldsArray);
-			\Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()->getXPath('formProcessor/adm/create/formAdded'));
-		}
+    public function changestatusAjaxAction(\Difra\Param\AnyInt $id)
+    {
 
-		$this->ajax->redirect('/adm/formprocessor/manage');
-	}
+        \Difra\Plugins\FormProcessor::getInstance()->changeStatus($id->val());
+        $this->ajax->refresh();
+    }
 
-	public function changestatusAjaxAction(\Difra\Param\AnyInt $id) {
+    public function deleteAjaxAction(\Difra\Param\AnyInt $id)
+    {
 
-		\Difra\Plugins\FormProcessor::getInstance()->changeStatus($id->val());
-		$this->ajax->refresh();
-	}
+        \Difra\Plugins\FormProcessor::getInstance()->deleteForm($id->val());
+        $this->ajax->refresh();
+    }
 
-	public function deleteAjaxAction(\Difra\Param\AnyInt $id) {
+    public function editAction(\Difra\Param\AnyInt $id)
+    {
 
-		\Difra\Plugins\FormProcessor::getInstance()->deleteForm($id->val());
-		$this->ajax->refresh();
-	}
-
-	public function editAction(\Difra\Param\AnyInt $id) {
-
-		$rootNode = $this->root->appendChild($this->xml->createElement('FP_editform'));
-		$formNode = $rootNode->appendChild($this->xml->createElement('form'));
-		if(!\Difra\Plugins\FormProcessor::getInstance()->getFormXML($formNode, $id->val())) {
-			$this->view->httpError(404);
-		}
-	}
-
+        $rootNode = $this->root->appendChild($this->xml->createElement('FP_editform'));
+        $formNode = $rootNode->appendChild($this->xml->createElement('form'));
+        if (!\Difra\Plugins\FormProcessor::getInstance()->getFormXML($formNode, $id->val())) {
+            $this->view->httpError(404);
+        }
+    }
 }

@@ -4,29 +4,28 @@ namespace Difra\Plugins\Tasker\Objects;
 
 /**
  * Class Department
- *
  * @package Difra\Plugins\Tasker\Objects
  */
-class Department extends \Difra\Unify {
-
+class Department extends \Difra\Unify
+{
 	static public $objKey = 'department';
 	static protected $table = 'departments';
-	static protected $propertiesList = array(
-		'id' => array(
+	static protected $propertiesList = [
+		'id' => [
 			'type' => 'int',
 			'options' => 'auto_increment'
-		),
+		],
 		'company' => 'foreign',
-		'department' => array(
+		'department' => [
 			'type' => 'foreign',
 			'ondelete' => 'null'
-		),
-		'name' => array(
+		],
+		'name' => [
 			'type' => 'varchar',
 			'length' => 1000,
 			'required' => true,
 			'index' => true
-		)
-	);
+		]
+	];
 	static protected $primary = 'id';
 }

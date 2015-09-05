@@ -2,79 +2,91 @@
 
 use Difra\Plugins, Difra\Param;
 
-class AdmContentTagsController extends Difra\Controller {
+class AdmContentTagsController extends Difra\Controller
+{
+    public function dispatch()
+    {
 
-	public function dispatch() {
+        \Difra\View::$instance = 'adm';
+    }
 
-		\Difra\View::$instance = 'adm';
-	}
+    public function indexAction()
+    {
 
-	public function indexAction() {
+        $tagsNode = $this->root->appendChild($this->xml->createElement('adm_tags'));
+        $Tags = Plugins\Tags::getInstance();
+        $Tags->getAllTagsXML($tagsNode);
 
-		$tagsNode = $this->root->appendChild( $this->xml->createElement( 'adm_tags' ) );
-		$Tags = Plugins\Tags::getInstance();
-		$Tags->getAllTagsXML( $tagsNode );
+        $aliasesNode = $this->root->appendChild($this->xml->createElement('aliases'));
+        $Tags->getAliasesXML($aliasesNode);
+    }
 
-		$aliasesNode = $this->root->appendChild( $this->xml->createElement( 'aliases' ) );
-		$Tags->getAliasesXML( $aliasesNode );
-	}
+    public function saveAjaxAction(
+        \Difra\Param\AjaxInt $tagId,
+        \Difra\Param\AjaxString $module,
+        \Difra\Param\AjaxString $tagName
+    ) {
 
-	public function saveAjaxAction( \Difra\Param\AjaxInt $tagId,
-					\Difra\Param\AjaxString $module,
-					\Difra\Param\AjaxString $tagName ) {
+        if (\Difra\Plugins\Tags::getInstance()->saveTag($module->val(), $tagId->val(), $tagName->val())) {
 
-		if( \Difra\Plugins\Tags::getInstance()->saveTag( $module->val(), $tagId->val(), $tagName->val() ) ) {
+            \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()->getXPath('tags/adm/tagSaved'));
+            $this->ajax->reload();
+        } else {
+            $this->ajax->notify(\Difra\Locales::getInstance()->getXPath('tags/adm/notSaved'));
+        }
+    }
 
-			\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'tags/adm/tagSaved' ) );
-			$this->ajax->reload();
-		} else {
-			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'tags/adm/notSaved' ) );
-		}
-	}
+    public function deleteAjaxAction(\Difra\Param\AjaxInt $tagId, \Difra\Param\AjaxString $module)
+    {
 
-	public function deleteAjaxAction( \Difra\Param\AjaxInt $tagId, \Difra\Param\AjaxString $module ) {
+        if (\Difra\Plugins\Tags::getInstance()->deleteTag($module->val(), $tagId->val())) {
 
-		if( \Difra\Plugins\Tags::getInstance()->deleteTag( $module->val(), $tagId->val() ) ) {
+            \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()->getXPath('tags/adm/tagDeleted'));
+            $this->ajax->reload();
+        } else {
+            $this->ajax->notify(\Difra\Locales::getInstance()->getXPath('tags/adm/notDeleted'));
+        }
+    }
 
-			\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'tags/adm/tagDeleted' ) );
-			$this->ajax->reload();
-		} else {
-			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'tags/adm/notDeleted' ) );
-		}
-	}
+    public function editAjaxAction(\Difra\Param\AnyString $module, \Difra\Param\AnyInt $tagId)
+    {
 
-	public function editAjaxAction( \Difra\Param\AnyString $module, \Difra\Param\AnyInt $tagId ) {
+        $tagData = \Difra\Plugins\Tags::getInstance()->getTag($module->val(), $tagId->val());
+        if (!empty($tagData)) {
 
-		$tagData = \Difra\Plugins\Tags::getInstance()->getTag( $module->val(), $tagId->val() );
-		if( !empty( $tagData ) ) {
+            /** @var \DOMElement $mainNode */
+            $mainNode = $this->root->appendChild($this->xml->createElement('tagsEditForm'));
+            $mainNode->setAttribute('id', $tagData['id']);
+            $mainNode->setAttribute('module', $module->val());
+            $mainNode->setAttribute('tag', $tagData['tag']);
 
-			/** @var \DOMElement $mainNode */
-			$mainNode = $this->root->appendChild( $this->xml->createElement( 'tagsEditForm' ) );
-			$mainNode->setAttribute( 'id', $tagData['id'] );
-			$mainNode->setAttribute( 'module', $module->val() );
-			$mainNode->setAttribute( 'tag', $tagData['tag'] );
+            $html = \Difra\View::render($this->xml, 'forms', true);
+            $this->ajax->display($html);
+        }
+    }
 
-			$html = \Difra\View::render( $this->xml, 'forms', true );
-			$this->ajax->display( $html );
-		}
-	}
+    public function deletealiasAjaxAction(\Difra\Param\AnyInt $aliasId)
+    {
 
-	public function deletealiasAjaxAction( \Difra\Param\AnyInt $aliasId ) {
+        \Difra\Plugins\Tags::getInstance()->deleteAlias($aliasId->val());
 
-		\Difra\Plugins\Tags::getInstance()->deleteAlias( $aliasId->val() );
+        \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()->getXPath('tags/adm/aliasDeleted'));
+        $this->ajax->reload();
+    }
 
-		\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'tags/adm/aliasDeleted' ) );
-		$this->ajax->reload();
-	}
+    public function createaliaseAjaxAction(
+        \Difra\Param\AjaxInt $tagId,
+        \Difra\Param\AjaxString $module,
+        \Difra\Param\AjaxString $aliase
+    ) {
 
-	public function createaliaseAjaxAction( \Difra\Param\AjaxInt $tagId, \Difra\Param\AjaxString $module, \Difra\Param\AjaxString $aliase ) {
+        if (\Difra\Plugins\Tags::getInstance()->createAliase($module->val(), $tagId->val(), $aliase->val())) {
 
-		if( \Difra\Plugins\Tags::getInstance()->createAliase( $module->val(), $tagId->val(), $aliase->val() ) ) {
-
-			\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'tags/adm/aliasCreated' ) );
-			$this->ajax->reload();
-		} else {
-			$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'tags/adm/aliasCreateError' ) );
-		}
-	}
+            \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
+                                                                     ->getXPath('tags/adm/aliasCreated'));
+            $this->ajax->reload();
+        } else {
+            $this->ajax->notify(\Difra\Locales::getInstance()->getXPath('tags/adm/aliasCreateError'));
+        }
+    }
 }

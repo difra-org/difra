@@ -1,11 +1,12 @@
 <?php
 
-class UnifySearchTest extends PHPUnit_Framework_TestCase {
+class UnifySearchTest extends PHPUnit_Framework_TestCase
+{
+    public function test_query_noSuchObjectException()
+    {
 
-	public function test_query_noSuchObjectException() {
-
-		$this->setExpectedException( 'Difra\Exception' );
-		$q = new \Difra\Unify\Search( 'noSuchObject' );
+        $this->setExpectedException('Difra\Exception');
+        $q = new \Difra\Unify\Search('noSuchObject');
 //		$q->doQuery();
-	}
+    }
 }

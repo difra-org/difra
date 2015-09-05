@@ -32,7 +32,6 @@ class AdmContentPagesController extends \Difra\Controller
 
     /**
      * Edit page form
-     *
      * @param \Difra\Param\AnyInt $id
      */
     public function editAction(\Difra\Param\AnyInt $id)
@@ -44,11 +43,10 @@ class AdmContentPagesController extends \Difra\Controller
 
     /**
      * Save page
-     *
      * @param \Difra\Param\AjaxString $title
      * @param \Difra\Param\AjaxString $tag
-     * @param \Difra\Param\AjaxHTML   $body
-     * @param \Difra\Param\AjaxInt    $id
+     * @param \Difra\Param\AjaxHTML $body
+     * @param \Difra\Param\AjaxInt $id
      */
     public function saveAjaxAction(
         \Difra\Param\AjaxString $title,
@@ -69,8 +67,7 @@ class AdmContentPagesController extends \Difra\Controller
 
     /**
      * Delete page
-     *
-     * @param \Difra\Param\AnyInt       $id
+     * @param \Difra\Param\AnyInt $id
      * @param \Difra\Param\AjaxCheckbox $confirm
      */
     public function deleteAjaxAction(\Difra\Param\AnyInt $id, \Difra\Param\AjaxCheckbox $confirm = null)

@@ -2,14 +2,15 @@
 
 namespace Difra\Plugins\CDN;
 
-class Plugin extends \Difra\Plugin {
+class Plugin extends \Difra\Plugin
+{
+    protected $version = 3.1;
+    protected $description = 'Content delivery network';
+    protected $require = 'mysql';
 
-	protected $version = 3.1;
-	protected $description = 'Content delivery network';
-	protected $require = 'mysql';
+    public function init()
+    {
 
-	public function init() {
-
-		\Difra\Events::register( 'dispatch', '\Difra\Plugins\CDN', 'selectHost' );
-	}
+        \Difra\Events::register('dispatch', '\Difra\Plugins\CDN', 'selectHost');
+    }
 }

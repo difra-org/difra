@@ -1,19 +1,21 @@
 <?php
 
-class AdmContentPortfolioPersonsController extends \Difra\Plugins\Widgets\DirectoryController {
+class AdmContentPortfolioPersonsController extends \Difra\Plugins\Widgets\DirectoryController
+{
+    const directory = 'PortfolioPersons';
 
-	const directory = 'PortfolioPersons';
+    public function dispatch()
+    {
 
-	public function dispatch() {
+        \Difra\View::$instance = 'adm';
+    }
 
-		\Difra\View::$instance = 'adm';
-	}
+    public function action($value)
+    {
 
-	public function action( $value ) {
-
-		$escapedValue = addslashes( htmlspecialchars( $value ) );
-		\Difra\Ajaxer::getInstance()->exec(
-			<<<SCRIPT
+        $escapedValue = addslashes(htmlspecialchars($value));
+        \Difra\Ajaxer::getInstance()->exec(
+            <<<SCRIPT
 			var person = $( '.widgets-directory.last' );
 			if( person.length ) {
 				var id = person.closest( 'tr' ).find( '.portfolio-role' ).attr( 'ts' );
@@ -26,6 +28,6 @@ class AdmContentPortfolioPersonsController extends \Difra\Plugins\Widgets\Direct
 	        		);
 	        	}
 SCRIPT
-		);
-	}
+        );
+    }
 }
