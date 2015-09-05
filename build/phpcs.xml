@@ -13,4 +13,5 @@
 	<exclude-pattern>../plugins/jqueryui/js</exclude-pattern>
 	<exclude-pattern>../old-plugins</exclude-pattern>
 	<exclude-pattern>../fw/js/all/jquery</exclude-pattern>
+	<exclude-pattern>../tests</exclude-pattern>
 </ruleset>
