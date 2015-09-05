@@ -9,12 +9,12 @@ namespace Difra;
  */
 class Cache
 {
-    const INST_AUTO = 'auto';
-    const INST_MEMCACHED = 'memcached';
-    const INST_MEMCACHE = 'memcache';
-    const INST_XCACHE = 'xcache';
-    const INST_SHAREDMEM = 'shm';
-    const INST_NONE = 'none';
+    const INST_AUTO = 'Auto detect';
+    const INST_MEMCACHED = 'MemCached';
+    const INST_MEMCACHE = 'Memcache';
+    const INST_XCACHE = 'XCache';
+    const INST_SHAREDMEM = 'Shared Memory';
+    const INST_NONE = 'None';
     const INST_DEFAULT = self::INST_AUTO;
     /**
      * Configured cache adapters.
@@ -30,58 +30,59 @@ class Cache
      */
     public static function getInstance($configName = self::INST_DEFAULT)
     {
-        // adapter type auto detection
         if ($configName == self::INST_AUTO) {
-            static $_auto = null;
-            if ($_auto) {
-                return self::getInstance($_auto);
-            }
-            if (!Debugger::isCachesEnabled()) {
-                Debugger::addLine("Caching disabled by Debug Mode settings");
-                return self::getInstance($_auto = self::INST_NONE);
-            }
-            if (Cache\XCache::isAvailable()) {
-                Debugger::addLine("Auto-detected cache type: XCache");
-                return self::getInstance($_auto = self::INST_XCACHE);
-            } elseif (Cache\MemCached::isAvailable()) {
-                Debugger::addLine("Auto-detected cache type: MemCached");
-                return self::getInstance($_auto = self::INST_MEMCACHED);
-            } elseif (Cache\MemCache::isAvailable()) {
-                Debugger::addLine("Auto-detected cache type: Memcache");
-                return self::getInstance($_auto = self::INST_MEMCACHE);
-//			} elseif( Cache\SharedMemory::isAvailable() ) {
-//				Debugger::getInstance()->addLine( "Auto-detected cache type: Shared Memory" );
-//				return self::getInstance( $_auto = self::INST_SHAREDMEM );
-            } else {
-                Debugger::addLine("No cache detected");
-                return self::getInstance($_auto = self::INST_NONE);
-            }
+            $configName = self::detect();
         }
+        return self::getAdapter($configName);
+    }
 
-        // return adapter if exists
+    private static function detect()
+    {
+        static $autoDetected = null;
+        if ($autoDetected) {
+            return $autoDetected;
+        }
+        if (!Debugger::isCachesEnabled()) {
+            Debugger::addLine('Caching disabled by Debug Mode settings');
+            return $autoDetected;
+        }
+        if (Cache\XCache::isAvailable()) {
+            Debugger::addLine('Auto-detected cache type: XCache');
+            return $autoDetected = self::INST_XCACHE;
+        } elseif (Cache\MemCached::isAvailable()) {
+            Debugger::addLine('Auto-detected cache type: MemCached');
+            return $autoDetected = self::INST_MEMCACHED;
+        } elseif (Cache\MemCache::isAvailable()) {
+            Debugger::addLine('Auto-detected cache type: Memcache');
+            return $autoDetected = self::INST_MEMCACHE;
+//        } elseif (Cache\SharedMemory::isAvailable()) {
+//            Debugger::getInstance()->addLine('Auto-detected cache type: Shared Memory');
+//            return $autoDetected = self::INST_SHAREDMEM;
+        }
+        Debugger::addLine('No cache detected');
+        return $autoDetected = self::INST_NONE;
+    }
+
+    private static function getAdapter($configName)
+    {
         if (isset(self::$adapters[$configName])) {
             return self::$adapters[$configName];
         }
 
-        // create new adapter
         switch ($configName) {
             case self::INST_XCACHE:
-                self::$adapters[$configName] = new Cache\XCache();
-                return self::$adapters[$configName];
+                return self::$adapters[$configName] = new Cache\XCache();
             case self::INST_SHAREDMEM:
-                self::$adapters[$configName] = new Cache\SharedMemory();
-                return self::$adapters[$configName];
+                return self::$adapters[$configName] = new Cache\SharedMemory();
             case self::INST_MEMCACHED:
-                self::$adapters[$configName] = new Cache\MemCached();
-                return self::$adapters[$configName];
+                return self::$adapters[$configName] = new Cache\MemCached();
             case self::INST_MEMCACHE:
-                self::$adapters[$configName] = new Cache\MemCache();
-                return self::$adapters[$configName];
+                return self::$adapters[$configName] = new Cache\MemCache();
+            case self::INST_NONE:
+                return self::$adapters[$configName] = new Cache\None();
             default:
-                if (!isset(self::$adapters[self::INST_NONE])) {
-                    self::$adapters[self::INST_NONE] = new Cache\None();
-                }
-                return self::$adapters[self::INST_NONE];
+                // todo: wrong adapter name: warning?
+                return self::getAdapter(self::INST_NONE);
         }
     }
 }
