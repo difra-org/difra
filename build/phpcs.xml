@@ -5,6 +5,7 @@
 		<exclude name="PSR1.Classes.ClassDeclaration.MissingNamespace"/>
 	</rule>
 
+	<exclude-pattern>../fw/lib/bootstrap.php</exclude-pattern>
 	<exclude-pattern>../fw/lib/libs/esapi</exclude-pattern>
 	<exclude-pattern>../fw/lib/libs/less</exclude-pattern>
 	<exclude-pattern>../plugins/editor/ckeditor</exclude-pattern>

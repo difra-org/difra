@@ -4,6 +4,9 @@
 	<testsuites>
 		<testsuite name="Difra">
 			<directory suffix=".php">../tests/fw</directory>
+			<exclude>
+				<directory>../fw/lib/cache</directory>
+			</exclude>
 		</testsuite>
 	</testsuites>
 
