@@ -7,7 +7,6 @@ use Difra\Locales;
 
 /**
  * Cookies
- *
  * @desc    Работа с куками
  * @package fw
  * @version 0.1
@@ -31,10 +30,9 @@ class Cookies
 
     /**
      * Singleton
-     *
      * @return Cookies
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;
@@ -42,7 +40,6 @@ class Cookies
 
     /**
      * Set cookies path
-     *
      * @param string $path
      * @return void
      */
@@ -53,7 +50,6 @@ class Cookies
 
     /**
      * Set cookies domain
-     *
      * @param string $domain
      * @return void
      */
@@ -64,7 +60,6 @@ class Cookies
 
     /**
      * Set cookies expire time
-     *
      * @param integer $expireTime
      * @return void
      */
@@ -75,7 +70,6 @@ class Cookies
 
     /**
      * Remove cookie
-     *
      * @param string $name
      * @return boolean
      */
@@ -86,7 +80,6 @@ class Cookies
 
     /**
      * Sets cookie that makes Ajaxer show notification popup
-     *
      * @param      $message
      * @param bool $error
      */
@@ -95,9 +88,9 @@ class Cookies
         $this->set(
             'notify',
             [
-                'type'    => $error ? 'error' : 'ok',
+                'type' => $error ? 'error' : 'ok',
                 'message' => (string)$message,
-                'lang'    => [
+                'lang' => [
                     'close' => Locales::get('notifications/close')
                 ]
             ]
@@ -106,8 +99,7 @@ class Cookies
 
     /**
      * Set cookie
-     *
-     * @param string       $name
+     * @param string $name
      * @param string|array $value
      * @return boolean
      */
@@ -121,7 +113,6 @@ class Cookies
 
     /**
      * Set Ajaxer.js request cookie
-     *
      * @param $url
      * @return void
      */
@@ -130,4 +121,3 @@ class Cookies
         $this->set('query', ['url' => $url]);
     }
 }
-	

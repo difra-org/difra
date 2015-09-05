@@ -8,7 +8,6 @@ use Difra\View\Exception as ViewException;
 /**
  * Class Digest
  * Digest HTTP auth
- *
  * @package Difra\Libs\Auth
  */
 class Digest
@@ -19,11 +18,10 @@ class Digest
 
     /**
      * Singleton
-     *
      * @param array $newUsers
      * @return Digest
      */
-    static function getInstance($newUsers = [])
+    public static function getInstance($newUsers = [])
     {
         static $_instance = null;
         if (!$_instance) {
@@ -33,8 +31,7 @@ class Digest
     }
 
     /**
-     * Contructor
-     *
+     * Constructor
      * @param array $newUsers
      */
     public function __construct($newUsers = [])
@@ -44,7 +41,6 @@ class Digest
 
     /**
      * Request Digest auth
-     *
      * @throws \Difra\View\Exception
      */
     public function request()
@@ -66,7 +62,6 @@ class Digest
 
     /**
      * Verify auth
-     *
      * @return bool
      */
     public function verify()
@@ -96,7 +91,6 @@ class Digest
 
     /**
      * Digest auth parser
-     *
      * @param $txt
      * @return array|bool
      */
@@ -119,7 +113,6 @@ class Digest
 
     /**
      * Get nonce
-     *
      * @param bool $regen Force new nonce
      * @return bool|string
      */
@@ -139,7 +132,6 @@ class Digest
 
     /**
      * Check nc
-     *
      * @param $nc
      * @return bool
      */

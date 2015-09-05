@@ -4,14 +4,12 @@ namespace Difra\Minify;
 
 /**
  * Class JS
- *
  * @package Difra\Minify
  */
 class JS extends Common
 {
     /**
      * Minify JavaScript
-     *
      * @param string $data
      * @return string
      */

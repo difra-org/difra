@@ -1,16 +1,19 @@
 <?php
 
 namespace Difra\Plugins\Announcements;
-class Plugin extends \Difra\Plugin {
 
-	protected $require = array( 'users', 'editor', 'jqueryui', 'mysql' );
+class Plugin extends \Difra\Plugin
+{
+	protected $require = ['users', 'editor', 'jqueryui', 'mysql'];
 	protected $version = 5;
 	protected $description = 'Announcements';
 
-	public function init() {
+	public function init()
+	{
 	}
 
-	public function getSitemap() {
+	public function getSitemap()
+	{
 		return \Difra\Plugins\Announcements::getMap();
 	}
 }

@@ -8,7 +8,6 @@ use Difra\MySQL\Abstracts\None;
 /**
  * Factory for MySQL
  * Class MySQL
- *
  * @package Difra
  */
 class MySQL
@@ -16,7 +15,7 @@ class MySQL
     /** Auto detect adapter */
     const INST_AUTO = 'auto';
     /** MySQLi */
-    const INST_MySQLi = 'MySQLi';
+    const INST_MYSQLI = 'MySQLi';
     /** Stub */
     const INST_NONE = 'none';
     /** Default adapter */
@@ -25,7 +24,7 @@ class MySQL
 
     /**
      * @param string $adapter
-     * @param bool   $new
+     * @param bool $new
      * @return MySQL\Abstracts\MySQLi|MySQL\Abstracts\None
      */
     public static function getInstance($adapter = self::INST_DEFAULT, $new = false)
@@ -38,7 +37,7 @@ class MySQL
 
             if (MySQLi::isAvailable()) {
                 Debugger::addLine("MySQL module: MySQLi");
-                return self::getInstance($auto = self::INST_MySQLi, $new);
+                return self::getInstance($auto = self::INST_MYSQLI, $new);
             } else {
                 Debugger::addLine("No suitable MySQL module detected");
                 return self::getInstance($auto = self::INST_NONE, $new);
@@ -50,7 +49,7 @@ class MySQL
         }
 
         switch ($adapter) {
-            case self::INST_MySQLi:
+            case self::INST_MYSQLI:
                 $obj = new MySQLi();
                 break;
             default:

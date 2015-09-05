@@ -4,7 +4,6 @@ namespace Difra\Libs;
 
 /**
  * Class Diff
- *
  * @deprecated
  * @package Difra\Libs
  */
@@ -12,29 +11,27 @@ class Diff
 {
     /**
      * Get diff for two arrays of strings as if it is a text files
-     *
      * @param string[] $array1
      * @param string[] $array2
      * @return bool
      */
-    static public function diffArrays($array1, $array2)
+    public static function diffArrays($array1, $array2)
     {
-        $res = self::_diffArrays($array1, $array2);
+        $res = self::diffArraysSub($array1, $array2);
         return $res ? $res['data'] : false;
     }
 
     /**
      * diffArrays() recursive implementation
-     *
      * @param string[] $array1
      * @param string[] $array2
-     * @param array    $result
-     * @param int      $i1
-     * @param int      $i2
-     * @param int      $depth
+     * @param array $result
+     * @param int $i1
+     * @param int $i2
+     * @param int $depth
      * @return array
      */
-    static private function _diffArrays($array1, $array2, $result = [], $i1 = 0, $i2 = 0, $depth = 0)
+    private static function diffArraysSub($array1, $array2, $result = [], $i1 = 0, $i2 = 0, $depth = 0)
     {
         // equal lines
         while (isset($array1[$i1]) and isset($array2[$i2]) and $array1[$i1] == $array2[$i2]) {
@@ -69,7 +66,7 @@ class Diff
                 $result1[] = ['sign' => '-', 'value' => $array1[$i1a++]];
                 $da++;
             } while (isset($array1[$i1a]) and !in_array($array1[$i1a], $a2a));
-            $res1 = self::_diffArrays($array1, $array2, $result1, $i1a, $i2, $da);
+            $res1 = self::diffArraysSub($array1, $array2, $result1, $i1a, $i2, $da);
         } else {
             $res1 = false;
         }
@@ -83,7 +80,7 @@ class Diff
                 $result1[] = ['sign' => '+', 'value' => $array2[$i2a++]];
                 $da++;
             } while (isset($array2[$i2a]) and !in_array($array2[$i2a], $a1a));
-            $res2 = self::_diffArrays($array1, $array2, $result1, $i1, $i2a, $da);
+            $res2 = self::diffArraysSub($array1, $array2, $result1, $i1, $i2a, $da);
         } else {
             $res2 = false;
         }

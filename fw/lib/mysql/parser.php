@@ -4,7 +4,6 @@ namespace Difra\MySQL;
 
 /**
  * Class Parser
- *
  * @package Difra\MySQL
  * @deprecated
  */
@@ -12,7 +11,6 @@ class Parser
 {
     /**
      * Compare current mysql tables and bin/db.sql files. Return result to XML.
-     *
      * @param $node
      * @return array|bool
      */
@@ -51,7 +49,6 @@ class Parser
 
     /**
      * Get contents of bin/db.sql files
-     *
      * @return string
      */
     public static function getGoalSQL()
@@ -70,7 +67,6 @@ class Parser
 
     /**
      * Get current tables as SHOW CREATE TABLE text
-     *
      * @param bool $asArray
      * @return string|array
      */
@@ -96,10 +92,9 @@ class Parser
 
     /**
      * Chop SQL string to elements
-     *
-     * @param string $text      SQL string
-     * @param bool   $tree      Put grouped elements in braces as a child array
-     * @param bool   $recursive Internal paramter, do not use
+     * @param string $text SQL string
+     * @param bool $tree Put grouped elements in braces as a child array
+     * @param bool $recursive Internal paramter, do not use
      * @return array
      */
     private static function chop($text, $tree = false, $recursive = false)
@@ -256,7 +251,6 @@ class Parser
 
     /**
      * Get class for chopped SQL
-     *
      * @param $chunks
      * @return string|null
      */
@@ -272,7 +266,6 @@ class Parser
 
     /**
      * Get text string from chopped SQL
-     *
      * @param $array
      * @return string
      */

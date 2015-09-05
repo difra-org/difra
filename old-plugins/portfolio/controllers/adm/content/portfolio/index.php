@@ -1,35 +1,38 @@
 <?php
 
-class AdmContentPortfolioIndexController extends \Difra\Controller {
-
-	public function dispatch() {
+class AdmContentPortfolioIndexController extends \Difra\Controller
+{
+	public function dispatch()
+	{
 
 		\Difra\View::$instance = 'adm';
 	}
 
-	public function indexAction() {
+	public function indexAction()
+	{
 
-		$search = new \Difra\Unify\Search( 'PortfolioEntry' );
-		$portfolioNode = $this->root->appendChild( $this->xml->createElement( 'PortfolioEntryList' ) );
-		$search->setOrder( 'release', 'release' );
+		$search = new \Difra\Unify\Search('PortfolioEntry');
+		$portfolioNode = $this->root->appendChild($this->xml->createElement('PortfolioEntryList'));
+		$search->setOrder('release', 'release');
 		$workList = $search->getList();
-		$idArray = array();
-		if( !is_null( $workList ) ) {
-			foreach( $workList as $work ) {
-				$workNode = $portfolioNode->appendChild( $this->xml->createElement( 'PortfolioEntry' ) );
-				$work->getXML( $workNode );
+		$idArray = [];
+		if (!is_null($workList)) {
+			foreach ($workList as $work) {
+				$workNode = $portfolioNode->appendChild($this->xml->createElement('PortfolioEntry'));
+				$work->getXML($workNode);
 				$idArray[] = $work->id;
 			}
 
-			if( !empty( $idArray ) ) {
-				\Difra\Plugins\Portfolio::getMainImagesXML( $idArray, $portfolioNode );
+			if (!empty($idArray)) {
+				\Difra\Plugins\Portfolio::getMainImagesXML($idArray, $portfolioNode);
 			}
 		}
 	}
 
-	public function addAction() {
+	public function addAction()
+	{
 
-		$this->root->appendChild( $this->xml->createElement( 'PortfolioEntryAdd' ) );
+		$this->root->appendChild($this->xml->createElement('PortfolioEntryAdd'));
 	}
 
 	public function saveAjaxAction(
@@ -44,50 +47,50 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 		\Difra\Param\AjaxFiles $image = null
 	) {
 
-		if( is_null( $id ) && !\Difra\Plugins\Portfolio::checkURI( $name->val() ) ) {
+		if (is_null($id) && !\Difra\Plugins\Portfolio::checkURI($name->val())) {
 
-			$this->ajax->invalid( 'name' );
-			$this->ajax->status( 'name',
-				\Difra\Locales::getInstance()->getXPath( 'portfolio/adm/notify/dupName' ), 'problem' );
+			$this->ajax->invalid('name');
+			$this->ajax->status('name',
+				\Difra\Locales::getInstance()->getXPath('portfolio/adm/notify/dupName'), 'problem');
 			return;
 		}
 
-		if( $id ) {
-			$entry = \Difra\Unify::getObj( 'PortfolioEntry', (string)$id );
+		if ($id) {
+			$entry = \Difra\Unify::getObj('PortfolioEntry', (string)$id);
 		} else {
-			$entry = \Difra\Unify::createObj( 'PortfolioEntry' );
+			$entry = \Difra\Unify::createObj('PortfolioEntry');
 		}
 		$entry->name = $name;
-		if( !is_null( $release ) ) {
-			$release = strtotime( $release->val() . ' 00:00:00' );
-			$release = date( 'Y-m-d', $release );
+		if (!is_null($release)) {
+			$release = strtotime($release->val() . ' 00:00:00');
+			$release = date('Y-m-d', $release);
 		}
 		$entry->description = $description;
 		$entry->release = $release;
 		$entry->link = $link;
 		$entry->link_caption = $link_caption;
 		$entry->software = $software;
-		$entry->uri = \Difra\Locales::getInstance()->makeLink( $name->val() );
+		$entry->uri = \Difra\Locales::getInstance()->makeLink($name->val());
 
-		$sortedAuthors = array();
-		if( !is_null( $roles ) ) {
+		$sortedAuthors = [];
+		if (!is_null($roles)) {
 			$authors = $roles->val();
-			if( !empty( $authors ) ) {
-				foreach( $authors as $line ) {
-					if( empty( $line ) ) {
+			if (!empty($authors)) {
+				foreach ($authors as $line) {
+					if (empty($line)) {
 						continue;
 					}
 					$role = false;
-					$contributors = array();
-					foreach( $line as $k => $v ) {
-						if( $k === 'role' ) {
+					$contributors = [];
+					foreach ($line as $k => $v) {
+						if ($k === 'role') {
 							$role = $v;
 						} else {
 							$contributors[] = $v;
 						}
 					}
-					if( $role and !empty( $contributors ) ) {
-						$sortedAuthors[] = array( 'role' => $role, 'contibutors' => $contributors );
+					if ($role and !empty($contributors)) {
+						$sortedAuthors[] = ['role' => $role, 'contibutors' => $contributors];
 					}
 				}
 			}
@@ -95,52 +98,53 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 
 		$entry->authors = $sortedAuthors;
 
-		try{
+		try {
 			$entry->save();
-		} catch( \Difra\Exception $x ) {
+		} catch (\Difra\Exception $x) {
 			$x->notify();
-			$this->ajax->notify( $x->getMessage() );
+			$this->ajax->notify($x->getMessage());
 			return;
 		}
-		if( !is_null( $image ) ) {
+		if (!is_null($image)) {
 
-			if( $id ) {
+			if ($id) {
 				$eId = $id->val();
 			} else {
 				$eId = $entry->getPrimaryValue();
 			}
 
-			try{
-				\Difra\Plugins\Portfolio::saveImages( $eId, $image );
-			} catch( \Difra\Exception $x ) {
+			try {
+				\Difra\Plugins\Portfolio::saveImages($eId, $image);
+			} catch (\Difra\Exception $x) {
 				$x->notify();
-				$this->ajax->notify( $x->getMessage() );
+				$this->ajax->notify($x->getMessage());
 				return;
 			}
 		}
 
 		$Locales = \Difra\Locales::getInstance();
-		if( $id ) {
-			$notify = $Locales->getXPath( 'portfolio/adm/notify/edited' );
+		if ($id) {
+			$notify = $Locales->getXPath('portfolio/adm/notify/edited');
 		} else {
-			$notify = $Locales->getXPath( 'portfolio/adm/notify/added' );
+			$notify = $Locales->getXPath('portfolio/adm/notify/added');
 		}
 
-		$this->ajax->notify( $notify );
-		$this->ajax->redirect( '/adm/content/portfolio/' );
+		$this->ajax->notify($notify);
+		$this->ajax->redirect('/adm/content/portfolio/');
 	}
 
-	public function deleteAjaxAction( \Difra\Param\AnyInt $id ) {
+	public function deleteAjaxAction(\Difra\Param\AnyInt $id)
+	{
 
-		$entry = \Difra\Unify::getObj( 'PortfolioEntry', $id->val() );
+		$entry = \Difra\Unify::getObj('PortfolioEntry', $id->val());
 
-		$images = new \Difra\Unify\Search( 'PortfolioImages' );
-		$images->addCondition( 'portfolio', $id->val() );
+		$images = new \Difra\Unify\Search('PortfolioImages');
+		$images->addCondition('portfolio', $id->val());
 		$imageList = $images->getList();
 
-		if( !empty( $imageList ) ) {
-			foreach( $imageList as $img ) {
-				\Difra\Plugins\Portfolio::deleteImage( $img->id );
+		if (!empty($imageList)) {
+			foreach ($imageList as $img) {
+				\Difra\Plugins\Portfolio::deleteImage($img->id);
 			}
 		}
 
@@ -148,50 +152,53 @@ class AdmContentPortfolioIndexController extends \Difra\Controller {
 		$this->ajax->refresh();
 	}
 
-	public function editAction( \Difra\Param\AnyInt $id ) {
+	public function editAction(\Difra\Param\AnyInt $id)
+	{
 
-		$mainXml = $this->root->appendChild( $this->xml->createElement( 'PortfolioEntryEdit' ) );
-		$mainXml->setAttribute( 'edit', true );
-		$entryNode = $mainXml->appendChild( $this->xml->createElement( 'entry' ) );
-		$entry = \Difra\Unify::getObj( 'PortfolioEntry', $id->val() );
-		$entry->getXML( $entryNode );
+		$mainXml = $this->root->appendChild($this->xml->createElement('PortfolioEntryEdit'));
+		$mainXml->setAttribute('edit', true);
+		$entryNode = $mainXml->appendChild($this->xml->createElement('entry'));
+		$entry = \Difra\Unify::getObj('PortfolioEntry', $id->val());
+		$entry->getXML($entryNode);
 
-		$imagesNode = $entryNode->appendChild( $this->xml->createElement( 'images' ) );
+		$imagesNode = $entryNode->appendChild($this->xml->createElement('images'));
 
-		$images = new \Difra\Unify\Search( 'PortfolioImages' );
-		$images->addCondition( 'portfolio', $entry->id );
-		$images->setOrder( array( 'position' ) );
-		$images->getListXML( $imagesNode );
+		$images = new \Difra\Unify\Search('PortfolioImages');
+		$images->addCondition('portfolio', $entry->id);
+		$images->setOrder(['position']);
+		$images->getListXML($imagesNode);
 	}
 
-	public function imagedownAjaxAction( \Difra\Param\AnyInt $id ) {
+	public function imagedownAjaxAction(\Difra\Param\AnyInt $id)
+	{
 
-		try{
-			\Difra\Plugins\Portfolio::imageDown( $id->val() );
-		} catch( \Difra\Exception $x ) {
+		try {
+			\Difra\Plugins\Portfolio::imageDown($id->val());
+		} catch (\Difra\Exception $x) {
 			$x->notify();
-			$this->ajax->notify( $x->getMessage() );
+			$this->ajax->notify($x->getMessage());
 			return;
 		}
 		$this->ajax->refresh();
 	}
 
-	public function imageupAjaxAction( \Difra\Param\AnyInt $id ) {
+	public function imageupAjaxAction(\Difra\Param\AnyInt $id)
+	{
 
-		try{
-			\Difra\Plugins\Portfolio::imageUp( $id->val() );
-		} catch( \Difra\Exception $x ) {
+		try {
+			\Difra\Plugins\Portfolio::imageUp($id->val());
+		} catch (\Difra\Exception $x) {
 			$x->notify();
-			$this->ajax->notify( $x->getMessage() );
+			$this->ajax->notify($x->getMessage());
 			return;
 		}
 		$this->ajax->refresh();
 	}
 
-	public function deleteimageAjaxAction( \Difra\Param\AnyInt $id ) {
+	public function deleteimageAjaxAction(\Difra\Param\AnyInt $id)
+	{
 
-		\Difra\Plugins\Portfolio::deleteImage( $id->val() );
+		\Difra\Plugins\Portfolio::deleteImage($id->val());
 		$this->ajax->refresh();
 	}
-
 }

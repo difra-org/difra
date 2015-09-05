@@ -4,7 +4,6 @@ namespace Difra;
 
 /**
  * Class Exception
- *
  * @package Difra
  */
 class Exception extends \exception
@@ -22,7 +21,7 @@ class Exception extends \exception
      * @static
      * @param \Difra\Exception|\exception $exception
      */
-    static private function notifyObj($exception = null)
+    private static function notifyObj($exception = null)
     {
         if (Envi::getMode() == 'web' and !Debugger::isConsoleEnabled()) {
             $date = date('r');

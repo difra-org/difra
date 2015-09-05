@@ -10,7 +10,6 @@ use Difra\View\Exception as ViewException;
 /**
  * Abstract controller
  * Class Controller
- *
  * @package Difra
  */
 abstract class Controller
@@ -41,7 +40,6 @@ abstract class Controller
 
     /**
      * Constructor
-     *
      * @param array $parameters Parameters from url (passed from \Difra\Envi\Action)
      */
     final public function __construct($parameters = [])
@@ -73,14 +71,13 @@ abstract class Controller
      * Needed for skipping xml fill on error pages
      * TODO: check this
      */
-    final static public function init()
+    final public static function init()
     {
         self::getInstance();
     }
 
     /**
      * Call action factory
-     *
      * @return Controller|null
      */
     public static function getInstance()
@@ -95,7 +92,7 @@ abstract class Controller
     /**
      * Run suitable action
      */
-    final static public function run()
+    final public static function run()
     {
         $controller = self::getInstance();
         $controller->chooseAction();
@@ -222,7 +219,7 @@ abstract class Controller
     /**
      * Choose view depending on request type
      */
-    final static public function render()
+    final public static function render()
     {
         $controller = self::getInstance();
         if (!empty(self::$parameters)) {
@@ -265,7 +262,6 @@ abstract class Controller
 
     /**
      * Set X-Accel-Expires header for web server-side caching
-     *
      * @param bool|int $ttl
      */
     public function putExpires($ttl = null)
@@ -287,9 +283,8 @@ abstract class Controller
 
     /**
      * Fill output XML with some common data
-     *
      * @param \DOMDocument|null $xml
-     * @param null              $instance
+     * @param null $instance
      */
     public function fillXML(&$xml = null, $instance = null)
     {
@@ -316,9 +311,11 @@ abstract class Controller
         // ajax flag
         $node->setAttribute(
             'ajax',
-            (Request::isAjax() or (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and
-                                   $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage')) ? '1'
-                : '0'
+            (
+                Request::isAjax()
+                or
+                (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage')
+            ) ? '1' : '0'
         );
         $node->setAttribute(
             'switcher',
@@ -365,7 +362,6 @@ abstract class Controller
     /**
      * Check referer to prevent cross-site calls
      * Should be called manually
-     *
      * @throws Exception
      */
     public function checkReferer()

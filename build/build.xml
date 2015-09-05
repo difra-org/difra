@@ -17,11 +17,11 @@
 		description="Performs static analysis, runs the tests, and generates project documentation (cli)"/>
 
 	<target name="build-ci"
-		depends="prepare,static-analysis,phpunit-ci,phpdox,-check-failure"
+		depends="prepare,static-analysis,phpunit-ci,phpdox"
 		description="Performs static analysis, runs the tests, and generates project documentation (ci)"/>
 
 	<target name="build-parallel"
-		depends="prepare,static-analysis-parallel,phpunit-ci,phpdox,-check-failure"
+		depends="prepare,static-analysis-parallel,phpunit-ci,phpdox"
 		description="Performs static analysis (executing the tools in parallel), runs the tests, and generates project documentation"/>
 
 	<target name="static-analysis"
@@ -179,6 +179,7 @@
 			<arg value="--report=checkstyle"/>
 			<arg value="--report-file=${basedir}/logs/checkstyle.xml"/>
 			<arg value="--standard=${basedir}/phpcs.xml"/>
+			<arg value="--extensions=php"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 		<property name="phpcs.done" value="true"/>
@@ -263,5 +264,4 @@
 			</condition>
 		</fail>
 	</target>
-
 </project>

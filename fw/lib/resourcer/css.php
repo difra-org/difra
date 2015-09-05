@@ -6,7 +6,6 @@ use Difra\Libs\Less;
 
 /**
  * Class CSS
- *
  * @package Difra\Resourcer
  */
 class CSS extends Abstracts\Plain

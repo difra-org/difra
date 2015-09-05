@@ -5,7 +5,6 @@ namespace Difra;
 /**
  * Class Ajaxer
  * Parses data from Ajaxer.js. Sends action messages to Ajaxer.js.
- *
  * @package Difra
  */
 class Ajaxer
@@ -16,7 +15,6 @@ class Ajaxer
 
     /**
      * Returns ajaxer actions for Ajaxer.js
-     *
      * @return string
      */
     public static function getResponse()
@@ -35,9 +33,8 @@ class Ajaxer
 
     /**
      * Adds ajax response
-     *
      * @param string $param Parameter name
-     * @param mixed  $value Parameter value
+     * @param mixed $value Parameter value
      * @return void
      */
     public static function setResponse($param, $value)
@@ -47,7 +44,6 @@ class Ajaxer
 
     /**
      * Clean ajax answer data
-     *
      * @param bool $problem
      */
     public static function clean($problem = false)
@@ -59,9 +55,8 @@ class Ajaxer
 
     /**
      * Write $html contents to element $target
-     *
      * @param string $target jQuery element selector (e.g. '#targetId')
-     * @param string $html   Content for innerHTML
+     * @param string $html Content for innerHTML
      */
     public static function load($target, $html)
     {
@@ -69,14 +64,13 @@ class Ajaxer
             [
                 'action' => 'load',
                 'target' => $target,
-                'html'   => $html
+                'html' => $html
             ]
         );
     }
 
     /**
      * Adds ajaxer action to ajax reply data.
-     *
      * @param array $action Ajaxer actions array.
      * @return $this
      */
@@ -87,7 +81,6 @@ class Ajaxer
 
     /**
      * Flags for json_encode() to generate JSON Ajaxer.js can decode
-     *
      * @return int
      */
     public static function getJsonFlags()
@@ -105,7 +98,6 @@ class Ajaxer
 
     /**
      * Returns true if answer contains 'required' or 'invalid' answers.
-     *
      * @return bool
      */
     public static function hasProblem()
@@ -115,16 +107,15 @@ class Ajaxer
 
     /**
      * Display notification message.
-     *
      * @param string $message Message text
      */
     public static function notify($message)
     {
         self::addAction(
             [
-                'action'  => 'notify',
+                'action' => 'notify',
                 'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
-                'lang'    => [
+                'lang' => [
                     'close' => Locales::get('notifications/close')
                 ]
             ]
@@ -133,16 +124,15 @@ class Ajaxer
 
     /**
      * Display error message.
-     *
      * @param string $message Error message text.
      */
     public static function error($message)
     {
         self::addAction(
             [
-                'action'  => 'error',
+                'action' => 'error',
                 'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
-                'lang'    => [
+                'lang' => [
                     'close' => Locales::get('notifications/close')
                 ]
             ]
@@ -152,7 +142,6 @@ class Ajaxer
     /**
      * Required field is not filled.
      * Adds .problem class.
-     *
      * @param string $name Form field name
      */
     public static function required($name)
@@ -161,14 +150,13 @@ class Ajaxer
         self::addAction(
             [
                 'action' => 'require',
-                'name'   => $name
+                'name' => $name
             ]
         );
     }
 
     /**
      * Set incorrect field status for form element
-     *
      * @param string $name Form element name
      */
     public static function invalid($name)
@@ -185,18 +173,17 @@ class Ajaxer
      *        <input name="SomeName" placeholder="Field">
      *        <span class="status">Please fill this field</span>
      * </div>
-     *
-     * @param string $name    Form element name
+     * @param string $name Form element name
      * @param string $message Message to display in .status element
-     * @param string $class   Class name to add to element
+     * @param string $class Class name to add to element
      */
     public static function status($name, $message, $class)
     {
         self::addAction(
             [
-                'action'    => 'status',
-                'name'      => $name,
-                'message'   => $message,
+                'action' => 'status',
+                'name' => $name,
+                'message' => $message,
                 'classname' => $class
             ]
         );
@@ -212,7 +199,6 @@ class Ajaxer
 
     /**
      * Redirect
-     *
      * @param string $url
      */
     public static function redirect($url)
@@ -220,7 +206,7 @@ class Ajaxer
         self::addAction(
             [
                 'action' => 'redirect',
-                'url'    => $url
+                'url' => $url
             ]
         );
     }
@@ -239,7 +225,6 @@ class Ajaxer
 
     /**
      * Show html content in overlay
-     *
      * @param string $html innerHTML content
      */
     public static function display($html)
@@ -247,7 +232,7 @@ class Ajaxer
         self::addAction(
             [
                 'action' => 'display',
-                'html'   => $html
+                'html' => $html
             ]
         );
     }
@@ -278,7 +263,6 @@ class Ajaxer
 
     /**
      * Display confirmation window (Are you sure? [Yes] [No])
-     *
      * @param $text
      */
     public static function confirm($text)
@@ -286,7 +270,7 @@ class Ajaxer
         self::addAction(
             [
                 'action' => 'display',
-                'html'   =>
+                'html' =>
                     '<form action="' . Envi::getUri() . '" class="ajaxer">' .
                     '<input type="hidden" name="confirm" value="1"/>' .
                     '<div>' . $text . '</div>' .
@@ -302,7 +286,6 @@ class Ajaxer
     /**
      * Execute javascript code.
      * This is dangerous! Don't use it if there is another way.
-     *
      * @param $script
      */
     public static function exec($script)

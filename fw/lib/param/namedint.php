@@ -4,7 +4,6 @@ namespace Difra\Param;
 
 /**
  * Class NamedInt
- *
  * @package Difra\Param
  */
 class NamedInt extends Common

@@ -10,25 +10,25 @@ class HTML
 {
     /** @var array Allowed tag=>parameter=>filterMethod */
     private $allowedTags = [
-        'a'      => ['href' => 'cleanLink'],
-        'img'    => ['src' => 'cleanLink'],
-        'br'     => [],
-        'table'  => [],
-        'tr'     => [],
-        'td'     => ['colspan' => 'cleanUnsignedInt', 'rowspan' => 'cleanUnsignedInt'],
-        'div'    => [],
-        'em'     => [],
-        'li'     => [],
-        'ol'     => [],
-        'p'      => [],
-        'span'   => [],
+        'a' => ['href' => 'cleanLink'],
+        'img' => ['src' => 'cleanLink'],
+        'br' => [],
+        'table' => [],
+        'tr' => [],
+        'td' => ['colspan' => 'cleanUnsignedInt', 'rowspan' => 'cleanUnsignedInt'],
+        'div' => [],
+        'em' => [],
+        'li' => [],
+        'ol' => [],
+        'p' => [],
+        'span' => [],
         'strike' => [],
-        'u'      => [],
-        'ul'     => [],
+        'u' => [],
+        'ul' => [],
         'strong' => [],
-        'sub'    => [],
-        'sup'    => [],
-        'hr'     => []
+        'sub' => [],
+        'sup' => [],
+        'hr' => []
     ];
     /** @var array Parameters allowed for all tags, parameter=>filterMethod */
     private $allowedAttrsForAll = [
@@ -37,7 +37,7 @@ class HTML
     ];
     /** @var array Allowed styles list. Array lists values, true allows any value. */
     private $allowedStyles = [
-        'font-weight'     => [
+        'font-weight' => [
             'bold',
             'bolder',
             'lighter',
@@ -52,15 +52,14 @@ class HTML
             '800',
             '900'
         ],
-        'text-align'      => ['left', 'center', 'right', 'start', 'end'],
-        'color'           => true,
+        'text-align' => ['left', 'center', 'right', 'start', 'end'],
+        'color' => true,
         'text-decoration' => ['line-through', 'overline', 'underline', 'none'],
-        'font-style'      => ['normal', 'italic', 'oblique']
+        'font-style' => ['normal', 'italic', 'oblique']
     ];
 
     /**
      * Singleton
-     *
      * @return self
      */
     static public function getInstance()
@@ -71,10 +70,9 @@ class HTML
 
     /**
      * HTML processor
-     *
-     * @param string $source      Source HTML
-     * @param bool   $clean       Perform cleaning
-     * @param bool   $withHeaders Return full HTML page (true) or contents only (false)
+     * @param string $source Source HTML
+     * @param bool $clean Perform cleaning
+     * @param bool $withHeaders Return full HTML page (true) or contents only (false)
      * @return string
      */
     public function process($source, $clean = true, $withHeaders = false)
@@ -136,7 +134,6 @@ class HTML
 
     /**
      * Clean everything but allowed elements
-     *
      * @param \DOMElement|\DOMNode $node
      * @return \DOMElement[]
      */
@@ -173,9 +170,8 @@ class HTML
 
     /**
      * Clean all atttributes but allowed
-     *
      * @param \DOMElement|\DOMNode $node
-     * @param array                $attributes
+     * @param array $attributes
      */
     private function cleanAttributes(&$node, $attributes = [])
     {
@@ -200,7 +196,6 @@ class HTML
 
     /**
      * If some disallowed element is not empty, replace it with span
-     *
      * @param \DOMElement $node
      */
     private function replace(&$node)
@@ -215,7 +210,6 @@ class HTML
     /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Links filter
-     *
      * @param string $link
      * @return string
      */
@@ -236,7 +230,6 @@ class HTML
     /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Styles filter
-     *
      * @param string $attr
      * @return string
      */
@@ -273,7 +266,6 @@ class HTML
     /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Classes filter
-     *
      * @param string $classes
      * @return string
      */
@@ -293,7 +285,6 @@ class HTML
     /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Positive integers filter
-     *
      * @param $input
      * @return int|string
      */

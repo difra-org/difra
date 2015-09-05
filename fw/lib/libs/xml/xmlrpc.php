@@ -5,18 +5,16 @@ namespace Difra\Libs\XML;
 /**
  * Class XMLRPC
  * XML-RPC implementation
- *
  * @package Difra\Libs\XML
  */
 class XMLRPC
 {
     /**
      * Singleton
-     *
      * @static
      * @return self
      */
-    static function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         if (!$_instance) {
@@ -28,10 +26,9 @@ class XMLRPC
     /**
      * Send request
      * In case of error returns: [ "faultString" => "Server error: method not found.", "faultCode" => -32601 ]
-     *
      * @param string $url
      * @param string $method
-     * @param array  $params
+     * @param array $params
      * @return mixed
      */
     public function sendRequest($url, $method, $params)
@@ -55,7 +52,6 @@ class XMLRPC
 
     /**
      * Request processor
-     *
      * @param object $handler
      * @param array|bool $methodsList If omitted, handler should contain getMethods() method
      * @return string

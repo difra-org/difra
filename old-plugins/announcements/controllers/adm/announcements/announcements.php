@@ -2,141 +2,180 @@
 
 use Difra\Plugins, Difra\Plugins\Announcements, Difra\Param;
 
-class AdmAnnouncementsController extends Difra\Controller {
+class AdmAnnouncementsController extends Difra\Controller
+{
+    public function dispatch()
+    {
 
-	public function dispatch() {
+        \Difra\View::$instance = 'adm';
+    }
 
-		\Difra\View::$instance = 'adm';
-	}
+    public function indexAction()
+    {
 
-	public function indexAction( ) {
+        $indexNode = $this->root->appendChild($this->xml->createElement('announcementsLast'));
+        $eventsNode = $indexNode->appendChild($this->xml->createElement('announcements'));
+        \Difra\Plugins\Announcements::getInstance()->getAllEventsXML($eventsNode);
+    }
 
-		$indexNode = $this->root->appendChild( $this->xml->createElement( 'announcementsLast' ) );
-		$eventsNode = $indexNode->appendChild( $this->xml->createElement( 'announcements' ) );
-		\Difra\Plugins\Announcements::getInstance()->getAllEventsXML( $eventsNode );
+    public function addAction()
+    {
 
-	}
+        $addNode = $this->root->appendChild($this->xml->createElement('announcementsAdd'));
 
+        if (\Difra\Plugger::getInstance()->isEnabled('blogs')) {
+            \Difra\Plugins\Blogs\Group::getNewGroupsXml($addNode, 0, false);
+        }
+    }
 
-	public function addAction() {
+    public function settingsAction()
+    {
 
-		$addNode = $this->root->appendChild( $this->xml->createElement( 'announcementsAdd' ) );
+        $settingsNode = $this->root->appendChild($this->xml->createElement('announcementsSettings'));
+        \Difra\Plugins\Announcements::getInstance()->getSettingsXml($settingsNode);
+    }
 
-		if( \Difra\Plugger::getInstance()->isEnabled( 'blogs' ) ) {
-			\Difra\Plugins\Blogs\Group::getNewGroupsXml( $addNode, 0, false );
-		}
-	}
+    public function savesettingsAjaxAction(
+        \Difra\Param\AjaxInt $maxPerUser,
+        \Difra\Param\AjaxInt $maxPerGroup,
+        \Difra\Param\AjaxInt $width,
+        \Difra\Param\AjaxInt $height
+    ) {
 
-	public function settingsAction() {
+        $settingsArray = [
+            'maxPerUser' => $maxPerUser->val(),
+            'maxPerGroup' => $maxPerGroup->val(),
+            'width' => $width->val(),
+            'height' => $height->val()
+        ];
 
-		$settingsNode = $this->root->appendChild( $this->xml->createElement( 'announcementsSettings' ) );
-		\Difra\Plugins\Announcements::getInstance()->getSettingsXml( $settingsNode );
-	}
+        \Difra\Plugins\Announcements::getInstance()->saveSettings($settingsArray);
+        $this->ajax->notify(\Difra\Locales::getInstance()->getXPath('announcements/adm/settingsSaved'));
+    }
 
-	public function savesettingsAjaxAction( \Difra\Param\AjaxInt $maxPerUser,
-						\Difra\Param\AjaxInt $maxPerGroup, \Difra\Param\AjaxInt $width,
-						\Difra\Param\AjaxInt $height ) {
+    public function saveAjaxAction(
+        \Difra\Param\AjaxFile $eventImage,
+        \Difra\Param\AjaxString $title,
+        \Difra\Param\AjaxString $eventDate,
+        \Difra\Param\AjaxString $beginDate,
+        \Difra\Param\AjaxInt $priorityValue,
+        \Difra\Param\AjaxCheckbox $visible,
+        \Difra\Param\AjaxSafeHTML $shortDescription,
+        \Difra\Param\AjaxSafeHTML $description = null,
+        \Difra\Param\AjaxInt $group = null,
+        \Difra\Param\AjaxString $endDate = null
+    ) {
 
-		$settingsArray = [ 'maxPerUser' => $maxPerUser->val(), 'maxPerGroup' => $maxPerGroup->val(),
-					'width' => $width->val(), 'height' => $height->val() ];
+        $data = [
+            'title' => $title->val(),
+            'eventDate' => $eventDate->val(),
+            'beginDate' => $beginDate->val(),
+            'priority' => $priorityValue->val(),
+            'visible' => $visible->val(),
+            'shortDescription' => $shortDescription->val()
+        ];
 
-		\Difra\Plugins\Announcements::getInstance()->saveSettings( $settingsArray );
-		$this->ajax->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/settingsSaved' ) );
-	}
+        $data['description'] = is_null($description) ? null : $description->val();
+        $data['group'] = is_null($group) ? null : $group->val();
+        $data['endDate'] = is_null($endDate) ? null : $endDate->val();
+        // из админки пока ставим так, потом добавим выбор юзера.
+        $data['user'] = 1;
 
-	public function saveAjaxAction( \Difra\Param\AjaxFile $eventImage, \Difra\Param\AjaxString $title,
-					\Difra\Param\AjaxString $eventDate, \Difra\Param\AjaxString $beginDate,
-					\Difra\Param\AjaxInt $priorityValue, \Difra\Param\AjaxCheckbox $visible,
-					\Difra\Param\AjaxSafeHTML $shortDescription,
+        $Announcements = \Difra\Plugins\Announcements::getInstance();
 
-					\Difra\Param\AjaxSafeHTML $description = null, \Difra\Param\AjaxInt $group = null,
-					\Difra\Param\AjaxString $endDate = null ) {
+        // создаём анонс
+        $eventId = $Announcements->create($data);
 
-		$data = [ 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(),
-			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'shortDescription' => $shortDescription->val() ];
+        if (is_null($eventId)) {
+            $this->ajax->error(\Difra\Locales::getInstance()->getXPath('announcements/adm/notify/createError'));
+            return;
+        }
 
-		$data['description'] = is_null( $description ) ? null : $description->val();
-		$data['group'] = is_null( $group ) ? null : $group->val();
-		$data['endDate'] = is_null( $endDate ) ? null : $endDate->val();
-		// из админки пока ставим так, потом добавим выбор юзера.
-		$data['user'] = 1;
+        // записываем картиночку
 
-		$Announcements = \Difra\Plugins\Announcements::getInstance();
+        $Announcements->saveImage($eventId, $eventImage->val());
 
-		// создаём анонс
-		$eventId = $Announcements->create( $data );
+        \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
+                                                                 ->getXPath('announcements/adm/notify/goodCreate'));
+        $this->ajax->redirect('/adm/announcements/');
+    }
 
-		if( is_null( $eventId ) ) {
-			$this->ajax->error(\Difra\Locales::getInstance()->getXPath('announcements/adm/notify/createError'));
-			return;
-		}
+    public function savepriorityAjaxAction(\Difra\Param\AnyInt $id, \Difra\Param\AnyInt $priority)
+    {
 
-		// записываем картиночку
+        \Difra\Plugins\Announcements::setPriority($id->val(), $priority->val());
+        \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
+                                                                 ->getXPath('announcements/adm/notify/prioritySet'));
+        $this->ajax->refresh();
+    }
 
-		$Announcements->saveImage( $eventId, $eventImage->val() );
+    public function deleteAction(\Difra\Param\AnyInt $id)
+    {
 
-		\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodCreate' ) );
-		$this->ajax->redirect( '/adm/announcements/' );
-	}
+        \Difra\Plugins\Announcements::getInstance()->delete($id->val());
+        \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
+                                                                 ->getXPath('announcements/adm/notify/deleted'));
+        $this->view->redirect('/adm/announcements/');
+    }
 
-	public function savepriorityAjaxAction( \Difra\Param\AnyInt $id, \Difra\Param\AnyInt $priority ) {
+    public function editAction(\Difra\Param\AnyInt $id)
+    {
 
-		\Difra\Plugins\Announcements::setPriority( $id->val(), $priority->val() );
-		\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/prioritySet' ) );
-		$this->ajax->refresh();
-	}
+        $editNode = $this->root->appendChild($this->xml->createElement('announcementsEdit'));
+        \Difra\Plugins\Announcements::getInstance()->getByIdXML($id->val(), $editNode);
 
-	public function deleteAction( \Difra\Param\AnyInt $id ) {
+        if (\Difra\Plugger::getInstance()->isEnabled('blogs')) {
+            \Difra\Plugins\Blogs\Group::getNewGroupsXml($editNode, 0, false);
+        }
+    }
 
-		\Difra\Plugins\Announcements::getInstance()->delete( $id->val() );
-		\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/deleted' ) );
-		$this->view->redirect( '/adm/announcements/' );
-	}
+    public function updateAjaxAction(
+        \Difra\Param\AjaxString $title,
+        \Difra\Param\AjaxString $eventDate,
+        \Difra\Param\AjaxString $beginDate,
+        \Difra\Param\AjaxInt $priorityValue,
+        \Difra\Param\AjaxCheckbox $visible,
+        \Difra\Param\AjaxSafeHTML $shortDescription,
+        \Difra\Param\AjaxInt $id,
+        \Difra\Param\AjaxSafeHTML $description = null,
+        \Difra\Param\AjaxInt $group = null,
+        \Difra\Param\AjaxString $endDate = null,
+        \Difra\Param\AjaxFile $eventImage = null
+    ) {
 
-	public function editAction( \Difra\Param\AnyInt $id ) {
+        $data = [
+            'title' => $title->val(),
+            'eventDate' => $eventDate->val(),
+            'beginDate' => $beginDate->val(),
+            'id' => $id->val(),
+            'priority' => $priorityValue->val(),
+            'visible' => $visible->val(),
+            'shortDescription' => $shortDescription->val()
+        ];
 
-		$editNode = $this->root->appendChild( $this->xml->createElement( 'announcementsEdit' ) );
-		\Difra\Plugins\Announcements::getInstance()->getByIdXML( $id->val(), $editNode );
+        $data['description'] = is_null($description) ? null : $description->val();
+        $data['group'] = is_null($group) ? null : $group->val();
+        $data['endDate'] = is_null($endDate) ? null : $endDate->val();
 
-		if( \Difra\Plugger::getInstance()->isEnabled( 'blogs' ) ) {
-			\Difra\Plugins\Blogs\Group::getNewGroupsXml( $editNode, 0, false );
-		}
-	}
+        // из админки пока ставим так, потом добавим выбор юзера.
+        $data['user'] = 1;
 
-	public function updateAjaxAction( \Difra\Param\AjaxString $title, \Difra\Param\AjaxString $eventDate,
-					  \Difra\Param\AjaxString $beginDate, \Difra\Param\AjaxInt $priorityValue,
-					  \Difra\Param\AjaxCheckbox $visible, \Difra\Param\AjaxSafeHTML $shortDescription,
-					  \Difra\Param\AjaxInt $id,
+        $Announcements = \Difra\Plugins\Announcements::getInstance();
 
-					  \Difra\Param\AjaxSafeHTML $description = null, \Difra\Param\AjaxInt $group = null,
-					  \Difra\Param\AjaxString $endDate = null, \Difra\Param\AjaxFile $eventImage = null ) {
+        // апдейтим анонс
+        $eventId = $Announcements->create($data);
 
-		$data = [ 'title' => $title->val(), 'eventDate' => $eventDate->val(), 'beginDate' => $beginDate->val(), 'id' => $id->val(),
-			       'priority' => $priorityValue->val(), 'visible' => $visible->val(), 'shortDescription' => $shortDescription->val()
-		];
+        if (is_null($eventId)) {
+            $this->ajax->error(\Difra\Locales::getInstance()->getXPath('announcements/adm/notify/updateError'));
+            return;
+        }
 
-		$data['description'] = is_null( $description ) ? null : $description->val();
-		$data['group'] = is_null( $group ) ? null : $group->val();
-		$data['endDate'] = is_null( $endDate ) ? null : $endDate->val();
+        if (!is_null($eventImage)) {
+            $Announcements->saveImage($eventId, $eventImage->val());
+        }
 
-		// из админки пока ставим так, потом добавим выбор юзера.
-		$data['user'] = 1;
-
-		$Announcements = \Difra\Plugins\Announcements::getInstance();
-
-		// апдейтим анонс
-		$eventId = $Announcements->create( $data );
-
-		if( is_null( $eventId ) ) {
-			$this->ajax->error(\Difra\Locales::getInstance()->getXPath('announcements/adm/notify/updateError'));
-			return;
-		}
-
-		if(!is_null( $eventImage ) ) {
-			$Announcements->saveImage( $eventId, $eventImage->val() );
-		}
-
-		\Difra\Libs\Cookies::getInstance()->notify( \Difra\Locales::getInstance()->getXPath( 'announcements/adm/notify/goodUpdate' ) );
-		$this->ajax->redirect( '/adm/announcements/' );
-	}
+        \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
+                                                                 ->getXPath('announcements/adm/notify/goodUpdate'));
+        $this->ajax->redirect('/adm/announcements/');
+    }
 }

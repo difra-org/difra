@@ -6,7 +6,6 @@ use Difra\Exception;
 
 /**
  * Class Storage
- *
  * @package Difra\Unify
  */
 abstract class Storage
@@ -18,7 +17,6 @@ abstract class Storage
 
     /**
      * Register object(s)
-     *
      * @param string[] $list
      */
     final static public function registerObjects($list)
@@ -37,9 +35,8 @@ abstract class Storage
 
     /**
      * Get object by name and primary key
-     *
      * @param string $objKey
-     * @param mixed  $primary
+     * @param mixed $primary
      * @return mixed
      * @throws Exception
      */
@@ -54,7 +51,6 @@ abstract class Storage
 
     /**
      * Get Unify Object class by name
-     *
      * @param $objKey
      * @return string|Item|null
      */
@@ -65,7 +61,6 @@ abstract class Storage
 
     /**
      * Create new item object by name
-     *
      * @param string $objKey
      * @return static
      * @throws Exception
@@ -81,7 +76,6 @@ abstract class Storage
 
     /**
      * Get all Unify Object classes list
-     *
      * @return array
      */
     final public static function getAllClasses()

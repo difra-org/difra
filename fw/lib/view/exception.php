@@ -8,7 +8,6 @@ use Difra\View;
 
 /**
  * Class Exception
- *
  * @package Difra\View
  */
 class Exception extends \Exception
@@ -59,9 +58,8 @@ class Exception extends \Exception
 
     /**
      * Construct
-     *
-     * @param string     $message
-     * @param int        $code
+     * @param string $message
+     * @param int $code
      * @param \Exception $previous
      */
     public function __construct($message, $code = 0, \Exception $previous = null)

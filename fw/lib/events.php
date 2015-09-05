@@ -4,7 +4,6 @@ namespace Difra;
 
 /**
  * Class Events
- *
  * @package Difra
  */
 class Events
@@ -82,9 +81,8 @@ class Events
     /**
      * Register event handler
      * TODO: replace class and method with unnamed functions as a handlers
-     *
-     * @param string      $type   Event name
-     * @param string      $class  Handler class (should contain getInstance() singleton method)
+     * @param string $type Event name
+     * @param string $class Handler class (should contain getInstance() singleton method)
      * @param bool|string $method Handler method (if false, only getInstance() will be called)
      * @throws Exception
      */
@@ -95,14 +93,13 @@ class Events
             throw new Exception('Invalid event type: ' . $type);
         }
         self::$events[$type][] = [
-            'class'  => $class,
+            'class' => $class,
             'method' => $method
         ];
     }
 
     /**
      * Call registered handlers for an event
-     *
      * @param $event
      */
     private static function start($event)

@@ -7,7 +7,6 @@ use Difra\MySQL;
 
 /**
  * Class Item
- *
  * @package Difra\Unify
  */
 abstract class Item extends DBAPI
@@ -30,7 +29,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get default search conditions
-     *
      * @return array|null
      */
     public static function getDefaultSearchConditions()
@@ -40,7 +38,6 @@ abstract class Item extends DBAPI
 
     /**
      * Create new item
-     *
      * @return static
      */
     public static function create()
@@ -53,7 +50,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get object by primary
-     *
      * @param $primary
      * @return Item
      */
@@ -75,7 +71,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get (first) object by field value
-     *
      * @param string $field
      * @param string $value
      * @return static
@@ -108,7 +103,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get default sort order
-     *
      * @return array
      */
     public static function getDefaultOrder()
@@ -118,7 +112,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get default descending order fields list
-     *
      * @return array
      */
     public static function getDefaultOrderDesc()
@@ -136,7 +129,6 @@ abstract class Item extends DBAPI
 
     /**
      * Save object data
-     *
      * @param bool $replace Make replace instead of insert
      * @throws Exception
      */
@@ -222,7 +214,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get primary key value
-     *
      * @return mixed|null
      */
     public function getPrimaryValue()
@@ -232,7 +223,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get object name
-     *
      * @return string
      */
     public static function getObjKey()
@@ -246,7 +236,6 @@ abstract class Item extends DBAPI
 
     /**
      * Chops namespace and class into parts without common pieces
-     *
      * @return array
      * @throws Exception
      */
@@ -271,7 +260,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get field value
-     *
      * @param $name
      * @return mixed
      * @throws Exception
@@ -292,9 +280,8 @@ abstract class Item extends DBAPI
 
     /**
      * Set field value
-     *
      * @param string $name
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function __set($name, $value)
     {
@@ -322,7 +309,6 @@ abstract class Item extends DBAPI
 
     /**
      * Load data
-     *
      * @param bool $full Включать ли поля с autoload=false
      */
     public function load($full = false)
@@ -335,10 +321,9 @@ abstract class Item extends DBAPI
 
     /**
      * Load element by field value (for getByField())
-     *
      * @param string $field
-     * @param mixed  $value
-     * @param bool   $full
+     * @param mixed $value
+     * @param bool $full
      * @throws Exception
      */
     protected function loadByField($field, $value, $full = false)
@@ -384,7 +369,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get fields list (wrapper for getKeysArray)
-     *
      * @param bool $full |'only'        Include autoload=false keys
      * @return array
      */
@@ -402,7 +386,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get fields list
-     *
      * @param bool $full |'only'        Include autoload=false keys
      * @return array
      */
@@ -430,7 +413,6 @@ abstract class Item extends DBAPI
 
     /**
      * Get object data as XML node attributes
-     *
      * @param \DOMNode|\DOMElement $node
      */
     public function getXML($node)
@@ -447,7 +429,6 @@ abstract class Item extends DBAPI
 
     /**
      * This method is called after getXML is done
-     *
      * @param $node
      */
     protected function postProcessXML($node)
@@ -472,7 +453,6 @@ abstract class Item extends DBAPI
 
     /**
      * Quietly set data (e.g. on item load)
-     *
      * @param $newData
      */
     public function setData($newData)

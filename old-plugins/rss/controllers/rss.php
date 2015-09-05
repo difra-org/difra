@@ -1,61 +1,57 @@
 <?php
 
+class RssController extends \Difra\Controller
+{
+    /**
+     *    Пример контроллера для вывода rss из каталога
+     */
 
-class RssController extends \Difra\Controller {
+    public function indexAction()
+    {
+        /*
+        $Rss = \Difra\Plugins\Rss::make();
 
-	/**
-	 * 	Пример контроллера для вывода rss из каталога
-	 */
+        if( empty( $Rss ) ) {
+            return $this->view->httpError( 404 );
+        }
 
-	public function indexAction() {
+        $this->view->rendered = true;
 
-		/*
-		$Rss = \Difra\Plugins\Rss::make();
+        if( !$Rss->checkCached() ) {
 
-		if( empty( $Rss ) ) {
-			return $this->view->httpError( 404 );
-		}
+            $Config = \Difra\Config::getInstance();
+            if( !$perPage = $Config->getValue( 'rss', 'size' ) ) {
+                $perPage = 20;
+            }
 
-		$this->view->rendered = true;
+            $categoryList = \Difra\Plugins\Catalog\Category::getList();
+            $list = \Difra\Plugins\Catalog\Item::getList( null, true, 1, $perPage, 1, true );
 
-		if( !$Rss->checkCached() ) {
+            if( ! empty( $list ) ) {
+                foreach( $list as $k => $item ) {
 
-			$Config = \Difra\Config::getInstance();
-			if( !$perPage = $Config->getValue( 'rss', 'size' ) ) {
-				$perPage = 20;
-			}
+                    $link = 'http://' . \Difra\Site::getInstance()->getMainhost() . $item->getFullLink();
+                    $commentLink = '';
 
-			$categoryList = \Difra\Plugins\Catalog\Category::getList();
-			$list = \Difra\Plugins\Catalog\Item::getList( null, true, 1, $perPage, 1, true );
+                    if( $Config->getValue( 'noiseSettings', 'commentOn' ) == 1 ) {
+                        $commentLink = $link . '/comments/';
+                    }
 
-			if( ! empty( $list ) ) {
-				foreach( $list as $k => $item ) {
+                    $itemArray = array(
+                        'title' => $item->getName(),
+                        'link' => $link,
+                        'description' => $item->getDescription(),
+                        'pubDate' => $item->getCreated(),
+                        'guid' => $link,
+                        'comments' => $commentLink
+                    );
+                    $Rss->setItem( $itemArray );
+                }
+            }
+        }
 
-					$link = 'http://' . \Difra\Site::getInstance()->getMainhost() . $item->getFullLink();
-					$commentLink = '';
-
-					if( $Config->getValue( 'noiseSettings', 'commentOn' ) == 1 ) {
-						$commentLink = $link . '/comments/';
-					}
-
-					$itemArray = array(
-						'title' => $item->getName(),
-						'link' => $link,
-						'description' => $item->getDescription(),
-						'pubDate' => $item->getCreated(),
-						'guid' => $link,
-						'comments' => $commentLink
-					);
-					$Rss->setItem( $itemArray );
-				}
-			}
-		}
-
-		header( 'Content-type: text/xml' );
-		echo $Rss->get();
-		*/
-
-	}
-
-
+        header( 'Content-type: text/xml' );
+        echo $Rss->get();
+        */
+    }
 }

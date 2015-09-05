@@ -23,7 +23,6 @@ class AdmContentMenuController extends \Difra\Controller
 
     /**
      * Menu elements list
-     *
      * @param Difra\Param\AnyInt $menuId
      */
     public function viewAction(\Difra\Param\AnyInt $menuId)
@@ -38,7 +37,6 @@ class AdmContentMenuController extends \Difra\Controller
 
     /**
      * Add menu element form
-     *
      * @param Difra\Param\AnyInt $menuId
      */
     public function addAction(\Difra\Param\AnyInt $menuId)
@@ -51,7 +49,6 @@ class AdmContentMenuController extends \Difra\Controller
 
     /**
      * Edit menu element form
-     *
      * @param Difra\Param\AnyInt $id
      */
     public function editAction(\Difra\Param\AnyInt $id)
@@ -64,7 +61,6 @@ class AdmContentMenuController extends \Difra\Controller
 
     /**
      * Save menu element: page
-     *
      * @param Difra\Param\AjaxInt $menu
      * @param Difra\Param\AjaxInt $page
      * @param Difra\Param\AjaxInt $id
@@ -89,12 +85,11 @@ class AdmContentMenuController extends \Difra\Controller
 
     /**
      * Save menu element: link
-     *
-     * @param Difra\Param\AjaxInt    $menu
+     * @param Difra\Param\AjaxInt $menu
      * @param Difra\Param\AjaxString $link
      * @param Difra\Param\AjaxString $label
-     * @param Difra\Param\AjaxInt    $id
-     * @param Difra\Param\AjaxInt    $parent
+     * @param Difra\Param\AjaxInt $id
+     * @param Difra\Param\AjaxInt $parent
      */
     public function savelinkAjaxAction(
         \Difra\Param\AjaxInt $menu,
@@ -117,8 +112,7 @@ class AdmContentMenuController extends \Difra\Controller
 
     /**
      * Delete menu element
-     *
-     * @param Difra\Param\AnyInt       $id
+     * @param Difra\Param\AnyInt $id
      * @param Difra\Param\AjaxCheckbox $confirm
      */
     public function deleteAjaxAction(\Difra\Param\AnyInt $id, \Difra\Param\AjaxCheckbox $confirm = null)
@@ -143,7 +137,6 @@ class AdmContentMenuController extends \Difra\Controller
 
     /**
      * Move menu element up
-     *
      * @param Difra\Param\AnyInt $id
      */
     public function upAjaxAction(\Difra\Param\AnyInt $id)
@@ -154,7 +147,6 @@ class AdmContentMenuController extends \Difra\Controller
 
     /**
      * Move menu element down
-     *
      * @param Difra\Param\AnyInt $id
      */
     public function downAjaxAction(\Difra\Param\AnyInt $id)

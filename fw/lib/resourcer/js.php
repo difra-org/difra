@@ -4,7 +4,6 @@ namespace Difra\Resourcer;
 
 /**
  * Class JS
- *
  * @package Difra\Resourcer
  */
 class JS extends Abstracts\Plain

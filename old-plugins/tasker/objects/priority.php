@@ -4,33 +4,31 @@ namespace Difra\Plugins\Tasker\Objects;
 
 /**
  * Class Priority
- *
  * @package Difra\Plugins\Tasker\Objects
  */
-class Priority extends \Difra\Unify {
-
+class Priority extends \Difra\Unify
+{
 	static public $objKey = 'priority';
 	static protected $table = 'priorities';
-	static protected $propertiesList = array(
-		'id' => array(
+	static protected $propertiesList = [
+		'id' => [
 			'type' => 'int',
 			'options' => 'auto_increment'
-		),
-		'weight' => array(
+		],
+		'weight' => [
 			'type' => 'int',
 			'index' => true
-		),
-		'name' => array(
+		],
+		'name' => [
 			'type' => 'char',
 			'length' => 64,
 			'required' => 1
-		),
-		'selectable' => array(
+		],
+		'selectable' => [
 			'type' => 'bool',
 			'default' => 1,
 			'required' => 1
-		)
-	);
+		]
+	];
 	static protected $primary = 'id';
-
 }

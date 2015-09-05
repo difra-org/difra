@@ -9,14 +9,12 @@ include_once(DIR_FW . 'lib/libs/less/lessc.inc.php');
 /**
  * Class Less
  * LESS support.
- *
  * @package Difra\Libs
  */
 class Less
 {
     /**
      * Convert LESS to CSS
-     *
      * @param string $string
      * @return string
      */

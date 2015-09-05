@@ -6,7 +6,6 @@ use Difra\Envi\Setup;
 
 /**
  * Class Locales
- *
  * @package Difra
  */
 class Locales
@@ -23,18 +22,20 @@ class Locales
 
     /**
      * Constructor
-     *
      * @param $locale
      * @return \Difra\Locales
      */
-    public function __construct($locale)
+    private function __construct($locale)
     {
         $this->locale = $locale;
     }
 
+    private function __clone()
+    {
+    }
+
     /**
      * Get text string from current locale (short form)
-     *
      * @param $xpath
      * @return bool|string
      */
@@ -48,7 +49,6 @@ class Locales
      * Get locale string by XPath
      * NOT DEPRECATED. Marked as deprecated to get rid of old \Difra\Locales::getInstance()->getXPath( ... ) calls
      * in favor of \Difra\Locales::get( ... ) calls.
-     *
      * @deprecated
      * @param string $xpath
      * @return string|bool
@@ -81,11 +81,10 @@ class Locales
 
     /**
      * Singleton
-     *
      * @param null $locale
      * @return Locales
      */
-    static function getInstance($locale = null)
+    public static function getInstance($locale = null)
     {
         static $locales = [];
         if (!$locale) {
@@ -100,7 +99,6 @@ class Locales
 
     /**
      * Returns locale as XML document
-     *
      * @param \DOMElement $node
      * @return void
      */
@@ -114,7 +112,6 @@ class Locales
 
     /**
      * Set current locale
-     *
      * @param string $locale
      * @return void
      */
@@ -125,7 +122,6 @@ class Locales
 
     /**
      * Validate date string
-     *
      * @param $string
      * @return bool
      */
@@ -140,8 +136,7 @@ class Locales
     /**
      * Parse date string
      * Returns array [ 0 => Y, 1 => m, 2 => d ]
-     *
-     * @param string      $string
+     * @param string $string
      * @param string|bool $locale
      * @return array|bool
      */
@@ -170,7 +165,6 @@ class Locales
 
     /**
      * Convert local date string to MySQL date string
-     *
      * @param string $dateString if ommited, current date is used
      * @return string|false
      */
@@ -187,7 +181,6 @@ class Locales
 
     /**
      * Get MySQL syntax for getting localized dates
-     *
      * @param bool $locale
      * @return mixed
      */
@@ -200,8 +193,7 @@ class Locales
 
     /**
      * Convert MySQL date string to localized date string
-     *
-     * @param string  $date
+     * @param string $date
      * @param boolean $withTime
      * @return string
      */
@@ -221,7 +213,6 @@ class Locales
 
     /**
      * Get localized date and time from timestamp
-     *
      * @param $timestamp
      * @return string
      */
@@ -232,7 +223,6 @@ class Locales
 
     /**
      * Get localized date from timestamp
-     *
      * @param int $timestamp
      * @return string
      */
@@ -244,7 +234,6 @@ class Locales
     /**
      * Create link part from string.
      * Used to replace all uncommon characters with dash.
-     *
      * @param string $string
      * @return string
      */

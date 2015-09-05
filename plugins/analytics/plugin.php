@@ -4,7 +4,6 @@ namespace Difra\Plugins\Analytics;
 
 /**
  * Class Plugin
- *
  * @package Difra\Plugins\Analytics
  */
 class Plugin extends \Difra\Plugin

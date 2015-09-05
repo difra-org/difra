@@ -4,7 +4,6 @@ namespace Difra\Resourcer;
 
 /**
  * Class XSLT
- *
  * @package Difra\Resourcer
  */
 class XSLT extends Abstracts\XSLT

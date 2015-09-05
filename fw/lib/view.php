@@ -6,7 +6,6 @@ use \Difra\View\Exception as ViewException;
 
 /**
  * Class View
- *
  * @package Difra
  */
 class View
@@ -18,9 +17,9 @@ class View
 
     /**
      * @param \DOMDocument $xml
-     * @param bool|string  $specificInstance
-     * @param bool         $dontEcho
-     * @param bool         $dontFillXML
+     * @param bool|string $specificInstance
+     * @param bool $dontEcho
+     * @param bool $dontFillXML
      * @throws Exception
      * @return bool|string
      */
@@ -79,7 +78,6 @@ class View
 
     /**
      * XSLT to HTML5 covertation
-     *
      * @param $htmlDoc
      * @return string
      */
@@ -95,7 +93,6 @@ class View
 
     /**
      * HTTP redirect
-     *
      * @param $url
      */
     public static function redirect($url)
@@ -107,7 +104,6 @@ class View
 
     /**
      * Add Expires and X-Accel-Expires headers
-     *
      * @param $ttl
      */
     public static function addExpires($ttl)

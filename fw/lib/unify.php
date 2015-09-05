@@ -4,7 +4,6 @@ namespace Difra;
 
 /**
  * Class Unify
- *
  * @package Difra\Unify
  */
 class Unify extends Unify\Item

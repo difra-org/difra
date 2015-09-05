@@ -7,7 +7,6 @@ use Difra\Envi\Session;
 /**
  * Class Capcha
  * Generates capcha images.
- *
  * @package Difra\Libs
  */
 class Capcha
@@ -20,7 +19,7 @@ class Capcha
     /**
      * Constructor
      */
-    public function __construct()
+    private function __construct()
     {
         // Load capcha key from session
         Session::start();
@@ -29,10 +28,9 @@ class Capcha
 
     /**
      * Singleton
-     *
      * @return Capcha
      */
-    static function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;
@@ -40,7 +38,6 @@ class Capcha
 
     /**
      * Verify entered key
-     *
      * @param string $inKey
      * @return bool
      */
@@ -62,9 +59,8 @@ class Capcha
 
     /**
      * Creates image with text
-     *
-     * @param int    $sizeX
-     * @param int    $sizeY
+     * @param int $sizeX
+     * @param int $sizeY
      * @param string $text
      * @param string $generator
      * @return \Imagick
@@ -128,7 +124,6 @@ class Capcha
 
     /**
      * Generates random key
-     *
      * @param int $len
      * @return string
      */
@@ -174,7 +169,6 @@ class Capcha
 
     /**
      * Create capcha image with new key
-     *
      * @return \Imagick
      */
     public function viewCapcha()
@@ -188,7 +182,6 @@ class Capcha
 
     /**
      * Set image size for $this->viewCapcha()
-     *
      * @param int $sizeX
      * @param int $sizeY
      */
@@ -200,7 +193,6 @@ class Capcha
 
     /**
      * Set key length for $this->viewCapcha()
-     *
      * @param $n
      */
     public function setKeyLength($n)

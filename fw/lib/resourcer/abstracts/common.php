@@ -14,7 +14,6 @@ use Difra\View;
 /**
  * Abstract resourcer class
  * Class Common
- *
  * @package Difra\Resourcer\Abstracts
  */
 abstract class Common
@@ -25,7 +24,6 @@ abstract class Common
 
     /**
      * Resource processor
-     *
      * @param string $instance
      * @return mixed
      */
@@ -36,7 +34,6 @@ abstract class Common
 
     /**
      * Singleton
-     *
      * @return self
      */
     static public function getInstance()
@@ -48,7 +45,6 @@ abstract class Common
 
     /**
      * Validate instance name
-     *
      * @param $instance
      * @return bool
      * @throws Exception
@@ -63,7 +59,6 @@ abstract class Common
 
     /**
      * Output resource
-     *
      * @param $instance
      * @return bool
      * @throws Exception
@@ -130,7 +125,6 @@ abstract class Common
 
     /**
      * Is resource suitable for direct output?
-     *
      * @return bool
      */
     public function isPrintable()
@@ -140,7 +134,6 @@ abstract class Common
 
     /**
      * Create gz version for resource
-     *
      * @param $instance
      * @return string
      */
@@ -191,7 +184,6 @@ abstract class Common
 
     /**
      * Get compiled resource
-     *
      * @param      $instance
      * @param bool $withSources
      * @return bool|null
@@ -257,9 +249,8 @@ abstract class Common
 
     /**
      * Compile resource
-     *
      * @param string $instance
-     * @param bool   $withSources
+     * @param bool $withSources
      * @throws Exception
      * @return string
      */
@@ -278,7 +269,6 @@ abstract class Common
 
     /**
      * Search for resource directories
-     *
      * @param string $instance
      * @return bool
      */
@@ -326,7 +316,6 @@ abstract class Common
     /**
      * Find all possible instances for selected resource
      * Warning: this is slow! Do not use it except for administrator area or cron scripts etc.
-     *
      * @return array|bool
      */
     public function findInstances()
@@ -363,8 +352,7 @@ abstract class Common
 
     /**
      * Add directories to search list
-     *
-     * @param string       $instance
+     * @param string $instance
      * @param string|array $dirs
      */
     private function addDirs($instance, $dirs)
@@ -384,7 +372,6 @@ abstract class Common
 
     /**
      * Search resources by directories
-     *
      * @param $instance
      */
     public function processDirs($instance)
@@ -402,9 +389,9 @@ abstract class Common
                 if (is_dir($entry)) { // "special"
                     $exp = explode('-', $dirEntry);
                     $special = [
-                        'name'    => (sizeof($exp) == 2 ? $exp[0] : $dirEntry),
+                        'name' => (sizeof($exp) == 2 ? $exp[0] : $dirEntry),
                         'version' => (sizeof($exp) == 2 ? $exp[1] : 0),
-                        'files'   => []
+                        'files' => []
                     ];
                     if (isset($this->resources[$instance]['specials'][$special['name']])) {
                         if ($this->resources[$instance]['specials'][$special['name']]['version'] >
@@ -447,7 +434,6 @@ abstract class Common
 
     /**
      * Get list of all matching files
-     *
      * @param string $instance
      * @return string[]
      */
@@ -469,7 +455,6 @@ abstract class Common
 
     /**
      * Should 'all' directories be included?
-     *
      * @param string $instance
      * @return bool
      */
@@ -484,7 +469,6 @@ abstract class Common
 
     /**
      * Resource postprocessing
-     *
      * @param string $text
      * @return string
      */

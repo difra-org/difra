@@ -12,7 +12,6 @@ abstract class Plain extends Common
 {
     /**
      * Combine resources to single string
-     *
      * @param $instance
      * @return string
      */
@@ -39,7 +38,6 @@ abstract class Plain extends Common
 
     /**
      * Choose most suitable file
-     *
      * @param $file
      * @return mixed|string
      */

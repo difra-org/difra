@@ -2,19 +2,20 @@
 
 namespace Difra\Plugins\Widgets;
 
-class Plugin extends \Difra\Plugin {
-
+class Plugin extends \Difra\Plugin
+{
 	protected $require = false;
 	protected $version = 5;
 	protected $description = 'Web widgets';
-
-	protected $objects = array(
+	protected $objects = [
 		'Difra\\Plugins\\Widgets\\Objects\\Directory'
-	);
+	];
 
-	public function init() {
+	public function init()
+	{
 	}
 
-	public function getSitemap() {
+	public function getSitemap()
+	{
 	}
 }

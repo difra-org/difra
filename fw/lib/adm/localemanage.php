@@ -8,17 +8,15 @@ use Difra\Resourcer\Locale;
 
 /**
  * Class Localemanage
- *
  * @package Difra\Adm
  */
 class Localemanage
 {
     /**
      * Singleton
-     *
      * @return Localemanage
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;
@@ -26,7 +24,6 @@ class Localemanage
 
     /**
      * Get locales information as XML
-     *
      * @param \DOMElement|\DOMNode $node
      */
     public function getLocalesTreeXML($node)
@@ -83,7 +80,6 @@ class Localemanage
 
     /**
      * Get locales information as array
-     *
      * @return array
      */
     public function getLocalesTree()
@@ -101,7 +97,6 @@ class Localemanage
 
     /**
      * Get locales list
-     *
      * @return array|bool
      */
     public function getLocalesList()
@@ -111,7 +106,6 @@ class Localemanage
 
     /**
      * Get current locale XML
-     *
      * @param $locale
      * @return bool|null
      * @throws \Difra\Exception
@@ -123,11 +117,10 @@ class Localemanage
 
     /**
      * Get locale as array
-     *
      * @param \DOMElement|\DOMNode $node
-     * @param array                $arr
-     * @param array                $allxpaths
-     * @param string               $xpath
+     * @param array $arr
+     * @param array $allxpaths
+     * @param string $xpath
      */
     public function xml2tree($node, &$arr, &$allxpaths, $xpath)
     {
@@ -144,8 +137,8 @@ class Localemanage
                     }
                     $arr[$module][$xpath] = [
                         'source' => basename($source),
-                        'text'   => $item->nodeValue,
-                        'usage'  => ($usage = $this->findUsages($xpath))
+                        'text' => $item->nodeValue,
+                        'usage' => ($usage = $this->findUsages($xpath))
                     ];
                     if ($usage) {
                         if (!isset($allxpaths[$module])) {
@@ -160,7 +153,6 @@ class Localemanage
 
     /**
      * Detect module name for locale file
-     *
      * @param $filename
      * @return string
      */
@@ -184,7 +176,6 @@ class Localemanage
 
     /**
      * Try to detect locale record usages
-     *
      * @param $xpath
      * @return int
      * @throws \Difra\Exception
@@ -237,7 +228,6 @@ class Localemanage
 
     /**
      * Get all locale files from directory (recursive)
-     *
      * @param $collection
      * @param $dir
      */

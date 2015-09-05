@@ -200,8 +200,11 @@ class AuthController extends Difra\Controller
      * @return void
      */
     public function register2AjaxAction(
-        Param\AjaxCheckbox $accept, Param\AjaxString $email = null, Param\AjaxString $password1 = null,
-        Param\AjaxString $password2 = null, Param\AjaxString $capcha = null
+        Param\AjaxCheckbox $accept,
+        Param\AjaxString $email = null,
+        Param\AjaxString $password1 = null,
+        Param\AjaxString $password2 = null,
+        Param\AjaxString $capcha = null
     ) {
         $auth = Difra\Auth::getInstance();
         if ($auth->logged) {
@@ -333,7 +336,9 @@ class AuthController extends Difra\Controller
      * @return void
      */
     public function changepasswordAjaxActionAuth(
-        Param\AjaxString $oldpassword, Param\AjaxString $password1, Param\AjaxString $password2
+        Param\AjaxString $oldpassword,
+        Param\AjaxString $password1,
+        Param\AjaxString $password2
     ) {
 
         $ok = true;

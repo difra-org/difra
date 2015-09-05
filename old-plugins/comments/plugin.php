@@ -2,11 +2,12 @@
 
 namespace Difra\Plugins\Comments;
 
-class Plugin extends \Difra\Plugin {
+class Plugin extends \Difra\Plugin
+{
+    protected $version = 3.1;
+    protected $description = 'Comments';
 
-	protected $version = 3.1;
-	protected $description = 'Comments';
-
-	public function init() {
-	}
+    public function init()
+    {
+    }
 }

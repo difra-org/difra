@@ -8,7 +8,6 @@ use Difra\View\Exception as ViewException;
 /**
  * Class Request
  * Processes complex requests, e.g. requests made with Ajaxer.js or forms submitted via iframe.
- *
  * @package Difra\Envi
  */
 class Request
@@ -19,7 +18,6 @@ class Request
 
     /**
      * Is current request comes by Ajaxer.js?
-     *
      * @return bool
      */
     public static function isAjax()
@@ -30,7 +28,6 @@ class Request
 
     /**
      * Find out request type and call proper parser
-     *
      * @throws \Difra\View\Exception
      */
     private static function parseRequest()
@@ -51,7 +48,6 @@ class Request
 
     /**
      * Parser for Ajaxer.js requests
-     *
      * @throws \Difra\View\Exception
      */
     private static function parseAjaxerJSRequest()
@@ -78,7 +74,6 @@ class Request
 
     /**
      * Get data from ajaxer
-     *
      * @return array
      */
     private static function getRequest()
@@ -94,10 +89,9 @@ class Request
      * Parses parameter and puts it into $arr.
      * Subroutine for constructor.
      * Supports parameters like name[abc][]
-     *
-     * @param array  $arr Working array
-     * @param string $k   Parameter key
-     * @param mixed  $v   Parameter value
+     * @param array $arr Working array
+     * @param string $k Parameter key
+     * @param mixed $v Parameter value
      */
     private static function parseParam(&$arr, $k, $v)
     {
@@ -117,7 +111,6 @@ class Request
     /**
      * Recursively put parameters to array.
      * Subroutine for parseParam().
-     *
      * @param array $arr
      * @param array $keys
      * @param mixed $v
@@ -171,11 +164,11 @@ class Request
                     $files = [];
                     foreach ($files2['name'] as $k2 => $v2) {
                         $files[] = [
-                            'name'     => $v2,
-                            'type'     => $files2['type'][$k2],
+                            'name' => $v2,
+                            'type' => $files2['type'][$k2],
                             'tmp_name' => $files2['tmp_name'][$k2],
-                            'error'    => $files2['error'][$k2],
-                            'size'     => $files2['size'][$k2]
+                            'error' => $files2['error'][$k2],
+                            'size' => $files2['size'][$k2]
                         ];
                     }
                 }
@@ -191,7 +184,6 @@ class Request
 
     /**
      * Is request a form parsed via iframe?
-     *
      * @return bool
      */
     public static function isIframe()
@@ -202,7 +194,6 @@ class Request
 
     /**
      * Get parameter value
-     *
      * @param string $name Parameter name
      * @return mixed
      */

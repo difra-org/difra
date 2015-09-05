@@ -6,7 +6,6 @@ use Difra\Unify;
 
 /**
  * Class Plugin
- *
  * @property string|string[] provides
  * @package Difra
  */
@@ -33,10 +32,9 @@ abstract class Plugin
 
     /**
      * Singleton
-     *
      * @return self
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_self = [];
         $class = get_called_class();
@@ -45,7 +43,6 @@ abstract class Plugin
 
     /**
      * Get list of dependencies and other stuff
-     *
      * @return array|null
      */
     public function getInfo()
@@ -81,7 +78,6 @@ abstract class Plugin
 
     /**
      * Detect if plugin is enabled
-     *
      * @return bool
      */
     public function isEnabled()
@@ -91,7 +87,6 @@ abstract class Plugin
 
     /**
      * Enable plugin
-     *
      * @return bool
      */
     public function enable()
@@ -106,7 +101,6 @@ abstract class Plugin
 
     /**
      * Get objects provided by plugin
-     *
      * @return null
      */
     public function getObjects()
@@ -117,7 +111,6 @@ abstract class Plugin
 
     /**
      * Get plugin directory path
-     *
      * @return string
      */
     public function getPath()
@@ -131,7 +124,6 @@ abstract class Plugin
 
     /**
      * Get plugin name
-     *
      * @return string
      */
     public function getName()
@@ -150,7 +142,6 @@ abstract class Plugin
      *         'changefreq' => 'monthly',
      *         'priority' => 0.8
      * ]
-     *
      * @return array|bool
      */
     public function getSitemap()
@@ -158,4 +149,3 @@ abstract class Plugin
         return false;
     }
 }
-

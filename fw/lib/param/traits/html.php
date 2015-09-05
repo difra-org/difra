@@ -6,7 +6,6 @@ use Difra\Libs\Vault;
 
 /**
  * Class HTML
- *
  * @package Difra\Param\Traits
  */
 trait HTML
@@ -16,7 +15,6 @@ trait HTML
 
     /**
      * Verify
-     *
      * @param string $value
      * @return string
      */
@@ -27,7 +25,6 @@ trait HTML
 
     /**
      * Save images
-     *
      * @param string $path
      * @param string $urlPrefix
      */
@@ -40,7 +37,6 @@ trait HTML
     /**
      * Get safe html
      * Remember to call saveImages() first.
-     *
      * @param bool $quiet
      * @return string
      */
@@ -58,7 +54,6 @@ trait HTML
 
     /**
      * Get raw html
-     *
      * @return string
      */
     function raw()

@@ -9,7 +9,6 @@ use Difra\Exception;
 /**
  * Abstract cache adapter class
  * Class Common
- *
  * @package Difra\Cache
  */
 abstract class Common
@@ -32,7 +31,6 @@ abstract class Common
 
     /**
      * Check if cache record exists
-     *
      * @deprecated
      * @param string $id
      * @return bool
@@ -41,14 +39,12 @@ abstract class Common
 
     /**
      * Defines if cache backend supports automatic cleaning
-     *
      * @return bool
      */
     abstract public function isAutomaticCleaningAvailable();
 
     /**
      * Get cache record wrapper
-     *
      * @param $key
      * @return string|null
      */
@@ -63,41 +59,37 @@ abstract class Common
 
     /**
      * Get cache record
-     *
      * @param string $id
-     * @param bool   $doNotTestCacheValidity
+     * @param bool $doNotTestCacheValidity
      * @return mixed|null
      */
     abstract public function realGet($id, $doNotTestCacheValidity = false);
 
     /**
      * Set cache record wrapper
-     *
      * @param string $key
      * @param string $data
-     * @param int    $ttl
+     * @param int $ttl
      */
     public function put($key, $data, $ttl = 300)
     {
         $data = [
             'expires' => time() + $ttl,
-            'data'    => $data
+            'data' => $data
         ];
         $this->realPut(Envi::getSubsite() . '_' . $key, $data, $ttl);
     }
 
     /**
      * Set cache record
-     *
      * @param string $id
-     * @param mixed  $data
-     * @param bool   $specificLifetime
+     * @param mixed $data
+     * @param bool $specificLifetime
      */
     abstract public function realPut($id, $data, $specificLifetime = false);
 
     /**
      * Delete cache record wrapper
-     *
      * @param string $key
      */
     public function remove($key)
@@ -107,7 +99,6 @@ abstract class Common
 
     /**
      * Delete cache method
-     *
      * @param string $id
      */
     abstract public function realRemove($id);

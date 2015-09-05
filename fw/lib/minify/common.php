@@ -9,11 +9,10 @@ abstract class Common
 {
     /**
      * Singleton
-     *
      * @static
      * @return self
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instances = [];
         $name = get_called_class();
@@ -22,9 +21,8 @@ abstract class Common
 
     /**
      * Minification method
-     *
      * @param $data
      * @return mixed
      */
-    abstract function minify($data);
+    abstract public function minify($data);
 }

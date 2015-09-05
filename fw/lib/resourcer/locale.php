@@ -4,7 +4,6 @@ namespace Difra\Resourcer;
 
 /**
  * Class Locale
- *
  * @package Difra\Resourcer
  */
 class Locale extends Abstracts\XML

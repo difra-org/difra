@@ -4,14 +4,12 @@ namespace Difra\View;
 
 /**
  * Class Normalizer
- *
  * @package Difra\View
  */
 class Normalizer
 {
     /**
      * Get normalizer template as string
-     *
      * @return string
      */
     public static function getXML()

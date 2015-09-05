@@ -7,18 +7,17 @@ use Difra\Param\AjaxFile;
 
 /**
  * Class Images
- *
  * @package Difra\Libs
  */
 final class Images
 {
+    // TODO: make class static
     /**
      * Singleton
-     *
      * @static
      * @return Images
      */
-    static function getInstance()
+    public static function getInstance()
     {
         static $self = null;
         return $self ? $self : $self = new self;
@@ -26,7 +25,6 @@ final class Images
 
     /**
      * Get image object from image data
-     *
      * @param string|AjaxFile $data
      * @throws Exception
      * @return \Imagick|null
@@ -49,9 +47,8 @@ final class Images
 
     /**
      * Get image data from image object
-     *
      * @param \Imagick $img
-     * @param string   $type
+     * @param string $type
      * @return string mixed
      */
     public function image2data($img, $type = 'png')
@@ -72,7 +69,6 @@ final class Images
 
     /**
      * Convert image string between image formats
-     *
      * @param string $data
      * @param string $type
      * @return bool|string
@@ -85,11 +81,10 @@ final class Images
 
     /**
      * Resizes image from binary string to given resolution keeping aspect ratio
-     *
-     * @param string|AjaxFile $data      binary string with image in it
-     * @param int             $maxWidth  maximum height of thumbnail
-     * @param int             $maxHeight maximum width of thumbnail
-     * @param string          $type      resulting image type
+     * @param string|AjaxFile $data binary string with image in it
+     * @param int $maxWidth maximum height of thumbnail
+     * @param int $maxHeight maximum width of thumbnail
+     * @param string $type resulting image type
      * @return string
      */
     public function createThumbnail($data, $maxWidth, $maxHeight, $type = 'png')
@@ -112,11 +107,10 @@ final class Images
 
     /**
      * Resizes image from binary string to given resolution keeping aspect ratio
-     *
-     * @param string $data      binary string with image in it
-     * @param int    $maxWidth  maximum width of thumbnail
-     * @param int    $maxHeight maximum height of thumbnail
-     * @param string $type      resulting image type
+     * @param string $data binary string with image in it
+     * @param int $maxWidth maximum width of thumbnail
+     * @param int $maxHeight maximum height of thumbnail
+     * @param string $type resulting image type
      * @return string
      */
     public function scaleAndCrop($data, $maxWidth, $maxHeight, $type = 'png')
@@ -128,12 +122,11 @@ final class Images
 
     /**
      * Add watermark (text or image)
-     *
-     * @param string    $image
-     * @param string    $text
-     * @param string    $watermarkImage
-     * @param string    $type
-     * @param int       $padding
+     * @param string $image
+     * @param string $text
+     * @param string $watermarkImage
+     * @param string $type
+     * @param int $padding
      * @param float|int $opacity
      * @return string
      */
@@ -231,4 +224,3 @@ final class Images
         return $this->image2data($originalImage, $type);
     }
 }
-

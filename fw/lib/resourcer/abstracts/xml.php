@@ -9,7 +9,6 @@ abstract class XML extends Common
 {
     /**
      * Assemble resources to single XML
-     *
      * @param      $instance
      * @param bool $withFilenames
      * @return mixed
@@ -36,10 +35,9 @@ abstract class XML extends Common
 
     /**
      * Recursively merge two XML trees
-     *
-*@param \SimpleXMLElement $xml1
+     * @param \SimpleXMLElement $xml1
      * @param \SimpleXMLElement $xml2
-     * @param string            $filename
+     * @param string $filename
      */
     private function mergeXML(&$xml1, &$xml2, &$filename)
     {
