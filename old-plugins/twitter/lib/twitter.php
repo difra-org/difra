@@ -26,7 +26,7 @@ class Twitter
 	{
 		$onOff = Config::getInstance()->getValue('oAuth', 'postToTwitter');
 		if (!$onOff) {
-			throw new Exception('Missing oAuth');
+			throw new Exception('Missing oAuth/postToTwitter');
 		}
 
 		$requestFields = ['status' => $text];
