@@ -2,6 +2,9 @@
 
 namespace Difra\Plugins;
 
+use Difra\Config;
+use Difra\Exception;
+
 class Twitter
 {
 	private $errorCode = 0;
@@ -16,20 +19,21 @@ class Twitter
 	/**
 	 * Постинг сообщения в твиттер
 	 * @param $text
+	 * @return Twitter|null
+	 * @throws Exception
 	 */
 	public static function post($text)
 	{
-
-		$onOff = \Difra\Config::getInstance()->getValue('oAuth', 'postToTwitter');
-		if (is_null($onOff) || $onOff == '' || $onOff == 0) {
-			return null;
+		$onOff = Config::getInstance()->getValue('oAuth', 'postToTwitter');
+		if (!$onOff) {
+			throw new Exception('Missing oAuth');
 		}
 
 		$requestFields = ['status' => $text];
-		$Twitter = new self;
-		$Twitter->_performRequest($requestFields);
+		$twitter = new self;
+		$twitter->_performRequest($requestFields);
 
-		return $Twitter;
+		return $twitter;
 	}
 
 	/**
@@ -39,8 +43,7 @@ class Twitter
 	 */
 	private function _performRequest(array $fields, $method = 'POST')
 	{
-
-		$OAuth = \Difra\Plugins\Twitter\Oauth::build(self::$postUrl);
+		$OAuth = Twitter\Oauth::build(self::$postUrl);
 		$header = $OAuth->getHeader();
 
 		$options = [
@@ -98,7 +101,6 @@ class Twitter
 
 	private function _getErrors($jsonAnswer)
 	{
-
 		if (isset($this->response['errors']) && is_array($this->response['errors'])) {
 
 			foreach ($this->response['errors'] as $k => $data) {

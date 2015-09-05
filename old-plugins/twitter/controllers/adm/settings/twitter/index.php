@@ -9,7 +9,7 @@ class AdmSettingsTwitterIndexController extends \Difra\Controller
 
 	public function indexAction()
 	{
-
+		/** @var \DOMElement $mainXml */
 		$mainXml = $this->root->appendChild($this->xml->createElement('twitterSettings'));
 		$config = \Difra\Config::getInstance()->get('oAuth');
 		if (!empty($config)) {
@@ -37,7 +37,7 @@ class AdmSettingsTwitterIndexController extends \Difra\Controller
 
 		\Difra\Config::getInstance()->set('oAuth', $oAuthArray);
 
-		$this->ajax->refresh();
-		$this->ajax->notify(\Difra\Locales::getInstance()->getXPath('twitter/adm/oAuth/settingsSaved'));
+		\Difra\Ajaxer::refresh();
+		\Difra\Ajaxer::notify(\Difra\Locales::getInstance()->getXPath('twitter/adm/oAuth/settingsSaved'));
 	}
 }
