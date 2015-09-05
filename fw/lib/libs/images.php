@@ -12,13 +12,14 @@ use Difra\Param\AjaxFile;
  */
 final class Images
 {
+    // TODO: make class static
     /**
      * Singleton
      *
      * @static
      * @return Images
      */
-    static function getInstance()
+    public static function getInstance()
     {
         static $self = null;
         return $self ? $self : $self = new self;
@@ -231,4 +232,3 @@ final class Images
         return $this->image2data($originalImage, $type);
     }
 }
-

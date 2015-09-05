@@ -7,7 +7,6 @@ use Difra\Envi;
 
 /**
  * Class Setup
- *
  * @package Difra\Envi
  */
 class Setup
@@ -51,7 +50,6 @@ class Setup
 
     /**
      * Set locale
-     *
      * @param $locale
      */
     public static function setLocale($locale = false)
@@ -68,7 +66,6 @@ class Setup
 
     /**
      * Get locale name
-     *
      * @return string
      */
     public static function getLocale()

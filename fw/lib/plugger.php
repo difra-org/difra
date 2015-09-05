@@ -6,7 +6,6 @@ use Difra\Libs\XML\DOM;
 
 /**
  * Class Plugger
- *
  * @package Difra
  */
 class Plugger
@@ -25,13 +24,12 @@ class Plugger
     {
         self::$provisions = [];
         self::$provisions['mysql'] =
-            ['available' => MySQL::getInstance()->isConnected(), 'url' => '/test', 'source' => 'core'];
+                ['available' => MySQL::getInstance()->isConnected(), 'url' => '/test', 'source' => 'core'];
         self::smartPluginsEnable();
     }
 
     /**
      * Get all available plugins list
-     *
      * @return string[]
      */
     private static function getPluginsNames()
@@ -58,7 +56,6 @@ class Plugger
 
     /**
      * Get array of all available plugins objects
-     *
      * @return \Difra\Plugin[]
      */
     public static function getAllPlugins()
@@ -101,14 +98,14 @@ class Plugger
         foreach ($plugins as $name => $plugin) {
             $info = $plugin->getInfo();
             self::$pluginsData[$name] = [
-                'enabled'     =>
-                    in_array($name, $enabledPlugins, true) or
-                    (isset($enabledPlugins[$name]) and $enabledPlugins[$name]),
-                'loaded'      => false,
-                'require'     => $info['requires'],
-                'provides'    => $info['provides'],
-                'version'     => $info['version'],
-                'description' => $info['description']
+                    'enabled' =>
+                            in_array($name, $enabledPlugins, true) or
+                            (isset($enabledPlugins[$name]) and $enabledPlugins[$name]),
+                    'loaded' => false,
+                    'require' => $info['requires'],
+                    'provides' => $info['provides'],
+                    'version' => $info['version'],
+                    'description' => $info['description']
             ];
             $provs = array_merge([$name], $info['provides']);
             foreach ($provs as $prov) {
@@ -120,8 +117,8 @@ class Plugger
                     }
                 } else {
                     self::$provisions[$prov] = [
-                        'available' => false,
-                        'source'    => $name
+                            'available' => false,
+                            'source' => $name
                     ];
                 }
             }
@@ -189,7 +186,6 @@ class Plugger
 
     /**
      * Get plugins information as XML
-     *
      * @param \DOMElement|\DOMNode $node
      */
     public static function getPluginsXML($node)
@@ -204,7 +200,6 @@ class Plugger
 
     /**
      * Get directories for all enabled plugins
-     *
      * @return array
      */
     public static function getPaths()
@@ -224,7 +219,6 @@ class Plugger
 
     /**
      * Is plugin enabled?
-     *
      * @param string $pluginName
      * @return bool
      */
@@ -238,7 +232,6 @@ class Plugger
 
     /**
      * Enable plugin in configuration
-     *
      * @param string $name
      * @return bool
      */
@@ -259,7 +252,6 @@ class Plugger
 
     /**
      * Disable plugin in configuration
-     *
      * @param string $name
      * @return bool
      */

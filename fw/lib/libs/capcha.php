@@ -7,7 +7,6 @@ use Difra\Envi\Session;
 /**
  * Class Capcha
  * Generates capcha images.
- *
  * @package Difra\Libs
  */
 class Capcha
@@ -20,7 +19,7 @@ class Capcha
     /**
      * Constructor
      */
-    public function __construct()
+    private function __construct()
     {
         // Load capcha key from session
         Session::start();
@@ -29,10 +28,9 @@ class Capcha
 
     /**
      * Singleton
-     *
      * @return Capcha
      */
-    static function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;
@@ -40,7 +38,6 @@ class Capcha
 
     /**
      * Verify entered key
-     *
      * @param string $inKey
      * @return bool
      */
@@ -62,9 +59,8 @@ class Capcha
 
     /**
      * Creates image with text
-     *
-     * @param int    $sizeX
-     * @param int    $sizeY
+     * @param int $sizeX
+     * @param int $sizeY
      * @param string $text
      * @param string $generator
      * @return \Imagick
@@ -102,21 +98,21 @@ class Capcha
                         $i = $order[$n];
                         $draw->setFont(DIR_FW . 'lib/libs/capcha/DejaVuSans.ttf');
                         $draw->setFontSize(
-                            $j
-                                ? rand($sizeY * 3 / 5, $sizeY * 5 / 6)
-                                : rand(
-                                $sizeY * 4 / 6,
-                                $sizeY * 5 / 6
-                            )
+                                $j
+                                        ? rand($sizeY * 3 / 5, $sizeY * 5 / 6)
+                                        : rand(
+                                        $sizeY * 4 / 6,
+                                        $sizeY * 5 / 6
+                                )
                         );
                         $draw->setFontWeight(rand(100, 900));
                         $draw->setGravity(\imagick::GRAVITY_CENTER);
                         $image->annotateImage(
-                            $draw,
-                            ($i - strlen($text) / 2) * $sizeX / (strlen($text) + 2.3),
-                            0,
-                            rand(-25, 25),
-                            $text{$i}
+                                $draw,
+                                ($i - strlen($text) / 2) * $sizeX / (strlen($text) + 2.3),
+                                0,
+                                rand(-25, 25),
+                                $text{$i}
                         );
                         $image->gaussianBlurImage(1, 1);
                     }
@@ -128,7 +124,6 @@ class Capcha
 
     /**
      * Generates random key
-     *
      * @param int $len
      * @return string
      */
@@ -141,27 +136,27 @@ class Capcha
         }
         // exclude some character sequences from result
         $bad = [
-            'mm',
-            'ww',
-            'mw',
-            'wm',
-            'huy',
-            'fuck',
-            'suka',
-            'huj',
-            'hui',
-            'blya',
-            'blia',
-            'blja',
-            'pidor',
-            'sex',
-            'suck',
-            'cyka',
-            'pee',
-            'pizd',
-            'pi3d',
-            'nu3g',
-            'fukk'
+                'mm',
+                'ww',
+                'mw',
+                'wm',
+                'huy',
+                'fuck',
+                'suka',
+                'huj',
+                'hui',
+                'blya',
+                'blia',
+                'blja',
+                'pidor',
+                'sex',
+                'suck',
+                'cyka',
+                'pee',
+                'pizd',
+                'pi3d',
+                'nu3g',
+                'fukk'
         ];
         $upA = strtolower($a);
         foreach ($bad as $b) {
@@ -174,7 +169,6 @@ class Capcha
 
     /**
      * Create capcha image with new key
-     *
      * @return \Imagick
      */
     public function viewCapcha()
@@ -188,7 +182,6 @@ class Capcha
 
     /**
      * Set image size for $this->viewCapcha()
-     *
      * @param int $sizeX
      * @param int $sizeY
      */
@@ -200,7 +193,6 @@ class Capcha
 
     /**
      * Set key length for $this->viewCapcha()
-     *
      * @param $n
      */
     public function setKeyLength($n)

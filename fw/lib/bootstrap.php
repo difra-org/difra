@@ -19,6 +19,8 @@ require_once(DIR_FW . 'lib/envi.php');
 define('DIR_SITE', DIR_ROOT . 'sites/' . \Difra\Envi::getSubsite() . '/');
 define('DIR_DATA', !empty($_SERVER['VHOST_DATA']) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/');
 require_once(DIR_FW . 'lib/autoloader.php');
+// Register auto loader class
+\Difra\Autoloader::register();
 
 \Difra\Envi::setMode(!empty($_SERVER['REQUEST_METHOD']) ? 'web' : 'cli');
 \Difra\Events::run();

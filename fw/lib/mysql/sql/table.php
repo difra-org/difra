@@ -8,7 +8,6 @@ use Difra\MySQL\Parser;
 
 /**
  * Class Table
- *
  * @package Difra\MySQL\SQL
  * @deprecated
  */
@@ -20,7 +19,6 @@ class Table extends Common
 
     /**
      * Create new table object
-     *
      * @param array $chunks
      * @return Table
      */
@@ -35,7 +33,6 @@ class Table extends Common
 
     /**
      * Get table object by name
-     *
      * @param $name
      * @return null
      */
@@ -46,9 +43,8 @@ class Table extends Common
 
     /**
      * Load table from chopped SQL
-     *
      * @param array $chunks
-     * @param bool  $goal
+     * @param bool $goal
      * @throws Exception
      */
     public function loadChunks($chunks, $goal = true)

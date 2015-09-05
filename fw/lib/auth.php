@@ -9,7 +9,6 @@ use Difra\Envi\Session;
  * Auth adapter. User logins, logouts and user sessions.
  * This is a layer between actual auth and framework code.
  * It allows to write any auth plugins without direct calls to them and without registering multiple boring handlers.
- *
  * @package Difra
  */
 class Auth
@@ -23,10 +22,9 @@ class Auth
 
     /**
      * Singleton
-     *
      * @return Auth
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;
@@ -42,7 +40,6 @@ class Auth
 
     /**
      * Get auth data as XML node
-     *
      * @param \DOMNode|\DOMElement $node
      */
     public function getAuthXML($node)
@@ -68,8 +65,7 @@ class Auth
 
     /**
      * Log in
-     *
-     * @param int   $userId
+     * @param int $userId
      * @param array $data
      * @param array $additionals
      */
@@ -108,9 +104,9 @@ class Auth
         Session::start();
         if ($this->logged) {
             $_SESSION['auth'] = [
-                'id'          => $this->id,
-                'data'        => $this->data,
-                'additionals' => $this->additionals
+                    'id' => $this->id,
+                    'data' => $this->data,
+                    'additionals' => $this->additionals
             ];
         } else {
             if (isset($_SESSION['auth'])) {
@@ -121,7 +117,6 @@ class Auth
 
     /**
      * Get auth data from session
-     *
      * @return bool
      */
     private function load()
@@ -139,7 +134,6 @@ class Auth
 
     /**
      * Get current user's id. Or null if user is not authorized.
-     *
      * @return int|null
      */
     public function getId()
@@ -149,7 +143,6 @@ class Auth
 
     /**
      * Get user type
-     *
      * @return string|null
      */
     public function getType()
@@ -159,7 +152,6 @@ class Auth
 
     /**
      * Is user authorized?
-     *
      * @return bool
      */
     public function isLogged()
@@ -180,7 +172,6 @@ class Auth
 
     /**
      * Set user data
-     *
      * @param array $additionals
      */
     public function setAdditionals($additionals)
@@ -191,7 +182,6 @@ class Auth
 
     /**
      * Get user data
-     *
      * @return array
      */
     public function getAdditionals()
@@ -202,7 +192,6 @@ class Auth
     /**
      * Is user a moderator?
      * TODO: remove this.
-     *
      * @return bool
      */
     public function isModerator()

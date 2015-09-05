@@ -8,7 +8,6 @@ use Difra\Cache;
  * SharedMemory caching
  * TODO: It wasn't used for a while, test and fix it before use
  * Class SharedMemory
- *
  * @package Difra\Cache
  */
 class SharedMemory extends Common
@@ -21,7 +20,6 @@ class SharedMemory extends Common
 
     /**
      * Detect if backend is available
-     *
      * @return bool
      */
     public static function isAvailable()
@@ -32,8 +30,7 @@ class SharedMemory extends Common
 
     /**
      * Get cached data implementation
-     *
-     * @param string  $id
+     * @param string $id
      * @param boolean $doNotTestCacheValidity
      * @return string
      */
@@ -69,7 +66,6 @@ class SharedMemory extends Common
 
     /**
      * Test if cache record exists implementation
-     *
      * @param string $id
      * @return boolean
      */
@@ -81,9 +77,8 @@ class SharedMemory extends Common
 
     /**
      * Put data record implementation
-     *
-     * @param string   $id
-     * @param string   $data
+     * @param string $id
+     * @param string $data
      * @param bool|int $specificLifetime
      * @return bool
      */
@@ -170,7 +165,6 @@ class SharedMemory extends Common
 
     /**
      * Delete cache record implementation
-     *
      * @param string $id
      * @return boolean
      */
@@ -237,7 +231,6 @@ class SharedMemory extends Common
 
     /**
      * Clean cache implementation
-     *
      * @param string $mode
      * @return boolean true if no problem
      */
@@ -250,7 +243,6 @@ class SharedMemory extends Common
 
     /**
      * Get some info about Shared Memory
-     *
      * @return array|bool
      */
     public function cacheInfo()
@@ -281,7 +273,6 @@ class SharedMemory extends Common
 
     /**
      * Define automatic cache cleaning as not available
-     *
      * @return boolean
      */
     public function isAutomaticCleaningAvailable()

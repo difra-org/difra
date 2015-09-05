@@ -6,7 +6,6 @@ namespace Difra\Minify\JS;
  * Class JSMin
  * Minifies JavaScript.
  * Based on jsmin.php - PHP implementation of Douglas Crockford's JSMin.c.
- *
  * @package Difra\Minify\JS
  */
 class JSMin
@@ -24,7 +23,6 @@ class JSMin
 
     /**
      * Minify Javascript
-     *
      * @uses __construct()
      * @uses min()
      * @param string $js Javascript to be minified
@@ -38,7 +36,6 @@ class JSMin
 
     /**
      * Constructor
-     *
      * @param string $input Javascript to be minified
      */
     public function __construct($input)
@@ -51,7 +48,6 @@ class JSMin
      * Action -- do something! What to do is determined by the $command argument.
      * action treats a string as a single character. Wow!
      * action recognizes a regular expression if it is preceded by ( or , or =.
-     *
      * @uses   next()
      * @uses   get()
      * @throws JSMinException If parser errors are found:
@@ -69,7 +65,7 @@ class JSMin
             /** @noinspection PhpMissingBreakStatementInspection */
             case self::ACTION_KEEP_A:
                 $this->output .= $this->a;
-
+            // no break
             /** @noinspection PhpMissingBreakStatementInspection */
             case self::ACTION_DELETE_A:
                 $this->a = $this->b;
@@ -93,7 +89,7 @@ class JSMin
                         }
                     }
                 }
-
+            // no break
             case self::ACTION_DELETE_A_B:
                 $this->b = $this->next();
 
@@ -153,7 +149,6 @@ class JSMin
 
     /**
      * Get next char. Convert ctrl char to space.
-     *
      * @return string|null
      */
     protected function get()
@@ -175,25 +170,23 @@ class JSMin
 
     /**
      * Is $c a letter, digit, underscore, dollar sign, or non-ASCII character.
-     *
      * @param $c
      * @return bool
      */
     protected function isAlphaNum($c)
     {
         return
-            ('a' <= $c and $c <= 'z') or
-            ($c >= 'A' and $c <= 'Z') or
-            ($c >= '0' and $c <= '9') or
-            $c == '_' or
-            $c == '$' or
-            $c > '~' or
-            $c == '\\';
+                ('a' <= $c and $c <= 'z') or
+                ($c >= 'A' and $c <= 'Z') or
+                ($c >= '0' and $c <= '9') or
+                $c == '_' or
+                $c == '$' or
+                $c > '~' or
+                $c == '\\';
     }
 
     /**
      * Perform minification, return result
-     *
      * @uses action()
      * @uses isAlphaNum()
      * @return string
@@ -281,7 +274,6 @@ class JSMin
     /**
      * Get the next character, skipping over comments. peek() is used to see
      *  if a '/' is followed by a '/' or '*'.
-     *
      * @uses get()
      * @uses peek()
      * @throws JSMinException On unterminated comment.
@@ -302,7 +294,7 @@ class JSMin
                             return $c;
                         }
                     }
-
+                // no break
                 /** @noinspection PhpMissingBreakStatementInspection */
                 case '*':
                     $this->get();
@@ -320,7 +312,7 @@ class JSMin
                                 throw new JSMinException('Unterminated comment.');
                         }
                     }
-
+                // no break
                 default:
                     return $c;
             }
@@ -331,7 +323,6 @@ class JSMin
 
     /**
      * Get next char. If is ctrl character, translate to a space or newline.
-     *
      * @uses get()
      * @return string|null
      */

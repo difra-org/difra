@@ -6,7 +6,6 @@ use Difra\Envi\Request;
 
 /**
  * Class Debugger
- *
  * @package Difra
  */
 class Debugger
@@ -31,7 +30,6 @@ class Debugger
 
     /**
      * Is debugging enabled?
-     *
      * @return bool
      */
     public static function isEnabled()
@@ -63,8 +61,8 @@ class Debugger
             ini_set('display_errors', 'On');
             ini_set('error_reporting', E_ALL);
             ini_set(
-                'html_errors',
-                (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On'
+                    'html_errors',
+                    (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On'
             );
             self::$enabled = self::CONSOLE_DISABLED;
             self::$console = self::CONSOLE_NONE;
@@ -110,7 +108,6 @@ class Debugger
      * 0 — debugging is disabled
      * 1 — debugging is enabled, but console is disabled
      * 2 — console is enabled
-     *
      * @return int
      */
     public static function isConsoleEnabled()
@@ -121,7 +118,6 @@ class Debugger
 
     /**
      * Is caching enabled?
-     *
      * @return bool
      */
     public static function isCachesEnabled()
@@ -132,21 +128,19 @@ class Debugger
 
     /**
      * Add console log message
-     *
      * @param string $line
      */
     public static function addLine($line)
     {
         self::$output[] = [
-            'class'   => 'messages',
-            'message' => $line,
-            'timer'   => self::getTimer()
+                'class' => 'messages',
+                'message' => $line,
+                'timer' => self::getTimer()
         ];
     }
 
     /**
      * Get running time
-     *
      * @return float
      */
     public static function getTimer()
@@ -156,21 +150,19 @@ class Debugger
 
     /**
      * Add console log event
-     *
      * @param string $line
      */
     public static function addEventLine($line)
     {
         self::$output[] = [
-            'class'   => 'events',
-            'message' => $line,
-            'timer'   => self::getTimer()
+                'class' => 'events',
+                'message' => $line,
+                'timer' => self::getTimer()
         ];
     }
 
     /**
      * Add console log for SQL requests
-     *
      * @param string $type
      * @param string $line
      */
@@ -180,16 +172,15 @@ class Debugger
             return;
         }
         self::$output[] = [
-            'class'   => 'db',
-            'type'    => $type,
-            'message' => $line,
-            'timer'   => self::getTimer()
+                'class' => 'db',
+                'type' => $type,
+                'message' => $line,
+                'timer' => self::getTimer()
         ];
     }
 
     /**
      * Callback for exceptions
-     *
      * @static
      * @param Exception $exception
      * @return bool
@@ -198,12 +189,12 @@ class Debugger
     {
         self::init();
         $err = [
-            'class'     => 'errors',
-            'stage'     => 'exception',
-            'message'   => $msg = $exception->getMessage(),
-            'file'      => $file = $exception->getFile(),
-            'line'      => $line = $exception->getLine(),
-            'traceback' => $exception->getTrace()
+                'class' => 'errors',
+                'stage' => 'exception',
+                'message' => $msg = $exception->getMessage(),
+                'file' => $file = $exception->getFile(),
+                'line' => $line = $exception->getLine(),
+                'traceback' => $exception->getTrace()
         ];
         self::$handledByException = "$msg in $file:$line";
         self::addLineAsArray($err);
@@ -212,7 +203,6 @@ class Debugger
 
     /**
      * Add console log error
-     *
      * @param $array
      */
     public static function addLineAsArray($array)
@@ -229,7 +219,6 @@ class Debugger
 
     /**
      * When running in production environment, we may want to e-mail all exceptions
-     *
      * @param $exception
      */
     public static function productionException($exception)
@@ -241,7 +230,6 @@ class Debugger
 
     /**
      * Callback for captureable errors
-     *
      * @static
      * @param $type
      * @param $message
@@ -256,13 +244,13 @@ class Debugger
             return false;
         }
         $err = [
-            'class'   => 'errors',
-            'type'    => $type,
-            'error'   => Libs\Debug\errorConstants::getInstance()->getVerbalError($type),
-            'message' => $message,
-            'file'    => $file,
-            'line'    => $line,
-            'stage'   => 'normal'
+                'class' => 'errors',
+                'type' => $type,
+                'error' => Libs\Debug\ErrorConstants::getInstance()->getVerbalError($type),
+                'message' => $message,
+                'file' => $file,
+                'line' => $line,
+                'stage' => 'normal'
         ];
         $err['traceback'] = debug_backtrace();
         array_shift($err['traceback']);
@@ -285,7 +273,7 @@ class Debugger
         if ($error) {
             // add error to console log
             if (self::$handledByNormal != $error['message']) {
-                $error['error'] = Libs\Debug\errorConstants::getInstance()->getVerbalError($error['type']);
+                $error['error'] = Libs\Debug\ErrorConstants::getInstance()->getVerbalError($error['type']);
                 $error['class'] = 'errors';
                 $error['traceback'] = debug_backtrace();
                 array_shift($error['traceback']);
@@ -308,7 +296,6 @@ class Debugger
 
     /**
      * Render debug console HTML
-     *
      * @param bool $standalone Render console standalone page (looks like full screen console)
      * @return string
      */
@@ -328,9 +315,8 @@ class Debugger
 
     /**
      * Add console data to output XML
-     *
      * @param \DOMNode|\DOMElement $node
-     * @param bool                 $standalone
+     * @param bool $standalone
      * @return string
      */
     public static function debugXML($node, $standalone = false)
@@ -352,7 +338,6 @@ class Debugger
 
     /**
      * Does console log contain errors?
-     *
      * @return bool
      */
     public static function hadError()
@@ -362,7 +347,6 @@ class Debugger
 
     /**
      * If page rendered too long, report to developers
-     *
      * @throws Exception
      */
     public static function checkSlow()

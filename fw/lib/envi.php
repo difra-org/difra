@@ -4,7 +4,6 @@ namespace Difra;
 
 /**
  * Class Envi
- *
  * @package Difra
  */
 class Envi
@@ -28,7 +27,6 @@ class Envi
 
     /**
      * Set environment mode
-     *
      * @param $mode
      */
     public static function setMode($mode)
@@ -38,7 +36,6 @@ class Envi
 
     /**
      * Get current URI
-     *
      * @param bool $raw Don't urldecode() URI
      * @return string
      */
@@ -66,7 +63,6 @@ class Envi
 
     /**
      * Set current URI
-     *
      * @param string $uri
      */
     public static function setUri($uri)
@@ -78,7 +74,6 @@ class Envi
 
     /**
      * Get some configuration variables as XML node attributes
-     *
      * @param \DOMElement|\DOMNode $node
      */
     public static function getStateXML($node)
@@ -95,10 +90,10 @@ class Envi
     public static function getState()
     {
         return [
-            'locale'   => Envi\Setup::getLocale(),
-            'host'     => self::getSubsite(),
-            'hostname' => self::getHost(),
-            'mainhost' => self::getHost(true)
+                'locale' => Envi\Setup::getLocale(),
+                'host' => self::getSubsite(),
+                'hostname' => self::getHost(),
+                'mainhost' => self::getHost(true)
         ];
     }
 
@@ -108,7 +103,6 @@ class Envi
      * 2. By Host names sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
      *    www.subdomain.domain.com domain.com www.domain.com.
      * 3. "default" subsite name.
-     *
      * @return string|bool
      */
     public static function getSubsite()
@@ -145,7 +139,6 @@ class Envi
 
     /**
      * Get host name from request
-     *
      * @param bool $main Get "main" host name (for subdomains)
      * @return string
      */

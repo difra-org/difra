@@ -9,7 +9,6 @@ class None extends Common
 {
     /**
      * Stub
-     *
      * @param string $data
      * @return string
      */

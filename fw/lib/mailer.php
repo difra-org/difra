@@ -4,17 +4,15 @@ namespace Difra;
 
 /**
  * Class Mailer
- *
  * @package Difra
  */
 class Mailer
 {
-    var $fromText = 'Robot';
-    var $fromMail = 'robot@example.com'; // TODO: move this to configuration and throw exception if it's not set
+    private $fromText = 'Robot';
+    private $fromMail = 'robot@example.com'; // TODO: move this to configuration and throw exception if it's not set
 
     /**
      * Singleton
-     *
      * @return self
      */
     public static function getInstance()
@@ -33,10 +31,9 @@ class Mailer
 
     /**
      * Send e-mail message
-     *
-     * @param string      $email    To:
-     * @param string      $subject  Subject:
-     * @param string      $body     Message body
+     * @param string $email To:
+     * @param string $subject Subject:
+     * @param string $body Message body
      * @param string|bool $fromMail From: (address)
      * @param string|bool $fromText From: (name)
      * @return bool
@@ -52,11 +49,11 @@ class Mailer
         }
 
         $headers = [
-            "Mime-Version: 1.0",
-            "Content-Type: text/html; charset=\"UTF-8\"",
-            "Date: " . date('r'),
-            "Message-Id: <" . md5(microtime()) . '-' . md5($fromMail . $email) . '@' . Envi::getHost(true) . '>',
-            'Content-Transfer-Encoding: 8bit'
+                "Mime-Version: 1.0",
+                "Content-Type: text/html; charset=\"UTF-8\"",
+                "Date: " . date('r'),
+                "Message-Id: <" . md5(microtime()) . '-' . md5($fromMail . $email) . '@' . Envi::getHost(true) . '>',
+                'Content-Transfer-Encoding: 8bit'
         ];
 
         // Encode non-ascii text strings to base64
@@ -81,10 +78,9 @@ class Mailer
      * Generate and send e-mail message
      * Data are passed to templates as <mail> node attributes.
      * Message template can contain following tags: from, fromtext, subject, text
-     *
      * @param string $email
      * @param string $template
-     * @param array  $data
+     * @param array $data
      */
     public function createMail($email, $template, $data)
     {
@@ -108,9 +104,8 @@ class Mailer
 
     /**
      * Add some data to output XML for message template
-     *
      * @param \DOMElement|\DOMNode $node
-     * @param array                $data
+     * @param array $data
      */
     private function addData($node, $data)
     {

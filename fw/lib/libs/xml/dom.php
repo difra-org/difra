@@ -18,7 +18,7 @@ class DOM
      * @static
      * @return DOM
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;
@@ -30,7 +30,7 @@ class DOM
      * @param \DOMNode $node
      * @param string   $newName
      */
-    static public function renameNode($node, $newName)
+    public static function renameNode($node, $newName)
     {
         $newNode = $node->ownerDocument->createElement($newName);
         if ($node->hasAttributes()) {

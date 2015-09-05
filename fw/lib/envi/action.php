@@ -14,7 +14,6 @@ use \Difra\View\Exception as ViewException;
 /**
  * Class Action
  * Find controller and action for current URI
- *
  * @package Difra
  */
 class Action
@@ -39,15 +38,14 @@ class Action
     public static $methodAjaxAuth = null;
     /** @var array */
     public static $methodTypes = [
-        ['', ''],
-        ['', 'Auth'],
-        ['Ajax', ''],
-        ['Ajax', 'Auth']
+            ['', ''],
+            ['', 'Auth'],
+            ['Ajax', ''],
+            ['Ajax', 'Auth']
     ];
 
     /**
      * Find controller and action for current URI
-     *
      * @throws Exception
      */
     public static function find()
@@ -68,8 +66,9 @@ class Action
             throw new ViewException(404);
         }
         self::$controllerUri =
-            '/' .
-            implode('/', sizeof($parts) ? array_slice($controllerUriParts, 0, -sizeof($parts)) : $controllerUriParts);
+                '/' .
+                implode('/',
+                        sizeof($parts) ? array_slice($controllerUriParts, 0, -sizeof($parts)) : $controllerUriParts);
 
         /** @noinspection PhpIncludeInspection */
         include_once(self::$controllerFile);
@@ -86,7 +85,6 @@ class Action
 
     /**
      * Load cached data
-     *
      * @throws \Difra\View\Exception
      * @return bool
      */
@@ -111,7 +109,6 @@ class Action
 
     /**
      * Cache data
-     *
      * @param string $result Result type: 'action' or '404'
      */
     private static function saveCache($result = 'action')
@@ -119,13 +116,13 @@ class Action
         if ($result != '404') {
             // save main variables
             $match = [
-                'vars' => [
-                    'controllerClass' => self::$controllerClass,
-                    'controllerFile'  => self::$controllerFile,
-                    'controllerUri'   => self::$controllerUri,
-                    'parameters'      => self::$parameters
-                ],
-                'result' => $result
+                    'vars' => [
+                            'controllerClass' => self::$controllerClass,
+                            'controllerFile' => self::$controllerFile,
+                            'controllerUri' => self::$controllerUri,
+                            'parameters' => self::$parameters
+                    ],
+                    'result' => $result
             ];
             // save action types variables
             foreach (self::$methodTypes as $methodType) {
@@ -134,7 +131,7 @@ class Action
             }
         } else {
             $match = [
-                'result' => '404'
+                    'result' => '404'
             ];
         }
 
@@ -143,7 +140,6 @@ class Action
 
     /**
      * Resource (JS, CSS, etc.) request processor
-     *
      * @param string[] $parts
      * @throws \Difra\View\Exception
      * @return bool
@@ -184,7 +180,6 @@ class Action
 
     /**
      * Get list of controllers directories
-     *
      * @return string[]
      */
     public static function getControllerPaths()
@@ -203,7 +198,6 @@ class Action
 
     /**
      * Get cache record key
-     *
      * @return string
      */
     private static function getCacheKey()
@@ -213,7 +207,6 @@ class Action
 
     /**
      * Find deppest controller directory path for current REQUEST
-     *
      * @param string[] $parts
      * @return string[]
      */
@@ -243,7 +236,6 @@ class Action
 
     /**
      * Find matching controller for current URI
-     *
      * @param $parts
      * @return null|string
      */
@@ -285,7 +277,6 @@ class Action
 
     /**
      * Find matching action for current URI
-     *
      * @param string[] $parts
      * @return bool|string
      */
@@ -296,8 +287,8 @@ class Action
         foreach ($methodNames as $methodTmp) {
             foreach (self::$methodTypes as $methodType) {
                 if (method_exists(
-                    self::$controllerClass,
-                    $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1]
+                        self::$controllerClass,
+                        $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1]
                 )) {
                     $foundMethod = $methodTmp;
                     $methodVar = "method{$methodType[0]}{$methodType[1]}";
@@ -314,7 +305,6 @@ class Action
 
     /**
      * Get matched controller name
-     *
      * @return null|string
      */
     public static function getControllerClass()
@@ -324,10 +314,9 @@ class Action
 
     /**
      * Manually set controller and action
-     *
      * @param string $controllerClass
      * @param string $actionMethod
-     * @param array  $parameters
+     * @param array $parameters
      */
     public static function setCustomAction($controllerClass, $actionMethod, $parameters = [])
     {
@@ -339,7 +328,6 @@ class Action
     /**
      * Get URI matching current controller
      * Useful for relative paths.
-     *
      * @return string
      */
     public static function getControllerUri()

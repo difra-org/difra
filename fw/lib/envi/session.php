@@ -7,7 +7,6 @@ use Difra\Envi;
 
 /**
  * Class Session
- *
  * @package Difra\Envi
  */
 class Session

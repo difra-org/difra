@@ -4,7 +4,6 @@ namespace Difra\Libs;
 
 /**
  * Class Strings
- *
  * @deprecated
  * @package Difra\Libs
  */
@@ -12,7 +11,6 @@ class Strings
 {
     /**
      * Is character is a whitespace?
-     *
      * @param string $char
      * @return bool
      */

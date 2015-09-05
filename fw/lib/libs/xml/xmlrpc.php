@@ -16,7 +16,7 @@ class XMLRPC
      * @static
      * @return self
      */
-    static function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         if (!$_instance) {

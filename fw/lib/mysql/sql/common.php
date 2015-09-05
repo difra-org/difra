@@ -4,7 +4,6 @@ namespace Difra\MySQL\SQL;
 
 /**
  * Class Common
- *
  * @package Difra\MySQL\SQL
  * @deprecated
  */
@@ -14,7 +13,6 @@ abstract class Common
     protected static $list = [];
     /**
      * Create object from chopped SQL
-     *
      * @param array $chunks
      * @return mixed
      */
@@ -22,7 +20,6 @@ abstract class Common
 
     /**
      * Get list of loaded objects
-     *
      * @return array
      */
     public static function getList()
@@ -32,7 +29,6 @@ abstract class Common
 
     /**
      * Get name from chunk
-     *
      * @param $name
      * @return string
      */

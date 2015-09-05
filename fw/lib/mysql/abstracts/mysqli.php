@@ -17,7 +17,7 @@ class MySQLi extends Common
      *
      * @return bool
      */
-    static function isAvailable()
+    public static function isAvailable()
     {
         return extension_loaded('mysqli');
     }

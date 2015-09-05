@@ -8,7 +8,6 @@ use Difra\View\Exception as ViewException;
 /**
  * Class Digest
  * Digest HTTP auth
- *
  * @package Difra\Libs\Auth
  */
 class Digest
@@ -19,11 +18,10 @@ class Digest
 
     /**
      * Singleton
-     *
      * @param array $newUsers
      * @return Digest
      */
-    static function getInstance($newUsers = [])
+    public static function getInstance($newUsers = [])
     {
         static $_instance = null;
         if (!$_instance) {
@@ -33,8 +31,7 @@ class Digest
     }
 
     /**
-     * Contructor
-     *
+     * Constructor
      * @param array $newUsers
      */
     public function __construct($newUsers = [])
@@ -44,21 +41,20 @@ class Digest
 
     /**
      * Request Digest auth
-     *
      * @throws \Difra\View\Exception
      */
     public function request()
     {
         header('HTTP/1.1 401 Unauthorized');
         header(
-            'WWW-Authenticate: Digest realm="' .
-            $this->realm .
-            '",qop="auth",nonce="' .
-            $this->getNonce(true) .
-            '",opaque="' .
-            md5($this->realm) .
-            '"' .
-            ($this->stale ? ',stale=TRUE' : '')
+                'WWW-Authenticate: Digest realm="' .
+                $this->realm .
+                '",qop="auth",nonce="' .
+                $this->getNonce(true) .
+                '",opaque="' .
+                md5($this->realm) .
+                '"' .
+                ($this->stale ? ',stale=TRUE' : '')
         );
 
         throw new ViewException(401);
@@ -66,7 +62,6 @@ class Digest
 
     /**
      * Verify auth
-     *
      * @return bool
      */
     public function verify()
@@ -86,7 +81,7 @@ class Digest
         $A1 = md5($data['username'] . ':' . $this->realm . ':' . $this->users[$data['username']]);
         $A2 = md5($_SERVER['REQUEST_METHOD'] . ':' . $data['uri']);
         $valid_response = md5(
-            $A1 . ':' . $data['nonce'] . ':' . $data['nc'] . ':' . $data['cnonce'] . ':' . $data['qop'] . ':' . $A2
+                $A1 . ':' . $data['nonce'] . ':' . $data['nc'] . ':' . $data['cnonce'] . ':' . $data['qop'] . ':' . $A2
         );
         if ($data['response'] != $valid_response) {
             return false;
@@ -96,7 +91,6 @@ class Digest
 
     /**
      * Digest auth parser
-     *
      * @param $txt
      * @return array|bool
      */
@@ -104,7 +98,7 @@ class Digest
     {
         // protect against missing data
         $needed_parts =
-            ['nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1];
+                ['nonce' => 1, 'nc' => 1, 'cnonce' => 1, 'qop' => 1, 'username' => 1, 'uri' => 1, 'response' => 1];
         $data = [];
 
         // php docs use @(\w+)=(?:([\'"])([^\2]+)\2|([^\s,]+))@ regexp, but it doesn't work
@@ -119,7 +113,6 @@ class Digest
 
     /**
      * Get nonce
-     *
      * @param bool $regen Force new nonce
      * @return bool|string
      */
@@ -139,7 +132,6 @@ class Digest
 
     /**
      * Check nc
-     *
      * @param $nc
      * @return bool
      */

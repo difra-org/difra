@@ -8,7 +8,6 @@ use Difra\Exception;
 /**
  * XCache adapter
  * Class XCache
- *
  * @package Difra\Cache
  */
 class XCache extends Common
@@ -17,7 +16,6 @@ class XCache extends Common
 
     /**
      * Detect if backend is available
-     *
      * @return bool
      */
     public static function isAvailable()
@@ -38,8 +36,7 @@ class XCache extends Common
 
     /**
      * Get cache record implementation
-     *
-     * @param string  $id
+     * @param string $id
      * @param boolean $doNotTestCacheValidity
      * @return string
      */
@@ -53,7 +50,6 @@ class XCache extends Common
 
     /**
      * Check if cache record exists implementation
-     *
      * @param string $id cache id
      * @return boolean
      */
@@ -64,9 +60,8 @@ class XCache extends Common
 
     /**
      * Put cache record implementation
-     *
-     * @param string   $id
-     * @param string   $data
+     * @param string $id
+     * @param string $data
      * @param bool|int $specificLifetime
      * @return boolean
      */
@@ -77,7 +72,6 @@ class XCache extends Common
 
     /**
      * Delete cache record implementation
-     *
      * @param string $id
      * @return boolean
      */
@@ -88,7 +82,6 @@ class XCache extends Common
 
     /**
      * Define automatic cleaning as available
-     *
      * @return boolean
      */
     public function isAutomaticCleaningAvailable()

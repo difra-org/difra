@@ -6,41 +6,39 @@ use Difra\Libs\XML\DOM;
 
 /**
  * Class UserAgent
- *
  * @package Difra\Envi
  */
 class UserAgent
 {
-    static $agents = [
-        'OPR'     => 'Opera',
-        'Chrome'  => 'Chrome',
-        'CriOS'   => 'Chrome',
-        'Firefox' => 'Firefox',
-        'Opera'   => 'Opera',
-        'Safari'  => 'Safari',
-        'Trident' => 'IE'
+    private static $agents = [
+            'OPR' => 'Opera',
+            'Chrome' => 'Chrome',
+            'CriOS' => 'Chrome',
+            'Firefox' => 'Firefox',
+            'Opera' => 'Opera',
+            'Safari' => 'Safari',
+            'Trident' => 'IE'
     ];
-    static $engines = [
-        'AppleWebKit' => 'WebKit',
-        'Gecko'       => 'Gecko',
-        'Presto'      => 'Presto',
-        'Trident'     => 'Trident'
+    private static $engines = [
+            'AppleWebKit' => 'WebKit',
+            'Gecko' => 'Gecko',
+            'Presto' => 'Presto',
+            'Trident' => 'Trident'
     ];
-    static $oses = [
-        'Windows'    => 'Windows',
-        'Macintosh'  => 'Macintosh',
-        'iPad'       => 'iOS',
-        'iPod'       => 'iOS',
-        'iPhone'     => 'iOS',
-        'Android'    => 'Android',
-        'BlackBerry' => 'BlackBerry',
-        'MeeGo'      => 'MeeGo',
-        'Linux'      => 'Linux'
+    private static $oses = [
+            'Windows' => 'Windows',
+            'Macintosh' => 'Macintosh',
+            'iPad' => 'iOS',
+            'iPod' => 'iOS',
+            'iPhone' => 'iOS',
+            'Android' => 'Android',
+            'BlackBerry' => 'BlackBerry',
+            'MeeGo' => 'MeeGo',
+            'Linux' => 'Linux'
     ];
 
     /**
      * Get user agent information as XML
-     *
      * @param \DOMElement $node
      */
     public static function getUserAgentXML($node)
@@ -57,7 +55,6 @@ class UserAgent
 
     /**
      * Get user agent information as array
-     *
      * @return array
      */
     public static function getUserAgent()
@@ -66,11 +63,11 @@ class UserAgent
             return self::$userAgent;
         }
         return self::$userAgent = [
-            'agent'   => self::getAgent(),
-            'version' => self::getVersion(),
-            'os'      => self::getOS(),
-            'engine'  => self::getEngine(),
-            'device'  => self::getDevice()
+                'agent' => self::getAgent(),
+                'version' => self::getVersion(),
+                'os' => self::getOS(),
+                'engine' => self::getEngine(),
+                'device' => self::getDevice()
         ];
     }
 
@@ -78,7 +75,6 @@ class UserAgent
 
     /**
      * Get user agent identifier
-     *
      * @return string|bool
      */
     public static function getAgentId()
@@ -99,7 +95,6 @@ class UserAgent
 
     /**
      * Get user agent name
-     *
      * @return string|bool
      */
     public static function getAgent()
@@ -129,7 +124,6 @@ class UserAgent
 
     /**
      * Get user agent engine name
-     *
      * @return string|bool
      */
     public static function getEngine()
@@ -151,7 +145,6 @@ class UserAgent
 
     /**
      * Get user agent OS
-     *
      * @return string|bool
      */
     public static function getOS()
@@ -173,7 +166,6 @@ class UserAgent
 
     /**
      * Get user agent version
-     *
      * @return string|bool
      */
     public static function getVersion()
@@ -222,7 +214,6 @@ class UserAgent
 
     /**
      * Get user agent header
-     *
      * @return string|bool
      */
     public static function getUAString()
@@ -240,7 +231,6 @@ class UserAgent
 
     /**
      * Get hash array from User-Agent string
-     *
      * @return array
      */
     private static function getUAArray()
@@ -260,7 +250,6 @@ class UserAgent
 
     /**
      * Get CSS classes for user agent
-     *
      * @return string
      */
     public static function getUserAgentClass()
@@ -290,7 +279,6 @@ class UserAgent
 
     /**
      * Get user agent device name
-     *
      * @return null
      */
     public static function getDevice()
@@ -308,7 +296,6 @@ class UserAgent
     /**
      * Set custom user agent string
      * Used by unit tests.
-     *
      * @param $string
      */
     public static function setUAString($string)

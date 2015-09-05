@@ -5,7 +5,6 @@ namespace Difra;
 /**
  * Project configuration
  * Class Config
- *
  * @package Difra
  */
 class Config
@@ -16,23 +15,22 @@ class Config
     private $modified = false;
     /** @var array Default configuration */
     private $defaultConfig = [
-        'instances' => [
-            'main' => [
-                'withAll' => true
-            ],
-            'adm'  => [
-                'withAll' => true
+            'instances' => [
+                    'main' => [
+                            'withAll' => true
+                    ],
+                    'adm' => [
+                            'withAll' => true
+                    ]
             ]
-        ]
     ];
 
     /**
      * Singleton
-     *
      * @static
      * @return Config
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $instance = null;
         return $instance ? $instance : $instance = new self;
@@ -48,7 +46,6 @@ class Config
 
     /**
      * Save configuration
-     *
      * @return bool
      */
     public function save()
@@ -72,7 +69,6 @@ class Config
 
     /**
      * Finds difference between saved configuration and current one
-     *
      * @return array
      */
     private function diff()
@@ -82,7 +78,6 @@ class Config
 
     /**
      * Recursive part for diff()
-     *
      * @param array $a1
      * @param array $a2
      * @return array
@@ -115,7 +110,6 @@ class Config
 
     /**
      * Get configuration from config.php
-     *
      * @return array
      */
     private function loadFileConfigs()
@@ -139,12 +133,11 @@ class Config
 
     /**
      * Merge two configuration array
-     *
      * @param array $a1
      * @param array $a2
      * @return mixed
      */
-    function merge($a1, $a2)
+    private function merge($a1, $a2)
     {
         foreach ($a2 as $k => $v) {
             $a1[$k] = $v;
@@ -154,7 +147,6 @@ class Config
 
     /**
      * Get configuration item value
-     *
      * @param string $key
      * @return mixed
      */
@@ -192,9 +184,8 @@ class Config
 
     /**
      * Set configuration item value
-     *
      * @param string $key
-     * @param mixed  $value
+     * @param mixed $value
      */
     public function set($key, $value)
     {
@@ -205,7 +196,6 @@ class Config
 
     /**
      * Get configuration array item value
-     *
      * @param string $key
      * @param string $arrayKey
      * @return mixed
@@ -218,10 +208,9 @@ class Config
 
     /**
      * Set configuration array item value
-     *
      * @param string $key
      * @param string $arrayKey
-     * @param mixed  $arrayValue
+     * @param mixed $arrayValue
      */
     public function setValue($key, $arrayKey, $arrayValue)
     {
@@ -235,7 +224,6 @@ class Config
 
     /**
      * Get full configuration
-     *
      * @return array
      */
     public function getConfig()
@@ -246,7 +234,6 @@ class Config
 
     /**
      * Get modified configuration items
-     *
      * @return array
      */
     public function getDiff()

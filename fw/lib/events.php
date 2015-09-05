@@ -4,30 +4,29 @@ namespace Difra;
 
 /**
  * Class Events
- *
  * @package Difra
  */
 class Events
 {
     /** @var array */
     private static $types = [
-        'core-init', // init some classes
-        'plugins-load', // load plugins
-        'config', // load configuration
-        'plugins-init', // init plugins
+            'core-init', // init some classes
+            'plugins-load', // load plugins
+            'config', // load configuration
+            'plugins-init', // init plugins
 
-        'pre-action', // this event lets you define controller and action
-        'action-find', // default controller and action detect
-        'init-done', // event between controller+action detection and action run
+            'pre-action', // this event lets you define controller and action
+            'action-find', // default controller and action detect
+            'init-done', // event between controller+action detection and action run
 
-        'action-run', // run action
+            'action-run', // run action
 
-        'dispatch', // run dispatchers
+            'dispatch', // run dispatchers
 
-        'render-init', // init view
-        'render-run', // render view
+            'render-init', // init view
+            'render-run', // render view
 
-        'done' // after page render
+            'done' // after page render
     ];
     /** @var array */
     private static $events = null;
@@ -82,9 +81,8 @@ class Events
     /**
      * Register event handler
      * TODO: replace class and method with unnamed functions as a handlers
-     *
-     * @param string      $type   Event name
-     * @param string      $class  Handler class (should contain getInstance() singleton method)
+     * @param string $type Event name
+     * @param string $class Handler class (should contain getInstance() singleton method)
      * @param bool|string $method Handler method (if false, only getInstance() will be called)
      * @throws Exception
      */
@@ -95,14 +93,13 @@ class Events
             throw new Exception('Invalid event type: ' . $type);
         }
         self::$events[$type][] = [
-            'class'  => $class,
-            'method' => $method
+                'class' => $class,
+                'method' => $method
         ];
     }
 
     /**
      * Call registered handlers for an event
-     *
      * @param $event
      */
     private static function start($event)
@@ -113,8 +110,8 @@ class Events
         }
         foreach ($handlers as $handler) {
             Debugger::addEventLine(
-                'Handler for ' . $event . ': ' . $handler['class'] . '->' . ($handler['method']
-                    ? $handler['method'] : 'getInstance') . ' started'
+                    'Handler for ' . $event . ': ' . $handler['class'] . '->' . ($handler['method']
+                            ? $handler['method'] : 'getInstance') . ' started'
             );
             call_user_func([$handler['class'], $handler['method']]);
         }

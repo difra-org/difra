@@ -5,7 +5,6 @@ namespace Difra;
 /**
  * Class Autoloader
  * Class auto loader
- *
  * @package Difra
  */
 class Autoloader
@@ -16,7 +15,6 @@ class Autoloader
 
     /**
      * Auto loader method
-     *
      * @param $class
      * @throws Exception
      */
@@ -44,7 +42,6 @@ class Autoloader
 
     /**
      * Get file name for class and namespace
-     *
      * @param string $class
      * @return string
      */
@@ -75,7 +72,6 @@ class Autoloader
 
     /**
      * Set autoloader handler
-     *
      * @throws exception
      */
     public static function register()
@@ -85,7 +81,6 @@ class Autoloader
 
     /**
      * Add class name to blacklist
-     *
      * @param string $class
      */
     public static function addBL($class)
@@ -101,7 +96,3 @@ class Autoloader
         self::$loader = $obj;
     }
 }
-
-// Register auto loader class
-// TODO: move it somewhere, class + code in same file is something bad
-Autoloader::register();

@@ -18,7 +18,7 @@ class Localemanage
      *
      * @return Localemanage
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;

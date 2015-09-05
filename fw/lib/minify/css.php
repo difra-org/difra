@@ -10,7 +10,6 @@ class CSS extends Common
 {
     /**
      * Minify CSS
-     *
      * @param string $data
      * @return string
      */

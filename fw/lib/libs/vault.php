@@ -9,18 +9,16 @@ use Difra\MySQL;
 /**
  * Class Vault
  * Temporary files storage.
- *
  * @package Difra\Libs
  */
 class Vault
 {
     /**
      * Add file to vault
-     *
      * @param string $data
      * @return int
      */
-    static function add($data)
+    public static function add($data)
     {
         $db = MySQL::getInstance();
         $db->query('DELETE FROM `vault` WHERE `created`<DATE_SUB(now(),INTERVAL 3 HOUR)');
@@ -37,11 +35,10 @@ class Vault
 
     /**
      * Get file from vault
-     *
      * @param $id
      * @return string|null
      */
-    static function get($id)
+    public static function get($id)
     {
         Session::start();
         if (!isset($_SESSION['vault']) or !isset($_SESSION['vault'][$id])) {
@@ -53,10 +50,9 @@ class Vault
 
     /**
      * Delete file from vault
-     *
      * @param $id
      */
-    static function delete($id)
+    public static function delete($id)
     {
         Session::start();
         if (!isset($_SESSION['vault'][$id])) {
@@ -74,27 +70,26 @@ class Vault
      * Warning: if $path contains files not found in $html's as img src="..." links, those files will be deleted.
      * 1. Use $path exclusively for one object.
      * 2. Call saveImages() before saving $html
-     *
      * @param $html
      * @param $path
      * @param $urlPrefix
      */
-    static function saveImages(&$html, $path, $urlPrefix)
+    public static function saveImages(&$html, $path, $urlPrefix)
     {
         // when using AjaxSafeHTML, characters inside src= are encoded using ESAPI
         $html =
-            str_replace(
-                'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . '&#x2f;up&#x2f;tmp&#x2f;',
-                'src="/up/tmp/',
-                $html
-            );
+                str_replace(
+                        'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . '&#x2f;up&#x2f;tmp&#x2f;',
+                        'src="/up/tmp/',
+                        $html
+                );
         $html = str_replace('src="&#x2f;up&#x2f;tmp&#x2f;', 'src="/up/tmp/', $html);
         $html =
-            str_replace(
-                'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . str_replace('/', '&#x2f;', "$urlPrefix/"),
-                'src="' . $urlPrefix . '/',
-                $html
-            );
+                str_replace(
+                        'src="http&#x3a;&#x2f;&#x2f;' . Envi::getHost() . str_replace('/', '&#x2f;', "$urlPrefix/"),
+                        'src="' . $urlPrefix . '/',
+                        $html
+                );
         $html = str_replace('src="' . str_replace('/', '&#x2f;', $urlPrefix . '/'), 'src="' . $urlPrefix . '/', $html);
 
         preg_match_all('/src=\"\/up\/tmp\/([0-9]+)\"/', $html, $newImages);

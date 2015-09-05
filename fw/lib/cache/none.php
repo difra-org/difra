@@ -7,7 +7,6 @@ use Difra\Cache;
 /**
  * Stub cache adapter
  * Class None
- *
  * @package Difra\Cache
  */
 class None extends Common
@@ -17,7 +16,6 @@ class None extends Common
     /**
      * Stub backend is always available. Or not.
      * Depends on your point of view, but let adapter be available anyways.
-     *
      * @return bool
      */
     public static function isAvailable()
@@ -27,8 +25,7 @@ class None extends Common
 
     /**
      * Get cache record pseudo-implementation
-     *
-     * @param string  $id
+     * @param string $id
      * @param boolean $doNotTestCacheValidity
      * @return string
      */
@@ -39,7 +36,6 @@ class None extends Common
 
     /**
      * Test if cache record exists pseudo-implementation
-     *
      * @param string $id cache id
      * @return boolean
      */
@@ -50,9 +46,8 @@ class None extends Common
 
     /**
      * Set cache record pseudo-implementation
-     *
-     * @param string   $id
-     * @param string   $data
+     * @param string $id
+     * @param string $data
      * @param bool|int $specificLifetime
      * @return boolean
      */
@@ -63,7 +58,6 @@ class None extends Common
 
     /**
      * Delete cache record pseudo-implementation
-     *
      * @param string $id
      * @return boolean
      */
@@ -74,7 +68,6 @@ class None extends Common
 
     /**
      * Let it be
-     *
      * @return boolean
      */
     public function isAutomaticCleaningAvailable()

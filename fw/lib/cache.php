@@ -5,7 +5,6 @@ namespace Difra;
 /**
  * Cache factory
  * Class Cache
- *
  * @package Difra
  */
 class Cache
@@ -19,15 +18,13 @@ class Cache
     const INST_DEFAULT = self::INST_AUTO;
     /**
      * Configured cache adapters.
-     *
      * @var array
      */
-    private static $_adapters = [];
+    private static $adapters = [];
 
     /**
      * Builds new cache adapter or returns
      * existing one.
-     *
      * @param string $configName
      * @return \Difra\Cache\Common
      */
@@ -62,30 +59,29 @@ class Cache
         }
 
         // return adapter if exists
-        if (isset(self::$_adapters[$configName])) {
-            return self::$_adapters[$configName];
+        if (isset(self::$adapters[$configName])) {
+            return self::$adapters[$configName];
         }
 
         // create new adapter
         switch ($configName) {
             case self::INST_XCACHE:
-                self::$_adapters[$configName] = new Cache\XCache();
-                return self::$_adapters[$configName];
+                self::$adapters[$configName] = new Cache\XCache();
+                return self::$adapters[$configName];
             case self::INST_SHAREDMEM:
-                self::$_adapters[$configName] = new Cache\SharedMemory();
-                return self::$_adapters[$configName];
+                self::$adapters[$configName] = new Cache\SharedMemory();
+                return self::$adapters[$configName];
             case self::INST_MEMCACHED:
-                self::$_adapters[$configName] = new Cache\MemCached();
-                return self::$_adapters[$configName];
+                self::$adapters[$configName] = new Cache\MemCached();
+                return self::$adapters[$configName];
             case self::INST_MEMCACHE:
-                self::$_adapters[$configName] = new Cache\MemCache();
-                return self::$_adapters[$configName];
+                self::$adapters[$configName] = new Cache\MemCache();
+                return self::$adapters[$configName];
             default:
-                if (!isset(self::$_adapters[self::INST_NONE])) {
-                    self::$_adapters[self::INST_NONE] = new Cache\None();
+                if (!isset(self::$adapters[self::INST_NONE])) {
+                    self::$adapters[self::INST_NONE] = new Cache\None();
                 }
-                return self::$_adapters[self::INST_NONE];
+                return self::$adapters[self::INST_NONE];
         }
     }
 }
-
