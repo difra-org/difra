@@ -159,7 +159,7 @@
 .ui-datepicker-row-break {
 	clear: both;
 	width: 100%;
-	font-size: 0em;
+	font-size: 0;
 }
 
 /* RTL support */
