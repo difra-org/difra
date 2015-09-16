@@ -14,8 +14,9 @@
 		<whitelist addUncoveredFilesFromWhitelist="true">
 			<directory suffix=".php">..</directory>
 			<exclude>
-				<directory suffix=".php">../fw/lib/libs/esapi</directory>
-				<directory suffix=".php">../fw/lib/libs/less</directory>
+				<directory>../fw/lib/libs/esapi</directory>
+				<directory>../fw/lib/libs/less</directory>
+				<directory>../old-plugins</directory>
 				<file>../fw/lib/bootstrap.php</file>
 				<directory suffix=".php">../tests</directory>
 			</exclude>
