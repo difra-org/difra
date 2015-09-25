@@ -1,6 +1,7 @@
 {
         "name": "difra-org/difra",
         "description": "Difra framework",
+	"version": "6.0-dev",
         "keywords": ["framework","php"],
         "homepage": "http://www.difra.org",
         "license": "BSD-2-Clause",
