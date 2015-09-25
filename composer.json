@@ -1,6 +1,7 @@
 {
         "name": "difra-org/difra",
         "description": "Difra framework",
+	"version": "6.0.2-RC",
         "keywords": ["framework","php"],
         "homepage": "http://www.difra.org",
         "license": "BSD-2-Clause",
@@ -25,5 +26,6 @@
         		"type": "vcs",
         		"url": "https://github.com/difra-org/difra.git"
         	}
-	]
+	],
+	"non-feature-branches": ["release-2.2","release-3.0","release-4.0","release-5.0","release-5.1","release-6.0"]
 }
