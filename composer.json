@@ -23,7 +23,7 @@
 	"repositories": [
 		{
         		"type": "vcs",
-        		"url": "https://github.com/difra-org/difra"
+        		"url": "https://github.com/difra-org/difra.git"
         	}
 	]
 }
