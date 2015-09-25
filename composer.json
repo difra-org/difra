@@ -1,0 +1,31 @@
+{
+        "name": "difra-org/difra",
+        "description": "Difra framework",
+	"version": "5.0.0",
+        "keywords": ["framework","php"],
+        "homepage": "http://www.difra.org",
+        "license": "BSD-2-Clause",
+        "require": {
+                "php": ">=5.6.0",
+		"ext-ctype": "*",
+		"ext-curl": "*",
+		"ext-date": "*",
+		"ext-dom": "*",
+		"ext-json": "*",
+		"ext-mbstring": "*",
+		"ext-pdo_mysql": "*",
+		"ext-Reflection": "*",
+		"ext-session": "*",
+		"ext-SimpleXML": "*",
+		"ext-sqlite3": "*",
+		"ext-xsl": "*",
+		"ext-zlib": "*"
+        },
+	"repositories": [
+		{
+        		"type": "vcs",
+        		"url": "https://github.com/difra-org/difra.git"
+        	}
+	],
+	"non-feature-branches": ["release-2.2","release-3.0","release-4.0","release-5.0","release-5.1","release-6.0"]
+}
