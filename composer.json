@@ -28,7 +28,6 @@
 	],
 	"extra": {
 		"branch-alias": {
-			"dev-master": "6.1.x-dev",
 			"dev-release-6.0": "6.0.x-dev",
 			"dev-release-5.1": "5.1.x-dev",
 			"dev-release-5.0": "5.0.x-dev",
