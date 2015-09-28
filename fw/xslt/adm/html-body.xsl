@@ -7,9 +7,12 @@
 					<xsl:with-param name="auto" select="0"/>
 				</xsl:apply-templates>
 				<div id="signature">
-					<span id="signature_difra">
-						<xsl:value-of select="/root/@build"/>
-					</span>
+					<a href="http://www.difra.org/">
+						<span id="signature_difra">
+							<xsl:value-of select="/root/@build"/>
+						</span>
+					</a>
+					<!--
 					<span id="signature_ajam">
 						<xsl:value-of select="/root/date/@Y"/>
 						<xsl:text> © </xsl:text>
@@ -17,9 +20,11 @@
 							<xsl:value-of select="$locale/common/a-jam"/>
 						</a>
 					</span>
+					-->
 				</div>
 			</div>
 			<xsl:call-template name="content-wrapper"/>
+			<!--
 			<div id="right">
 				Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nullam suscipit, tellus quis
 				volutpat malesuada, urna arcu fringilla
@@ -42,6 +47,7 @@
 				condimentum, neque sit amet hendrerit malesuada, velit nisl varius eros, a adipiscing
 				orci magna sit amet ante.
 			</div>
+			-->
 		</body>
 	</xsl:template>
 
