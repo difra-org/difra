@@ -5,11 +5,18 @@ if (isset($_)) {
     define('DIR_ROOT', dirname($_) . '/');
     define('DIR_PHAR', dirname(dirname(__DIR__)) . '/');
     define('DIR_DIFRA', DIR_PHAR);
-} else {
-    if (!defined('DIR_ROOT')) {
+}
+if (!defined('DIR_ROOT')) {
+    if (!empty($_SERVER['VHOST_ROOT'])) {
+        define('DIR_ROOT', rtrim($_SERVER['VHOST_ROOT'], '/') . '/');
+    } else {
         define('DIR_ROOT', dirname(dirname(__DIR__)) . '/');
     }
-    if (!defined('DIR_DIFRA')) {
+}
+if (!defined('DIR_DIFRA')) {
+    if (!empty($_SERVER['VHOST_DIFRA'])) {
+        define('DIR_DIFRA', rtrim($_SERVER['VHOST_DIFRA'], '/') . '/');
+    } else {
         define('DIR_DIFRA', DIR_ROOT);
     }
 }
