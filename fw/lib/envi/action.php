@@ -174,6 +174,9 @@ class Action
         }
         if (!self::$controllerObj) {
             self::$controllerObj = new self::$controllerClass(self::$parameters);
+            if (!self::$controllerObj instanceof \Difra\Controller) {
+                throw new Exception('Controller should extend \Difra\Controller: ' . self::$controllerClass);
+            }
         }
         return self::$controllerObj;
     }
