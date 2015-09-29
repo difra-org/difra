@@ -26,7 +26,6 @@ class CDN
 	 */
 	public function getHosts($withFailed = false)
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		$where = '';
 		if (!$withFailed) {
@@ -45,7 +44,6 @@ class CDN
 	 */
 	public function getHostsXML($node, $withFailed = false)
 	{
-
 		$hosts = $this->getHosts($withFailed);
 		if (empty($hosts)) {
 			$node->appendChild($node->ownerDocument->createElement('empty'));
@@ -67,7 +65,6 @@ class CDN
 	 */
 	public function delete($id)
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		$db->query("DELETE FROM `cdn_hosts` WHERE `id`='" . intval($id) . "'");
 		$this->_cleanWork();
@@ -80,7 +77,6 @@ class CDN
 	 */
 	public function getHost($id)
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		return $db->fetchRow("SELECT * FROM `cdn_hosts` WHERE `id`='" . intval($id) . "'");
 	}
@@ -92,7 +88,6 @@ class CDN
 	 */
 	public function getHostXML($node, $id)
 	{
-
 		$hostData = $this->getHost($id);
 		if (empty($hostData)) {
 			$node->appendChild($node->ownerDocument->createElement('empty'));
@@ -112,7 +107,6 @@ class CDN
 	 */
 	public function checkHost($host, $port)
 	{
-
 		$hostString = $host . '/status.txt';
 		$this->_getSettings();
 		$ch = curl_init();
@@ -156,7 +150,6 @@ class CDN
 	 */
 	public function checkHosts()
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		$query = "SELECT `id`, `host`, `port` FROM `cdn_hosts`";
 		$res = $db->fetch($query);
@@ -222,7 +215,6 @@ class CDN
 	 */
 	public function addHost($host, $port)
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		// проверяем есть ли уже такой хост
 		$res = $db->fetchRow("SELECT `id` FROM `cdn_hosts` WHERE `host` = '" . $db->escape($host) . "' AND `port` = '" .
@@ -240,7 +232,6 @@ class CDN
 
 	public function saveHost($id, $host, $port)
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		$db->query("UPDATE `cdn_hosts` SET `host` = '" . $db->escape($host) . "', `port`='" . intval($port) .
 				   "' WHERE `id`='" . intval($id) . "'");
@@ -249,7 +240,6 @@ class CDN
 
 	private function _getSettings()
 	{
-
 		$tmp = \Difra\Config::getInstance()->get('CDN');
 		if (!empty($tmp)) {
 			$this->settings = $tmp;
@@ -262,7 +252,6 @@ class CDN
 	 */
 	public function getSettingsXML($node)
 	{
-
 		$this->_getSettings();
 		foreach ($this->settings as $key => $value) {
 			$node->setAttribute($key, $value);
@@ -275,7 +264,6 @@ class CDN
 	 */
 	public function saveSettings($settingsArray)
 	{
-
 		if (!empty($settingsArray)) {
 			\Difra\Config::getInstance()->set('CDN', $settingsArray);
 		}
@@ -286,7 +274,6 @@ class CDN
 	 */
 	private function _cleanWork()
 	{
-
 		\Difra\MySQL::getInstance()->query("DELETE FROM `cdn_hosts_work`");
 	}
 
@@ -297,7 +284,6 @@ class CDN
 	 */
 	private function _updateSelected($id, $host)
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		$this->_getSettings();
 		$db->query("UPDATE `cdn_hosts_work` SET `selected` = NOW() WHERE `id`='" . intval($id) . "'");
@@ -309,7 +295,6 @@ class CDN
 	 */
 	public function selectHost()
 	{
-
 		$this->_getSettings();
 
 		$db = \Difra\MySQL::getInstance();
