@@ -26,14 +26,15 @@
         		"url": "https://github.com/difra-org/difra.git"
         	}
 	],
+	"non-feature-branches": ["release-2.2","release-3.0","release-4.0","release-5.0","release-5.1","release-6.0"],
 	"extra": {
-		"branch-alias": {
-			"dev-release-6.0": "6.0.x-dev",
-			"dev-release-5.1": "5.1.x-dev",
-			"dev-release-5.0": "5.0.x-dev",
-			"dev-release-4.0": "4.0.x-dev",
-			"dev-release-3.0": "3.0.x-dev",
-			"dev-release-2.2": "2.2.x-dev"
-		}
-	}
+                "branch-alias": {
+                        "dev-release-6.0": "6.0.x-dev",
+                        "dev-release-5.1": "5.1.x-dev",
+                        "dev-release-5.0": "5.0.x-dev",
+                        "dev-release-4.0": "4.0.x-dev",
+                        "dev-release-3.0": "3.0.x-dev",
+                        "dev-release-2.2": "2.2.x-dev"
+                }
+        }
 }
