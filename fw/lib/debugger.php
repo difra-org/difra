@@ -56,8 +56,12 @@ class Debugger
             return;
         }
 
-        // is debug disabled by get parameter debug=-1?
-        if (isset($_GET['debug']) and $_GET['debug'] == -1) {
+        // is debug disabled by config or get parameter debug=-1?
+        $confConsole = Config::getInstance()->getValue('debug', 'console');
+        if (
+            (!is_null($confConsole) and !$confConsole)
+            or (isset($_GET['debug']) and $_GET['debug'] == -1)
+        ) {
             ini_set('display_errors', 'On');
             ini_set('error_reporting', E_ALL);
             ini_set(
