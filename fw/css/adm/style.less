@@ -37,7 +37,8 @@
 // размеры
 
 @leftcolumn-width: 260px;
-@rightcolumn-width: 260px;
+//@rightcolumn-width: 260px;
+@rightcolumn-width: 0;
 
 // стандартные элементы
 
@@ -331,7 +332,7 @@ a {
 	}
 }
 
-// лого и копирайт
+// logo
 
 #signature {
 	position: absolute;
@@ -349,11 +350,6 @@ a {
 		padding-top: 9px;
 		color: @color-darkwhite;
 	}
-	#signature_ajam {
-		height: 17px;
-		display: block;
-		color: @color-grey;
-	}
 	a,
 	a:hover,
 	a:visited,
@@ -363,29 +359,29 @@ a {
 	}
 }
 
-// правый столбец
+// right column
 
-#right {
-	position: absolute;
-	right: -@rightcolumn-width;
-	width: ( @rightcolumn-width - 20px );
-	top: 0;
-	padding: 10px;
-	color: @color-white;
-	.transition(all 0.3s ease-out);
-}
+//#right {
+//	position: absolute;
+//	right: -@rightcolumn-width;
+//	width: ( @rightcolumn-width - 20px );
+//	top: 0;
+//	padding: 10px;
+//	color: @color-white;
+//	.transition(all 0.3s ease-out);
+//}
 
-// адаптивка
+// adaptive
 
 //@media screen and (max-width: 1239px) {
-body {
-	margin-right: 0;
-}
-
-#right {
-	display: none;
-}
-
+//body {
+//	margin-right: 0;
+//}
+//
+//#right {
+//	display: none;
+//}
+//
 //}
 
 // дополнительные стили
