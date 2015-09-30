@@ -152,4 +152,10 @@ class Envi
         }
         return gethostname();
     }
+
+    // development mode is enabled by VHOST_DEVMODE='on' server variable
+    public static function isProduction()
+    {
+        return !isset($_SERVER['VHOST_DEVMODE']) or strtolower($_SERVER['VHOST_DEVMODE']) != 'on';
+    }
 }
