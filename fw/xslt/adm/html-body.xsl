@@ -12,15 +12,6 @@
 							<xsl:value-of select="/root/@build"/>
 						</span>
 					</a>
-					<!--
-					<span id="signature_ajam">
-						<xsl:value-of select="/root/date/@Y"/>
-						<xsl:text> © </xsl:text>
-						<a href="http://a-jam.ru">
-							<xsl:value-of select="$locale/common/a-jam"/>
-						</a>
-					</span>
-					-->
 				</div>
 			</div>
 			<xsl:call-template name="content-wrapper"/>
