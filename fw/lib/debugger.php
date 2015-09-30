@@ -12,16 +12,22 @@ class Debugger
 {
     const DEBUG_DISABLED = 0;
     const DEBUG_ENABLED = 1;
-    const CONSOLE_NONE = 0;
-    const CONSOLE_DISABLED = 1;
-    const CONSOLE_ENABLED = 2; // console disabled
+    const CONSOLE_DISABLED = 0;
+    const CONSOLE_OFF = 1;
+    const CONSOLE_ON = 2; // console disabled
     const CACHES_DISABLED = 0; // console enabled, but not active
     const CACHES_ENABLED = 1; // console enabled and active
+    const ERRORS_SHOW = 0;
+    const ERRORS_HIDE = 0;
+
     /** @var bool */
     static public $shutdown = false;
+
     private static $enabled = self::DEBUG_DISABLED;
-    private static $console = self::CONSOLE_NONE;
+    private static $console = self::CONSOLE_DISABLED;
     private static $caches = self::CACHES_ENABLED;
+    private static $errors = self::ERRORS_HIDE;
+
     private static $output = [];
     private static $hadError = false;
     private static $handledByException = null;
@@ -40,70 +46,97 @@ class Debugger
 
     public static function init()
     {
+        // run once
         static $initDone = false;
         if ($initDone) {
             return;
         }
         $initDone = true;
 
-        if (Envi::getMode() != 'web') {
-            self::$caches = self::CACHES_DISABLED;
+        self::configure();
+        self::apply();
+    }
+
+    private function configure()
+    {
+        // production environment
+        if (Envi::isProduction()) {
+            self::$enabled = self::DEBUG_DISABLED;
+            self::$console = self::CONSOLE_DISABLED;
+            self::$caches = self::CACHES_ENABLED;
+            if (Envi::getMode() == 'web') {
+                self::$errors = self::ERRORS_HIDE;
+                set_exception_handler(['\Difra\Debugger', 'productionException']);
+            } else {
+                self::$errors = self::ERRORS_SHOW;
+            }
             return;
-        }
-        if (!isset($_SERVER['VHOST_DEVMODE']) or strtolower($_SERVER['VHOST_DEVMODE']) != 'on') {
-            ini_set('display_errors', 'Off');
-            set_exception_handler(['\Difra\Debugger', 'productionException']);
+        };
+
+        // got GET parameter debug=-1, emulate production but show errors
+        if (isset($_GET['debug']) and $_GET['debug'] == -1) {
+            self::$enabled = self::DEBUG_DISABLED;
+            self::$console = self::CONSOLE_DISABLED;
+            self::$errors = self::ERRORS_SHOW;
+            self::$caches = self::CACHES_ENABLED;
             return;
         }
 
-        // is debug disabled by config or get parameter debug=-1?
-        $confConsole = Config::getInstance()->getValue('debug', 'console');
+        // configure default development mode
+        self::$enabled = self::DEBUG_ENABLED;
+        self::$console = self::CONSOLE_ON;
+        self::$caches = self::CACHES_DISABLED;
+        self::$errors = self::ERRORS_SHOW;
+
         if (
-            (!is_null($confConsole) and !$confConsole)
-            or (isset($_GET['debug']) and $_GET['debug'] == -1)
-        ) {
-            ini_set('display_errors', 'On');
-            ini_set('error_reporting', E_ALL);
-            ini_set(
-                'html_errors',
-                (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On'
-            );
-            self::$enabled = self::CONSOLE_DISABLED;
-            self::$console = self::CONSOLE_NONE;
-            return;
-        }
-        if ((isset($_GET['debug']) and !$_GET['debug']) or (isset($_COOKIE['debug']) and !$_COOKIE['debug'])) {
-            self::$enabled = self::DEBUG_DISABLED;
-        } else {
-            self::$enabled = self::DEBUG_ENABLED;
-        }
-        // is console disabled by a cookie?
-        if (!self::$enabled or
-            (isset($_COOKIE['debugConsole']) and !$_COOKIE['debugConsole']) or
+            // console is disabled by configuration
+            (!is_null($confConsole = Config::getInstance()->getValue('debug', 'console')) and !$confConsole)
+            or
+            // no XSL extension, can't render console
             !extension_loaded('xsl')
         ) {
             self::$console = self::CONSOLE_DISABLED;
-        } else {
-            self::$console = self::CONSOLE_ENABLED;
-        }
-        // are caches disabled by a cookie?
-        if (!isset($_COOKIE['cachesEnabled']) or !$_COOKIE['cachesEnabled']) {
-            self::$caches = self::CACHES_DISABLED;
+            return;
         }
 
-        if (self::$console == self::CONSOLE_ENABLED) {
-            // console is active, intercept errors
+        // debug is disabled by a cookie or GET parameter
+        if (
+            (isset($_GET['debug']) and !$_GET['debug'])
+            or
+            (isset($_COOKIE['debug']) and !$_COOKIE['debug'])
+        ) {
+            self::$enabled = self::DEBUG_DISABLED;
+            self::$console = self::CONSOLE_OFF;
+            self::$errors = self::ERRORS_HIDE;
+            return;
+        }
+
+        // console is disabled by a cookie
+        if (isset($_COOKIE['debugConsole']) and !$_COOKIE['debugConsole']) {
+            self::$console = self::CONSOLE_OFF;
+        }
+
+        // caches enabled by a cookie
+        if (isset($_COOKIE['cachesEnabled']) and $_COOKIE['cachesEnabled']) {
+            self::$caches = self::CACHES_ENABLED;
+        }
+    }
+
+    private static function apply()
+    {
+        if(self::$errors == self::ERRORS_HIDE) {
             ini_set('display_errors', 'Off');
-            ini_set('html_errors', 'Off');
+        } else {
+            ini_set('display_errors', 'On');
+            ini_set('error_reporting', E_ALL);
+            ini_set('html_errors', (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On' ? 'Off' : 'On');
+        }
+        if(self::$console == self::CONSOLE_ON) {
+            ini_set('display_errors', 'Off');
             ini_set('error_reporting', E_ALL);
             set_error_handler(['\Difra\Debugger', 'captureNormal']);
             set_exception_handler(['\Difra\Debugger', 'captureException']);
             register_shutdown_function(['\Difra\Debugger', 'captureShutdown']);
-        } else {
-            // console is inactive, enable errors output
-            ini_set('display_errors', 'On');
-            ini_set('error_reporting', E_ALL);
-            ini_set('html_errors', Request::isAjax() ? 'Off' : 'On');
         }
     }
 
@@ -227,9 +260,7 @@ class Debugger
      */
     public static function productionException($exception)
     {
-        if ($exception instanceof Exception) {
-            $exception->notify();
-        }
+        Exception::sendNotification($exception);
     }
 
     /**
