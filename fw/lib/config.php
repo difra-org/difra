@@ -55,9 +55,9 @@ class Config
         }
         $diff = $this->diff();
         try {
-            $db = MySQL::getInstance();
+            $db = PDO::getInstance();
             $db->query('DELETE FROM `config`');
-            $db->query("INSERT INTO `config` SET `config`='" . $db->escape(serialize($diff)) . "'");
+            $db->query('INSERT INTO `config` SET `config`=?',[serialize($diff)]);
             Cache::getInstance()->remove('config');
         } catch (Exception $e) {
             $e->notify();
@@ -171,8 +171,7 @@ class Config
         }
         $this->config = $this->loadFileConfigs();
         try {
-            $db = MySQL::getInstance();
-            $conf = $db->fetchOne('SELECT `config` FROM `config` LIMIT 1');
+            $conf = PDO::getInstance()->fetchOne('SELECT `config` FROM `config` LIMIT 1');
             $dbconf = @unserialize($conf);
             if (is_array($dbconf)) {
                 $this->config = $this->merge($this->config, $dbconf);
