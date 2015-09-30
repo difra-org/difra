@@ -14,16 +14,25 @@ class Exception extends \exception
      */
     public function notify()
     {
-        self::notifyObj($this);
+        self::sendNotification($this);
     }
 
     /**
      * @static
      * @param \Difra\Exception|\exception $exception
      */
-    private static function notifyObj($exception = null)
+    public static function sendNotification($exception)
     {
-        if (Envi::getMode() == 'web' and !Debugger::isConsoleEnabled()) {
+        // don't send notifications on development environment
+        if (!Envi::isProduction()) {
+            return;
+        }
+
+        $notificationMail = Config::getInstance()->getValue('email', 'errors');
+        // no notification mail is set
+        if (!$notificationMail) {
+            return;
+        }
             $date = date('r');
             $server = print_r($_SERVER, true);
             $post = print_r($_POST, true);
@@ -33,12 +42,15 @@ class Exception extends \exception
             $uri = !empty($_SERVER['REQUEST_URI']) ? $_SERVER['REQUEST_URI'] : '-';
             $host = !empty($_SERVER['HTTP_HOST']) ? $_SERVER['HTTP_HOST'] : '-';
 
+            $exceptionClass = get_class($exception);
+
             $text = <<<MSG
 {$exception->getMessage()}
 
 Page:	$uri
 Time:	$date
 Host:	$host
+Type:   $exceptionClass
 File:	{$exception->getFile()}
 Line:	{$exception->getLine()}
 User:	$user
@@ -55,8 +67,6 @@ $post
 $cookie
 MSG;
             // TODO: move exceptions e-mail address to configuration
-            mail('errors@ajamstudio.com', $host . ': ' . $exception->getMessage(), $text);
-        } else {
-        }
+            mail($notificationMail, $host . ': ' . $exception->getMessage(), $text);
     }
 }

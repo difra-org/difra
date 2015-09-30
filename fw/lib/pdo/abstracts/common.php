@@ -39,6 +39,7 @@ abstract class Common
      */
     public function prepare($query)
     {
+        $this->connect();
         static $cache = [];
         if (!isset($cache[$query])) {
             return $cache[$query] = $this->pdo->prepare($query);
@@ -54,7 +55,6 @@ abstract class Common
      */
     public function query($query, $parameters = [])
     {
-        $this->connect();
         $sth = $this->prepare($query);
         $sth->execute($parameters);
         $this->lastAffectedRows = $sth->rowCount();
@@ -70,7 +70,6 @@ abstract class Common
      */
     public function multiQuery($query, $parametersSet = [])
     {
-        $this->connect();
         $sth = $this->prepare($query);
         $this->lastAffectedRows = 0;
         foreach ($parametersSet as $parameters) {
@@ -94,8 +93,8 @@ abstract class Common
         $this->connected = false;
         try {
             $this->realConnect();
-        } catch (Exception $ex) {
-            $ex->notify();
+        } catch (\Exception $ex) {
+            Exception::sendNotification($ex);
             throw new Exception('Database connection is not available');
         }
         $this->connected = true;
@@ -146,7 +145,6 @@ abstract class Common
      */
     public function fetch($query, $parameters = [])
     {
-        $this->connect();
         Debugger::addDBLine('DB', $query);
         $this->queries++;
         $sth = $this->prepare($query);
