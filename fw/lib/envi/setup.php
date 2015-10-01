@@ -30,18 +30,7 @@ class Setup
         if (!ini_get('date.timezone')) {
             date_default_timezone_set('Europe/Moscow');
         }
-
-        // prepare data
-        if (get_magic_quotes_gpc()) {
-            $strip_slashes_deep = function ($value) use (&$strip_slashes_deep) {
-
-                return is_array($value) ? array_map($strip_slashes_deep, $value) : stripslashes($value);
-            };
-            $_GET = array_map($strip_slashes_deep, $_GET);
-            $_POST = array_map($strip_slashes_deep, $_POST);
-            $_COOKIE = array_map($strip_slashes_deep, $_COOKIE);
-        }
-
+        
         self::setLocale();
     }
 
