@@ -26,13 +26,14 @@ class PDO
         }
 
         $cfg = self::getConfig();
-        $dstConf = isset($cfg[$instance]) ? $instance : 'default';
-
-        switch (strtolower($cfg[$dstConf]['type'])) {
+        if (!isset($cfg[$instance]) and $instance != 'default') {
+            return self::$adapters[$instance] = self::getInstance();
+        }
+        switch (strtolower($cfg[$instance]['type'])) {
             case 'mysql':
-                return self::$adapters[$instance] = new MySQL($cfg[$dstConf]);
+                return self::$adapters[$instance] = new MySQL($cfg[$instance]);
             default:
-                throw new Exception("PDO adapter not found for type '{$cfg[$dstConf]['type']}'");
+                throw new Exception("PDO adapter not found for '{$cfg[$instance]['type']}'");
         }
     }
 
@@ -57,6 +58,9 @@ class PDO
                     unset($cfg[$key]);
                 } else {
                     switch($key) {
+                        case 'type':
+                            $cfg['default']['type'] = 'mysql';
+                            break;
                         case 'database':
                         case 'username':
                             $cfg['default'][$key] = Envi::getSubsite();
