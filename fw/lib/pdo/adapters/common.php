@@ -1,6 +1,6 @@
 <?php
 
-namespace Difra\PDO\Abstracts;
+namespace Difra\PDO\Adapters;
 
 use Difra\Debugger;
 use Difra\Envi;
@@ -25,12 +25,32 @@ abstract class Common
     protected $error = null;
 
     /**
-     * Detect if this adapter is useable
+     * Detect if this adapter is usable
      * @return bool
+     * @throws Exception
      */
     public static function isAvailable()
     {
-        return false;
+        throw new Exception(get_called_class() . '::isAvailable() is not defined');
+    }
+
+    /**
+     * Returns PDO connection string ($dsn parameter for constructor)
+     * @return string
+     */
+    abstract protected function getConnectionString();
+
+    /**
+     * Constructor
+     * @param array $conf
+     * @throws Exception
+     */
+    public function __construct($conf)
+    {
+        if (!static::isAvailable()) {
+            throw new Exception("PDO adapter is not usable: {$conf['type']}");
+        }
+        $this->config = $conf;
     }
 
     /**
@@ -92,18 +112,21 @@ abstract class Common
         }
         $this->connected = false;
         try {
-            $this->realConnect();
+            $this->pdo = new \PDO(
+                $this->getConnectionString(),
+                $this->config['username'],
+                $this->config['password'],
+                [
+                    \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
+                    \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
+                ]
+            );
         } catch (\Exception $ex) {
             Exception::sendNotification($ex);
-            throw new Exception('Database connection is not available');
+            throw new Exception("Database connection failed: {$this->config['name']}");
         }
         $this->connected = true;
     }
-
-    /**
-     * Initiate database connection
-     */
-    abstract protected function realConnect();
 
     /**
      * Escape string(s)
