@@ -2,7 +2,7 @@
 
 namespace Difra;
 
-use Difra\PDO\Abstracts\MySQL;
+use Difra\PDO\Adapters\MySQL;
 
 /**
  * Factory for PDO
@@ -11,51 +11,77 @@ use Difra\PDO\Abstracts\MySQL;
  */
 class PDO
 {
-    /** Auto detect adapter */
-    const INST_AUTO = 'auto';
-    /** MySQLi */
-    const INST_MYSQL = 'MySQL';
-    /** Stub */
-    const INST_NONE = 'none';
-    const INST_DEFAULT = self::INST_AUTO;
     private static $adapters = [];
 
     /**
-     * @param string $adapter
-     * @param bool $new
+     * @param string $instance
      * @return MySQL
      * @throws \Difra\Exception
      */
-    public static function getInstance($adapter = self::INST_DEFAULT, $new = false)
+    public static function getInstance($instance = 'default')
     {
-        if ($adapter == self::INST_AUTO) {
-            static $auto = null;
-            if (!is_null($auto)) {
-                return self::getInstance($auto, $new);
-            }
-
-            if (MySQL::isAvailable()) {
-                Debugger::addLine("PDO module: MySQL");
-                return self::getInstance($auto = self::INST_MYSQL, $new);
-            } else {
-                throw new Exception('Failed to find PDO adapter');
-            }
+        if (isset(self::$adapters[$instance])) {
+            // TODO: ping db
+            return self::$adapters[$instance];
         }
 
-        if (!$new and isset(self::$adapters[$adapter])) {
-            return self::$adapters[$adapter];
+        $cfg = self::getConfig();
+        if (!isset($cfg[$instance]) and $instance != 'default') {
+            return self::$adapters[$instance] = self::getInstance();
         }
-
-        switch ($adapter) {
-            case self::INST_MYSQL:
-                $obj = new MySQL();
-                break;
+        switch (strtolower($cfg[$instance]['type'])) {
+            case 'mysql':
+                return self::$adapters[$instance] = new MySQL($cfg[$instance]);
             default:
-                throw new Exception('Failed to find PDO adapter');
+                throw new Exception("PDO adapter not found for '{$cfg[$instance]['type']}'");
         }
-        if (!$new) {
-            self::$adapters[$adapter] = $obj;
+    }
+
+    private static function &getConfig()
+    {
+        static $cfg = null;
+        if (!is_null($cfg)) {
+            return $cfg;
         }
-        return $obj;
+
+        $cfg = Config::getInstance()->get('db');
+
+        // generate default config + backwards compatibility
+        if (empty($cfg) or empty($cfg['default'])) {
+            $cfg['default'] = [];
+        }
+        $keys = ['type', 'hostname', 'database', 'username', 'password'];
+        foreach($keys as $key) {
+            if(!isset($cfg['default'][$key])) {
+                if (isset($cfg[$key])) {
+                    $cfg['default'][$key] = $cfg[$key];
+                    unset($cfg[$key]);
+                } else {
+                    switch($key) {
+                        case 'type':
+                            $cfg['default']['type'] = 'mysql';
+                            break;
+                        case 'database':
+                        case 'username':
+                            $cfg['default'][$key] = Envi::getSubsite();
+                            break;
+                        default:
+                            $cfg['default'][$key] = '';
+                    }
+                }
+            }
+        }
+
+        // add missing keys from default config
+        foreach ($cfg as $name => &$conf) {
+            foreach ($keys as $key) {
+                $conf['name'] = $name;
+                if (!isset($conf[$key])) {
+                    $conf[$key] = $cfg['default'][$key];
+                }
+            }
+        }
+
+        return $cfg;
     }
 }

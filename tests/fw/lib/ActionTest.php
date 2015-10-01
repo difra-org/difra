@@ -23,5 +23,8 @@ class ActionTest extends PHPUnit_Framework_TestCase
         \Difra\Envi\Action::find();
         $this->assertEquals(\Difra\Envi\Action::getControllerClass(), 'AdmDevelopmentConfigController');
         $this->assertEquals(\Difra\Envi\Action::$methodAjax, 'resetAjaxAction');
+
+	\Difra\Envi::setUri('');
+	\Difra\Envi\Action::find();
     }
 }

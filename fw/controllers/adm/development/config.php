@@ -7,14 +7,14 @@ class AdmDevelopmentConfigController extends \Difra\Controller
 {
     public function dispatch()
     {
+        if (!\Difra\Debugger::isEnabled()) {
+            throw new \Difra\View\Exception(404);
+        }
         \Difra\View::$instance = 'adm';
     }
 
     public function indexAction()
     {
-        if (!\Difra\Debugger::isEnabled()) {
-            throw new \Difra\View\Exception(404);
-        }
         $config = \Difra\Config::getInstance();
         /** @var \DOMElement $configNode */
         $configNode = $this->root->appendChild($this->xml->createElement('configuration'));
