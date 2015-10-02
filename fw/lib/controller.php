@@ -83,7 +83,7 @@ abstract class Controller
 
     /**
      * Call action factory
-     * @return Controller|null
+     * @return Controller
      */
     public static function getInstance()
     {
