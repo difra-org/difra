@@ -16,7 +16,7 @@ class Plugin extends \Difra\Plugin
     /** @var string */
     protected $description = 'Content management system';
     /** @var array */
-    protected $require = ['mysql', 'editor'];
+    protected $require = ['database', 'editor'];
 
     public function init()
     {

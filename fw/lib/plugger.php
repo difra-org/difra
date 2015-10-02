@@ -3,6 +3,7 @@
 namespace Difra;
 
 use Difra\Libs\XML\DOM;
+use Difra\PDO\Adapters\MySQL;
 
 /**
  * Class Plugger
@@ -23,8 +24,16 @@ class Plugger
     public static function init()
     {
         self::$provisions = [];
-        self::$provisions['mysql'] =
-            ['available' => MySQL::getInstance()->isConnected(), 'url' => '/test', 'source' => 'core'];
+
+        // default database dependency
+        $dbAvail = false;
+        try {
+            PDO::getInstance()->fetchOne('SELECT 1');
+            $dbAvail = true;
+        } catch (Exception $ex) {
+        }
+        self::$provisions['database'] = ['available' => $dbAvail, 'url' => '#', 'source' => 'core'];
+
         self::smartPluginsEnable();
     }
 

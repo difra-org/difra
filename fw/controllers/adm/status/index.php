@@ -65,8 +65,7 @@ class AdmStatusIndexController extends Difra\Controller
             'mbstring',
             'Reflection',
             'Phar',
-            'imagick',
-            'mysqli'
+            'imagick'
         ];
         foreach ($extensions as $extension) {
             if (in_array($extension, $extensionsRequired)) {

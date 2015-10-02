@@ -51,13 +51,13 @@ class PDO
             $cfg['default'] = [];
         }
         $keys = ['type', 'hostname', 'database', 'username', 'password'];
-        foreach($keys as $key) {
-            if(!isset($cfg['default'][$key])) {
+        foreach ($keys as $key) {
+            if (!isset($cfg['default'][$key])) {
                 if (isset($cfg[$key])) {
                     $cfg['default'][$key] = $cfg[$key];
                     unset($cfg[$key]);
                 } else {
-                    switch($key) {
+                    switch ($key) {
                         case 'type':
                             $cfg['default']['type'] = 'mysql';
                             break;

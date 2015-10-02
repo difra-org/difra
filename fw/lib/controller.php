@@ -49,8 +49,13 @@ abstract class Controller
         // create output XML
         $this->xml = new \DOMDocument;
         $this->realRoot = $this->xml->appendChild($this->xml->createElement('root'));
-        $this->root = $this->realRoot->appendChild($this->xml->createElement('content'));
-        $this->header = $this->realRoot->appendChild($this->xml->createElement('header'));
+        if (Config::getInstance()->getValue('layout', 'top-header')) {
+            $this->header = $this->realRoot->appendChild($this->xml->createElement('header'));
+            $this->root = $this->realRoot->appendChild($this->xml->createElement('content'));
+        } else {
+            $this->root = $this->realRoot->appendChild($this->xml->createElement('content'));
+            $this->header = $this->realRoot->appendChild($this->xml->createElement('header'));
+        }
         $this->footer = $this->realRoot->appendChild($this->xml->createElement('footer'));
 
         // run dispatcher
@@ -179,9 +184,13 @@ abstract class Controller
                         array_shift($namedParameters);
                     } else {
                         // unnamed parameter
-                        if (!empty(self::$parameters) and (!$parameter->isOptional() or
-                                                           empty($namedParameters) or
-                                                           self::$parameters[0] != $namedParameters[0])
+                        if (
+                            !empty(self::$parameters)
+                            and (
+                                !$parameter->isOptional()
+                                or empty($namedParameters)
+                                or self::$parameters[0] != $namedParameters[0]
+                            )
                         ) {
                             if (!call_user_func(["$class", 'verify'], self::$parameters[0])) {
                                 throw new View\Exception(404);
@@ -319,8 +328,10 @@ abstract class Controller
         );
         $node->setAttribute(
             'switcher',
-            (!$this->cache and isset($_SERVER['HTTP_X_REQUESTED_WITH']) and
-                               $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage') ? '1' : '0'
+            (!$this->cache
+                and isset($_SERVER['HTTP_X_REQUESTED_WITH'])
+                and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage'
+            ) ? '1' : '0'
         );
         // build number
         $node->setAttribute('build', Version::getBuild());
