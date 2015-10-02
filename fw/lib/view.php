@@ -45,15 +45,15 @@ class View
             throw new Exception("XSLT load problem for instance '$instance'");
         }
 
-        $xslProc = new \XsltProcessor();
-        $xslProc->importStyleSheet($xslDom);
+        $xslProcessor = new \XsltProcessor();
+        $xslProcessor->importStyleSheet($xslDom);
 
         if (!$dontFillXML and !ViewException::$error and !Debugger::$shutdown) {
-            Controller::getInstance()->fillXML($xml, $instance);
+            View\XML::fillXML($xml, $instance);
         }
 
         // transform template
-        if ($html = $xslProc->transformToDoc($xml)) {
+        if ($html = $xslProcessor->transformToDoc($xml)) {
 
             $html = self::normalize($html);
 

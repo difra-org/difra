@@ -70,7 +70,7 @@ class Events
         if (Envi::getMode() == 'web') {
             self::register('action-find', 'Difra\\Controller', 'init');
             self::register('action-run', 'Difra\\Controller', 'run');
-            self::register('render-run', 'Difra\\Controller', 'render');
+            self::register('render-run', 'Difra\\View\\Output', 'start');
         }
         if (file_exists($initPHP = (DIR_ROOT . '/lib/init.php'))) {
             /** @noinspection PhpIncludeInspection */
