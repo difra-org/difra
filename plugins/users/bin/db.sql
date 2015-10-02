@@ -7,7 +7,7 @@ CREATE TABLE `user` (
   `banned` TINYINT(1) NOT NULL DEFAULT '0',
   `registered` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   `lastseen` TIMESTAMP NOT NULL DEFAULT '0000-00-00 00:00:00',
-  `info` BLOB,
+  `data` BLOB,
   `activation` CHAR(24) DEFAULT NULL,
   `moderator` TINYINT(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`),
