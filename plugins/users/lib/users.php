@@ -2,9 +2,10 @@
 
 namespace Difra\Plugins;
 
+use Difra\PDO;
+
 class Users
 {
-    const MIN_PASSWORD_LENGTH = 6;
     const RECOVER_TTL = 72; // hours
     const ACTIVATE_TTL = 7; // days
     const IP_MASK = '255.255.0.0'; // маска проверки ip
@@ -15,15 +16,6 @@ class Users
 //        return $_instance ? $_instance : $_instance = new self;
 //    }
 
-    const REGISTER_OK = 'ok';
-    const REGISTER_EMAIL_EMPTY = 'email_empty';
-    const REGISTER_BAD_EMAIL = 'bad_email';
-    const REGISTER_EMAIL_BUSY = 'email_busy';
-    const REGISTER_PASSWORD1_EMPTY = 'password1_empty';
-    const REGISTER_PASSWORD2_EMPTY = 'password2_empty';
-    const REGISTER_PASSWORDS_DIFF = 'password_diff';
-    const REGISTER_PASSWORD_SHORT = 'password_short';
-    const REGISTER_FAILED = 'register_failed';
 
 //    // проверка заполненности основных полей в форме регистрации
 //    private function _checkRegisterFields($data)
@@ -137,11 +129,6 @@ class Users
 //        return true;
 //    }
 //
-//    // проверка валидности e-mail'ов
-//    public function isEmailValid($email)
-//    {
-//        return preg_match('/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/', $email) ? true : false;
-//    }
 //
 //    const LOGIN_NOTFOUND = 'login_notfound';
 //    const LOGIN_BADPASSWORD = 'login_badpassword';
@@ -444,13 +431,6 @@ class Users
 //        return true;
 //    }
 //
-//    public function checkLogin($email)
-//    {
-//        $mysql = MySQL::getInstance();
-//        $check = $mysql->fetch('SELECT `id` FROM `user` WHERE `email`=\'' . $mysql->escape($email) . "'");
-//        return !empty($check) ? true : false;
-//    }
-//
 //    // проверяет поля unique на дубликаты в базе
 //    public function checkUniqueFields($field, $data)
 //    {
@@ -599,5 +579,6 @@ class Users
 //        $db = MySQL::getInstance();
 //        $db->query("UPDATE `user` SET `active`=1, `activation`=NULL WHERE `id`='" . intval($id) . "'");
 //    }
+
 }
 
