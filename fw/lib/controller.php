@@ -2,6 +2,7 @@
 
 namespace Difra;
 
+use Difra\Controller\Layout;
 use Difra\Envi\Action;
 use Difra\Envi\Request;
 use Difra\Envi\Version;
@@ -14,6 +15,8 @@ use Difra\View\Exception as ViewException;
  */
 abstract class Controller
 {
+    use Layout;
+
     /** Default web server-side caching time, seconds */
     const DEFAULT_CACHE = 60;
     protected static $parameters = [];
@@ -21,19 +24,6 @@ abstract class Controller
     public $isAjaxAction = false;
     /** @var bool|int Web server-side page caching (false = no, int = seconds, true = DEFAULT_CACHE) */
     public $cache = false;
-    /** @var \DOMDocument */
-    public $xml;
-    /** @var \DOMElement */
-    public $realRoot;
-
-    /** @var \DOMElement Root */
-    public $root = null;
-    /** @var \DOMElement */
-    public $header = null;
-    /** @var \DOMElement */
-    public $footer = null;
-    /** @var \DOMElement[] */
-    public $blocks = [];
 
     /** @var string */
     protected $method = null;
@@ -44,36 +34,13 @@ abstract class Controller
 
     /**
      * Constructor
-     * @param array $parameters Parameters from url (passed from \Difra\Envi\Action)
+     * @param array $parameters Parameters from url (from \Difra\Envi\Action)
      */
     final public function __construct($parameters = [])
     {
         self::$parameters = $parameters;
 
-        // create output XML
-        $this->xml = new \DOMDocument;
-        $this->realRoot = $this->xml->appendChild($this->xml->createElement('root'));
-
-        // generate page layout
-        $defaultElements = ['root', 'header', 'footer'];
-        $layout = Config::getInstance()->get('layout') ?: $defaultElements;
-        if (!in_array('root', $layout)) {
-            throw new Exception('Layout has no \'root\' element');
-        }
-        foreach ($layout as $element) {
-            if ($element === 'root') {
-                $this->root = $this->realRoot->appendChild($this->xml->createElement('content'));
-            } elseif (in_array($element, $defaultElements)) {
-                $this->{$element} = $this->realRoot->appendChild($this->xml->createElement($element));
-            } else {
-                $this->blocks[$element] = $this->realRoot->appendChild($this->xml->createElement($element));
-            }
-        }
-        foreach ($defaultElements as $element) {
-            if (!$this->{$element}) {
-                $this->{$element} = &$this->root;
-            }
-        }
+        $this->layoutInit();
 
         // run dispatcher
         Debugger::addLine('Started controller dispatcher');
