@@ -1,3 +1,4 @@
+/*
 function addAdditionalField() {
 	$('#additionalsAddFields').show();
 	$('#addedFields').append('<tr><th><input type = "text" name="additional_name[]" class="full-width" placeholder="Название" /></th>' +
@@ -13,3 +14,4 @@ function changePassEnabler() {
 		$('#newPw').attr('disabled', 'disabled');
 	}
 }
+*/

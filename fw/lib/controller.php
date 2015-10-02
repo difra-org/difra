@@ -24,13 +24,17 @@ abstract class Controller
     /** @var \DOMDocument */
     public $xml;
     /** @var \DOMElement */
-    public $root;
-    /** @var \DOMElement */
-    public $header;
-    /** @var \DOMElement */
-    public $footer;
-    /** @var \DOMElement */
     public $realRoot;
+
+    /** @var \DOMElement Root */
+    public $root = null;
+    /** @var \DOMElement */
+    public $header = null;
+    /** @var \DOMElement */
+    public $footer = null;
+    /** @var \DOMElement[] */
+    public $blocks = [];
+
     /** @var string */
     protected $method = null;
     /** @var string */
@@ -49,14 +53,27 @@ abstract class Controller
         // create output XML
         $this->xml = new \DOMDocument;
         $this->realRoot = $this->xml->appendChild($this->xml->createElement('root'));
-        if (Config::getInstance()->getValue('layout', 'top-header')) {
-            $this->header = $this->realRoot->appendChild($this->xml->createElement('header'));
-            $this->root = $this->realRoot->appendChild($this->xml->createElement('content'));
-        } else {
-            $this->root = $this->realRoot->appendChild($this->xml->createElement('content'));
-            $this->header = $this->realRoot->appendChild($this->xml->createElement('header'));
+
+        // generate page layout
+        $defaultElements = ['root', 'header', 'footer'];
+        $layout = Config::getInstance()->get('layout') ?: $defaultElements;
+        if (!in_array('root', $layout)) {
+            throw new Exception('Layout has no \'root\' element');
         }
-        $this->footer = $this->realRoot->appendChild($this->xml->createElement('footer'));
+        foreach ($layout as $element) {
+            if ($element === 'root') {
+                $this->root = $this->realRoot->appendChild($this->xml->createElement('content'));
+            } elseif (in_array($element, $defaultElements)) {
+                $this->{$element} = $this->realRoot->appendChild($this->xml->createElement($element));
+            } else {
+                $this->blocks[$element] = $this->realRoot->appendChild($this->xml->createElement($element));
+            }
+        }
+        foreach ($defaultElements as $element) {
+            if (!$this->{$element}) {
+                $this->{$element} = &$this->root;
+            }
+        }
 
         // run dispatcher
         Debugger::addLine('Started controller dispatcher');

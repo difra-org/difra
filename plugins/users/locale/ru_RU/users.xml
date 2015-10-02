@@ -138,7 +138,7 @@
 			<h2-title>Пользователи</h2-title>
 			<h3-useredit-common>Редактирование пользователя</h3-useredit-common>
 			<h3-useredit-info>Дополнительная информация</h3-useredit-info>
-			<users-empty>Нет ни одного пользователя</users-empty>
+			<users-empty>Нет ни одного пользователя.</users-empty>
 			<user-not-found>Пользователь с таким ID не найден</user-not-found>
 			<id>ID</id>
 			<email>E-mail</email>
