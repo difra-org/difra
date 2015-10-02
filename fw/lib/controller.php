@@ -2,11 +2,10 @@
 
 namespace Difra;
 
-use Difra\Controller\Layout;
 use Difra\Envi\Action;
 use Difra\Envi\Request;
-use Difra\Envi\Version;
-use Difra\View\Exception as ViewException;
+use Difra\View\Layout;
+use Difra\View\Output;
 
 /**
  * Abstract controller
@@ -15,8 +14,6 @@ use Difra\View\Exception as ViewException;
  */
 abstract class Controller
 {
-    use Layout;
-
     /** Default web server-side caching time, seconds */
     const DEFAULT_CACHE = 60;
     protected static $parameters = [];
@@ -27,10 +24,28 @@ abstract class Controller
 
     /** @var string */
     protected $method = null;
+
+    /**
+     * View/Output links
+     */
     /** @var string */
-    protected $output = null;
+    public $output = null;
     /** @var string */
-    protected $outputType = 'text/plain';
+    public $outputType = 'text/plain';
+
+    /**
+     * View/Layout links
+     */
+    /** @var \DOMDocument */
+    public $xml;
+    /** @var \DOMElement */
+    public $realRoot;
+    /** @var \DOMElement Root */
+    public $root = null;
+    /** @var \DOMElement */
+    public $header = null;
+    /** @var \DOMElement */
+    public $footer = null;
 
     /**
      * Constructor
@@ -40,7 +55,9 @@ abstract class Controller
     {
         self::$parameters = $parameters;
 
-        $this->layoutInit();
+        Layout::getInstance()->linkController($this);
+        $this->output =& Output::$output;
+        $this->outputType =& Output::$outputType;
 
         // run dispatcher
         Debugger::addLine('Started controller dispatcher');
@@ -58,7 +75,6 @@ abstract class Controller
     /**
      * Pre-init
      * Needed for skipping xml fill on error pages
-     * TODO: check this
      */
     final public static function init()
     {
@@ -210,50 +226,6 @@ abstract class Controller
     }
 
     /**
-     * Choose view depending on request type
-     */
-    final public static function render()
-    {
-        $controller = self::getInstance();
-        if (!empty(self::$parameters)) {
-            $controller->putExpires(true);
-            throw new ViewException(404);
-        } elseif (!is_null($controller->output)) {
-            $controller->putExpires();
-            header('Content-Type: ' . $controller->outputType . '; charset="utf-8"');
-            echo $controller->output;
-            View::$rendered = true;
-        } elseif (Debugger::isEnabled() and isset($_GET['xml']) and $_GET['xml']) {
-            if ($_GET['xml'] == '2') {
-                $controller->fillXML();
-            }
-            header('Content-Type: text/xml; charset="utf-8"');
-            $controller->xml->formatOutput = true;
-            $controller->xml->encoding = 'utf-8';
-            echo rawurldecode($controller->xml->saveXML());
-            View::$rendered = true;
-        } elseif (!View::$rendered and Request::isAjax()) {
-            $controller->putExpires();
-            // should be application/json, but opera doesn't understand it and offers to save file to disk
-            header('Content-type: text/plain');
-            echo(Ajaxer::getResponse());
-            View::$rendered = true;
-        } elseif (!View::$rendered) {
-            $controller->putExpires();
-            try {
-                View::render($controller->xml);
-            } catch (Exception $ex) {
-                if (!Debugger::isConsoleEnabled()) {
-                    throw new View\Exception(500);
-                } else {
-                    echo Debugger::debugHTML(true);
-                    die();
-                }
-            }
-        }
-    }
-
-    /**
      * Set X-Accel-Expires header for web server-side caching
      * @param bool|int $ttl
      */
@@ -272,86 +244,6 @@ abstract class Controller
             return;
         }
         View::addExpires($ttl);
-    }
-
-    /**
-     * Fill output XML with some common data
-     * @param \DOMDocument|null $xml
-     * @param null $instance
-     */
-    public function fillXML(&$xml = null, $instance = null)
-    {
-        if (is_null($xml)) {
-            $xml = $this->xml;
-            $node = $this->realRoot;
-        } else {
-            $node = $xml->documentElement;
-        }
-        Debugger::addLine('Filling XML data for render: Started');
-        // TODO: sync this with Envi::getState()
-        $node->setAttribute('lang', Envi\Setup::getLocale());
-        $node->setAttribute('site', Envi::getSubsite());
-        $node->setAttribute('host', $host = Envi::getHost());
-        $node->setAttribute('mainhost', $mainhost = Envi::getHost(true));
-        $node->setAttribute('instance', $instance ? $instance : View::$instance);
-        $node->setAttribute('uri', Envi::getUri());
-        $node->setAttribute('controllerUri', Action::getControllerUri());
-        if ($host != $mainhost) {
-            $node->setAttribute('urlprefix', 'http://' . $mainhost);
-        }
-        // get user agent
-        Envi\UserAgent::getUserAgentXML($node);
-        // ajax flag
-        $node->setAttribute(
-            'ajax',
-            (
-                Request::isAjax()
-                or
-                (isset($_SERVER['HTTP_X_REQUESTED_WITH']) and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage')
-            ) ? '1' : '0'
-        );
-        $node->setAttribute(
-            'switcher',
-            (!$this->cache
-                and isset($_SERVER['HTTP_X_REQUESTED_WITH'])
-                and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage'
-            ) ? '1' : '0'
-        );
-        // build number
-        $node->setAttribute('build', Version::getBuild());
-        // date
-        /** @var $dateNode \DOMElement */
-        $dateNode = $node->appendChild($xml->createElement('date'));
-        $dateKeys = ['d', 'e', 'A', 'a', 'm', 'B', 'b', 'Y', 'y', 'c', 'x', 'H', 'M', 'S'];
-        $dateValues = explode('|', strftime('%' . implode('|%', $dateKeys)));
-        $dateCombined = array_combine($dateKeys, $dateValues);
-        foreach ($dateCombined as $k => $v) {
-            $dateNode->setAttribute($k, $v);
-        }
-        // debug flag
-        $node->setAttribute('debug', Debugger::isEnabled() ? '1' : '0');
-        // config values (for js variable)
-        $configNode = $node->appendChild($xml->createElement('config'));
-        Envi::getStateXML($configNode);
-        // menu
-        if ($menuResource = Resourcer::getInstance('menu')->compile(View::$instance)) {
-            $menuXML = new \DOMDocument();
-            $menuXML->loadXML($menuResource);
-            $node->appendChild($xml->importNode($menuXML->documentElement, true));
-        }
-        // auth
-        Auth::getInstance()->getAuthXML($node);
-        // locale
-        Locales::getInstance()->getLocaleXML($node);
-        // Add config js object
-        $config = Envi::getState();
-        $confJS = '';
-        foreach ($config as $k => $v) {
-            $confJS .= "config.{$k}='" . addslashes($v) . "';";
-        }
-        $node->setAttribute('jsConfig', $confJS);
-        Debugger::addLine('Filling XML data for render: Done');
-        Debugger::debugXML($node);
     }
 
     /**
@@ -375,5 +267,15 @@ abstract class Controller
         if (false === strpos($domain, Envi::getHost(true))) {
             throw new Exception('Bad referer');
         }
+    }
+
+    public static function hasUnusedParameters()
+    {
+        return !empty(self::$parameters);
+    }
+
+    public function getOutput()
+    {
+        return $this->output;
     }
 }
