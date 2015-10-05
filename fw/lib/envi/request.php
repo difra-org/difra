@@ -3,7 +3,7 @@
 namespace Difra\Envi;
 
 use Difra\Exception;
-use Difra\View\Exception as ViewException;
+use Difra\View\HttpError as ViewException;
 
 /**
  * Class Request
@@ -28,7 +28,7 @@ class Request
 
     /**
      * Find out request type and call proper parser
-     * @throws \Difra\View\Exception
+     * @throws \Difra\View\HttpError
      */
     private static function parseRequest()
     {
@@ -48,7 +48,7 @@ class Request
 
     /**
      * Parser for Ajaxer.js requests
-     * @throws \Difra\View\Exception
+     * @throws \Difra\View\HttpError
      */
     private static function parseAjaxerJSRequest()
     {
@@ -68,7 +68,7 @@ class Request
                 }
             }
         } catch (Exception $ex) {
-            throw new ViewException(400);
+            throw new HttpError(400);
         }
     }
 

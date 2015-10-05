@@ -2,7 +2,7 @@
 
 namespace Difra;
 
-use \Difra\View\Exception as ViewException;
+use \Difra\View\HttpError as ViewException;
 
 /**
  * Class View
@@ -48,7 +48,7 @@ class View
         $xslProcessor = new \XsltProcessor();
         $xslProcessor->importStyleSheet($xslDom);
 
-        if (!$dontFillXML and !ViewException::$error and !Debugger::$shutdown) {
+        if (!$dontFillXML and !HttpError::$error and !Debugger::$shutdown) {
             View\XML::fillXML($xml, $instance);
         }
 

@@ -17,7 +17,7 @@ class AdmGalleryAlbumController extends \Difra\Controller
         $album = \Difra\Plugins\Gallery\Album::get($id->val());
 
         if (!$album->load()) {
-            throw new \Difra\View\Exception(404);
+            throw new \Difra\View\HttpError(404);
         }
 
         $album->getXML($albumNode);

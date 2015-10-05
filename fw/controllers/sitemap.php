@@ -18,7 +18,7 @@ class SitemapController extends \Difra\Controller
      * etc.
      *
      * @param Difra\Param\AnyInt $page
-     * @throws Difra\View\Exception
+     * @throws Difra\View\HttpError
      */
     public function indexAction(\Difra\Param\AnyInt $page = null)
     {
@@ -29,7 +29,7 @@ class SitemapController extends \Difra\Controller
         } else {
             $res = \Difra\Libs\XML\Sitemap::getXML($page->val());
             if (!$res) {
-                throw new \Difra\View\Exception(404);
+                throw new \Difra\View\HttpError(404);
             }
             $this->outputType = 'text/xml';
             $this->output = $res;
@@ -44,13 +44,13 @@ class SitemapController extends \Difra\Controller
      * etc.
      *
      * @param \Difra\Param\AnyInt $page
-     * @throws \Difra\View\Exception
+     * @throws \Difra\View\HttpError
      */
     public function htmlAction(\Difra\Param\AnyInt $page = null)
     {
         $this->cache = self::CACHE_TTL;
         if (!$html = \Difra\Libs\XML\Sitemap::getHTML($page)) {
-            throw new \Difra\View\Exception(404);
+            throw new \Difra\View\HttpError(404);
         }
         $this->outputType = 'text/html';
         $this->output = $html;

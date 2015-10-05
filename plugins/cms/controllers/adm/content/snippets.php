@@ -30,12 +30,12 @@ class AdmContentSnippetsController extends \Difra\Controller
 
     /**
      * @param \Difra\Param\AnyInt $id
-     * @throws Difra\View\Exception
+     * @throws Difra\View\HttpError
      */
     public function editAction(\Difra\Param\AnyInt $id)
     {
         if (!$snippet = \Difra\Plugins\CMS\Snippet::getById($id->val())) {
-            throw new \Difra\View\Exception(404);
+            throw new \Difra\View\HttpError(404);
         }
         /** @var $editNode \DOMElement */
         $editNode = $this->root->appendChild($this->xml->createElement('snippetEdit', $snippet->getText()));

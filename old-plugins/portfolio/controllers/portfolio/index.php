@@ -45,7 +45,7 @@ class PortfolioIndexController extends \Difra\Controller
 		$entry->addCondition('uri', $link);
 		$list = $entry->getList();
 		if (empty($list)) {
-			throw new \Difra\View\Exception(404);
+			throw new \Difra\View\HttpError(404);
 		}
 
 		$mainXml = $this->root->appendChild($this->xml->createElement('PortfolioWork'));

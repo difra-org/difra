@@ -7,7 +7,7 @@ use Difra\Controller;
 use Difra\Debugger;
 use Difra\Envi\Request;
 use Difra\View;
-use Difra\View\Exception as ViewException;
+use Difra\View\HttpError as ViewException;
 
 class Output {
 
@@ -24,7 +24,7 @@ class Output {
         $controller = Controller::getInstance();
         if (!empty(Controller::hasUnusedParameters())) {
             $controller->putExpires(true);
-            throw new ViewException(404);
+            throw new HttpError(404);
         } elseif (!is_null(self::$output)) {
             $controller->putExpires();
             header('Content-Type: ' . self::$outputType . '; charset="utf-8"');
@@ -49,9 +49,9 @@ class Output {
             $controller->putExpires();
             try {
                 View::render($controller->xml);
-            } catch (Exception $ex) {
+            } catch (HttpError $ex) {
                 if (!Debugger::isConsoleEnabled()) {
-                    throw new ViewException(500);
+                    throw new HttpError(500);
                 } else {
                     echo Debugger::debugHTML(true);
                     die();

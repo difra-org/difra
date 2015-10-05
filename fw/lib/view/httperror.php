@@ -7,10 +7,11 @@ use Difra\Envi\Version;
 use Difra\View;
 
 /**
- * Class Exception
+ * Class HttpError
+ * Generates HTTP errors (404, etc.)
  * @package Difra\View
  */
-class Exception extends \Exception
+class HttpError extends \Exception
 {
     public static $error = null;
     public static $errors = [
