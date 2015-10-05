@@ -3,7 +3,7 @@
 namespace Difra\Libs\Auth;
 
 use Difra\Envi\Session;
-use Difra\View\Exception as ViewException;
+use Difra\View\HttpError as ViewException;
 
 /**
  * Class Digest
@@ -41,7 +41,7 @@ class Digest
 
     /**
      * Request Digest auth
-     * @throws \Difra\View\Exception
+     * @throws \Difra\View\HttpError
      */
     public function request()
     {
@@ -57,7 +57,7 @@ class Digest
             ($this->stale ? ',stale=TRUE' : '')
         );
 
-        throw new ViewException(401);
+        throw new HttpError(401);
     }
 
     /**

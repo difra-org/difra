@@ -41,14 +41,14 @@ class UpController extends \Difra\Controller
     /**
      * View image
      * @param Difra\Param\AnyInt $id
-     * @throws Difra\View\Exception
+     * @throws Difra\View\HttpError
      */
     public function tmpAction(\Difra\Param\AnyInt $id)
     {
 
         $data = \Difra\Libs\Vault::get($id->val());
         if (!$data) {
-            throw new \Difra\View\Exception(404);
+            throw new \Difra\View\HttpError(404);
         }
         \Difra\View::$rendered = true;
         header('Content-type: image/png');

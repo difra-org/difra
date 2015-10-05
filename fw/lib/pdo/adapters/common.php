@@ -172,7 +172,7 @@ abstract class Common
         $this->queries++;
         $sth = $this->prepare($query);
         $sth->execute($parameters);
-        return $sth->fetchAll($parameters);
+        return $sth->fetchAll();
     }
 
     /**

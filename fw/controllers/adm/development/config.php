@@ -8,7 +8,7 @@ class AdmDevelopmentConfigController extends \Difra\Controller
     public function dispatch()
     {
         if (!\Difra\Debugger::isEnabled()) {
-            throw new \Difra\View\Exception(404);
+            throw new \Difra\View\HttpError(404);
         }
         \Difra\View::$instance = 'adm';
     }

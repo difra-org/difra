@@ -66,7 +66,6 @@ $post
 \$_COOKIE:
 $cookie
 MSG;
-            // TODO: move exceptions e-mail address to configuration
             mail($notificationMail, $host . ': ' . $exception->getMessage(), $text);
     }
 }

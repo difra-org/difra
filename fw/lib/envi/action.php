@@ -9,7 +9,7 @@ use Difra\Exception;
 use Difra\Plugger;
 use Difra\Resourcer;
 use Difra\View;
-use \Difra\View\Exception as ViewException;
+use \Difra\View\HttpError as ViewException;
 
 /**
  * Class Action
@@ -63,7 +63,7 @@ class Action
         $controllerUriParts = $parts;
         if (!self::$controllerFile = self::findController($parts)) {
             self::saveCache('404');
-            throw new ViewException(404);
+            throw new HttpError(404);
         }
         self::$controllerUri =
             '/' .
@@ -85,7 +85,7 @@ class Action
 
     /**
      * Load cached data
-     * @throws \Difra\View\Exception
+     * @throws \Difra\View\HttpError
      * @return bool
      */
     private static function loadCache()
@@ -102,7 +102,7 @@ class Action
                 include_once(self::$controllerFile);
                 break;
             case '404':
-                throw new ViewException(404);
+                throw new HttpError(404);
         }
         return true;
     }
@@ -141,7 +141,7 @@ class Action
     /**
      * Resource (JS, CSS, etc.) request processor
      * @param string[] $parts
-     * @throws \Difra\View\Exception
+     * @throws \Difra\View\HttpError
      * @return bool
      */
     private static function getResource($parts)
@@ -153,12 +153,12 @@ class Action
         if ($resourcer and $resourcer->isPrintable()) {
             try {
                 if (!$resourcer->view($parts[1])) {
-                    throw new ViewException(404);
+                    throw new HttpError(404);
                 }
                 View::$rendered = true;
                 die();
             } catch (Exception $ex) {
-                throw new ViewException(404);
+                throw new HttpError(404);
             }
         }
         return false;

@@ -25,19 +25,15 @@ class Autoloader
         }
         $file = self::class2file($class);
 
-        /**
-         * This code is disabled because file_exists() is slow!
-         * Do not enable it unless you're not going to use profiler.
-         * TODO: consider adding profiler constant
-         * if( Debugger::isConsoleEnabled() == Debugger::CONSOLE_ENABLED ) {
-         * if( !file_exists( $file ) ) {
-         * throw new Exception( 'File "' . $file . "' for class '" . $class . '" was not found.' );
-         * }
-         * }
-         */
+        // file_exists() is slow! Use only for debugging.
+//        if (Debugger::isConsoleEnabled() == Debugger::CONSOLE_ENABLED) {
+//            if (!file_exists($file)) {
+//                throw new Exception('File "' . $file . "' for class '" . $class . '" was not found.');
+//            }
+//        }
 
         /** @noinspection PhpIncludeInspection */
-        @include_once($file);
+        include_once($file);
     }
 
     /**

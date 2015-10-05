@@ -29,7 +29,7 @@ class EventsIndexController extends \Difra\Controller
                     $groupId = $Group->getId();
                     $this->_showGroupEvents($groupId);
                 } else {
-                    throw new \Difra\View\Exception(404);
+                    throw new \Difra\View\HttpError(404);
                     return;
                 }
             } else {
@@ -47,7 +47,7 @@ class EventsIndexController extends \Difra\Controller
         $Announce = $Announcements->getByLink($link);
 
         if ($Announce === false) {
-            throw new \Difra\View\Exception(404);
+            throw new \Difra\View\HttpError(404);
             return;
         }
 

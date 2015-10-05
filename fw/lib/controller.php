@@ -83,7 +83,7 @@ abstract class Controller
 
     /**
      * Call action factory
-     * @return Controller|null
+     * @return Controller
      */
     public static function getInstance()
     {
@@ -127,9 +127,9 @@ abstract class Controller
             $method = 'method';
         } elseif (Action::$methodAuth or Action::$methodAjaxAuth) {
             self::$parameters = [];
-            throw new View\Exception(401);
+            throw new View\HttpError(401);
         } else {
-            throw new View\Exception(404);
+            throw new View\HttpError(404);
         }
         $this->method = $method;
     }
@@ -172,12 +172,14 @@ abstract class Controller
                         if (sizeof(self::$parameters) >= 2 and self::$parameters[0] == $name) {
                             array_shift(self::$parameters);
                             if (!call_user_func(["$class", 'verify'], self::$parameters[0])) {
-                                throw new View\Exception(404);
+                                throw new View\HttpError(404);
                             }
                             $callParameters[$parameter->getName()] =
                                 new $class(array_shift(self::$parameters));
+                        } elseif (call_user_func(["$class", 'isAuto'])) {
+                            $callParameters[$name] = new $class;
                         } elseif (!$parameter->isOptional()) {
-                            throw new View\Exception(404);
+                            throw new View\HttpError(404);
                         } else {
                             $callParameters[$parameter->getName()] = null;
                         }
@@ -193,11 +195,11 @@ abstract class Controller
                             )
                         ) {
                             if (!call_user_func(["$class", 'verify'], self::$parameters[0])) {
-                                throw new View\Exception(404);
+                                throw new View\HttpError(404);
                             }
                             $callParameters[$name] = new $class(array_shift(self::$parameters));
                         } elseif (!$parameter->isOptional()) {
-                            throw new View\Exception(404);
+                            throw new View\HttpError(404);
                         } else {
                             $callParameters[$parameter->getName()] = null;
                         }

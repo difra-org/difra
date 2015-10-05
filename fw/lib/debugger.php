@@ -17,7 +17,7 @@ class Debugger
     const CONSOLE_ON = 2; // console disabled
     const CACHES_DISABLED = 0; // console enabled, but not active
     const CACHES_ENABLED = 1; // console enabled and active
-    const ERRORS_SHOW = 0;
+    const ERRORS_SHOW = 1;
     const ERRORS_HIDE = 0;
 
     /** @var bool */

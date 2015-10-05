@@ -4,29 +4,21 @@ use Difra\Ajaxer;
 use Difra\Locales;
 use Difra\Plugins, Difra\Param;
 
-class AdmUsersListController extends Difra\Controller
+class AdmUsersListController extends Difra\Controller\Adm
 {
     /** @var \DOMElement */
     private $node = null;
 
-    public function dispatch()
+    public function indexAction(\Difra\Param\NamedPaginator $page = null)
     {
-        \Difra\View::$instance = 'adm';
-    }
-
-    public function indexAction(\Difra\Param\NamedInt $page = null)
-    {
-        $page = $page ? $page->val() : 1;
         $this->node = $this->root->appendChild($this->xml->createElement('userList'));
-        $this->node->setAttribute('link', '/adm/users/list');
-        $this->node->setAttribute('current', $page);
-        Plugins\Users::getInstance()->getListXML($this->node, $page);
+        Plugins\Users\User::getListXML($this->node, $page);
     }
 
     public function editAction(Param\AnyInt $id)
     {
         $this->node = $this->root->appendChild($this->xml->createElement('userEdit'));
-        Plugins\Users::getInstance()->getUserXML($this->node, $id->val());
+        Plugins\Users::getUserXML($this->node, $id->val());
     }
 
     public function saveAjaxAction(
