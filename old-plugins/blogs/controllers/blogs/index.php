@@ -36,7 +36,7 @@ class BlogsIndexController extends \Difra\Controller
 			// /user/имя
 			if (empty($this->action->parameters)) {
 				$auth = \Difra\Auth::getInstance();
-				$canModify = ($auth->logged and ($userId == $auth->getId()));
+				$canModify = ($auth->logged and ($userId == $auth->getEmail()));
 
 				// виджет данных юзера
 				/** @var \DOMElement $blogsViewNode */
@@ -69,9 +69,9 @@ class BlogsIndexController extends \Difra\Controller
 				$friendsNode = $this->root->appendChild($this->xml->createElement('friendsWidget'));
 				$friendsNode->setAttribute('right', 1);
 
-				\Difra\Plugins\Blogs\Blog::getFriendsPreviewXML($auth->getId(), $friendsNode);
-				if ($userId != $auth->getId()) {
-					$friendsNode->setAttribute('user', $auth->getId());
+				\Difra\Plugins\Blogs\Blog::getFriendsPreviewXML($auth->getEmail(), $friendsNode);
+				if ($userId != $auth->getEmail()) {
+					$friendsNode->setAttribute('user', $auth->getEmail());
 					$friendsNode->setAttribute('canAdd', $blogId);
 				}
 				// /user/имя/15/заголовок
@@ -115,9 +115,9 @@ class BlogsIndexController extends \Difra\Controller
 				$friendsNode->setAttribute('right', 1);
 
 				$auth = \Difra\Auth::getInstance();
-				\Difra\Plugins\Blogs\Blog::getFriendsPreviewXML($auth->getId(), $friendsNode);
-				if ($userId != $auth->getId()) {
-					$friendsNode->setAttribute('user', $auth->getId());
+				\Difra\Plugins\Blogs\Blog::getFriendsPreviewXML($auth->getEmail(), $friendsNode);
+				if ($userId != $auth->getEmail()) {
+					$friendsNode->setAttribute('user', $auth->getEmail());
 					$friendsNode->setAttribute('canAdd', $post->getBlogId());
 				}
 

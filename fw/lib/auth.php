@@ -3,6 +3,7 @@
 namespace Difra;
 
 use Difra\Envi\Session;
+use Difra\View\HttpError;
 
 /**
  * Class Auth
@@ -13,12 +14,10 @@ use Difra\Envi\Session;
  */
 class Auth
 {
-    public $logged = false;
-    public $id = null;
-    public $data = null;
-    public $moderator = false;
-    public $additionals = null;
-    public $type = 'user';
+    /** @var string */
+    private $email = null;
+    /** @var mixed[] */
+    private $data = null;
 
     /**
      * Singleton
@@ -45,36 +44,27 @@ class Auth
     public function getAuthXML($node)
     {
         $authNode = $node->appendChild($node->ownerDocument->createElement('auth'));
-        if (!$this->logged) {
+        if (!$this->email) {
             $authNode->appendChild($node->ownerDocument->createElement('unauthorized'));
             return;
         } else {
             /** @var \DOMElement $subNode */
             $subNode = $authNode->appendChild($node->ownerDocument->createElement('authorized'));
-            $subNode->setAttribute('id', $this->id);
-            $subNode->setAttribute('userid', $this->getId());
-            $subNode->setAttribute('moderator', $this->moderator);
-            $subNode->setAttribute('type', $this->type);
-            if (!empty($this->additionals)) {
-                foreach ($this->additionals as $k => $v) {
-                    $subNode->setAttribute($k, $v);
-                }
-            }
+            $subNode->setAttribute('email', $this->email);
+            $subNode->setAttribute('login', $this->getLogin());
+            $subNode->setAttribute('id', $this->getUserId());
         }
     }
 
     /**
      * Log in
-     * @param int $userId
+     * @param string $email
      * @param array $data
-     * @param array $additionals
      */
-    public function login($userId, $data = null, $additionals = null)
+    public function login($email, $data = null)
     {
-        $this->id = $userId;
+        $this->email = $email;
         $this->data = $data;
-        $this->additionals = $additionals;
-        $this->logged = true;
         $this->save();
     }
 
@@ -83,8 +73,7 @@ class Auth
      */
     public function logout()
     {
-        $this->id = $this->data = $this->additionals = null;
-        $this->logged = false;
+        $this->email = $this->data = null;
         $this->save();
     }
 
@@ -102,11 +91,10 @@ class Auth
     private function save()
     {
         Session::start();
-        if ($this->logged) {
+        if ($this->email) {
             $_SESSION['auth'] = [
-                'id' => $this->id,
-                'data' => $this->data,
-                'additionals' => $this->additionals
+                'id' => $this->email,
+                'data' => $this->data
             ];
         } else {
             if (isset($_SESSION['auth'])) {
@@ -124,30 +112,45 @@ class Auth
         if (!isset($_SESSION['auth'])) {
             return false;
         }
-        $this->id = $_SESSION['auth']['id'];
+        $this->email = $_SESSION['auth']['id'];
         $this->data = $_SESSION['auth']['data'];
-        $this->additionals = $_SESSION['auth']['additionals'];
-        $this->moderator = ($_SESSION['auth']['data']['moderator'] == 1) ? true : false;
-        $this->type = isset($_SESSION['auth']['data']['type']) ? $_SESSION['auth']['data']['type'] : 'user';
-        return $this->logged = true;
+        return true;
     }
 
     /**
-     * Get current user's id. Or null if user is not authorized.
-     * @return int|null
+     * Get current user's e-mail.
+     * @return string
      */
-    public function getId()
+    public function getEmail()
+    {
+        return $this->email;
+    }
+
+    /**
+     * Get current user's login.
+     * @return mixed|null
+     */
+    public function getLogin()
+    {
+        return isset($this->data['login']) ? $this->data['login'] : null;
+    }
+
+    /**
+     * Get user ID
+     * @return mixed|null
+     */
+    public function getUserId()
     {
         return isset($this->data['id']) ? $this->data['id'] : null;
     }
 
     /**
-     * Get user type
-     * @return string|null
+     * Get info array
+     * @return mixed
      */
-    public function getType()
+    public function getInfo()
     {
-        return $this->type;
+        return $this->data['info'];
     }
 
     /**
@@ -156,7 +159,7 @@ class Auth
      */
     public function isLogged()
     {
-        return $this->logged;
+        return (bool)$this->email;
     }
 
     /**
@@ -165,37 +168,8 @@ class Auth
      */
     public function required()
     {
-        if (!$this->logged) {
-            throw new exception('Authorization required');
+        if (!$this->email) {
+            throw new HttpError(401);
         }
-    }
-
-    /**
-     * Set user data
-     * @param array $additionals
-     */
-    public function setAdditionals($additionals)
-    {
-        $this->additionals = $additionals;
-        $this->save();
-    }
-
-    /**
-     * Get user data
-     * @return array
-     */
-    public function getAdditionals()
-    {
-        return $this->additionals;
-    }
-
-    /**
-     * Is user a moderator?
-     * TODO: remove this.
-     * @return bool
-     */
-    public function isModerator()
-    {
-        return $this->moderator;
     }
 }

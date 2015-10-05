@@ -264,7 +264,7 @@ class Announcements
     {
         $db = MySQL::getInstance();
         $groupId = null;
-        $userId = Auth::getInstance()->getId();
+        $userId = Auth::getInstance()->getEmail();
 
         /*
         if (Plugger::isEnabled('blogs')) {

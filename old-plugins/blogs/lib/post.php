@@ -72,7 +72,7 @@ class Post
 
         $groups = [];
         $Auth = Auth::getInstance();
-        if ($userId = $Auth->getId()) {
+        if ($userId = $Auth->getEmail()) {
             $groups = Group::getOwnedGroupsIds($userId);
         }
 

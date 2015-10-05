@@ -259,7 +259,7 @@ class Comment
 
 		$groups = [];
 		$Auth = \Difra\Auth::getInstance();
-		$userId = $Auth->getId();
+		$userId = $Auth->getEmail();
 		if ($userId && \Difra\Plugger::getInstance()->isEnabled('blogs')) {
 			$groups = \Difra\Plugins\Blogs\Group::getOwnedGroupsIds($userId);
 		}
@@ -310,7 +310,7 @@ class Comment
 
 		$groups = [];
 		$Auth = \Difra\Auth::getInstance();
-		$userId = $Auth->getId();
+		$userId = $Auth->getEmail();
 		if ($userId && \Difra\Plugger::getInstance()->isEnabled('blogs')) {
 			$groups = \Difra\Plugins\Blogs\Group::getOwnedGroupsIds($userId);
 		}
