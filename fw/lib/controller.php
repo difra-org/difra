@@ -176,6 +176,8 @@ abstract class Controller
                             }
                             $callParameters[$parameter->getName()] =
                                 new $class(array_shift(self::$parameters));
+                        } elseif (call_user_func(["$class", 'isAuto'])) {
+                            $callParameters[$name] = new $class;
                         } elseif (!$parameter->isOptional()) {
                             throw new View\HttpError(404);
                         } else {
