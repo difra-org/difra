@@ -2,7 +2,7 @@
 
 namespace Difra;
 
-use \Difra\View\HttpError as ViewException;
+use Difra\View\HttpError;
 
 /**
  * Class View
