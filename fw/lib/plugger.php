@@ -28,7 +28,7 @@ class Plugger
         // default database dependency
         $dbAvail = false;
         try {
-            PDO::getInstance()->fetchOne('SELECT 1');
+            DB::getInstance()->fetchOne('SELECT 1');
             $dbAvail = true;
         } catch (Exception $ex) {
         }

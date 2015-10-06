@@ -5,7 +5,7 @@ namespace Difra\Plugins\Users;
 use Difra\Auth;
 use Difra\Config;
 use Difra\Exception;
-use Difra\PDO;
+use Difra\DB;
 use Difra\Plugins\Users;
 
 /**
@@ -18,7 +18,6 @@ class User
     const LOGIN_BANNED = 'banned';
     const LOGIN_INACTIVE = 'inactive';
     const LOGIN_BADPASS = 'bad_password';
-
     /** @var int */
     private $id = null;
     /** @var string */
@@ -39,9 +38,10 @@ class User
     private $info = [];
     /** @var string|null */
     private $activation = null;
-
-    /** @var array[] */
-    private $modified = [];
+    /** @var bool */
+    private $modified = false;
+    /** @var string[] */
+    private $saveProperties = ['email', 'login', 'password', 'active', 'banned', 'info', 'activation'];
 
     /**
      * Forbid direct creation of user object
@@ -55,36 +55,31 @@ class User
         $this->save();
     }
 
-    private function save()
+    public function save()
     {
-        if (empty($this->modified)) {
+        if (!$this->modified) {
             return;
         }
         $set = [];
         $parameters = [];
-        foreach ($this->modified as $field => $value) {
-            if (!property_exists($this, $field)) {
-                throw new Exception("Invalid user property: $field");
-            }
+        foreach ($this->saveProperties as $field) {
             switch ($field) {
                 case 'info':
                     $set[] = "`$field` = :$field";
-                    $parameters[$field] = serialize($value);
+                    $parameters[$field] = serialize($this->{$field});
                     break;
                 default:
                     $set[] = "`$field` = :$field";
-                    $parameters[$field] = $value;
+                    $parameters[$field] = $this->{$field};
             }
         }
-        if (empty($set)) {
-            return;
-        }
-        $pdo = PDO::getInstance(Users::DB);
+        $db = DB::getInstance(Users::DB);
         if ($this->id) {
             $parameters['id'] = $this->id;
-            $pdo->query("\nUPDATE `user` SET " . implode(',', $set) . ' WHERE `id`=:id', $parameters);
+            $db->query("\nUPDATE `user` SET " . implode(',', $set) . ' WHERE `id`=:id', $parameters);
         } else {
-            $pdo->query('INSERT INTO `user` SET ' . implode(',', $set));
+            $db->query('INSERT INTO `user` SET ' . implode(',', $set));
+            $this->id = $db->getLastId();
         }
         $this->modified = [];
     }
@@ -131,14 +126,14 @@ class User
      */
     public static function getList($paginator = null)
     {
-        $pdo = PDO::getInstance(Users::DB);
+        $db = DB::getInstance(Users::DB);
         if ($paginator) {
             $limits = $paginator->getPaginatorLimit();
-            $usersData = $pdo->fetch("SELECT * FROM `user` LIMIT {$limits[0]},{$limits[1]}");
-            $total = $pdo->fetchOne('SELECT COUNT(*) FROM `user`');
+            $usersData = $db->fetch("SELECT * FROM `user` LIMIT {$limits[0]},{$limits[1]}");
+            $total = $db->fetchOne('SELECT COUNT(*) FROM `user`');
             $paginator->setTotal($total);
         } else {
-            $usersData = $pdo->fetch('SELECT * FROM `user`');
+            $usersData = $db->fetch('SELECT * FROM `user`');
         }
         $users = [];
         foreach ($usersData as $data) {
@@ -314,13 +309,13 @@ class User
             return false;
         }
         // find user
-        $pdo = PDO::getInstance(Users::DB);
-        if (!$userId = $pdo->fetchOne('SELECT `id` FROM `user` WHERE `active`=0 AND `activation`=? LIMIT 1', [$key])) {
+        $db = DB::getInstance(Users::DB);
+        if (!$userId = $db->fetchOne('SELECT `id` FROM `user` WHERE `active`=0 AND `activation`=? LIMIT 1', [$key])) {
             // not found
             return false;
         }
         // activate
-        $pdo->query('SET `active`=1,`activation`=NULL WHERE `id`=?', [$userId]);
+        $db->query('SET `active`=1,`activation`=NULL WHERE `id`=?', [$userId]);
         return $userId;
     }
 
@@ -335,7 +330,7 @@ class User
         static $cache = [];
         if (!isset($cache[$id])) {
             $user =
-                PDO::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `id`=?', [$id]) ?: false;
+                DB::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `id`=?', [$id]) ?: false;
             $cache[$id] = $user ? self::load($user) : false;
         }
         if (!$cache[$id]) {
@@ -374,7 +369,7 @@ class User
      */
     public static function loginByPassword($login, $password, $longSession)
     {
-        $data = PDO::getInstance(Users::getDB())->fetch(<<<QUERY
+        $data = DB::getInstance(Users::getDB())->fetch(<<<QUERY
 SELECT * FROM `user` WHERE (`email` = :login OR `login` = :login)
 QUERY
             , [
@@ -408,33 +403,32 @@ QUERY
     /**
      * Create new user
      * @return User
+     * @throws Exception
      */
     public static function create()
     {
-        return new self;
-    }
+        $user = new self;
 
-    public static function register()
-    {
-        // todo configure and save user
-        // move (or split to check() and something) this method?
-
-//        $confirm = ;
-//        switch ($confirm) {
-//            /** @noinspection PhpMissingBreakStatementInspection */
-//            case 'email':
-//                do {
-//                    $key = strtolower(Capcha::getInstance()->genKey(24));
-//                    $d = $mysql->fetch("SELECT `id` FROM `user` WHERE `activation`='$key'");
-//                } while (!empty($d));
-//                $data['activation'] = $key;
-//                $query .= ", `activation`='$key', `active`=0";
-//                break;
-//            case 'moderate':
-//                $query .= ', `active`=0';
-//                break;
-//            case 'none':
-//            default:
-//        }
+        // configure activation
+        $activation = Users::getActivationMethod();
+        switch ($activation) {
+            case 'email':
+                do {
+                    $user->activation = bin2hex(openssl_random_pseudo_bytes(24));
+                } while (DB::getInstance(Users::getDB())
+                           ->fetchOne('SELECT count(*) FROM user WHERE activation=?', [$user->activation]));
+                $user->active = 0;
+                break;
+            case 'moderate':
+                $user->activation = null;
+                $user->active = 0;
+                break;
+            case 'none':
+                $user->activation = null;
+                $user->active = 1;
+                break;
+            default:
+                throw new Exception("Unknown activation type: $activation");
+        }
     }
 }

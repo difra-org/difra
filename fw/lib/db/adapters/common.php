@@ -1,15 +1,15 @@
 <?php
 
-namespace Difra\PDO\Adapters;
+namespace Difra\DB\Adapters;
 
 use Difra\Debugger;
 use Difra\Envi;
 use Difra\Exception;
 
 /**
- * Abstract PDO adapter
+ * Abstract Db adapter
  * Class Common
- * @package Difra\PDO
+ * @package Difra\DB
  */
 abstract class Common
 {

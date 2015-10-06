@@ -43,40 +43,11 @@ class Users
         return Config::getInstance()->getValue('auth', 'confirmation') ?: 'email';
     }
 
+    public static function getRecoverTTL()
+    {
+        return self::RECOVER_TTL;
+    }
 
-//    // регистрация пользователя
-//    public function register($data)
-//    {
-//        $data2 = [];
-//        foreach ($data as $k => $v) {
-//            $data2[$k] = trim($v);
-//        }
-//
-//        if (($res = $this->_checkRegisterFields($data)) !== self::REGISTER_OK) {
-//            return $res;
-//        }
-//        $data['email'] = strtolower($data['email']);
-//
-////        if (true !== ($res = \Difra\Additionals::checkAdditionals('users', $data))) {
-////            return $res;
-////        }
-//
-//        $mysql = MySQL::getInstance();
-//        $query = "INSERT INTO `user` SET `email`='" . $mysql->escape($data['email']) . "', `password`='" .
-//                 md5($data['password1']) . "'";
-//
-//
-//        if (false === $mysql->query($query)) {
-//            return self::REGISTER_FAILED;
-//        }
-//        $userId = $mysql->getLastId();
-//        \Difra\Additionals::saveAdditionals('users', $userId, $data);
-//
-//        $this->_registrationMail($data, $confirm);
-//        return true;
-//    }
-//
-//
 //    private function _registrationMail($data, $confirm = 'none')
 //    {
 //        $data2 = [
@@ -108,117 +79,6 @@ class Users
 //        return true;
 //    }
 //
-//
-//    const LOGIN_NOTFOUND = 'login_notfound';
-//    const LOGIN_BADPASSWORD = 'login_badpassword';
-//    const LOGIN_INACTIVE = 'login_inactive';
-//    const LOGIN_BANNED = 'login_banned';
-//
-//    public function login($email, $password, $remember, $withAdditionals = false)
-//    {
-//        $mysql = MySQL::getInstance();
-//        $email = strtolower($email);
-//        $additionals = null;
-//        $data = $mysql->fetch('SELECT * FROM `user` WHERE `email`=\'' . $mysql->escape($email) . "'");
-//        if (empty($data)) {
-//            return self::LOGIN_NOTFOUND;
-//        }
-//        $data = $data[0];
-//        if ($data['password'] != md5($password)) {
-//            return self::LOGIN_BADPASSWORD;
-//        }
-//        if (!$data['active']) {
-//            return self::LOGIN_INACTIVE;
-//        }
-//        if ($data['banned']) {
-//            return self::LOGIN_BANNED;
-//        }
-//
-//        if ($withAdditionals == true) {
-//            $additionalsData =
-//                $mysql->fetch("SELECT `name`, `value` FROM `user_field` WHERE `user`='" . intval($data['id']) . "'");
-//            if (!empty($additionalsData)) {
-//                foreach ($additionalsData as $k => $tempData) {
-//                    $additionals[$tempData['name']] = $tempData['value'];
-//                }
-//            }
-//        }
-//
-//        Auth::getInstance()->login($email, $data, $additionals);
-//        if ($remember) {
-//            $this->_setLongSession($data['id']);
-//        }
-//        $mysql->query('UPDATE `user` SET `lastseen`=NOW() WHERE `email`=\'' . $mysql->escape($email) . "'");
-//        return true;
-//    }
-//
-//    public function recover($email)
-//    {
-//        $mysql = MySQL::getInstance();
-//        $data = $mysql->fetch('SELECT * FROM `user` WHERE `email`=\'' . $mysql->escape($email) . "'");
-//        if (empty($data)) {
-//            return self::LOGIN_NOTFOUND;
-//        }
-//        $data = $data[0];
-//        if (!$data['active']) {
-//            return self::LOGIN_INACTIVE;
-//        }
-//        if ($data['banned']) {
-//            return self::LOGIN_BANNED;
-//        }
-//        do {
-//            $key = strtolower(Capcha::getInstance()->genKey(24));
-//            $d = $mysql->fetch('SELECT `recover` FROM `user_recover` WHERE `recover`=\'' . $key . "'");
-//        } while (!empty($d));
-//        $mysql->query("INSERT INTO `user_recover` (`recover`,`user`) VALUES ('$key','{$data['id']}')");
-//        Mailer::getInstance()->CreateMail(
-//            $data['email'], 'mail_recover', ['code' => $key, 'ttl' => self::RECOVER_TTL]
-//        );
-//        return true;
-//    }
-//
-//    const RECOVER_INVALID = 'recover_invalid';
-//    const RECOVER_USED = 'recover_used';
-//    const RECOVER_OUTDATED = 'recover_outdated';
-//
-//    public function verifyRecover($key)
-//    {
-//        $db = MySQL::getInstance();
-//        $data = $db->fetch("SELECT * FROM `user_recover` WHERE `recover`='" . $db->escape($key) . "'");
-//        if (empty($data)) {
-//            return self::RECOVER_INVALID;
-//        }
-//        $data = $data[0];
-//        if ($data['used']) {
-//            return self::RECOVER_USED;
-//        }
-//        $date = $data['date_requested'];
-//        $date = explode(' ', $date);
-//        $day = explode('-', $date[0]);
-//        $time = explode(':', $date[1]);
-//        $day1 = mktime($time[0], $time[1], $time[2], $day[1], $day[2], $day[0]);
-//        if ($day1 and (time() - $day1 > 1440 * 60 * 3)) {
-//            return self::RECOVER_OUTDATED;
-//        }
-//        return true;
-//    }
-//
-//    public function recoverSetPassword($key, $pw1, $pw2)
-//    {
-//        $db = MySQL::getInstance();
-//        $data = $db->fetch("SELECT * FROM `user_recover` WHERE `user`='" . $db->escape($key) . "'");
-//        if (empty($data)) {
-//            return self::RECOVER_INVALID;
-//        }
-//        $data = $data[0];
-//        if (($r = $this->setPassword($data['user_id'], $pw1, $pw2)) !== true) {
-//            return $r;
-//        }
-//        $db->query(
-//            'UPDATE `user_recover` SET `used`=1,`date_used`=NOW() WHERE `recover`=\'' . $db->escape($key) . "'"
-//        );
-//        return true;
-//    }
 //
 //    const PW_EMPTY = 'pw_empty';
 //    const PW_SHORT = 'pw_short';

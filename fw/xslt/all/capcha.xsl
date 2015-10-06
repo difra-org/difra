@@ -6,7 +6,7 @@
 		<div style="display:block;position:absolute;right:1px;top:2px">
 			<a href="#"
 			   onclick="$('#capcha-image').attr('src','/capcha?t='+(new Date().getTime()))"
-			   style="text-decoration:none;color:#169971;font-size:14px;font-face:arial;font-weight:bold">
+			   style="text-decoration:none;color:#169971;font-size:14px;font-face:arial">
 				<xsl:text>↻</xsl:text>
 			</a>
 		</div>

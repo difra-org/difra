@@ -5,7 +5,7 @@ namespace Difra\Plugins\Users;
 use Difra\Auth;
 use Difra\Exception;
 use Difra\Libs\Cookies;
-use Difra\PDO;
+use Difra\DB;
 use Difra\Plugins\Users;
 
 /**
@@ -21,12 +21,12 @@ class Session
             return;
         }
 
-        $sessionId = sha1(uniqid()) . substr(sha1(uniqid()), 1, 8);
+        $sessionId = bin2hex(openssl_random_pseudo_bytes(24));
         $cookies = Cookies::getInstance();
         $cookies->setExpire(time() + 31 * 3 * 24 * 60 * 60);
         $cookies->set('resume', $sessionId);
 
-        PDO::getInstance(Users::getDB())->query(
+        DB::getInstance(Users::getDB())->query(
             'REPLACE INTO `user_session` SET `user`=?, `session`=?, `ip`=?',
             [Auth::getInstance()->getUserId(), $sessionId, ip2long($_SERVER['REMOTE_ADDR'])]
         );
@@ -34,7 +34,7 @@ class Session
 
     public static function remove()
     {
-        PDO::getInstance(Users::getDB())->query("DELETE FROM `user_session` WHERE `session`=?", [$_COOKIE['resume']]);
+        DB::getInstance(Users::getDB())->query("DELETE FROM `user_session` WHERE `session`=?", [$_COOKIE['resume']]);
         Cookies::getInstance()->remove('resume');
     }
 
@@ -50,7 +50,7 @@ class Session
 
         try {
             // find session in db
-            $session = PDO::getInstance()->fetchRow(<<<QUERY
+            $session = DB::getInstance()->fetchRow(<<<QUERY
 SELECT `s`.`ip`, `s`.`user`
     FROM `user_session` `s`
     WHERE `s`.`session`=?

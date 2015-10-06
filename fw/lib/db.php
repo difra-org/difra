@@ -2,14 +2,14 @@
 
 namespace Difra;
 
-use Difra\PDO\Adapters\MySQL;
+use Difra\DB\Adapters\MySQL;
 
 /**
- * Factory for PDO
- * Class PDO
+ * Factory for DB
+ * Class DB
  * @package Difra
  */
-class PDO
+class DB
 {
     private static $adapters = [];
 

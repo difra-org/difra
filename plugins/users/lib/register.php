@@ -6,7 +6,7 @@ use Difra\Ajaxer;
 use Difra\Exception;
 use Difra\Libs\Capcha;
 use Difra\Locales;
-use Difra\PDO;
+use Difra\DB;
 use Difra\Plugins\Users;
 
 /**
@@ -118,7 +118,7 @@ class Register
      */
     private static function isEmailAvailable($email)
     {
-        return PDO::getInstance(Users::getDB())->fetchOne(
+        return DB::getInstance(Users::getDB())->fetchOne(
             'SELECT `id` FROM `user` WHERE `email`=?',
             [$email]
         ) ? false : true;
@@ -187,7 +187,7 @@ class Register
      */
     public static function isLoginAvailable($login)
     {
-        return PDO::getInstance(Users::getDB())->fetchOne(
+        return DB::getInstance(Users::getDB())->fetchOne(
             'SELECT `id` FROM `user` WHERE `login`=?',
             [$login]
         ) ? false : true;
@@ -337,6 +337,6 @@ class Register
         $user = User::create();
         $user->setEmail($this->email);
         $user->setPassword($this->password1);
-        $user->register();
+        $user->save();
     }
 }
