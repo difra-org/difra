@@ -157,7 +157,7 @@ class Auth
      * Is user authorized?
      * @return bool
      */
-    public function isLogged()
+    public function isAuthorized()
     {
         return (bool)$this->email;
     }

@@ -18,6 +18,5 @@ class Plugin extends \Difra\Plugin
     public function init()
     {
         Events::register('config', '\Difra\Plugins\Users\Session', 'load');
-        Events::register('config', '\Difra\Plugins\Users', 'bind');
     }
 }

@@ -36,7 +36,7 @@ class BlogsIndexController extends \Difra\Controller
 			// /user/имя
 			if (empty($this->action->parameters)) {
 				$auth = \Difra\Auth::getInstance();
-				$canModify = ($auth->logged and ($userId == $auth->getEmail()));
+				$canModify = ($auth->isAuthorized() and ($userId == $auth->getEmail()));
 
 				// виджет данных юзера
 				/** @var \DOMElement $blogsViewNode */
@@ -49,7 +49,7 @@ class BlogsIndexController extends \Difra\Controller
 				$blogsViewNode->setAttribute('canModify', $canModify ? '1' : '0');
 				$blogId = Blogs::getInstance()->getUserBlogXML($blogsViewNode, $userId, $page);
 
-				if ($auth->logged) {
+				if ($auth->isAuthorized()) {
 					if ($canModify) {
 						/** @var \DOMElement $blogsControlNode */
 						$blogsControlNode = $this->root->appendChild($this->xml->createElement('blogsControl'));
@@ -132,7 +132,7 @@ class BlogsIndexController extends \Difra\Controller
 			$blogsViewNode->setAttribute('link', '/blogs');
 			Difra\Plugins\Blogs::getInstance()->getAllPostsXML($blogsViewNode, $page);
 
-			if (Difra\Auth::getInstance()->isLogged()) {
+			if (Difra\Auth::getInstance()->isAuthorized()) {
 				/** @var \DOMElement $mypageWidget */
 				$mypageWidget = $this->root->appendChild($this->xml->createElement('myPageWidget'));
 				$mypageWidget->setAttribute('right', 1);
@@ -172,7 +172,7 @@ class BlogsIndexController extends \Difra\Controller
 			Difra\Plugins\Blogs::getInstance()->getAllPostsXML($blogsViewNode, $page);
 		}
 
-		if (Difra\Auth::getInstance()->isLogged()) {
+		if (Difra\Auth::getInstance()->isAuthorized()) {
 			/** @var \DOMElement $mypageWidgetNode */
 			$mypageWidgetNode = $this->root->appendChild($this->xml->createElement('myPageWidget'));
 			$mypageWidgetNode->setAttribute('right', 1);

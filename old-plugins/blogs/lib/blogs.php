@@ -48,7 +48,7 @@ class Blogs
 	{
 
 		$auth = \Difra\Auth::getInstance();
-		if (!$auth->logged) {
+		if (!$auth->isAuthorized()) {
 			throw new \Difra\Exception('Unauthorized users can\'t change groups');
 		}
 		if (!$this->isGroupNameAvailable($name)) {
@@ -68,7 +68,7 @@ class Blogs
 	{
 
 		$auth = \Difra\Auth::getInstance();
-		if (!$auth->logged) {
+		if (!$auth->isAuthorized()) {
 			throw new \Difra\Exception('Unauthorized users can\'t change groups');
 		}
 		if (!$this->isGroupDomainAvailable($domain)) {
@@ -253,7 +253,7 @@ class Blogs
 	{
 
 		$auth = \Difra\Auth::getInstance();
-		if (!$auth->logged) {
+		if (!$auth->isAuthorized()) {
 			return;
 		}
 		$groupsNode = $node->appendChild($node->ownerDocument->createElement('groups'));

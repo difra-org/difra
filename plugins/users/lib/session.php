@@ -17,7 +17,7 @@ class Session
 {
     public static function save()
     {
-        if (!Auth::getInstance()->isLogged() or isset($_COOKIE['resume'])) {
+        if (!Auth::getInstance()->isAuthorized() or isset($_COOKIE['resume'])) {
             return;
         }
 
@@ -40,7 +40,7 @@ class Session
 
     public static function load()
     {
-        if (Auth::getInstance()->isLogged()) {
+        if (Auth::getInstance()->isAuthorized()) {
             return;
         }
 
