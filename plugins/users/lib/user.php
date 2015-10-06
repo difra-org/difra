@@ -42,6 +42,8 @@ class User
     private $modified = false;
     /** @var string[] */
     private $saveProperties = ['email', 'login', 'password', 'active', 'banned', 'info', 'activation'];
+    /** @var self[] */
+    private static $cache = [];
 
     /**
      * Forbid direct creation of user object
@@ -80,6 +82,7 @@ class User
         } else {
             $db->query('INSERT INTO `user` SET ' . implode(',', $set));
             $this->id = $db->getLastId();
+            self::$cache[$this->id] = $this;
         }
         $this->modified = [];
     }
@@ -89,7 +92,7 @@ class User
      * @param array $data Database row
      * @return User
      */
-    private static function load($data = [])
+    private static function load($data)
     {
         $user = new self;
         $user->id = $data['id'];
@@ -102,6 +105,7 @@ class User
         $user->lastseen = $data['lastseen'];
         $user->info = $data['info'] ? @unserialize($data['info']) : '';
         $user->activation = $data['activation'];
+        self::$cache[$user->id] = $user;
         return $user;
     }
 
@@ -327,16 +331,17 @@ class User
      */
     public static function getById($id)
     {
-        static $cache = [];
-        if (!isset($cache[$id])) {
-            $user =
-                DB::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `id`=?', [$id]) ?: false;
-            $cache[$id] = $user ? self::load($user) : false;
+        if (isset(self::$cache[$id])) {
+            $user = self::$cache[$id];
+        } else {
+            $data = DB::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `id`=?', [$id]) ?: false;
+            $user = $data ? self::load($data) : false;
         }
-        if (!$cache[$id]) {
+        if (!$user) {
             throw new Exception(self::LOGIN_NOTFOUND);
         }
-        return $cache[$id];
+
+        return $user;
     }
 
     /**
@@ -380,7 +385,7 @@ QUERY
         if (empty($data)) {
             throw new Exception(self::LOGIN_NOTFOUND);
         }
-        if ($data['password'] !== sha1($password)) {
+        if ($data['password'] !== sha1($password) and $data['password'] !== md5($password)) {
             throw new Exception(self::LOGIN_BADPASS);
         }
         $user = self::load($data);
