@@ -3,11 +3,16 @@
 namespace Difra\Plugins\Users;
 
 use Difra\Ajaxer;
+use Difra\Exception;
 use Difra\Libs\Capcha;
 use Difra\Locales;
-use Difra\PDO;
+use Difra\DB;
 use Difra\Plugins\Users;
 
+/**
+ * Class Register
+ * @package Difra\Plugins\Users
+ */
 class Register
 {
     // error codes, should match language strings auth/register/*
@@ -24,6 +29,10 @@ class Register
     const REGISTER_CAPCHA_EMPTY = 'capcha_empty';
     const REGISTER_CAPCHA_INVALID = 'capcha_invalid';
     const REGISTER_CAPCHA_OK = 'capcha_ok';
+    const REGISTER_LOGIN_EMPTY = 'login_empty';
+    const REGISTER_LOGIN_INVALID = 'login_invalid';
+    const REGISTER_LOGIN_EXISTS = 'login_dupe';
+    const REGISTER_LOGIN_OK = 'login_ok';
 
     const REGISTER_LOGIN_VALIDATE = '/^[a-zA-Z0-9][a-zA-Z0-9._-]+$/u';
 
@@ -41,6 +50,8 @@ class Register
     private $ignoreEmpty = false;
     private $fast = false;
 
+    private $valid = false;
+
     /**
      * @param bool $ignoreEmpty Report only invalid fields (skip empty or fine fields reporting)
      * @param bool|null $fast true = skip database queries, false = query database, null = depending on capcha
@@ -51,11 +62,21 @@ class Register
         $this->fast = $fast;
     }
 
+    /**
+     * Set e-mail
+     * @param $email
+     */
     public function setEmail($email)
     {
         $this->email = (string)$email;
+        $this->valid = false;
     }
 
+    /**
+     * Verify e-mail
+     * @param bool|false $fast
+     * @return null|string
+     */
     private function verifyEmail($fast = false)
     {
         // check e-mail
@@ -89,30 +110,67 @@ class Register
         return (bool)preg_match('/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/', $email);
     }
 
+    /**
+     * Isn't e-mail exists?
+     * @param $email
+     * @return bool
+     * @throws Exception
+     */
     private static function isEmailAvailable($email)
     {
-        return PDO::getInstance()->fetchOne(
+        return DB::getInstance(Users::getDB())->fetchOne(
             'SELECT `id` FROM `user` WHERE `email`=?',
             [$email]
-        ) ? true : false;
-    }
-
-    public function setLogin($login)
-    {
-        $this->login = $login;
+        ) ? false : true;
     }
 
     /**
-     * Verify login
+     * Set user name
+     * @param $login
+     * @throws Exception
+     */
+    public function setLogin($login)
+    {
+        if (!Users::isLoginNamesEnabled()) {
+            throw new Exception('User names are disabled');
+        }
+        $this->login = $login;
+        $this->valid = false;
+    }
+
+    /**
+     * Verify user name
      * @param bool $fast Skip database checks
+     * @return null|string
      */
     public function verifyLogin($fast = false)
     {
-        // TODO
+        if (!Users::isLoginNamesEnabled()) {
+            return null;
+        }
+        // check e-mail
+        if (!$this->ignoreEmpty) {
+            if ($this->login === '') {
+                return $this->failures['login'] = self::REGISTER_LOGIN_EMPTY;
+            } elseif (!self::isLoginValid($this->email)) {
+                return $this->failures['login'] = self::REGISTER_LOGIN_INVALID;
+            } elseif (!$fast and !self::isLoginAvailable($this->email)) {
+                return $this->failures['login'] = self::REGISTER_LOGIN_EXISTS;
+            } else {
+                return $this->successful['login'] = self::REGISTER_LOGIN_OK;
+            }
+        } elseif ($this->login !== '') {
+            if (!self::isLoginValid($this->login)) {
+                return $this->failures['login'] = self::REGISTER_LOGIN_INVALID;
+            } elseif (!$fast and !self::isLoginAvailable($this->email)) {
+                return $this->failures['login'] = self::REGISTER_LOGIN_EXISTS;
+            }
+        }
+        return null;
     }
 
     /**
-     * Verify if login string is valid
+     * Verify if user name string is valid
      * @param $login
      * @return bool
      */
@@ -129,10 +187,10 @@ class Register
      */
     public static function isLoginAvailable($login)
     {
-        return PDO::getInstance()->fetchOne(
+        return DB::getInstance(Users::getDB())->fetchOne(
             'SELECT `id` FROM `user` WHERE `login`=?',
             [$login]
-        ) ? true : false;
+        ) ? false : true;
     }
 
     /**
@@ -142,6 +200,7 @@ class Register
     public function setPassword1($password1)
     {
         $this->password1 = (string)$password1;
+        $this->valid = false;
     }
 
     /**
@@ -173,6 +232,7 @@ class Register
     public function setPassword2($password2)
     {
         $this->password2 = (string)$password2;
+        $this->valid = false;
     }
 
     /**
@@ -194,6 +254,7 @@ class Register
                 return $this->failures['password2'] = self::REGISTER_PASSWORDS_DIFF;
             }
         }
+        return null;
     }
 
     /**
@@ -203,6 +264,7 @@ class Register
     public function setCapcha($capcha)
     {
         $this->capcha = (string)$capcha;
+        $this->valid = false;
     }
 
     /**
@@ -224,6 +286,7 @@ class Register
                 return $this->failures['capcha'] = self::REGISTER_CAPCHA_INVALID;
             }
         }
+        return null;
     }
 
     /**
@@ -240,7 +303,7 @@ class Register
         $this->verifyPassword1();
         $this->verifyPassword2();
 
-        return empty($this->failures);
+        return $this->valid = empty($this->failures);
     }
 
     /**
@@ -261,5 +324,19 @@ class Register
             return false;
         }
         return true;
+    }
+
+    public function register()
+    {
+        if (!$this->valid) {
+            $this->validate();
+            if (!$this->valid) {
+                throw new Exception('Registration aborted: invalid data');
+            }
+        }
+        $user = User::create();
+        $user->setEmail($this->email);
+        $user->setPassword($this->password1);
+        $user->save();
     }
 }

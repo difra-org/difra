@@ -1,11 +1,11 @@
 <?php
 
-namespace Difra\PDO\Adapters;
+namespace Difra\DB\Adapters;
 
 /**
  * MySQL Adapter
  * Class MySQL
- * @package Difra\PDO
+ * @package Difra\DB
  */
 class MySQL extends Common
 {

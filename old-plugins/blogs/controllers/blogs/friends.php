@@ -5,7 +5,7 @@ class BlogsFriendsController extends \Difra\Controller
     public function addAjaxAction(\Difra\Param\AnyString $blogId)
     {
 
-        if (!\Difra\Auth::getInstance()->getId()) {
+        if (!\Difra\Auth::getInstance()->getEmail()) {
             $this->ajax->notify(Difra\Locales::getInstance()->getXPath('notify/need_reg'));
             return;
         }

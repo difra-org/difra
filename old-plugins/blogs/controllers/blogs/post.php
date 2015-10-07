@@ -19,7 +19,7 @@ class BlogsPostController extends Difra\Controller
     public function newActionAuth()
     {
 
-        if (Blogs\Group::current() and !Blogs\Group::current()->hasUser(Difra\Auth::getInstance()->getId())) {
+        if (Blogs\Group::current() and !Blogs\Group::current()->hasUser(Difra\Auth::getInstance()->getEmail())) {
             \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
                                                                      ->getXPath('blogs/notifies/add_post_denied'),
                 true);
@@ -27,7 +27,7 @@ class BlogsPostController extends Difra\Controller
         }
 
         // создаём временный пост с visible = 0;
-        $userId = Difra\Auth::getInstance()->getId();
+        $userId = Difra\Auth::getInstance()->getEmail();
         if ($group = Blogs\Group::current()) {
             if (!$group->hasUser($userId)) {
                 \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
@@ -56,9 +56,9 @@ class BlogsPostController extends Difra\Controller
             $this->view->redirect('/');
         }
         $Auth = \Difra\Auth::getInstance();
-        if ($post->getUser() != $Auth->getId() && !$Auth->isModerator()) {
+        if ($post->getUser() != $Auth->getEmail() && !$Auth->isModerator()) {
             $group = $post->getBlog()->getGroup();
-            if (!$group or $group->getOwner() != \Difra\Auth::getInstance()->getId()) {
+            if (!$group or $group->getOwner() != \Difra\Auth::getInstance()->getEmail()) {
                 \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
                                                                          ->getXPath('blogs/notifies/edit_post_denied'),
                     true);
@@ -84,7 +84,7 @@ class BlogsPostController extends Difra\Controller
     public function addAjaxActionAuth(Param\AjaxString $title, Param\AjaxSafeHTML $text, Param\AjaxString $tags = null)
     {
 
-        $userId = Difra\Auth::getInstance()->getId();
+        $userId = Difra\Auth::getInstance()->getEmail();
         if ($group = Blogs\Group::current()) {
             if (!$group->hasUser($userId)) {
                 \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
@@ -121,9 +121,9 @@ class BlogsPostController extends Difra\Controller
             $this->view->redirect('/');
         }
         $Auth = \Difra\Auth::getInstance();
-        if ($post->getUser() != $Auth->getId() && !$Auth->isModerator()) {
+        if ($post->getUser() != $Auth->getEmail() && !$Auth->isModerator()) {
             $group = $post->getBlog()->getGroup();
-            if (!$group or $group->getOwner() != \Difra\Auth::getInstance()->getId()) {
+            if (!$group or $group->getOwner() != \Difra\Auth::getInstance()->getEmail()) {
                 \Difra\Libs\Cookies::getInstance()->notify(\Difra\Locales::getInstance()
                                                                          ->getXPath('blogs/notifies/edit_post_denied'),
                     true);
@@ -157,9 +157,9 @@ class BlogsPostController extends Difra\Controller
             die();
         }
         $Auth = \Difra\Auth::getInstance();
-        if ($post->getUser() != $Auth->getId() && !$Auth->isModerator()) {
+        if ($post->getUser() != $Auth->getEmail() && !$Auth->isModerator()) {
             $group = $post->getBlog()->getGroup();
-            if (!$group or $group->getOwner() != \Difra\Auth::getInstance()->getId()) {
+            if (!$group or $group->getOwner() != \Difra\Auth::getInstance()->getEmail()) {
                 $this->ajax->display(Difra\Locales::getInstance()->getXPath('blogs/notifies/edit_post_denied'));
                 die();
             }
@@ -183,9 +183,9 @@ class BlogsPostController extends Difra\Controller
             die();
         }
         $Auth = \Difra\Auth::getInstance();
-        if ($post->getUser() != $Auth->getId() && !$Auth->isModerator()) {
+        if ($post->getUser() != $Auth->getEmail() && !$Auth->isModerator()) {
             $group = $post->getBlog()->getGroup();
-            if (!$group or $group->getOwner() != \Difra\Auth::getInstance()->getId()) {
+            if (!$group or $group->getOwner() != \Difra\Auth::getInstance()->getEmail()) {
                 $this->ajax->display(Difra\Locales::getInstance()->getXPath('blogs/notifies/edit_post_denied'));
                 die();
             }

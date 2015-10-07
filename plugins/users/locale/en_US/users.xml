@@ -102,13 +102,17 @@
 			<capcha_empty>Please enter text from image.</capcha_empty>
 			<capcha_invalid>Entered test does not match with the one shown on image.</capcha_invalid>
 			<capcha_ok>Correct.</capcha_ok>
-			<complete-email>Thank you for your registration. Now you should get e-mail message with link for
+            <login_empty>Choose user name.</login_empty>
+            <login_invalid>Invalid user name.</login_invalid>
+            <login_dupe>This user name is not available.</login_dupe>
+            <login_ok>User name looks good.</login_ok>
+            <complete-email>Thank you for your registration. Now you should get e-mail message with link for
 				activation of your registration.
 			</complete-email>
 			<complete-moderate>Thank you for your registration. You will receive an email when the moderator
 				activate your account.
 			</complete-moderate>
-			<complete-none>Thanks for signing up. Now you can log on..</complete-none>
+			<complete-none>Thanks for signing up. Now you can log in.</complete-none>
 		</register>
 		<activate>
 			<done>Your account has been activated.</done>

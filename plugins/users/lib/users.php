@@ -2,102 +2,52 @@
 
 namespace Difra\Plugins;
 
-use Difra\PDO;
+use Difra\Config;
 
+/**
+ * Class Users
+ * @package Difra\Plugins
+ */
 class Users
 {
+    const DB = 'users';
+
     const RECOVER_TTL = 72; // hours
     const ACTIVATE_TTL = 7; // days
     const IP_MASK = '255.255.0.0'; // маска проверки ip
 
-//    static public function getInstance()
-//    {
-//        static $_instance = null;
-//        return $_instance ? $_instance : $_instance = new self;
-//    }
+    /**
+     * Get database name for users plugin
+     * @return string
+     */
+    static public function getDB()
+    {
+        return self::DB;
+    }
 
+    /**
+     * Are user names enabled?
+     * @return bool
+     */
+    static public function isLoginNamesEnabled()
+    {
+        return (bool)Config::getInstance()->getValue('auth', 'logins');
+    }
 
-//    // проверка заполненности основных полей в форме регистрации
-//    private function _checkRegisterFields($data)
-//    {
-//        if (empty($data['email'])) {
-//            return self::REGISTER_EMAIL_EMPTY;
-//        }
-//        if (empty($data['password1'])) {
-//            return self::REGISTER_PASSWORD1_EMPTY;
-//        }
-//        if (empty($data['password2'])) {
-//            return self::REGISTER_PASSWORD2_EMPTY;
-//        }
-//        if (!$this->isEmailValid($data['email'])) {
-//            return self::REGISTER_BAD_EMAIL;
-//        }
-//        if (strlen($data['password1']) < self::MIN_PASSWORD_LENGTH) {
-//            return self::REGISTER_PASSWORD_SHORT;
-//        }
-//        if ($data['password1'] != $data['password2']) {
-//            return self::REGISTER_PASSWORDS_DIFF;
-//        }
-//        if ($this->checkLogin($data['email'])) {
-//            return self::REGISTER_EMAIL_BUSY;
-//        }
-//        return self::REGISTER_OK;
-//    }
-//
-//    // регистрация пользователя
-//    public function register($data)
-//    {
-//        $data2 = [];
-//        foreach ($data as $k => $v) {
-//            $data2[$k] = trim($v);
-//        }
-//
-//        if (($res = $this->_checkRegisterFields($data)) !== self::REGISTER_OK) {
-//            return $res;
-//        }
-//        $data['email'] = strtolower($data['email']);
-//
-////        if (true !== ($res = \Difra\Additionals::checkAdditionals('users', $data))) {
-////            return $res;
-////        }
-//
-//        $mysql = MySQL::getInstance();
-//        $query = "INSERT INTO `user` SET `email`='" . $mysql->escape($data['email']) . "', `password`='" .
-//                 md5($data['password1']) . "'";
-//
-//        switch ($confirm = $this->getActivationMethod()) {
-//            /** @noinspection PhpMissingBreakStatementInspection */
-//            case 'email':
-//                do {
-//                    $key = strtolower(Capcha::getInstance()->genKey(24));
-//                    $d = $mysql->fetch("SELECT `id` FROM `user` WHERE `activation`='$key'");
-//                } while (!empty($d));
-//                $data['activation'] = $key;
-//                $query .= ", `activation`='$key', `active`=0";
-//                break;
-//            case 'moderate':
-//                $query .= ', `active`=0';
-//                break;
-//            case 'none':
-//            default:
-//        }
-//
-//        if (false === $mysql->query($query)) {
-//            return self::REGISTER_FAILED;
-//        }
-//        $userId = $mysql->getLastId();
-//        \Difra\Additionals::saveAdditionals('users', $userId, $data);
-//
-//        $this->_registrationMail($data, $confirm);
-//        return true;
-//    }
-//
-//    public function getActivationMethod()
-//    {
-//        $conf = Config::getInstance()->get('users');
-//        return isset($conf['confirm']) ? $conf['confirm'] : 'none';
-//    }
-//
+    /**
+     * Get activation method (email, moderate or none)
+     * @return string
+     */
+    public static function getActivationMethod()
+    {
+        return Config::getInstance()->getValue('auth', 'confirmation') ?: 'email';
+    }
+
+    public static function getRecoverTTL()
+    {
+        return self::RECOVER_TTL;
+    }
+
 //    private function _registrationMail($data, $confirm = 'none')
 //    {
 //        $data2 = [
@@ -129,117 +79,6 @@ class Users
 //        return true;
 //    }
 //
-//
-//    const LOGIN_NOTFOUND = 'login_notfound';
-//    const LOGIN_BADPASSWORD = 'login_badpassword';
-//    const LOGIN_INACTIVE = 'login_inactive';
-//    const LOGIN_BANNED = 'login_banned';
-//
-//    public function login($email, $password, $remember, $withAdditionals = false)
-//    {
-//        $mysql = MySQL::getInstance();
-//        $email = strtolower($email);
-//        $additionals = null;
-//        $data = $mysql->fetch('SELECT * FROM `user` WHERE `email`=\'' . $mysql->escape($email) . "'");
-//        if (empty($data)) {
-//            return self::LOGIN_NOTFOUND;
-//        }
-//        $data = $data[0];
-//        if ($data['password'] != md5($password)) {
-//            return self::LOGIN_BADPASSWORD;
-//        }
-//        if (!$data['active']) {
-//            return self::LOGIN_INACTIVE;
-//        }
-//        if ($data['banned']) {
-//            return self::LOGIN_BANNED;
-//        }
-//
-//        if ($withAdditionals == true) {
-//            $additionalsData =
-//                $mysql->fetch("SELECT `name`, `value` FROM `user_field` WHERE `user`='" . intval($data['id']) . "'");
-//            if (!empty($additionalsData)) {
-//                foreach ($additionalsData as $k => $tempData) {
-//                    $additionals[$tempData['name']] = $tempData['value'];
-//                }
-//            }
-//        }
-//
-//        Auth::getInstance()->login($email, $data, $additionals);
-//        if ($remember) {
-//            $this->_setLongSession($data['id']);
-//        }
-//        $mysql->query('UPDATE `user` SET `lastseen`=NOW() WHERE `email`=\'' . $mysql->escape($email) . "'");
-//        return true;
-//    }
-//
-//    public function recover($email)
-//    {
-//        $mysql = MySQL::getInstance();
-//        $data = $mysql->fetch('SELECT * FROM `user` WHERE `email`=\'' . $mysql->escape($email) . "'");
-//        if (empty($data)) {
-//            return self::LOGIN_NOTFOUND;
-//        }
-//        $data = $data[0];
-//        if (!$data['active']) {
-//            return self::LOGIN_INACTIVE;
-//        }
-//        if ($data['banned']) {
-//            return self::LOGIN_BANNED;
-//        }
-//        do {
-//            $key = strtolower(Capcha::getInstance()->genKey(24));
-//            $d = $mysql->fetch('SELECT `recover` FROM `user_recover` WHERE `recover`=\'' . $key . "'");
-//        } while (!empty($d));
-//        $mysql->query("INSERT INTO `user_recover` (`recover`,`user`) VALUES ('$key','{$data['id']}')");
-//        Mailer::getInstance()->CreateMail(
-//            $data['email'], 'mail_recover', ['code' => $key, 'ttl' => self::RECOVER_TTL]
-//        );
-//        return true;
-//    }
-//
-//    const RECOVER_INVALID = 'recover_invalid';
-//    const RECOVER_USED = 'recover_used';
-//    const RECOVER_OUTDATED = 'recover_outdated';
-//
-//    public function verifyRecover($key)
-//    {
-//        $db = MySQL::getInstance();
-//        $data = $db->fetch("SELECT * FROM `user_recover` WHERE `recover`='" . $db->escape($key) . "'");
-//        if (empty($data)) {
-//            return self::RECOVER_INVALID;
-//        }
-//        $data = $data[0];
-//        if ($data['used']) {
-//            return self::RECOVER_USED;
-//        }
-//        $date = $data['date_requested'];
-//        $date = explode(' ', $date);
-//        $day = explode('-', $date[0]);
-//        $time = explode(':', $date[1]);
-//        $day1 = mktime($time[0], $time[1], $time[2], $day[1], $day[2], $day[0]);
-//        if ($day1 and (time() - $day1 > 1440 * 60 * 3)) {
-//            return self::RECOVER_OUTDATED;
-//        }
-//        return true;
-//    }
-//
-//    public function recoverSetPassword($key, $pw1, $pw2)
-//    {
-//        $db = MySQL::getInstance();
-//        $data = $db->fetch("SELECT * FROM `user_recover` WHERE `user`='" . $db->escape($key) . "'");
-//        if (empty($data)) {
-//            return self::RECOVER_INVALID;
-//        }
-//        $data = $data[0];
-//        if (($r = $this->setPassword($data['user_id'], $pw1, $pw2)) !== true) {
-//            return $r;
-//        }
-//        $db->query(
-//            'UPDATE `user_recover` SET `used`=1,`date_used`=NOW() WHERE `recover`=\'' . $db->escape($key) . "'"
-//        );
-//        return true;
-//    }
 //
 //    const PW_EMPTY = 'pw_empty';
 //    const PW_SHORT = 'pw_short';
@@ -477,86 +316,6 @@ class Users
 //        $db->query("UPDATE `user` SET `moderator`=0 WHERE `id` = '" . intval($id) . "'");
 //    }
 //
-//    private function _setLongSession($id)
-//    {
-//        $db = MySQL::getInstance();
-//        $sessionId = sha1(uniqid()) . substr(sha1(uniqid()), 1, 8);
-//        $Cookies = Cookies::getInstance();
-//        $Cookies->setExpire(time() + 31 * 3 * 24 * 60 * 60);
-//        $Cookies->set('resume', $sessionId);
-//
-//        $db->query(
-//            "REPLACE INTO `user_session` SET `user`='" . intval($id) .
-//            "', `session`='" . $sessionId . "', `ip`='" . ip2long($_SERVER['REMOTE_ADDR']) . "'"
-//        );
-//    }
-//
-//    public function unSetLongSession($id)
-//    {
-//        $db = MySQL::getInstance();
-//        $db->query("DELETE FROM `user_session` WHERE `session`='" . intval($id) . "'");
-//
-//        Cookies::getInstance()->remove('resume');
-//    }
-//
-//    public static function unSetLongSessionBySID($sessionId)
-//    {
-//        $db = MySQL::getInstance();
-//        $db->query("DELETE FROM `user_session` WHERE `session`='" . $db->escape($sessionId) . "'");
-//        Cookies::getInstance()->remove('resume');
-//    }
-//
-//    public static function checkLongSession()
-//    {
-//        if (Auth::getInstance()->isLogged()) {
-//            return;
-//        }
-//
-//        if (isset($_COOKIE['resume']) and strlen($_COOKIE['resume']) == 48) {
-//
-//            // проверяем наличие длинной сессии
-//            $db = MySQL::getInstance();
-//            $data = $db->fetchRow(
-//                "SELECT s.`ip`, u.*
-//					FROM `user_session` s
-//					RIGHT JOIN `user` AS `u` ON u.`id` = s.`user` AND u.`active`=1 AND u.`banned`=0
-//					WHERE s.`session`='" . $db->escape($_COOKIE['resume']) . "'"
-//            );
-//            if (empty($data)) {
-//                self::unSetLongSessionBySID($_COOKIE['resume']);
-//                return;
-//            }
-//
-//            // проверяем IP и логиним юзера
-//            $currentIp = $_SERVER['REMOTE_ADDR'];
-//            preg_match(
-//                '/\\b(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/', $currentIp, $t
-//            );
-//            if (!empty($t)) {
-//                $currentNetwork = $t[0] . '.0.0';
-//                if (($data['ip'] & ip2long(self::IP_MASK)) == ip2long($currentNetwork)) {
-//                    // можно залогинить юзера
-//                    $email = strtolower($data['email']);
-//
-//                    $additionals = null;
-//
-//                    $additionalsData = $db->fetch(
-//                        "SELECT `name`, `value` FROM `user_field` WHERE `user`='" .
-//                        intval($data['id']) . "'"
-//                    );
-//                    if (!empty($additionalsData)) {
-//                        foreach ($additionalsData as $k => $tempData) {
-//                            $additionals[$tempData['name']] = $tempData['value'];
-//                        }
-//                    }
-//
-//                    Auth::getInstance()->login($email, $data, $additionals);
-//                    return;
-//                }
-//            }
-//            self::unSetLongSessionBySID($_COOKIE['resume']);
-//        }
-//    }
 //
 //    /**
 //     * Возвращает id юзера по его активации

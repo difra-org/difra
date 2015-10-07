@@ -37,17 +37,7 @@
             </span>
         </div>
         <div class="container">
-            <span id="capchaDiv">
-                <img src="/capcha" class="capcha" id="capcha-image" alt="capcha"/>
-            </span>
-            <xsl:text></xsl:text>
-            <span style="position:relative;left:-20px;top:-10px;margin-right:-16px;">
-                <a href="#"
-                   onclick="$('#capcha-image').attr('src','/capcha?t='+(new Date().getTime()))"
-                   style="text-decoration:none">
-                    <img src="/images/icon-reload.png" alt="refresh"/>
-                </a>
-            </span>
+            <xsl:call-template name="capcha"/>
             <input type="text"
                    name="capcha"
                    style="width: 170px;"

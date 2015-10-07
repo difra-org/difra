@@ -115,13 +115,13 @@ abstract class Controller
     private function chooseAction()
     {
         $method = null;
-        if (Request::isAjax() and Action::$methodAjaxAuth and Auth::getInstance()->logged) {
+        if (Request::isAjax() and Action::$methodAjaxAuth and Auth::getInstance()->isAuthorized()) {
             $this->isAjaxAction = true;
             $method = 'methodAjaxAuth';
         } elseif (Request::isAjax() and Action::$methodAjax) {
             $this->isAjaxAction = true;
             $method = 'methodAjax';
-        } elseif (Action::$methodAuth and Auth::getInstance()->logged) {
+        } elseif (Action::$methodAuth and Auth::getInstance()->isAuthorized()) {
             $method = 'methodAuth';
         } elseif (Action::$method) {
             $method = 'method';

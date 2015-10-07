@@ -48,14 +48,14 @@ class Blogs
 	{
 
 		$auth = \Difra\Auth::getInstance();
-		if (!$auth->logged) {
+		if (!$auth->isAuthorized()) {
 			throw new \Difra\Exception('Unauthorized users can\'t change groups');
 		}
 		if (!$this->isGroupNameAvailable($name)) {
 			return self::NAME_BUSY;
 		}
 		$group = Blogs\Group::load($id);
-		if (!$group->isOwner($userId = $auth->getId())) {
+		if (!$group->isOwner($userId = $auth->getEmail())) {
 			throw new \Difra\Exception("User {$userId} is forbidden to rename group $id");
 		}
 		$group->setName($name);
@@ -68,14 +68,14 @@ class Blogs
 	{
 
 		$auth = \Difra\Auth::getInstance();
-		if (!$auth->logged) {
+		if (!$auth->isAuthorized()) {
 			throw new \Difra\Exception('Unauthorized users can\'t change groups');
 		}
 		if (!$this->isGroupDomainAvailable($domain)) {
 			return self::DOMAIN_BUSY;
 		}
 		$group = Blogs\Group::load($id);
-		if (!$group->isOwner($userId = $auth->getId())) {
+		if (!$group->isOwner($userId = $auth->getEmail())) {
 			throw new \Difra\Exception("User {$userId} is forbidden to change domain for group {$id}");
 		}
 		$group->setDomain($domain);
@@ -95,7 +95,7 @@ class Blogs
 
 		$auth = \Difra\Auth::getInstance();
 		$auth->required();
-		$userId = $auth->getId();
+		$userId = $auth->getEmail();
 
 		if (!$group = Blogs\Group::load($groupId)) {
 			throw new \Difra\Exception("Can't add user to non-existent group");
@@ -120,7 +120,7 @@ class Blogs
 
 		$auth = \Difra\Auth::getInstance();
 		$auth->required();
-		$user = $auth->getId();
+		$user = $auth->getEmail();
 
 		if (!$group = Blogs\Group::load($groupId)) {
 			throw new \Difra\Exception("Can't add user to non-existent group");
@@ -143,7 +143,7 @@ class Blogs
 
 		$auth = \Difra\Auth::getInstance();
 		$auth->required();
-		$user = $auth->getId();
+		$user = $auth->getEmail();
 
 		if (!$group = Blogs\Group::load($groupId)) {
 			throw new \Difra\Exception("Can't add user to non-existent group");
@@ -169,7 +169,7 @@ class Blogs
 
 		$auth = \Difra\Auth::getInstance();
 		$auth->required();
-		$user = $auth->getId();
+		$user = $auth->getEmail();
 
 		if (!$group = Blogs\Group::load($groupId)) {
 			throw new \Difra\Exception("Can't modify user in non-existent group");
@@ -195,7 +195,7 @@ class Blogs
 
 		$auth = \Difra\Auth::getInstance();
 		$auth->required();
-		$user = $auth->getId();
+		$user = $auth->getEmail();
 
 		if (!$group = Blogs\Group::load($groupId)) {
 			throw new \Difra\Exception("Can't modify user in non-existent group");
@@ -253,11 +253,11 @@ class Blogs
 	{
 
 		$auth = \Difra\Auth::getInstance();
-		if (!$auth->logged) {
+		if (!$auth->isAuthorized()) {
 			return;
 		}
 		$groupsNode = $node->appendChild($node->ownerDocument->createElement('groups'));
-		Blogs\Group::getGroupsByUserXML($groupsNode, $auth->getId());
+		Blogs\Group::getGroupsByUserXML($groupsNode, $auth->getEmail());
 	}
 
 	public function getPost($userId, $postId)
@@ -283,7 +283,7 @@ class Blogs
 
 		$auth = \Difra\Auth::getInstance();
 		$auth->required();
-		Blogs\Blog::addFriend($auth->getId(), $blogId);
+		Blogs\Blog::addFriend($auth->getEmail(), $blogId);
 	}
 
 	public function delFriend($blogId)
@@ -291,7 +291,7 @@ class Blogs
 
 		$auth = \Difra\Auth::getInstance();
 		$auth->required();
-		Blogs\Blog::delFriend($auth->getId(), $blogId);
+		Blogs\Blog::delFriend($auth->getEmail(), $blogId);
 	}
 
 	/**
@@ -304,7 +304,7 @@ class Blogs
 	{
 
 		if (!$userId) {
-			$userId = \Difra\Auth::getInstance()->getId();
+			$userId = \Difra\Auth::getInstance()->getEmail();
 		}
 		if ($userId) {
 			$friends = Blogs\Blog::getFriends($userId);
@@ -335,7 +335,7 @@ class Blogs
 
 		$postsStat = $Cache->get('posts_stat');
 
-		$client = \Difra\Auth::getInstance()->getId();
+		$client = \Difra\Auth::getInstance()->getEmail();
 		if (is_null($client)) {
 			$client = $_SERVER['REMOTE_ADDR'];
 		}

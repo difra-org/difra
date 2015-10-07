@@ -37,7 +37,7 @@ class Comments
         }
         $auth = \Difra\Auth::getInstance();
         $auth->required();
-        $data['user'] = $auth->getId();
+        $data['user'] = $auth->getEmail();
 
         return Comments\Comment::create($data);
     }
