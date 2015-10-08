@@ -33,23 +33,17 @@ class Register
     const REGISTER_LOGIN_INVALID = 'login_invalid';
     const REGISTER_LOGIN_EXISTS = 'login_dupe';
     const REGISTER_LOGIN_OK = 'login_ok';
-
     const REGISTER_LOGIN_VALIDATE = '/^[a-zA-Z0-9][a-zA-Z0-9._-]+$/u';
-
     const MIN_PASSWORD_LENGTH = 6;
-
     private $failures = [];
     private $successful = [];
-
     private $email = null;
     private $login = null;
     private $password1 = null;
     private $password2 = null;
     private $capcha = null;
-
     private $ignoreEmpty = false;
     private $fast = false;
-
     private $valid = false;
 
     /**
@@ -306,6 +300,13 @@ class Register
         return $this->valid = empty($this->failures);
     }
 
+    public function validatePasswords()
+    {
+        $this->verifyPassword1();
+        $this->verifyPassword2();
+        return empty($this->failures);
+    }
+
     /**
      * Add ajaxer events to highlight wrong or correct fields
      * @return bool
@@ -338,5 +339,31 @@ class Register
         $user->setEmail($this->email);
         $user->setPassword($this->password1);
         $user->save();
+    }
+
+    const ACTIVATE_NOTFOUND = 'activate_notfound';
+    const ACTIVATE_USED = 'activate_used';
+
+//    const ACTIVATE_TIMEOUT = 'activate_timeout'; // think about it. warning: no language string for this.
+
+    public static function activate($key)
+    {
+        $key = trim((string)$key);
+        if (!$key) {
+            throw new Exception(self::ACTIVATE_NOTFOUND);
+        }
+        $db = DB::getInstance(Users::getDB());
+        $data = $db->fetchRow('SELECT * FROM `user` WHERE `activation`=? LIMIT 1', [(string)$key]);
+        if (empty($data)) {
+            throw new Exception(self::ACTIVATE_NOTFOUND);
+        }
+        if ($data['active']) {
+            throw new Exception(self::ACTIVATE_USED);
+        }
+//        if ($data['registered'] < date('Y-m-d H:i:s', time() - Users::ACTIVATE_TTL)) {
+//            throw new Exception(self::ACTIVATE_TIMEOUT);
+//        }
+        $db->query("UPDATE `user` SET `active`='1',`activation`=NULL WHERE `activation`=?", [$key]);
+        return true;
     }
 }

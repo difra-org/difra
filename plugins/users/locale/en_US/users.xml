@@ -66,8 +66,7 @@
 			</recovered>
 		</login>
 		<recover>
-			<bad_link>This is bad password reset link.</bad_link>
-			<already_logged>Before you can reset password, you should sign out.</already_logged>
+			<already_logged>Before using password reset, you should sign out.</already_logged>
 			<recover_invalid>Invalid password reset link. Please check that link in the mail and in address
 				bar are exact. If you think this is a mistake, feel
 				free to request password reset once more.
