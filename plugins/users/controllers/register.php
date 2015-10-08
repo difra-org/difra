@@ -1,7 +1,14 @@
 <?php
 
 use Difra\Ajaxer;
+use Difra\Exception;
+use Difra\Libs\Cookies;
+use Difra\Locales;
+use Difra\Param\AjaxCheckbox;
+use Difra\Param\AjaxString;
+use Difra\Param\AnyString;
 use Difra\Plugins\Users, Difra\Param;
+use Difra\Plugins\Users\Register;
 use Difra\View;
 
 class RegisterController extends Difra\Controller
@@ -15,11 +22,10 @@ class RegisterController extends Difra\Controller
     }
 
     /**
-     * Authorized user (error)
+     * Authorized user (already registered)
      */
     public function indexActionAuth()
     {
-        // TODO: already registered
         // TODO: log
         View::redirect('/');
     }
@@ -45,89 +51,58 @@ class RegisterController extends Difra\Controller
 
     /**
      * Registration form submit (registration page version)
-     * @param Param\AjaxCheckbox $accept
-     * @param Param\AjaxString|null $email
-     * @param Param\AjaxString|null $password1
-     * @param Param\AjaxString|null $password2
-     * @param Param\AjaxString|null $login
-     * @param Param\AjaxString|null $capcha
-     * @throws \Difra\Exception
+     * @param AjaxCheckbox $accept
+     * @param AjaxCheckbox $ajaxRequest
+     * @param AjaxString|null $email
+     * @param AjaxString|null $password1
+     * @param AjaxString|null $password2
+     * @param AjaxString|null $login
+     * @param AjaxString|null $capcha
+     * @throws Exception
      */
     public function submitAjaxAction(
-        Param\AjaxCheckbox $accept,
-        Param\AjaxString $email = null,
-        Param\AjaxString $password1 = null,
-        Param\AjaxString $password2 = null,
-        Param\AjaxString $login = null,
-        Param\AjaxString $capcha = null
-    )
-    {
-        $ok = true;
-
+        AjaxCheckbox $accept,
+        AjaxCheckbox $ajaxRequest,
+        AjaxString $email = null,
+        AjaxString $password1 = null,
+        AjaxString $password2 = null,
+        AjaxString $login = null,
+        AjaxString $capcha = null
+    ) {
         $register = new Users\Register();
         $register->setEmail($email);
+        $register->setLogin($login);
         $register->setPassword1($password1);
         $register->setPassword2($password2);
         $register->setCapcha($capcha);
 
-        /*        $addit = \Difra\Additionals::getStatus('users', Ajaxer::parameters);
-                if (is_array($addit) and !empty($addit)) {
-                    foreach ($addit as $name => $status) {
-                        switch ($status) {
-                            case \Difra\Additionals::FIELD_OK:
-                                Ajaxer::status($name, Locales::get('additionals/users/' . $name . '/ok'), 'ok');
-                                break;
-                            case \Difra\Additionals::FIELD_EMPTY:
-                                Ajaxer::status(
-                                    $name,
-                                    Locales::get('additionals/users/' . $name . '/empty'), 'error'
-                                );
-                                $ok = false;
-                                break;
-                            case \Difra\Additionals::FIELD_DUPE:
-                                Ajaxer::status(
-                                    $name,
-                                    Locales::get('additionals/users/' . $name . '/dupe'), 'error'
-                                );
-                                $ok = false;
-                                break;
-                            case \Difra\Additionals::FIELD_BAD:
-                                Ajaxer::status(
-                                    $name, Locales::get('additionals/users/' . $name . '/bad_symbols'), 'error'
-                                );
-
-                                $ok = false;
-                                break;
-                        }
-                    }
-                }*/
         if (!$register->validate()) {
             $register->callAjaxerEvents();
             return;
         }
 
         // EULA
-        // TODO: if EULA is enabled, show it
         if (!$accept->val() and \Difra\Config::getInstance()->getValue('auth', 'eula')) {
             $this->root->appendChild($this->xml->createElement('eula'));
             Ajaxer::display(View::render($this->xml, 'auth-ajax', true));
             return;
         }
 
-        // TODO: register user
-//        $register->run();
+        $register->register();
 
-        // TODO: do something
-//        $users = Users::getInstance();
-//        $res = $users->register(Ajaxer::parameters);
-//        if ($res === true) {
-//            Ajaxer::notify(
-//                Locales::get('auth/register/complete-' . Users::getInstance()->getActivationMethod())
-//            );
-//            Ajaxer::close();
-//        } else {
-//            Ajaxer::error('Unknown error: ' . $res);
-//        }
+        // ajax answer
+        if ($ajaxRequest) {
+            Ajaxer::notify(
+                Locales::get('auth/register/complete-' . Users::getActivationMethod())
+            );
+            Ajaxer::close();
+        }
+
+        // html answer
+        Cookies::getInstance()->notify(
+            Locales::get('auth/register/complete-' . Users::getActivationMethod())
+        );
+        View::redirect('/');
     }
 
     /**
@@ -139,22 +114,155 @@ class RegisterController extends Difra\Controller
         // TODO: log
     }
 
+    /**
+     * Activation link
+     * @param AnyString $code
+     */
+    public function activateAction(AnyString $code)
+    {
+        try {
+            Register::activate($code->val());
+            Cookies::getInstance()->notify(Locales::get('auth/activate/done'));
+        } catch (\Difra\Exception $error) {
+            Cookies::getInstance()->notify(
+                Locales::get('auth/activate/' . $error->getMessage()),
+                true
+            );
+        }
+        \Difra\View::redirect('/');
+    }
+
+
 //    /**
-//     * E-mail activation
-//     * @param \Difra\Param\AnyString $code
+//     * Old registration form
 //     * @return void
 //     */
-//    public function activateAction(Param\AnyString $code)
+//    public function registerAjaxAction()
 //    {
-//        $res = Users::activate($code);
-//        if ($res === true) {
-//            \Difra\Libs\Cookies::getInstance()->notify(Locales::get('auth/activate/done'));
-//        } else {
-//            \Difra\Libs\Cookies::getInstance()->notify(
-//                Locales::get('auth/activate/' . $res), true
-//            );
+//        if (\Difra\Auth::getInstance()->logged) {
+//            Ajaxer::reload();
+//            return;
 //        }
-//        \Difra\View::redirect('/');
+//        $this->root->appendChild($this->xml->createElement('register'));
+//        Ajaxer::display(\Difra\View::render($this->xml, 'auth-ajax', true));
+//    }
+//
+//    /**
+//     * Old registration submit form
+//     * @param Difra\Param\AjaxCheckbox $accept
+//     * @param Difra\Param\AjaxString|null $email
+//     * @param Difra\Param\AjaxString|null $password1
+//     * @param Difra\Param\AjaxString|null $password2
+//     * @param Difra\Param\AjaxString|null $capcha
+//     * @return void
+//     */
+//    public function register2AjaxAction(
+//        Param\AjaxCheckbox $accept,
+//        Param\AjaxString $email = null,
+//        Param\AjaxString $password1 = null,
+//        Param\AjaxString $password2 = null,
+//        Param\AjaxString $capcha = null
+//    ) {
+//        $auth = Difra\Auth::getInstance();
+//        if ($auth->logged) {
+//            Ajaxer::error(Locales::get('auth/register/already_logged'));
+//            return;
+//        }
+//        $users = Users::getInstance();
+//        $ok = true;
+//
+//        if (!$email or !$email->val()) {
+//            Ajaxer::status('email', Locales::get('auth/register/email_empty'), 'error');
+//            $ok = false;
+//        } elseif (!$users->isEmailValid($email->val())) {
+//            Ajaxer::status('email', Locales::get('auth/register/email_invalid'), 'error');
+//            $ok = false;
+//        } elseif ($users->checkLogin($email->val())) {
+//            Ajaxer::status('email', Locales::get('auth/register/email_dupe'), 'error');
+//            $ok = false;
+//        } else {
+//            Ajaxer::status('email', Locales::get('auth/register/email_ok'), 'ok');
+//        }
+//        if (!$password1 or !$password1->val()) {
+//            Ajaxer::status('password1', Locales::get('auth/register/password1_empty'), 'error');
+//            $ok = false;
+//        } elseif (strlen($password1->val()) < 6) {
+//            Ajaxer::status('password1', Locales::get('auth/register/password1_short'), 'error');
+//            $ok = false;
+//        } else {
+//            Ajaxer::status('password1', Locales::get('auth/register/password1_ok'), 'ok');
+//        }
+//        if (!$password2 or !$password2->val()) {
+//            Ajaxer::status('password2', Locales::get('auth/register/password2_empty'), 'error');
+//            $ok = false;
+//        } elseif ($password1->val() != $password2->val()) {
+//            Ajaxer::status('password2', Locales::get('auth/register/passwords_diff'), 'error');
+//            $ok = false;
+//        } else {
+//            Ajaxer::status('password2', Locales::get('auth/register/password2_ok'), 'ok');
+//        }
+//        if (!$capcha or !$capcha->val()) {
+//            Ajaxer::status('capcha', Locales::get('auth/register/capcha_empty'), 'error');
+//            $ok = false;
+//        } elseif (!\Difra\Libs\Capcha::getInstance()->verifyKey($capcha->val())) {
+//            Ajaxer::status('capcha', Locales::get('auth/register/capcha_invalid'), 'error');
+//        } else {
+//            Ajaxer::status('capcha', Locales::get('auth/register/capcha_ok'), 'ok');
+//        }
+//
+//        $addit = \Difra\Additionals::getStatus('users', Ajaxer::parameters);
+//        if (is_array($addit) and !empty($addit)) {
+//            foreach ($addit as $name => $status) {
+//                switch ($status) {
+//                    case \Difra\Additionals::FIELD_OK:
+//                        Ajaxer::status($name, Locales::get('additionals/users/' . $name . '/ok'), 'ok');
+//                        break;
+//                    case \Difra\Additionals::FIELD_EMPTY:
+//                        Ajaxer::status(
+//                            $name,
+//                            Locales::get('additionals/users/' . $name . '/empty'), 'error'
+//                        );
+//                        $ok = false;
+//                        break;
+//                    case \Difra\Additionals::FIELD_DUPE:
+//                        Ajaxer::status(
+//                            $name,
+//                            Locales::get('additionals/users/' . $name . '/dupe'), 'error'
+//                        );
+//                        $ok = false;
+//                        break;
+//                    case \Difra\Additionals::FIELD_BAD:
+//                        Ajaxer::status(
+//                            $name, Locales::get('additionals/users/' . $name . '/bad_symbols'), 'error'
+//                        );
+//
+//                        $ok = false;
+//                        break;
+//                }
+//            }
+//        }
+//        if (!$ok) {
+//            return;
+//        }
+//
+//        /*
+//        if( !$accept->val() ) {
+//            $this->root->appendChild( $this->xml->createElement( 'eula' ) );
+//            $this->ajax->display( $this->view->render( $this->xml, 'auth-ajax', true ) );
+//            return;
+//        }
+//        */
+//
+//        $users = Users::getInstance();
+//        $res = $users->register(Ajaxer::parameters);
+//        if ($res === true) {
+//            Ajaxer::notify(
+//                Locales::get('auth/register/complete-' . Users::getInstance()->getActivationMethod())
+//            );
+//            Ajaxer::close();
+//        } else {
+//            Ajaxer::error('Unknown error: ' . $res);
+//        }
 //    }
 
 //    /**
