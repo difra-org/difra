@@ -62,15 +62,15 @@ class Autoloader
             }
         } else {
             // psr4
-            if (!empty($psr4)) {
+            if (!empty(self::$psr4)) {
                 $psrFrom = $parts;
                 $psrTo = [];
-                while (!empty($searchPSR)) {
+                while (!empty($psrFrom)) {
                     $psrClass = implode('/', $psrFrom);
                     if (isset(self::$psr4[$psrClass])) {
-                        return self::$psr4[$psrClass] . implode('/', $psrTo) . '.php';
+                        return DIR_ROOT . self::$psr4[$psrClass] . '/' . implode('/', $psrTo) . '.php';
                     }
-                    array_unshift($psrTo, array_shift($psrFrom));
+                    array_unshift($psrTo, array_pop($psrFrom));
                 }
             }
             // default case
