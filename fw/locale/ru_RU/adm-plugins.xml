@@ -7,6 +7,7 @@
 			<description>Описание</description>
 			<version>Версия</version>
 			<requires>Зависимости</requires>
+			<provides>Предоставляет</provides>
 			<failed>Не удалось сохранить новую конфигурацию</failed>
 		</plugins>
 	</adm>
