@@ -33,10 +33,6 @@ class Plugger
         }
 
         self::smartPluginsEnable();
-
-        echo '<pre>';
-        var_dump(self::$provisions);
-        echo '</pre>';
     }
 
     /**
@@ -277,6 +273,11 @@ class Plugger
         if (empty(self::$provisions[$provision])) {
             throw new Exception("Failed to get provision $provision. Bad plugin requirements list?");
         }
-        return '\\Difra\\Plugins\\' . ucfirst(reset(self::$provisions[$provision]));
+        switch ($provision) {
+            case 'db':
+                return '\\Difra\\DB';
+            default:
+                return '\\Difra\\Plugins\\' . ucfirst(reset(self::$provisions[$provision]));
+        }
     }
 }
