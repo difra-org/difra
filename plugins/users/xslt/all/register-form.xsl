@@ -37,7 +37,7 @@
             </span>
         </div>
         <div class="container">
-            <xsl:call-template name="capcha"/>
+            <xsl:call-template name="captcha"/>
             <input type="text"
                    name="capcha"
                    style="width: 170px;"

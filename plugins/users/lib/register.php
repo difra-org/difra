@@ -4,7 +4,7 @@ namespace Difra\Plugins\Users;
 
 use Difra\Ajaxer;
 use Difra\Exception;
-use Difra\Libs\Capcha;
+use Difra\Plugins\Capcha;
 use Difra\Locales;
 use Difra\DB;
 use Difra\Plugins\Users;
