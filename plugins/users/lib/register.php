@@ -4,9 +4,9 @@ namespace Difra\Plugins\Users;
 
 use Difra\Ajaxer;
 use Difra\Exception;
-use Difra\Libs\Capcha;
 use Difra\Locales;
 use Difra\DB;
+use Difra\Plugger;
 use Difra\Plugins\Users;
 
 /**
@@ -267,16 +267,18 @@ class Register
      */
     private function verifyCapcha()
     {
+        /** @var \Difra\Plugins\Capcha $captcha */
+        $captcha = Plugger::getClass('captcha');
         if (!$this->ignoreEmpty) {
             if (!$this->capcha) {
                 return $this->failures['capcha'] = self::REGISTER_CAPCHA_EMPTY;
-            } elseif (!Capcha::getInstance()->verifyKey($this->capcha)) {
+            } elseif (!$captcha::getInstance()->verifyKey($this->capcha)) {
                 return $this->failures['capcha'] = self::REGISTER_CAPCHA_INVALID;
             } else {
                 return $this->successful['capcha'] = self::REGISTER_CAPCHA_OK;
             }
         } elseif ($this->capcha !== '') {
-            if (!Capcha::getInstance()->verifyKey($this->capcha)) {
+            if (!$captcha::getInstance()->verifyKey($this->capcha)) {
                 return $this->failures['capcha'] = self::REGISTER_CAPCHA_INVALID;
             }
         }
@@ -300,6 +302,10 @@ class Register
         return $this->valid = empty($this->failures);
     }
 
+    /**
+     * Passwords validation
+     * @return bool
+     */
     public function validatePasswords()
     {
         $this->verifyPassword1();
@@ -327,6 +333,10 @@ class Register
         return true;
     }
 
+    /**
+     * Process registration
+     * @throws Exception
+     */
     public function register()
     {
         if (!$this->valid) {
@@ -346,6 +356,12 @@ class Register
 
 //    const ACTIVATE_TIMEOUT = 'activate_timeout'; // think about it. warning: no language string for this.
 
+    /**
+     * Activate user
+     * @param $key
+     * @return bool
+     * @throws Exception
+     */
     public static function activate($key)
     {
         $key = trim((string)$key);

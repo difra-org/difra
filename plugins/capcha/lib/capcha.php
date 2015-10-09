@@ -1,6 +1,6 @@
 <?php
 
-namespace Difra\Libs;
+namespace Difra\Plugins;
 
 use Difra\Envi\Session;
 

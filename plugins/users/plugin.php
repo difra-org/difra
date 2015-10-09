@@ -11,7 +11,7 @@ use Difra\Events;
 class Plugin extends \Difra\Plugin
 {
     protected $provides = 'auth';
-    protected $require = 'database';
+    protected $require = ['database','captcha'];
     protected $version = 6;
     protected $description = 'User accounts';
 

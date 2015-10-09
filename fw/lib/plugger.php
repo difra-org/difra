@@ -3,7 +3,6 @@
 namespace Difra;
 
 use Difra\Libs\XML\DOM;
-use Difra\PDO\Adapters\MySQL;
 
 /**
  * Class Plugger
@@ -26,15 +25,18 @@ class Plugger
         self::$provisions = [];
 
         // default database dependency
-        $dbAvail = false;
         try {
-            DB::getInstance()->fetchOne('SELECT 1');
-            $dbAvail = true;
+            if (DB::getInstance()->fetchOne('SELECT \'pong\'') == 'pong') {
+                self::$provisions['database'] = ['db'];
+            }
         } catch (Exception $ex) {
         }
-        self::$provisions['database'] = ['available' => $dbAvail, 'url' => '#', 'source' => 'core'];
 
         self::smartPluginsEnable();
+
+        echo '<pre>';
+        var_dump(self::$provisions);
+        echo '</pre>';
     }
 
     /**
@@ -103,7 +105,7 @@ class Plugger
             $enabledPlugins = [];
         }
 
-        // составление списка плагинов
+        // create plugins list
         foreach ($plugins as $name => $plugin) {
             $info = $plugin->getInfo();
             self::$pluginsData[$name] = [
@@ -116,21 +118,6 @@ class Plugger
                 'version' => $info['version'],
                 'description' => $info['description']
             ];
-            $provs = array_merge([$name], $info['provides']);
-            foreach ($provs as $prov) {
-                if (isset(self::$provisions[$prov])) {
-                    if (is_array(self::$provisions[$prov]['source'])) {
-                        self::$provisions[$prov]['source'][] = $name;
-                    } else {
-                        self::$provisions[$prov]['source'] = [self::$provisions[$prov]['source'], $name];
-                    }
-                } else {
-                    self::$provisions[$prov] = [
-                        'available' => false,
-                        'source' => $name
-                    ];
-                }
-            }
         }
         // Load plugins
         do {
@@ -143,7 +130,7 @@ class Plugger
                 // check if all provisions are available
                 if (!empty($data['require'])) {
                     foreach ($data['require'] as $req) {
-                        if (!self::$provisions[$req]['available']) {
+                        if (empty(self::$provisions[$req])) {
                             continue 2;
                         }
                     }
@@ -152,10 +139,10 @@ class Plugger
                 self::$plugins[$name]->enable();
                 self::$pluginsData[$name]['loaded'] = true;
                 $changed = true;
-                // set plugin provisions as available
-                self::$provisions[$name]['available'] = true;
+                // set plugin provisions
+                self::$provisions[$name][] = $name;
                 foreach ($data['provides'] as $prov) {
-                    self::$provisions[$prov]['available'] = true;
+                    self::$provisions[$prov][] = $name;
                 }
             }
         } while ($changed);
@@ -181,7 +168,7 @@ class Plugger
         foreach (self::$pluginsData as $name => $data) {
             if (!$data['loaded'] and !empty($data['require'])) {
                 foreach ($data['require'] as $req) {
-                    if (!isset(self::$provisions[$req]) or !self::$provisions[$req]['available']) {
+                    if (empty(self::$provisions[$req])) {
                         self::$pluginsData[$name]['missingReq'][] = $req;
                         self::$pluginsData[$name]['disabled'] = true;
                     }
@@ -277,5 +264,19 @@ class Plugger
             $config->set('plugins', $conf);
         }
         return $config->save();
+    }
+
+    /**
+     * Get class for provision.
+     * @param string $provision
+     * @return string
+     * @throws Exception
+     */
+    public static function getClass($provision)
+    {
+        if (empty(self::$provisions[$provision])) {
+            throw new Exception("Failed to get provision $provision. Bad plugin requirements list?");
+        }
+        return '\\Difra\\Plugins\\' . ucfirst(reset(self::$provisions[$provision]));
     }
 }
