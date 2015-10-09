@@ -11,7 +11,8 @@ class Autoloader
 {
     /** @var array Class black list */
     private static $bl = ['sqlite3'];
-    private static $loader = null;
+    /** @var string[string] */
+    private static $psr4 = null;
 
     /**
      * Auto loader method
@@ -24,13 +25,6 @@ class Autoloader
             return;
         }
         $file = self::class2file($class);
-
-        // file_exists() is slow! Use only for debugging.
-//        if (Debugger::isConsoleEnabled() == Debugger::CONSOLE_ENABLED) {
-//            if (!file_exists($file)) {
-//                throw new Exception('File "' . $file . "' for class '" . $class . '" was not found.');
-//            }
-//        }
 
         /** @noinspection PhpIncludeInspection */
         include_once($file);
@@ -45,23 +39,42 @@ class Autoloader
     {
         $class = ltrim($class, '\\');
         $parts = explode('\\', $class);
-        if ($parts[0] != 'Difra') {
-            $path = DIR_ROOT . 'lib/';
-        } elseif (sizeof($parts) > 4 and $parts[0] == 'Difra' and $parts[1] == 'Plugins' and $parts[3] == 'Objects') {
-            $plugin = strtolower($parts[2]);
-            $parts = array_slice($parts, 4);
-            $path = DIR_PLUGINS . "$plugin/objects/";
-        } elseif ($parts[0] == 'Difra' and $parts[1] == 'Plugins') {
-            $name = strtolower($parts[2]);
-            // search for Plugins/Name classes in plugins/name/lib/name.php
-            if (sizeof($parts) == 3) {
-                $parts[] = $name;
+
+        // framework and plugins
+        if ($parts[0] === 'Difra') {
+            if (sizeof($parts) > 4 and
+                $parts[0] == 'Difra' and $parts[1] == 'Plugins' and $parts[3] == 'Objects'
+            ) {
+                $plugin = strtolower($parts[2]);
+                $parts = array_slice($parts, 4);
+                $path = DIR_PLUGINS . "$plugin/objects/";
+            } elseif ($parts[0] == 'Difra' and $parts[1] == 'Plugins') {
+                $name = strtolower($parts[2]);
+                // search for Plugins/Name classes in plugins/name/lib/name.php
+                if (sizeof($parts) == 3) {
+                    $parts[] = $name;
+                }
+                $parts = array_slice($parts, 3);
+                $path = DIR_PLUGINS . "$name/lib/";
+            } else {
+                $path = DIR_FW . 'lib/';
+                array_shift($parts);
             }
-            $parts = array_slice($parts, 3);
-            $path = DIR_PLUGINS . "$name/lib/";
         } else {
-            $path = DIR_FW . 'lib/';
-            array_shift($parts);
+            // psr4
+            if (!empty($psr4)) {
+                $psrFrom = $parts;
+                $psrTo = [];
+                while (!empty($searchPSR)) {
+                    $psrClass = implode('/', $psrFrom);
+                    if (isset(self::$psr4[$psrClass])) {
+                        return self::$psr4[$psrClass] . implode('/', $psrTo) . '.php';
+                    }
+                    array_unshift($psrTo, array_shift($psrFrom));
+                }
+            }
+            // default case
+            $path = DIR_ROOT . 'lib/';
         }
         return $path . strtolower(implode('/', $parts)) . '.php';
     }
@@ -87,8 +100,8 @@ class Autoloader
         }
     }
 
-    public static function setLoader($obj)
+    public static function init()
     {
-        self::$loader = $obj;
+        self::$psr4 = Config::getInstance()->get('psr4') ?: null;
     }
 }
