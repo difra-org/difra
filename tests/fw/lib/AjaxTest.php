@@ -7,6 +7,8 @@ class AjaxTest extends PHPUnit_Framework_TestCase
      */
     public function test_actions()
     {
+        \Difra\Debugger::disable();
+
         \Difra\Ajaxer::clean();
         $actions = [];
 
