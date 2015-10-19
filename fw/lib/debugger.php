@@ -73,7 +73,7 @@ class Debugger
             self::$errors = self::ERRORS_HIDE;
             set_exception_handler(['\Difra\Debugger', 'productionException']);
             return;
-        };
+        }
 
         // got GET parameter debug=-1, emulate production but show errors
         if (isset($_GET['debug']) and $_GET['debug'] == -1) {
@@ -388,31 +388,44 @@ class Debugger
      */
     public static function checkSlow()
     {
-        if (self::$console) {
+        // TODO: merge this method with Exception::sendNotification()
+
+        $time = self::getTimer();
+        if (!$time <= 1) {
             return;
         }
-        $time = self::getTimer();
-        if ($time > 1) {
-            $output = '<pre>';
-            foreach (self::$output as $line) {
-                if (!isset($line['type'])) {
-                    $line['type'] = null;
-                };
-                $output .= "{$line['timer']}\t{$line['class']}\t{$line['type']}\t{$line['message']}\n";
-            }
-            $date = date('r');
-            $server = print_r($_SERVER, true);
-            $post = print_r($_POST, true);
-            $cookie = print_r($_COOKIE, true);
-            $host = Envi::getHost();
-            $uri = Envi::getUri();
-            $user = Auth::getInstance()->getEmail();
 
-            $output .= <<<MSG
+        // don't send notifications on development environment
+        if (!Envi::isProduction()) {
+            return;
+        }
 
+        $notificationMail = self::getNotificationMail();
+        // no notification mail is set
+        if (!$notificationMail) {
+            return;
+        }
+
+        $output = '<pre>';
+        foreach (self::$output as $line) {
+            if (!isset($line['type'])) {
+                $line['type'] = null;
+            };
+            $output .= "{$line['timer']}\t{$line['class']}\t{$line['type']}\t{$line['message']}\n";
+        }
+        $date = date('r');
+        $server = print_r($_SERVER, true);
+        $post = print_r($_POST, true);
+        $cookie = print_r($_COOKIE, true);
+        $host = Envi::getHost();
+        $uri = Envi::getUri();
+        $user = Auth::getInstance()->getEmail();
+
+        $output .= <<<MSG
+
+Page:	$uri
 Time:	$date
 Host:	$host
-Uri:	$uri
 User:	$user
 
 \$_SERVER:
@@ -424,11 +437,8 @@ $post
 \$_COOKIE:
 $cookie
 MSG;
-            $output .= '</pre>';
-            // nooo!!! please no!!!
-            // TODO: implement slow script errors e-mail setting in configuration
-//			Mailer::getInstance()->sendMail('errors@a-jam.ru', 'Slow script', print_r($output, true));
-        }
+        $output .= '</pre>';
+        Mailer::getInstance()->sendMail(self::getNotificationMail(), 'Slow script', print_r($output, true));
     }
 
     /**
@@ -439,5 +449,14 @@ MSG;
     {
         self::$enabled = self::DEBUG_DISABLED;
         self::apply();
+    }
+
+    /**
+     * Get e-mail for notifications
+     * @return string|null
+     */
+    public static function getNotificationMail()
+    {
+        return Config::getInstance()->getValue('email', 'errors');
     }
 }
