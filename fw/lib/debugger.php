@@ -19,15 +19,12 @@ class Debugger
     const CACHES_ENABLED = 1; // console enabled and active
     const ERRORS_SHOW = 1;
     const ERRORS_HIDE = 0;
-
     /** @var bool */
     static public $shutdown = false;
-
     private static $enabled = self::DEBUG_DISABLED;
     private static $console = self::CONSOLE_DISABLED;
     private static $caches = self::CACHES_ENABLED;
     private static $errors = self::ERRORS_HIDE;
-
     private static $output = [];
     private static $hadError = false;
     private static $handledByException = null;
@@ -59,17 +56,22 @@ class Debugger
 
     private function configure()
     {
+        // cli mode
+        if (Envi::getMode() == 'cli') {
+            self::$enabled = self::DEBUG_ENABLED;
+            self::$console = self::CONSOLE_DISABLED;
+            self::$caches = self::CACHES_DISABLED;
+            self::$errors = self::ERRORS_SHOW;
+            return;
+        }
+
         // production environment
         if (Envi::isProduction()) {
             self::$enabled = self::DEBUG_DISABLED;
             self::$console = self::CONSOLE_DISABLED;
             self::$caches = self::CACHES_ENABLED;
-            if (Envi::getMode() == 'web') {
-                self::$errors = self::ERRORS_HIDE;
-                set_exception_handler(['\Difra\Debugger', 'productionException']);
-            } else {
-                self::$errors = self::ERRORS_SHOW;
-            }
+            self::$errors = self::ERRORS_HIDE;
+            set_exception_handler(['\Difra\Debugger', 'productionException']);
             return;
         };
 
@@ -124,14 +126,14 @@ class Debugger
 
     private static function apply()
     {
-        if(self::$errors == self::ERRORS_HIDE) {
+        if (self::$errors == self::ERRORS_HIDE) {
             ini_set('display_errors', 'Off');
         } else {
             ini_set('display_errors', 'On');
             ini_set('error_reporting', E_ALL);
             ini_set('html_errors', (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On' ? 'Off' : 'On');
         }
-        if(self::$console == self::CONSOLE_ON) {
+        if (self::$console == self::CONSOLE_ON) {
             ini_set('display_errors', 'Off');
             ini_set('error_reporting', E_ALL);
             set_error_handler(['\Difra\Debugger', 'captureNormal']);
@@ -404,7 +406,7 @@ class Debugger
             $cookie = print_r($_COOKIE, true);
             $host = Envi::getHost();
             $uri = Envi::getUri();
-            $user = Auth::getInstance()->data['email'];
+            $user = Auth::getInstance()->getEmail();
 
             $output .= <<<MSG
 
