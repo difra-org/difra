@@ -23,6 +23,8 @@ abstract class Common
     protected $connected = null;
     /** @var string|null */
     protected $error = null;
+    /** @var bool */
+    protected $transaction = false;
 
     /**
      * Detect if this adapter is usable
@@ -51,6 +53,16 @@ abstract class Common
             throw new Exception("PDO adapter is not usable: {$conf['type']}");
         }
         $this->config = $conf;
+    }
+
+    /**
+     * Destructor
+     */
+    public function __destruct()
+    {
+        if ($this->transaction) {
+            $this->rollBack();
+        }
     }
 
     /**
@@ -107,8 +119,8 @@ abstract class Common
     {
         if ($this->connected === true) {
             return;
-        } elseif ($this->connected === false) {
-            throw new Exception('Database connection is not available');
+//        } elseif ($this->connected === false) {
+//            throw new Exception('Database connection is not available');
         }
         $this->connected = false;
         try {
@@ -123,7 +135,10 @@ abstract class Common
             );
         } catch (\Exception $ex) {
             Exception::sendNotification($ex);
-            throw new Exception("Database connection failed: {$this->config['name']}");
+            throw new Exception(
+                "Database connection failed: {$this->config['name']}"
+                . (Debugger::isEnabled() ? '(' . $ex->getMessage() . ')' : '')
+            );
         }
         $this->connected = true;
     }
@@ -231,5 +246,36 @@ abstract class Common
     public function getAffectedRows()
     {
         return $this->lastAffectedRows;
+    }
+
+    /**
+     * Start transaction
+     * @return bool
+     */
+    public function beginTransaction()
+    {
+        $this->connect();
+        $this->transaction = true;
+        return $this->pdo->beginTransaction();
+    }
+
+    /**
+     * Roll back transaction
+     * @return bool
+     */
+    public function rollBack()
+    {
+        $this->transaction = false;
+        return $this->pdo->rollBack();
+    }
+
+    /**
+     * Commit transaction
+     * @return bool
+     */
+    public function commit()
+    {
+        $this->transaction = false;
+        return $this->pdo->commit();
     }
 }
