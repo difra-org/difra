@@ -430,4 +430,14 @@ MSG;
 //			Mailer::getInstance()->sendMail('errors@a-jam.ru', 'Slow script', print_r($output, true));
         }
     }
+
+    /**
+     * Disable Debugger
+     * (for unit tests only)
+     */
+    public static function disable()
+    {
+        self::$enabled = self::DEBUG_DISABLED;
+        self::apply();
+    }
 }
