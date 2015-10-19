@@ -27,7 +27,7 @@ class Autoloader
         $file = self::class2file($class);
 
         /** @noinspection PhpIncludeInspection */
-        include_once($file);
+        @include_once($file);
     }
 
     /**
