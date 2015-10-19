@@ -153,7 +153,11 @@ class Envi
         return gethostname();
     }
 
-    // development mode is enabled by VHOST_DEVMODE='on' server variable
+    /**
+     * Is production mode enabled?
+     * Development mode is enabled by VHOST_DEVMODE='on' server variable.
+     * @return bool
+     */
     public static function isProduction()
     {
         return !isset($_SERVER['VHOST_DEVMODE']) or strtolower($_SERVER['VHOST_DEVMODE']) != 'on';
