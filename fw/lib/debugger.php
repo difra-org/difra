@@ -131,7 +131,7 @@ class Debugger
         } else {
             ini_set('display_errors', 'On');
             ini_set('error_reporting', E_ALL);
-            ini_set('html_errors', (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On' ? 'Off' : 'On');
+            ini_set('html_errors', (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On');
         }
         if (self::$console == self::CONSOLE_ON) {
             ini_set('display_errors', 'Off');
