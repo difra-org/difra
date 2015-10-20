@@ -9,6 +9,10 @@ use Difra\Envi\Request;
 use Difra\View;
 use Difra\View\HttpError as ViewException;
 
+/**
+ * Class Output
+ * @package Difra\View
+ */
 class Output {
 
     /** @var string */

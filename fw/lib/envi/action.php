@@ -3,13 +3,14 @@
 namespace Difra\Envi;
 
 use Difra\Cache;
+use Difra\Controller;
 use Difra\Debugger;
 use Difra\Envi;
 use Difra\Exception;
 use Difra\Plugger;
 use Difra\Resourcer;
 use Difra\View;
-use \Difra\View\HttpError as ViewException;
+use Difra\View\HttpError;
 
 /**
  * Class Action
@@ -24,7 +25,7 @@ class Action
     private static $controllerClass = null;
     /** @var string */
     private static $controllerFile = '';
-    /** @var \Difra\Controller */
+    /** @var Controller */
     private static $controllerObj = null;
     /** @var string */
     private static $controllerUri = null;
@@ -174,7 +175,7 @@ class Action
         }
         if (!self::$controllerObj) {
             self::$controllerObj = new self::$controllerClass(self::$parameters);
-            if (!self::$controllerObj instanceof \Difra\Controller) {
+            if (!self::$controllerObj instanceof Controller) {
                 throw new Exception('Controller should extend \Difra\Controller: ' . self::$controllerClass);
             }
         }
