@@ -66,7 +66,7 @@ class Autoloader
                 $psrFrom = $parts;
                 $psrTo = [];
                 while (!empty($psrFrom)) {
-                    $psrClass = implode('/', $psrFrom);
+                    $psrClass = implode('\\', $psrFrom);
                     if (isset(self::$psr4[$psrClass])) {
                         return DIR_ROOT . self::$psr4[$psrClass] . '/' . implode('/', $psrTo) . '.php';
                     }
