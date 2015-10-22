@@ -54,7 +54,7 @@ class Debugger
         self::apply();
     }
 
-    private function configure()
+    private static function configure()
     {
         // cli mode
         if (Envi::getMode() == 'cli') {
