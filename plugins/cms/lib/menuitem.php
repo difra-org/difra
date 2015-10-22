@@ -3,7 +3,9 @@
 namespace Difra\Plugins\CMS;
 
 use Difra\Cache;
+use Difra\Exception;
 use Difra\MySQL;
+use Difra\Plugins\CMS;
 
 /**
  * Class Menuitem
@@ -68,12 +70,12 @@ class Menuitem
             $cacheKey = 'cms_menuitem_list_' . $menuId;
             $cache = Cache::getInstance();
             if (!$data = $cache->get($cacheKey)) {
-                $db = MySQL::getInstance();
-                $data = $db->fetch(
-                    'SELECT `cms_menu_items`.*,`cms`.`id` as `page_id`,`cms`.`tag`,`cms`.`hidden`,`cms`.`title`'
-                    . ' FROM `cms_menu_items` LEFT JOIN `cms` ON `cms_menu_items`.`page`=`cms`.`id`'
-                    . ' WHERE `menu`=\'' . $db->escape($menuId)
-                    . "' ORDER BY `position`"
+                $data = CMS::getDB()->fetch(<<<SQL
+SELECT `cms_menu_items`.*,`cms`.`id` as `page_id`,`cms`.`tag`,`cms`.`hidden`,`cms`.`title`
+FROM `cms_menu_items` LEFT JOIN `cms` ON `cms_menu_items`.`page`=`cms`.`id`
+WHERE `menu`=? ORDER BY `position`
+SQL
+                    , [$menuId]
                 );
                 $cache->put($cacheKey, $data);
             }
@@ -123,30 +125,50 @@ class Menuitem
      */
     private function save()
     {
-        $db = MySQL::getInstance();
+        $db = CMS::getDB();
         if (!$this->id) {
             $pos = $db->fetchOne('SELECT MAX(`position`) FROM `cms_menu_items`');
-            $db->query(
-                'INSERT INTO `cms_menu_items` SET '
-                . "`menu`='" . $db->escape($this->menu) . "',"
-                . "`position`=" . $db->escape(intval($pos) + 1) . ","
-                . ($this->parent ? "`parent`='" . $db->escape($this->parent) . "'," : '`parent`=NULL,')
-                . "`visible`='" . $db->escape($this->visible) . "',"
-                . ($this->page ? "`page`='" . $db->escape($this->page) . "'," : '`page`=NULL,')
-                . ($this->link ? "`link`='" . $db->escape($this->link) . "'," : '`link`=NULL,')
-                . "`link_label`='" . $db->escape($this->linkLabel) . "'"
+            $db->query(<<<SQL
+INSERT INTO `cms_menu_items` SET
+    `menu`=:menu,
+    `position`=:position,
+    `parent`=:parent,
+    `visible`=:visible,
+    `page`=:page,
+    `link`=:link,
+    `link_label`=:link_label
+SQL
+                , [
+                    'menu' => $this->menu,
+                    'position' => intval($pos) + 1,
+                    'parent' => $this->parent ?: null,
+                    'visible' => $this->visible,
+                    'page' => $this->page,
+                    'link' => $this->link ?: null,
+                    'link_label' => $this->linkLabel
+                ]
             );
             $this->id = $db->getLastId();
         } else {
-            $db->query(
-                'UPDATE `cms_menu_items` SET '
-                . "`menu`='" . $db->escape($this->menu) . "',"
-                . ($this->parent ? "`parent`='" . $db->escape($this->parent) . "'," : '`parent`=NULL,')
-                . "`visible`='" . $db->escape($this->visible) . "',"
-                . ($this->page ? "`page`='" . $db->escape($this->page) . "'," : '`page`=NULL,')
-                . ($this->link ? "`link`='" . $db->escape($this->link) . "'," : '`link`=NULL,')
-                . "`link_label`='" . $db->escape($this->linkLabel) . "'"
-                . " WHERE `id`='" . $db->escape($this->id) . "'"
+            $db->query(<<<'SQL'
+UPDATE `cms_menu_items` SET
+    `menu`=:menu,
+    `parent`=:parent,
+    `visible`=:visible,
+    `page`=:page,
+    `link`=:link,
+    `link_label`=:link_label,
+    WHERE `id`=:id
+SQL
+                , [
+                    'id' => $this->id,
+                    'menu' => $this->menu,
+                    'parent' => $this->parent ?: null,
+                    'visible' => $this->visible,
+                    'page' => $this->page,
+                    'link' => $this->link ?: null,
+                    'link_label' => $this->linkLabel
+                ]
             );
         }
         $this->modified = false;
@@ -197,8 +219,7 @@ class Menuitem
         $cache = Cache::getInstance();
         $cacheKey = 'cms_menuitem_' . $this->id;
         if (!$data = $cache->get($cacheKey)) {
-            $db = MySQL::getInstance();
-            $data = $db->fetchRow("SELECT * FROM `cms_menu_items` WHERE `id`='" . $db->escape($this->id) . "'");
+            $data = CMS::getDB()->fetchRow("SELECT * FROM `cms_menu_items` WHERE `id`=?", [$this->id]);
             $cache->put($cacheKey, $data);
         }
         if (!$data) {
@@ -225,24 +246,30 @@ class Menuitem
             return false;
         }
         $node->setAttribute('id', $this->id);
+        $node->setAttribute('id', $this->id);
         $node->setAttribute('menu', $this->menu);
         $node->setAttribute('parent', $this->parent);
-        $node->setAttribute('visible', $this->visible);
         if ($this->page) {
-            $node->setAttribute('page', $this->page);
-            /** @var $pageNode \DOMElement */
-            $pageNode = $node->appendChild($node->ownerDocument->createElement('page'));
-            if (!empty($this->pageData)) {
-                $pageNode->setAttribute('id', $this->pageData['id']);
-                $pageNode->setAttribute('title', $this->pageData['title']);
-                $pageNode->setAttribute('uri', $this->pageData['tag']);
-                $pageNode->setAttribute('hidden', $this->pageData['hidden']);
-            } elseif ($this->page) {
-                Page::get($this->page)->getXML($pageNode);
+            if (empty($this->pageData)) {
+                $page = Page::get($this->page);
+                $this->pageData = [
+                    'id' => $page->getId(),
+                    'tag' => $page->getUri(),
+                    'hidden' => $page->getHidden(),
+                    'title' => $page->getTitle()
+                ];
             }
+            $hidden = (!$this->visible or $this->pageData['hidden']) ? '1' : '0';
+            $node->setAttribute('type', 'page');
+            $node->setAttribute('label', $this->pageData['title']);
+            $node->setAttribute('link', $this->pageData['tag']);
+            $node->setAttribute('hidden', $hidden);
+            $node->setAttribute('page', $this->pageData['id']);
         } elseif ($this->link) {
+            $node->setAttribute('type', 'link');
+            $node->setAttribute('label', $this->linkLabel);
             $node->setAttribute('link', $this->link);
-            $node->setAttribute('linkLabel', $this->linkLabel);
+            $node->setAttribute('hidden', !$this->visible ? '1' : '0');
         }
         return true;
     }
@@ -254,8 +281,7 @@ class Menuitem
     {
         $this->load();
         $this->modified = false;
-        $db = MySQL::getInstance();
-        $db->query("DELETE FROM `cms_menu_items` WHERE `id`='" . $db->escape($this->id) . "'");
+        CMS::getDB()->query('DELETE FROM `cms_menu_items` WHERE `id`=?', [$this->id]);
         $this->clearCache();
     }
 
@@ -345,12 +371,15 @@ class Menuitem
     public function moveUp()
     {
         $this->load();
-        $db = MySQL::getInstance();
+        $db = CMS::getDB();
         $items = $db->fetch(
-            "SELECT `id`,`position` FROM `cms_menu_items`"
-            . " WHERE `menu`='" . $this->menu . "'"
-            . " AND `parent`" . ($this->parent ? "='" . $db->escape($this->parent) . "'" : ' IS NULL')
-            . " ORDER BY `position`"
+            "SELECT `id`,`position` FROM `cms_menu_items`
+                WHERE `menu`=:menu
+                AND `parent`" . ($this->parent ? "=" . $db->escape($this->parent) : ' IS NULL')
+            . " ORDER BY `position`",
+            [
+                'menu' => $this->menu
+            ]
         );
         $newSort = [];
         $pos = 1;
@@ -369,7 +398,13 @@ class Menuitem
             $newSort[$prev['id']] = $pos;
         }
         foreach ($newSort as $id => $pos) {
-            $db->query("UPDATE `cms_menu_items` SET `position`='$pos' WHERE `id`='" . $db->escape($id) . "'");
+            CMS::getDB()->query(
+                "UPDATE `cms_menu_items` SET `position`=:pos WHERE `id`=:id",
+                [
+                    'pos' => $pos,
+                    'id' => $this->id
+                ]
+            );
         }
         $this->clearCache();
     }
@@ -380,12 +415,14 @@ class Menuitem
     public function moveDown()
     {
         $this->load();
-        $db = MySQL::getInstance();
-        $items = $db->fetch(
-            "SELECT `id`,`position` FROM `cms_menu_items`"
-            . " WHERE `menu`='" . $this->menu . "'"
-            . " AND `parent`" . ($this->parent ? "='" . $db->escape($this->parent) . "'" : ' IS NULL')
-            . " ORDER BY `position`"
+        $db = CMS::getDB();
+        $items = CMS::getDB()->fetch(
+            "SELECT `id`,`position` FROM `cms_menu_items`
+                WHERE
+                    `menu`=:menu
+                    AND `parent`" . ($this->parent ? '=' . $db->escape($this->parent) : ' IS NULL')
+            . " ORDER BY `position`",
+            ['menu' => $this->menu]
         );
         $newSort = [];
         $pos = 1;
@@ -404,11 +441,22 @@ class Menuitem
         if ($next) {
             $newSort[$next['id']] = $pos;
         }
-        $queries = [];
-        foreach ($newSort as $id => $pos) {
-            $queries[] = "UPDATE `cms_menu_items` SET `position`='$pos' WHERE `id`='" . $db->escape($id) . "'";
+        $db->beginTransaction();
+        try {
+            foreach ($newSort as $id => $pos) {
+                $db->query(
+                    "UPDATE `cms_menu_items` SET `position`=:pos WHERE `id`=:id",
+                    [
+                        'id' => $id,
+                        'pos' => $pos
+                    ]
+                );
+            }
+        } catch (\PDOException $e) {
+            $db->rollBack();
+            throw new Exception('PDO Exception: ' . $e->getMessage());
         }
-        $db->query($queries);
+        $db->commit();
         $this->clearCache();
     }
 }

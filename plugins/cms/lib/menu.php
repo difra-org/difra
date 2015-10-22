@@ -3,6 +3,8 @@
 namespace Difra\Plugins\CMS;
 
 use Difra, Difra\Plugins;
+use Difra\Cache;
+use Difra\Plugins\CMS;
 
 /**
  * Объект-меню
@@ -51,12 +53,10 @@ class Menu
     public static function getList()
     {
         try {
-            $cache = \Difra\Cache::getInstance();
+            $cache = Cache::getInstance();
             $cacheKey = 'cms_menu_list';
             if (!$data = $cache->get($cacheKey)) {
-                $db = \Difra\MySQL::getInstance();
-                $data =
-                    $db->fetch('SELECT * FROM `cms_menu` ORDER BY `name`');
+                $data = CMS::getDB()->fetch('SELECT * FROM `cms_menu` ORDER BY `name`');
                 $cache->put($cacheKey, $data);
             }
             if (!is_array($data) or empty($data)) {
@@ -92,7 +92,7 @@ class Menu
      */
     private function save()
     {
-        $db = \Difra\MySQL::getInstance();
+        $db = CMS::getDB();
         if (!$this->id) {
             $db->query(
                 'INSERT INTO `cms_menu` SET '
@@ -118,7 +118,7 @@ class Menu
      */
     public static function clearCache()
     {
-        \Difra\Cache::getInstance()->remove('cms_menu_list');
+        Cache::getInstance()->remove('cms_menu_list');
     }
 
     /**
@@ -149,8 +149,7 @@ class Menu
         if (!$this->id) {
             $this->save();
         }
-        $db = \Difra\MySQL::getInstance();
-        $data = $db->fetchRow("SELECT * FROM `cms_menu` WHERE `id`='" . $db->escape($this->id) . "'");
+        $data = CMS::getDB()->fetchRow('SELECT * FROM `cms_menu` WHERE `id`=?', [$this->id]);
         if (!$data) {
             return false;
         }
@@ -167,8 +166,7 @@ class Menu
     {
         $this->loaded = true;
         $this->modified = false;
-        $db = \Difra\MySQL::getInstance();
-        $db->query("DELETE FROM `cms_menu` WHERE `id`='" . $db->escape($this->id) . "'");
+        CMS::getDB()->query("DELETE FROM `cms_menu` WHERE `id`=?", [$this->id]);
         self::clearCache();
     }
 

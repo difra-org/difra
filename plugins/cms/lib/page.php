@@ -7,6 +7,7 @@ use Difra\Envi;
 use Difra\Exception;
 use Difra\MySQL;
 use Difra\Param;
+use Difra\Plugins\CMS;
 
 /**
  * Class Page
@@ -66,9 +67,8 @@ class Page
             $where[] = '`hidden`=' . ($visible ? '0' : '1');
         }
         try {
-            $db = MySQL::getInstance();
             $data =
-                $db->fetch(
+                CMS::getDB()->fetch(
                     'SELECT * FROM `cms`' . (
                     !empty($where) ? ' WHERE ' . implode(' AND ', $where) : '')
                     . ' ORDER BY `tag`'
@@ -106,8 +106,7 @@ class Page
         $cache = Cache::getInstance();
         if (!$data = $cache->get('cms_tags')) {
             try {
-                $db = MySQL::getInstance();
-                $data1 = $db->fetch('SELECT `id`,`tag` FROM `cms` WHERE `hidden`=0');
+                $data1 = CMS::getDB()->fetch('SELECT `id`,`tag` FROM `cms` WHERE `hidden`=0');
             } catch (Exception $ex) {
                 return false;
             }
@@ -137,24 +136,38 @@ class Page
      */
     private function save()
     {
-        $db = MySQL::getInstance();
+        $db = CMS::getDB();
         if (!$this->id) {
             $db->query(
-                'INSERT INTO `cms` SET '
-                . "`title`='" . $db->escape($this->title) . "',"
-                . "`tag`='" . $db->escape($this->uri) . "',"
-                . "`body`='" . $db->escape($this->body) . "',"
-                . "`hidden`='" . ($this->hidden ? '1' : '0') . "'"
+                'INSERT INTO `cms` SET
+                    `title`=:title,
+                    `tag`=:tag,
+                    `body`=:body,
+                    `hidden`=:hidden',
+                [
+                    'title' => $this->title,
+                    'tag' => $this->uri,
+                    'body' => $this->body,
+                    'hidden' => $this->hidden ? '1' : '0'
+                ]
             );
             $this->id = $db->getLastId();
         } else {
             $db->query(
-                'UPDATE `cms` SET '
-                . "`title`='" . $db->escape($this->title) . "',"
-                . "`tag`='" . $db->escape($this->uri) . "',"
-                . "`body`='" . $db->escape($this->body) . "',"
-                . "`hidden`='" . ($this->hidden ? '1' : '0') . "'"
-                . " WHERE `id`='" . $db->escape($this->id) . "'"
+                'UPDATE `cms` SET
+                    `title`=:title,
+                    `tag`=:tag,
+                    `body`=:body,
+                    `hidden`=:hidden
+                    WHERE `id`=:id',
+                [
+                    'id' => $this->id,
+                    'title' => $this->title,
+                    'tag' => $this->uri,
+                    'body' => $this->body,
+                    'hidden' => $this->hidden ? '1' : '0'
+                ]
+
             );
             Cache::getInstance()->remove('cms_page_' . $this->id);
         }
@@ -220,8 +233,7 @@ class Page
         }
         $cache = Cache::getInstance();
         if (!$data = $cache->get('cms_page_' . $this->id)) {
-            $db = MySQL::getInstance();
-            $data = $db->fetchRow("SELECT * FROM `cms` WHERE `id`='" . $db->escape($this->id) . "'");
+            $data = CMS::getDB()->fetchRow("SELECT * FROM `cms` WHERE `id`=?", [$this->id]);
             $cache->put('cms_page_' . $this->id, $data);
         }
         if (!$data) {
@@ -362,8 +374,7 @@ class Page
                 rmdir($path);
             }
         }
-        $db = MySQL::getInstance();
-        $db->query("DELETE FROM `cms` WHERE `id`='" . $db->escape($this->id) . "'");
+        CMS::getDB()->query("DELETE FROM `cms` WHERE `id`=?", [$this->id]);
         self::cleanCache();
     }
 }

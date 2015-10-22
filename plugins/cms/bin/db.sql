@@ -6,7 +6,7 @@ CREATE TABLE `cms` (
     `body`   MEDIUMTEXT,
     PRIMARY KEY (`id`),
     KEY `tag` (`tag`) USING HASH,
-    KEY `hidden` (`hidden`)
+    KEY `hidden` (`hidden`) USING HASH
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = `utf8`;
@@ -17,7 +17,7 @@ CREATE TABLE `cms_menu` (
     `description` CHAR(250)        DEFAULT NULL,
     `maxdepth`    INT(11)          DEFAULT NULL,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `name` (`name`)
+    UNIQUE KEY `name` (`name`) USING HASH
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = `utf8`;
@@ -32,13 +32,13 @@ CREATE TABLE `cms_menu_items` (
     `link`       VARCHAR(2048)    DEFAULT NULL,
     `link_label` CHAR(250)        DEFAULT NULL,
     PRIMARY KEY (`id`),
-    KEY `menu_id` (`menu`),
-    KEY `page_id` (`page`),
+    KEY `menu_id` (`menu`) USING HASH,
+    KEY `page_id` (`page`) USING HASH,
     KEY `position` (`position`),
-    CONSTRAINT `cms_menu_items_ibfk_1` FOREIGN KEY (`menu`) REFERENCES `cms_menu` (`id`)
+    CONSTRAINT `fk_cms_menu_items_menu` FOREIGN KEY (`menu`) REFERENCES `cms_menu` (`id`)
         ON DELETE CASCADE
         ON UPDATE CASCADE,
-    CONSTRAINT `cms_menu_items_ibfk_2` FOREIGN KEY (`page`) REFERENCES `cms` (`id`)
+    CONSTRAINT `fk_cms_menu_items_page` FOREIGN KEY (`page`) REFERENCES `cms` (`id`)
         ON DELETE CASCADE
         ON UPDATE CASCADE
 )
