@@ -3,6 +3,7 @@
 namespace Difra\Plugins;
 
 use Difra\Controller;
+use Difra\DB;
 use Difra\Envi;
 use Difra\MySQL;
 use Difra\View;
@@ -13,6 +14,8 @@ use Difra\View;
  */
 class CMS
 {
+    const DB = 'cms';
+
     /**
      * @static
      * @return CMS
@@ -105,8 +108,7 @@ class CMS
      */
     public static function getSitemap()
     {
-        $db = MySQL::getInstance();
-        $data = $db->fetch('SELECT `tag` FROM `cms`');
+        $data = CMS::getDB()->fetch('SELECT `tag` FROM `cms`');
         $res = [];
         if (empty($data)) {
             return false;
@@ -116,6 +118,14 @@ class CMS
             $res[] = ['loc' => $host . $t['tag']];
         }
         return $res;
+    }
+
+    /**
+     * Get database connection name
+     */
+    public static function getDB()
+    {
+        return DB::getInstance(self::DB);
     }
 
     /**

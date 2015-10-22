@@ -9,6 +9,7 @@ namespace Difra\Plugins\CMS;
 use Difra\Cache;
 use Difra\Exception;
 use Difra\MySQL;
+use Difra\Plugins\CMS;
 
 /**
  * Class Snippet
@@ -36,8 +37,7 @@ class Snippet
      */
     static public function getById($id)
     {
-        $db = MySQL::getInstance();
-        $data = $db->fetchRow('SELECT * FROM `cms_snippets` WHERE `id`=\'' . $db->escape($id) . "'");
+        $data = CMS::getDB()->fetchRow('SELECT * FROM `cms_snippets` WHERE `id`=?', [$id]);
         return self::data2obj($data);
     }
 
@@ -68,8 +68,7 @@ class Snippet
      */
     static public function getByName($name)
     {
-        $db = MySQL::getInstance();
-        $data = $db->fetchRow('SELECT * FROM `cms_snippets` WHERE `name`=\'' . $db->escape($name) . "'");
+        $data = CMS::getDB()->fetchRow('SELECT * FROM `cms_snippets` WHERE `name`=?', [$name]);
         return self::data2obj($data);
     }
 
@@ -84,8 +83,7 @@ class Snippet
         $res = $cache->get(self::CACHE_KEY);
         if (!is_array($res)) {
             try {
-                $db = MySQL::getInstance();
-                $res = $db->fetch("SELECT `id`, `name`, `text` FROM `cms_snippets`");
+                $res = CMS::getDB()->fetch("SELECT `id`, `name`, `text` FROM `cms_snippets`");
                 $cache->put(self::CACHE_KEY, $res ? $res : []);
             } catch (Exception $ex) {
             }
@@ -106,8 +104,7 @@ class Snippet
      */
     static public function getList()
     {
-        $db = MySQL::getInstance();
-        $data = $db->fetch('SELECT * FROM `cms_snippets`');
+        $data = CMS::getDB()->fetch('SELECT * FROM `cms_snippets`');
         $res = [];
         if (!empty($data)) {
             foreach ($data as $snip) {
@@ -136,18 +133,24 @@ class Snippet
         if (!$this->isModified) {
             return;
         }
-        $db = MySQL::getInstance();
         if ($this->id) {
-            $db->query(
-                'UPDATE `cms_snippets` SET `name`=\'' . $db->escape($this->name) . "',`text`='"
-                . $db->escape($this->text) . "',
-			`description`='" . $db->escape($this->description) . "' WHERE `id`='" . $db->escape($this->id) . "'"
+            CMS::getDB()->query(
+                'UPDATE `cms_snippets` SET `name`=:name,`text`=:text,`description`=:description WHERE `id`=:id',
+                [
+                    'id' => $this->id,
+                    'name' => $this->name,
+                    'text' => $this->text,
+                    'description' => $this->description
+                ]
             );
         } else {
-            $db->query(
-                'INSERT INTO `cms_snippets` SET `name`=\'' . $db->escape($this->name) . "',`text`='"
-                . $db->escape($this->text) . "',
-			 `description`='" . $db->escape($this->description) . "'"
+            CMS::getDB()->query(
+                'INSERT INTO `cms_snippets` SET `name`=:name,`text`=:text,`description`=:description',
+                [
+                    'name' => $this->name,
+                    'text' => $this->text,
+                    'description' => $this->description
+                ]
             );
         }
         $this->cleanCache();
@@ -253,7 +256,6 @@ class Snippet
     public function del()
     {
         $this->isModified = false;
-        $db = MySQL::getInstance();
-        $db->query('DELETE FROM `cms_snippets` WHERE `id`=\'' . $db->escape($this->id) . "'");
+        CMS::getDB()->query('DELETE FROM `cms_snippets` WHERE `id`=?', [$this->id]);
     }
 }
