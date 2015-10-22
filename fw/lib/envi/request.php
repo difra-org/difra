@@ -3,7 +3,7 @@
 namespace Difra\Envi;
 
 use Difra\Exception;
-use Difra\View\HttpError as ViewException;
+use Difra\View\HttpError;
 
 /**
  * Class Request
