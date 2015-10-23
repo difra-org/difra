@@ -128,8 +128,7 @@ class Request
         $k = array_shift($keys);
         if ($k === '') {
             $arr[] = [];
-            end($arr);
-            self::putParam($arr[key($arr)], $keys, $v);
+            self::putParam(end($arr), $keys, $v);
         } else {
             if (!isset($arr[$k])) {
                 $arr[$k] = [];
