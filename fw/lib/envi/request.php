@@ -126,7 +126,7 @@ class Request
             return;
         }
         $k = array_shift($keys);
-        if ($k) {
+        if ($k === '') {
             if (!isset($arr[$k])) {
                 $arr[$k] = [];
             }
