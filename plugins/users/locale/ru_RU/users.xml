@@ -61,10 +61,10 @@
             </registration>
         </mail>
         <login>
-            <login_notfound>Пользователя с таким e-mail нет.</login_notfound>
-            <login_badpassword>Неправильный пароль.</login_badpassword>
-            <login_inactive>Пользователь не активирован (проверьте почту).</login_inactive>
-            <login_banned>Пользователь заблокирован.</login_banned>
+            <not_found>Пользователя с таким e-mail нет.</not_found>
+            <bad_password>Неправильный пароль.</bad_password>
+            <inactive>Пользователь не активирован (проверьте почту).</inactive>
+            <banned>Пользователь заблокирован.</banned>
             <recovered>Вам на почту высланы дальнейшие инструкции для восстановления пароля.</recovered>
         </login>
         <recover>
