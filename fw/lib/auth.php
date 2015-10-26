@@ -91,9 +91,9 @@ class Auth
     private function save()
     {
         Session::start();
-        if ($this->email) {
+        if ($this->isAuthorized()) {
             $_SESSION['auth'] = [
-                'id' => $this->email,
+                'email' => $this->email,
                 'data' => $this->data
             ];
         } else {
@@ -112,7 +112,7 @@ class Auth
         if (!isset($_SESSION['auth'])) {
             return false;
         }
-        $this->email = $_SESSION['auth']['id'];
+        $this->email = $_SESSION['auth']['email'];
         $this->data = $_SESSION['auth']['data'];
         return true;
     }
