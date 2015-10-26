@@ -19,7 +19,7 @@ class Ajaxer
      */
     public static function getResponse()
     {
-        if (Debugger::isEnabled()) {
+        if (Debugger::isConsoleEnabled() !== Debugger::CONSOLE_DISABLED) {
             if (Debugger::hadError()) {
                 self::clean(true);
             }

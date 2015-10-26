@@ -7,16 +7,14 @@ CREATE TABLE `user` (
     `banned`     TINYINT(1) NOT NULL DEFAULT '0',
     `registered` TIMESTAMP  NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `lastseen`   TIMESTAMP  NOT NULL DEFAULT '0000-00-00 00:00:00',
-    `data`       BLOB,
-    `activation` CHAR(48)            DEFAULT NULL,
-    `moderator`  TINYINT(1) NOT NULL DEFAULT '0',
+    `activation` VARCHAR(48)         DEFAULT NULL,
+    `info`       BLOB,
     PRIMARY KEY (`id`),
-    UNIQUE KEY `email` (`email`),
-    UNIQUE KEY `login` (`login`),
-    KEY `active` (`active`),
-    KEY `banned` (`banned`),
-    KEY `activation` (`activation`),
-    KEY `moderator` (`moderator`)
+    UNIQUE KEY `email` (`email`) USING HASH,
+    UNIQUE KEY `login` (`login`) USING HASH,
+    KEY `active` (`active`) USING HASH,
+    KEY `banned` (`banned`) USING HASH,
+    KEY `activation` (`activation`) USING HASH
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = `utf8`;

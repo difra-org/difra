@@ -58,12 +58,11 @@
 			</registration>
 		</mail>
 		<login>
-			<login_notfound>There is no user with such an e-mail address.</login_notfound>
-			<login_badpassword>Invalid password.</login_badpassword>
-			<login_inactive>This account is not activated. Please check your mail.</login_inactive>
-			<login_banned>This account is locked.</login_banned>
-			<recovered>Please check your e-mail for further instructions about how to reset your password.
-			</recovered>
+			<not_found>There is no user with such an e-mail address.</not_found>
+			<bad_password>Invalid password.</bad_password>
+			<inactive>This account is not activated. Please check your mail.</inactive>
+			<banned>This account is locked.</banned>
+			<recovered>Please check your e-mail for further instructions about how to reset your password.</recovered>
 		</login>
 		<recover>
 			<already_logged>Before using password reset, you should sign out.</already_logged>
