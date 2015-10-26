@@ -125,7 +125,10 @@ abstract class Controller
             $method = 'methodAuth';
         } elseif (Action::$method) {
             $method = 'method';
-        } elseif (Action::$methodAuth or Action::$methodAjaxAuth) {
+        } elseif (Request::isAjax() and Action::$methodAjaxAuth) {
+            self::$parameters = [];
+            throw new View\HttpError(401);
+        } elseif (Action::$methodAuth) {
             self::$parameters = [];
             throw new View\HttpError(401);
         } else {
