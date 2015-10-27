@@ -90,19 +90,24 @@ class RegisterController extends Difra\Controller
 
         $register->register();
 
-        // ajax answer
-        if ($ajaxRequest) {
-            Ajaxer::notify(
-                Locales::get('auth/register/complete-' . Users::getActivationMethod())
-            );
-            Ajaxer::close();
-        }
-
-        // html answer
-        Cookies::getInstance()->notify(
+        // todo: html version (redirect)
+        Ajaxer::notify(
             Locales::get('auth/register/complete-' . Users::getActivationMethod())
         );
-        View::redirect('/');
+//        Ajaxer::redirect('/');
+
+        // ajax answer
+//        if ($ajaxRequest) {
+//            Ajaxer::notify(
+//                Locales::get('auth/register/complete-' . Users::getActivationMethod())
+//            );
+//            Ajaxer::reload();
+//        }
+
+//        // html answer
+//        Cookies::getInstance()->notify(
+//            Locales::get('auth/register/complete-' . Users::getActivationMethod())
+//        );
     }
 
     /**

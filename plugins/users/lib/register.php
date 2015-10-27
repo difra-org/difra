@@ -33,7 +33,8 @@ class Register
     const REGISTER_LOGIN_INVALID = 'login_invalid';
     const REGISTER_LOGIN_EXISTS = 'login_dupe';
     const REGISTER_LOGIN_OK = 'login_ok';
-    const REGISTER_LOGIN_VALIDATE = '/^[a-zA-Z0-9][a-zA-Z0-9._-]+$/u';
+    const LOGIN_REGEX = '/^[a-zA-Z0-9]([a-zA-Z0-9._-]{0,79})$/';
+    const EMAIL_REGEX = '/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/';
     const MIN_PASSWORD_LENGTH = 6;
     private $failures = [];
     private $successful = [];
@@ -101,7 +102,7 @@ class Register
      */
     private static function isEmailValid($email)
     {
-        return (bool)preg_match('/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/', $email);
+        return (bool)preg_match(self::EMAIL_REGEX, $email);
     }
 
     /**
@@ -126,6 +127,9 @@ class Register
     public function setLogin($login)
     {
         if (!Users::isLoginNamesEnabled()) {
+            if (!(string)$login) {
+                return;
+            }
             throw new Exception('User names are disabled');
         }
         $this->login = $login;
@@ -146,9 +150,9 @@ class Register
         if (!$this->ignoreEmpty) {
             if ($this->login === '') {
                 return $this->failures['login'] = self::REGISTER_LOGIN_EMPTY;
-            } elseif (!self::isLoginValid($this->email)) {
+            } elseif (!self::isLoginValid($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_INVALID;
-            } elseif (!$fast and !self::isLoginAvailable($this->email)) {
+            } elseif (!$fast and !self::isLoginAvailable($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_EXISTS;
             } else {
                 return $this->successful['login'] = self::REGISTER_LOGIN_OK;
@@ -156,7 +160,7 @@ class Register
         } elseif ($this->login !== '') {
             if (!self::isLoginValid($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_INVALID;
-            } elseif (!$fast and !self::isLoginAvailable($this->email)) {
+            } elseif (!$fast and !self::isLoginAvailable($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_EXISTS;
             }
         }
@@ -170,7 +174,7 @@ class Register
      */
     public static function isLoginValid($login)
     {
-        return (bool)preg_match(self::REGISTER_LOGIN_VALIDATE, $login);
+        return (bool)preg_match(self::LOGIN_REGEX, $login);
     }
 
     /**
@@ -291,13 +295,17 @@ class Register
      */
     public function validate()
     {
+        $this->successful = [];
+        $this->failures = [];
         $fast = !is_null($this->fast)
             ? $this->fast
             : ($this->verifyCapcha() != self::REGISTER_CAPCHA_OK);
-        $this->verifyEmail(!$fast);
-        $this->verifyLogin(!$fast);
+        $this->verifyEmail($fast);
+        $this->verifyLogin($fast);
         $this->verifyPassword1();
-        $this->verifyPassword2();
+        if (Users::isPassword2Enabled()) {
+            $this->verifyPassword2();
+        }
 
         return $this->valid = empty($this->failures);
     }
@@ -320,7 +328,7 @@ class Register
     public function callAjaxerEvents()
     {
         if (!empty($this->successful)) {
-            foreach ($this->failures as $field => $result) {
+            foreach ($this->successful as $field => $result) {
                 Ajaxer::status($field, Locales::get('auth/register/' . $result), 'ok');
             }
         }
@@ -348,12 +356,12 @@ class Register
         $user = User::create();
         $user->setEmail($this->email);
         $user->setPassword($this->password1);
+        $user->setLogin($this->login);
         $user->save();
     }
 
     const ACTIVATE_NOTFOUND = 'activate_notfound';
     const ACTIVATE_USED = 'activate_used';
-
 //    const ACTIVATE_TIMEOUT = 'activate_timeout'; // think about it. warning: no language string for this.
 
     /**

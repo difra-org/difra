@@ -3,7 +3,6 @@
 namespace Difra\Plugins\Users;
 
 use Difra\Auth;
-use Difra\Config;
 use Difra\Exception;
 use Difra\DB;
 use Difra\Plugins\Users;
@@ -29,7 +28,7 @@ class User
     /** @var bool */
     private $active = false;
     /** @var bool */
-    private $banned = false;
+    private $banned = 0;
     /** @var string Datetime */
     private $registered = null;
     /** @var string Datetime */
@@ -80,7 +79,7 @@ class User
             $parameters['id'] = $this->id;
             $db->query("\nUPDATE `user` SET " . implode(',', $set) . ' WHERE `id`=:id', $parameters);
         } else {
-            $db->query('INSERT INTO `user` SET ' . implode(',', $set));
+            $db->query('INSERT INTO `user` SET ' . implode(',', $set), $parameters);
             $this->id = $db->getLastId();
             self::$cache[$this->id] = $this;
         }
@@ -251,7 +250,7 @@ class User
      */
     public function isBanned()
     {
-        return $this->banned;
+        return (bool)$this->banned;
     }
 
     /**
@@ -260,7 +259,7 @@ class User
      */
     public function setBanned($banned)
     {
-        $this->banned = $banned;
+        $this->banned = $banned ? 1 : 0;
         $this->modified[] = 'banned';
     }
 
@@ -334,6 +333,7 @@ class User
         if (isset(self::$cache[$id])) {
             $user = self::$cache[$id];
         } else {
+            /** @var bool|array $data */
             $data = DB::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `id`=?', [$id]) ?: false;
             $user = $data ? self::load($data) : false;
         }
@@ -435,5 +435,7 @@ QUERY
             default:
                 throw new Exception("Unknown activation type: $activation");
         }
+
+        return $user;
     }
 }
