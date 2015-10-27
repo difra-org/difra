@@ -192,6 +192,7 @@ class Controller {
 		$actionReflection = new \ReflectionMethod( $this, $actionMethod );
 		$actionParameters = $actionReflection->getParameters();
 
+/*
 		$cachedLocale = false;
 		$domainProperties = Envi::getDomainProperties();
 		$actionLocale = \Difra\Adm\Localemanage::getLocaleLength( $domainProperties );
@@ -217,6 +218,7 @@ class Controller {
 		} else {
 			\Difra\Adm\Localemanage::exitLocale();
 		}
+*/
 
 		// у выбранного метода нет параметров
 		if( empty( $actionParameters ) ) {
