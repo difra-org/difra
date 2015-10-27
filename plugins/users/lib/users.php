@@ -34,6 +34,16 @@ class Users
     }
 
     /**
+     * Is password2 field enabled?
+     * @return bool|mixed
+     */
+    static public function isPassword2Enabled()
+    {
+        $en = Config::getInstance()->getValue('auth', 'password2');
+        return is_null($en) ? true : $en;
+    }
+
+    /**
      * Get activation method (email, moderate or none)
      * @return string
      */

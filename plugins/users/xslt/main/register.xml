@@ -4,6 +4,7 @@
         <div id="register">
             <form action="/register/submit" class="ajaxer">
                 <xsl:call-template name="register-form"/>
+                <input type="hidden" name="redirect" value="1"/>
             </form>
         </div>
     </xsl:template>

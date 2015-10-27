@@ -6,20 +6,23 @@ use Difra\Plugins\Users, Difra\Param;
 use Difra\Plugins\Users\User;
 use Difra\View;
 
+/**
+ * Class LoginController
+ */
 class LoginController extends Difra\Controller
 {
 //    /**
 //     * Форма логина
 //     * @return void
 //     */
-//    public function authorizationAjaxAction()
+//    public function indexAction()
 //    {
-//        if (\Difra\Auth::getInstance()->logged) {
+//        if (\Difra\Auth::getInstance()->isAuthorized()) {
 //            Ajaxer::reload();
 //            return;
 //        }
 //        $this->root->appendChild($this->xml->createElement('login'));
-//        Ajaxer::display(\Difra\View::render($this->xml, 'auth-ajax', true));
+////        Ajaxer::display(\Difra\View::render($this->xml, 'auth-ajax', true));
 //    }
 
     /**
@@ -34,8 +37,7 @@ class LoginController extends Difra\Controller
             User::loginByPassword($login->val(), $password->val(), ($rememberMe->val() == 1) ? true : false);
             Ajaxer::reload();
         } catch (\Difra\Exception $ex) {
-            $error = $ex->getMessage();
-            switch ($error) {
+            switch ($error = $ex->getMessage()) {
                 case User::LOGIN_BADPASS:
                     Ajaxer::status('password', Locales::get('auth/login/' . $error), 'problem');
                     break;

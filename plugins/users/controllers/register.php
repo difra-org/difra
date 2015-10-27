@@ -62,7 +62,7 @@ class RegisterController extends Difra\Controller
      */
     public function submitAjaxAction(
         AjaxCheckbox $accept,
-        AjaxCheckbox $ajaxRequest,
+        AjaxCheckbox $redirect,
         AjaxString $email = null,
         AjaxString $password1 = null,
         AjaxString $password2 = null,
@@ -90,19 +90,17 @@ class RegisterController extends Difra\Controller
 
         $register->register();
 
-        // ajax answer
-        if ($ajaxRequest) {
+        if ($redirect) {
+        Cookies::getInstance()->notify(
+            Locales::get('auth/register/complete-' . Users::getActivationMethod())
+        );
+            View::redirect('/');
+        } else {
             Ajaxer::notify(
                 Locales::get('auth/register/complete-' . Users::getActivationMethod())
             );
             Ajaxer::close();
         }
-
-        // html answer
-        Cookies::getInstance()->notify(
-            Locales::get('auth/register/complete-' . Users::getActivationMethod())
-        );
-        View::redirect('/');
     }
 
     /**
