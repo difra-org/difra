@@ -99,7 +99,7 @@ class RegisterController extends Difra\Controller
             Ajaxer::notify(
                 Locales::get('auth/register/complete-' . Users::getActivationMethod())
             );
-            Ajaxer::reload();
+            Ajaxer::close();
         }
     }
 
