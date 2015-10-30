@@ -95,7 +95,7 @@
                 системы.
             </already_logged>
             <email_empty>Введите адрес почты.</email_empty>
-            <email_invalid>Не правильный адрес почты.</email_invalid>
+            <email_invalid>Неправильный адрес почты.</email_invalid>
             <email_dupe>Такой адрес уже зарегистрирован.</email_dupe>
             <email_ok>Подходящий адрес.</email_ok>
             <password1_empty>Введите пароль.</password1_empty>
@@ -105,7 +105,7 @@
             <passwords_diff>Введённые пароли не совпадают.</passwords_diff>
             <password2_ok>Пароли совпадают.</password2_ok>
             <capcha_empty>Введите код с картинки.</capcha_empty>
-            <capcha_invalid>Не правильно введены символы с картинки.</capcha_invalid>
+            <capcha_invalid>Неправильно введены символы с картинки.</capcha_invalid>
             <capcha_ok>Правильный код.</capcha_ok>
             <login_empty>Выберите имя пользователя.</login_empty>
             <login_invalid>Недопустимое имя пользователя.</login_invalid>
@@ -121,11 +121,11 @@
         </register>
         <activate>
             <done>Ваша учётная запись активирована.</done>
-            <activate_notfound>Не правильная ссылка для активации учётной записи.</activate_notfound>
+            <activate_notfound>Неправильная ссылка для активации учётной записи.</activate_notfound>
             <activate_used>Эта учётная запись уже активирована.</activate_used>
         </activate>
         <password>
-            <bad_old>Не правильно введён текущий пароль.</bad_old>
+            <bad_old>Неправильно введён текущий пароль.</bad_old>
             <changed>Новый пароль сохранён.</changed>
         </password>
 
