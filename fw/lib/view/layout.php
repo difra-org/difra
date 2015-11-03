@@ -62,7 +62,7 @@ class Layout
     public static function &getElement($name)
     {
         if ($name == 'root') {
-            return self::getInstance()->xml;
+            return self::getInstance()->realRoot;
         }
         $me = self::getInstance();
         if (!isset($me->elements[$name])) {
