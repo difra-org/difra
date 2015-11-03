@@ -362,6 +362,10 @@ class User
             'login' => $this->login,
             'info' => $this->info
         ]);
+        DB::getInstance(Users::getDB())->query(
+            'UPDATE `user` SET `lastseen`=CURRENT_TIMESTAMP WHERE `id`=:id',
+            ['id' => $this->id]
+        );
     }
 
     /**
@@ -437,5 +441,22 @@ QUERY
         }
 
         return $user;
+    }
+
+    public function autoActivation()
+    {
+        switch ($method = Users::getActivationMethod()) {
+            case 'email':
+                $mailData = [
+                    'username' => $this->login ?: $this->email,
+                    'ttl' => Users::ACTIVATE_TTL,
+                    'code' => $this->activation,
+                    'confirm' => $method
+                ];
+                \Difra\Mailer::getInstance()->createMail($this->email, 'mail_registration', $mailData);
+                break;
+            default:
+                throw new Exception('Unknown activation method: ' . $method);
+        }
     }
 }

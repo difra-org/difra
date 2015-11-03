@@ -358,6 +358,7 @@ class Register
         $user->setPassword($this->password1);
         $user->setLogin($this->login);
         $user->save();
+        $user->autoActivation();
     }
 
     const ACTIVATE_NOTFOUND = 'activate_notfound';
