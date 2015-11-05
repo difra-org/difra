@@ -26,9 +26,9 @@ class Register
     const REGISTER_PASSWORD2_OK = 'password2_ok';
     const REGISTER_PASSWORD_SHORT = 'password1_short';
     const REGISTER_PASSWORDS_DIFF = 'passwords_diff';
-    const REGISTER_CAPCHA_EMPTY = 'capcha_empty';
-    const REGISTER_CAPCHA_INVALID = 'capcha_invalid';
-    const REGISTER_CAPCHA_OK = 'capcha_ok';
+    const REGISTER_CAPTCHA_EMPTY = 'captcha_empty';
+    const REGISTER_CAPTCHA_INVALID = 'captcha_invalid';
+    const REGISTER_CAPTCHA_OK = 'captcha_ok';
     const REGISTER_LOGIN_EMPTY = 'login_empty';
     const REGISTER_LOGIN_INVALID = 'login_invalid';
     const REGISTER_LOGIN_EXISTS = 'login_dupe';
@@ -42,14 +42,14 @@ class Register
     private $login = null;
     private $password1 = null;
     private $password2 = null;
-    private $capcha = null;
+    private $captcha = null;
     private $ignoreEmpty = false;
     private $fast = false;
     private $valid = false;
 
     /**
      * @param bool $ignoreEmpty Report only invalid fields (skip empty or fine fields reporting)
-     * @param bool|null $fast true = skip database queries, false = query database, null = depending on capcha
+     * @param bool|null $fast true = skip database queries, false = query database, null = depending on captcha
      */
     public function __construct($ignoreEmpty = false, $fast = null)
     {
@@ -256,34 +256,34 @@ class Register
     }
 
     /**
-     * Set capcha
-     * @param string $capcha
+     * Set captcha
+     * @param string $captcha
      */
-    public function setCapcha($capcha)
+    public function setCaptcha($captcha)
     {
-        $this->capcha = (string)$capcha;
+        $this->captcha = (string)$captcha;
         $this->valid = false;
     }
 
     /**
-     * Validate capcha
+     * Validate captcha
      * @return string
      */
-    private function verifyCapcha()
+    private function verifyCaptcha()
     {
         /** @var \Difra\Plugins\Capcha $captcha */
         $captcha = Plugger::getClass('captcha');
         if (!$this->ignoreEmpty) {
-            if (!$this->capcha) {
-                return $this->failures['capcha'] = self::REGISTER_CAPCHA_EMPTY;
-            } elseif (!$captcha::getInstance()->verifyKey($this->capcha)) {
-                return $this->failures['capcha'] = self::REGISTER_CAPCHA_INVALID;
+            if (!$this->captcha) {
+                return $this->failures['capcha'] = self::REGISTER_CAPTCHA_EMPTY;
+            } elseif (!$captcha::getInstance()->verifyKey($this->captcha)) {
+                return $this->failures['capcha'] = self::REGISTER_CAPTCHA_INVALID;
             } else {
-                return $this->successful['capcha'] = self::REGISTER_CAPCHA_OK;
+                return $this->successful['capcha'] = self::REGISTER_CAPTCHA_OK;
             }
-        } elseif ($this->capcha !== '') {
-            if (!$captcha::getInstance()->verifyKey($this->capcha)) {
-                return $this->failures['capcha'] = self::REGISTER_CAPCHA_INVALID;
+        } elseif ($this->captcha !== '') {
+            if (!$captcha::getInstance()->verifyKey($this->captcha)) {
+                return $this->failures['capcha'] = self::REGISTER_CAPTCHA_INVALID;
             }
         }
         return null;
@@ -299,7 +299,7 @@ class Register
         $this->failures = [];
         $fast = !is_null($this->fast)
             ? $this->fast
-            : ($this->verifyCapcha() != self::REGISTER_CAPCHA_OK);
+            : ($this->verifyCaptcha() != self::REGISTER_CAPTCHA_OK);
         $this->verifyEmail($fast);
         $this->verifyLogin($fast);
         $this->verifyPassword1();
@@ -358,9 +358,12 @@ class Register
         $user->setPassword($this->password1);
         $user->setLogin($this->login);
         $user->save();
+        $user->autoActivation();
     }
 
+    /** Activation code not found */
     const ACTIVATE_NOTFOUND = 'activate_notfound';
+    /** Activation code already used */
     const ACTIVATE_USED = 'activate_used';
 //    const ACTIVATE_TIMEOUT = 'activate_timeout'; // think about it. warning: no language string for this.
 
@@ -374,18 +377,18 @@ class Register
     {
         $key = trim((string)$key);
         if (!$key) {
-            throw new Exception(self::ACTIVATE_NOTFOUND);
+            throw new UsersException(self::ACTIVATE_NOTFOUND);
         }
         $db = DB::getInstance(Users::getDB());
         $data = $db->fetchRow('SELECT * FROM `user` WHERE `activation`=? LIMIT 1', [(string)$key]);
         if (empty($data)) {
-            throw new Exception(self::ACTIVATE_NOTFOUND);
+            throw new UsersException(self::ACTIVATE_NOTFOUND);
         }
         if ($data['active']) {
-            throw new Exception(self::ACTIVATE_USED);
+            throw new UsersException(self::ACTIVATE_USED);
         }
 //        if ($data['registered'] < date('Y-m-d H:i:s', time() - Users::ACTIVATE_TTL)) {
-//            throw new Exception(self::ACTIVATE_TIMEOUT);
+//            throw new UsersException(self::ACTIVATE_TIMEOUT);
 //        }
         $db->query("UPDATE `user` SET `active`='1',`activation`=NULL WHERE `activation`=?", [$key]);
         return true;

@@ -15,6 +15,7 @@
             <errors>
                 <emailRequired>Введите адрес вашей электронной почты.</emailRequired>
                 <passwordRequired>Введите пароль.</passwordRequired>
+                <captchaRequired>Введите текст с картинки.</captchaRequired>
             </errors>
         </forms>
         <placeholders>
@@ -22,7 +23,7 @@
             <password>Пароль</password>
             <againPassword>Пароль (ещё раз)</againPassword>
             <nickname>Псевдоним</nickname>
-            <capcha>Код подтверждения</capcha>
+            <captcha>Код подтверждения</captcha>
         </placeholders>
         <fieldDescs>
             <email>На этот адрес вам придёт письмо для подтверждения.</email>
@@ -95,7 +96,7 @@
                 системы.
             </already_logged>
             <email_empty>Введите адрес почты.</email_empty>
-            <email_invalid>Не правильный адрес почты.</email_invalid>
+            <email_invalid>Неправильный адрес почты.</email_invalid>
             <email_dupe>Такой адрес уже зарегистрирован.</email_dupe>
             <email_ok>Подходящий адрес.</email_ok>
             <password1_empty>Введите пароль.</password1_empty>
@@ -104,9 +105,9 @@
             <password2_empty>Введите пароль ещё раз.</password2_empty>
             <passwords_diff>Введённые пароли не совпадают.</passwords_diff>
             <password2_ok>Пароли совпадают.</password2_ok>
-            <capcha_empty>Введите код с картинки.</capcha_empty>
-            <capcha_invalid>Не правильно введены символы с картинки.</capcha_invalid>
-            <capcha_ok>Правильный код.</capcha_ok>
+            <captcha_empty>Введите код с картинки.</captcha_empty>
+            <captcha_invalid>Неправильно введены символы с картинки.</captcha_invalid>
+            <captcha_ok>Правильный код.</captcha_ok>
             <login_empty>Выберите имя пользователя.</login_empty>
             <login_invalid>Недопустимое имя пользователя.</login_invalid>
             <login_dupe>Такое имя пользователя уже занято.</login_dupe>
@@ -121,11 +122,12 @@
         </register>
         <activate>
             <done>Ваша учётная запись активирована.</done>
-            <activate_notfound>Не правильная ссылка для активации учётной записи.</activate_notfound>
+            <activate_notfound>Неправильная ссылка для активации учётной записи.</activate_notfound>
             <activate_used>Эта учётная запись уже активирована.</activate_used>
         </activate>
         <password>
-            <bad_old>Не правильно введён текущий пароль.</bad_old>
+            <bad_old>Неправильно введён текущий пароль.</bad_old>
+            <old_ok>Текущий пароль введён верно.</old_ok>
             <changed>Новый пароль сохранён.</changed>
         </password>
 

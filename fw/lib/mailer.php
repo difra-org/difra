@@ -87,8 +87,7 @@ class Mailer
         $xml = new \DOMDocument();
         $root = $xml->appendChild($xml->createElement('mail'));
         $this->addData($root, $data);
-        $view = new View;
-        $templateText = $view->render($xml, $template, true);
+        $templateText =View::render($xml, $template, true);
 
         preg_match('|<subject[^>]*>(.*)</subject>|Uis', $templateText, $subject);
         preg_match('|<text[^>]*>(.*)</text>|Uis', $templateText, $mailText);

@@ -34,8 +34,10 @@ class Session
 
     public static function remove()
     {
-        DB::getInstance(Users::getDB())->query("DELETE FROM `user_session` WHERE `session`=?", [$_COOKIE['resume']]);
-        Cookies::getInstance()->remove('resume');
+        if (!empty($_COOKIE['resume'])) {
+            DB::getInstance(Users::getDB())->query("DELETE FROM `user_session` WHERE `session`=?", [$_COOKIE['resume']]);
+            Cookies::getInstance()->remove('resume');
+        }
     }
 
     public static function load()

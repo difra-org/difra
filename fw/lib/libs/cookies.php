@@ -80,15 +80,20 @@ class Cookies
 
     /**
      * Sets cookie that makes Ajaxer show notification popup
-     * @param      $message
-     * @param bool $error
+     * @param string $message
+     * @param bool|string $error
      */
     public function notify($message, $error = false)
     {
+        if ($error === false) {
+            $error = 'ok';
+        } elseif ($error === true) {
+            $error = 'error';
+        }
         $this->set(
             'notify',
             [
-                'type' => $error ? 'error' : 'ok',
+                'type' => $error,
                 'message' => (string)$message,
                 'lang' => [
                     'close' => Locales::get('notifications/close')

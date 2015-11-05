@@ -19,12 +19,14 @@
 			<br/>
 			<xsl:value-of select="/mail/locale/auth/mail/registration/username"
 				      disable-output-escaping="yes"/>
-			<xsl:value-of select="@user"/>
+			<xsl:value-of select="@username"/>
 			<br/>
+<!--
 			<xsl:value-of select="/mail/locale/auth/mail/registration/password"
 				      disable-output-escaping="yes"/>
 			<xsl:value-of select="@password"/>
 			<br/>
+-->
 			<br/>
 			<xsl:choose>
 				<xsl:when test="@confirm='moderate'">
@@ -35,8 +37,11 @@
 				<xsl:when test="@confirm='email'">
 					<xsl:value-of select="/mail/locale/auth/mail/registration/email1"
 						      disable-output-escaping="yes"/>
-					<a href="http://{@host}/auth/activate/{@code}">http://<xsl:value-of
-						select="@host"/>/auth/activate/<xsl:value-of select="@code"/>
+					<a href="http://{@host}/register/activate/{@code}">
+						<xsl:text>http://</xsl:text>
+						<xsl:value-of select="@host"/>
+						<xsl:text>/register/activate/</xsl:text>
+						<xsl:value-of select="@code"/>
 					</a>
 					<xsl:value-of select="/mail/locale/auth/mail/registration/email2"
 						      disable-output-escaping="yes"/>
@@ -49,7 +54,8 @@
 			</xsl:choose>
 			<xsl:value-of select="/mail/locale/auth/mail/registration/legal1"
 				      disable-output-escaping="yes"/>
-			<a href="mailto:support@{@host}">support@<xsl:value-of select="@host"/>
+			<a href="mailto:support@{@host}">
+				<xsl:text>support@</xsl:text><xsl:value-of select="@host"/>
 			</a>
 			<xsl:value-of select="/mail/locale/auth/mail/registration/legal2"
 				      disable-output-escaping="yes"/>

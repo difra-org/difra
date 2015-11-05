@@ -9,22 +9,18 @@ use Difra\Param\AnyString;
 use Difra\Plugins\Users\Recover;
 use Difra\View;
 
+/**
+ * Class RecoverController
+ */
 class RecoverController extends \Difra\Controller
 {
-//    /**
-//     * Recover password page
-//     */
-//    public function indexAction()
-//    {
-//        // TODO
-//    }
-
     /**
      * Recover password (ajax)
      * @param AjaxString $login Login or e-mail
+     * @param AjaxString $captcha
      * @throws Exception
      */
-    public function indexAjaxAction(AjaxString $login = null)
+    public function indexAjaxAction(AjaxString $login, AjaxString $captcha)
     {
         // show recover form
         if (is_null($login)) {
@@ -32,9 +28,23 @@ class RecoverController extends \Difra\Controller
             Ajaxer::display(View::render($this->xml, 'auth-ajax', true));
             return;
         }
+        $error = false;
         // login's empty
         if ($login->val() === '') {
             Ajaxer::required('login');
+            $error = true;
+        }
+        if (!$captcha or $captcha->val() == '') {
+            Ajaxer::required('captcha');
+            $error = true;
+        }
+        /** @var \Difra\Plugins\Capcha $captchaClass */
+        $captchaClass = \Difra\Plugger::getClass('captcha');
+        if (!$captchaClass::getInstance()->verifyKey($captcha->val())) {
+            Ajaxer::invalid('captcha');
+            $error = true;
+        }
+        if ($error) {
             return;
         }
         // recover
@@ -94,11 +104,18 @@ class RecoverController extends \Difra\Controller
         View::redirect('/');
     }
 
+    /**
+     * Change password using recovery link
+     * @param AnyString $code
+     * @param AjaxString $password1
+     * @param AjaxString $password2
+     * @throws Exception
+     */
     public function submitAjaxAction(AnyString $code, AjaxString $password1, AjaxString $password2)
     {
         try {
-            $user = Recover::verify($code->val(), true);
-        } catch (Exception $ex) {
+            Recover::verify($code->val());
+        } catch (\Difra\Plugins\Users\UsersException $ex) {
             Ajaxer::notify(Locales::get('auth/recover/' . $ex->getMessage()));
             return;
         }
@@ -110,45 +127,19 @@ class RecoverController extends \Difra\Controller
             $register->callAjaxerEvents();
             return;
         }
-        $user->setPassword($password1->val());
-        Recover::setUsed($code->val());
+        Recover::recoverSetPassword($code->val(), $password1->val());
         Ajaxer::notify(Locales::get('auth/recover/done'));
+        Ajaxer::close();
     }
 
+    /**
+     * Change password using recovery link (already logged in stub)
+     * @param AnyString $code
+     */
     public function submitAjaxActionAuth(
         /** @noinspection PhpUnusedParameterInspection */
         AnyString $code
     ) {
         Ajaxer::error(Locales::get('auth/recover/already_logged'));
     }
-
-//
-//    /**
-//     * Сохранение нового пароля
-//     * @param Difra\Param\AnyString $code
-//     * @param Difra\Param\AjaxString $password1
-//     * @param Difra\Param\AjaxString $password2
-//     * @return void
-//     */
-//    public function recover3AjaxAction(Param\AnyString $code, Param\AjaxString $password1, Param\AjaxString $password2)
-//    {
-//        if (Difra\Auth::getInstance()->logged) {
-//            Ajaxer::error(Locales::get('auth/recover/already_logged'));
-//            return;
-//        }
-//        $res = Users::getInstance()->verifyRecover($code->val());
-//        if ($res !== true) {
-//            Ajaxer::error(Locales::get('auth/recover/' . $res));
-//            return;
-//        }
-//        $error =
-//            \Difra\Plugins\Users::getInstance()->recoverSetPassword($code->val(), $password1->val(), $password2->val());
-//        if ($error !== true) {
-//            echo $error;
-//            Ajaxer::status('password1', Locales::get('auth/recover/' . $error), 'problem');
-//            return;
-//        }
-//        Ajaxer::notify(Locales::get('auth/recover/done'));
-//        Ajaxer::close();
-//    }
 }
