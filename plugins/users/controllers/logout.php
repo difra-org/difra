@@ -3,6 +3,9 @@
 use Difra\Ajaxer;
 use Difra\Plugins\Users\User;
 
+/**
+ * Class LogoutController
+ */
 class LogoutController extends \Difra\Controller
 {
     /**
