@@ -15,6 +15,7 @@
             <errors>
                 <emailRequired>Введите адрес вашей электронной почты.</emailRequired>
                 <passwordRequired>Введите пароль.</passwordRequired>
+                <captchaRequired>Введите текст с картинки.</captchaRequired>
             </errors>
         </forms>
         <placeholders>
@@ -22,7 +23,7 @@
             <password>Пароль</password>
             <againPassword>Пароль (ещё раз)</againPassword>
             <nickname>Псевдоним</nickname>
-            <capcha>Код подтверждения</capcha>
+            <captcha>Код подтверждения</captcha>
         </placeholders>
         <fieldDescs>
             <email>На этот адрес вам придёт письмо для подтверждения.</email>
@@ -104,9 +105,9 @@
             <password2_empty>Введите пароль ещё раз.</password2_empty>
             <passwords_diff>Введённые пароли не совпадают.</passwords_diff>
             <password2_ok>Пароли совпадают.</password2_ok>
-            <capcha_empty>Введите код с картинки.</capcha_empty>
-            <capcha_invalid>Неправильно введены символы с картинки.</capcha_invalid>
-            <capcha_ok>Правильный код.</capcha_ok>
+            <captcha_empty>Введите код с картинки.</captcha_empty>
+            <captcha_invalid>Неправильно введены символы с картинки.</captcha_invalid>
+            <captcha_ok>Правильный код.</captcha_ok>
             <login_empty>Выберите имя пользователя.</login_empty>
             <login_invalid>Недопустимое имя пользователя.</login_invalid>
             <login_dupe>Такое имя пользователя уже занято.</login_dupe>
@@ -126,6 +127,7 @@
         </activate>
         <password>
             <bad_old>Неправильно введён текущий пароль.</bad_old>
+            <old_ok>Текущий пароль введён верно.</old_ok>
             <changed>Новый пароль сохранён.</changed>
         </password>
 

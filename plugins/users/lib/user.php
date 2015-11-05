@@ -5,6 +5,7 @@ namespace Difra\Plugins\Users;
 use Difra\Auth;
 use Difra\Exception;
 use Difra\DB;
+use Difra\Mailer;
 use Difra\Plugins\Users;
 
 /**
@@ -13,9 +14,13 @@ use Difra\Plugins\Users;
  */
 class User
 {
+    /** Login: user not found */
     const LOGIN_NOTFOUND = 'not_found';
+    /** Login: user is banned */
     const LOGIN_BANNED = 'banned';
+    /** Login: user is inactive */
     const LOGIN_INACTIVE = 'inactive';
+    /** Login: bad password */
     const LOGIN_BADPASS = 'bad_password';
     /** @var int */
     private $id = null;
@@ -236,6 +241,16 @@ class User
     }
 
     /**
+     * Verify password
+     * @param $password
+     * @return bool
+     */
+    public function verifyPassword($password)
+    {
+        return sha1($password) === $this->password or md5($password) === $this->password;
+    }
+
+    /**
      * Is user activated?
      * @return boolean
      */
@@ -325,8 +340,8 @@ class User
     /**
      * Get user by id
      * @param $id
-     * @return self
-     * @throws Exception
+     * @return User
+     * @throws UsersException
      */
     public static function getById($id)
     {
@@ -338,7 +353,28 @@ class User
             $user = $data ? self::load($data) : false;
         }
         if (!$user) {
-            throw new Exception(self::LOGIN_NOTFOUND);
+            throw new UsersException(self::LOGIN_NOTFOUND);
+        }
+
+        return $user;
+    }
+
+    /**
+     * Get current user
+     * @return User
+     * @throws UsersException
+     */
+    public static function getCurrent()
+    {
+        if (!$id = Auth::getInstance()->getUserId()) {
+            return null;
+        }
+        if (isset(self::$cache[$id])) {
+            $user = self::$cache[$id];
+        } else {
+            /** @var bool|array $data */
+            $data = DB::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `id`=?', [$id]) ?: false;
+            $user = $data ? self::load($data) : false;
         }
 
         return $user;
@@ -351,17 +387,20 @@ class User
     {
         // check if user is banned
         if ($this->banned) {
-            throw new Exception(self::LOGIN_BANNED);
+            throw new UsersException(self::LOGIN_BANNED);
         }
         // check if user is not active
         if (!$this->active) {
-            throw new Exception(self::LOGIN_INACTIVE);
+            throw new UsersException(self::LOGIN_INACTIVE);
         }
-        Auth::getInstance()->login($this->email, [
-            'id' => $this->id,
-            'login' => $this->login,
-            'info' => $this->info
-        ]);
+        Auth::getInstance()->login(
+            $this->email,
+            [
+                'id' => $this->id,
+                'login' => $this->login,
+                'info' => $this->info
+            ]
+        );
         DB::getInstance(Users::getDB())->query(
             'UPDATE `user` SET `lastseen`=CURRENT_TIMESTAMP WHERE `id`=:id',
             ['id' => $this->id]
@@ -374,23 +413,25 @@ class User
      * @param string $password Password
      * @param bool $longSession Set long session
      * @return User
-     * @throws Exception
+     * @throws UsersException
      */
     public static function loginByPassword($login, $password, $longSession)
     {
-        $data = DB::getInstance(Users::getDB())->fetchRow(<<<QUERY
-SELECT * FROM `user` WHERE (`email` = :login OR `login` = :login)
+        $data = DB::getInstance(Users::getDB())->fetchRow(
+            <<<QUERY
+            SELECT * FROM `user` WHERE (`email` = :login OR `login` = :login)
 QUERY
-            , [
+            ,
+            [
                 'login' => $login,
                 'password' => $password
             ]
         );
         if (empty($data)) {
-            throw new Exception(self::LOGIN_NOTFOUND);
+            throw new UsersException(self::LOGIN_NOTFOUND);
         }
         if ($data['password'] !== sha1($password) and $data['password'] !== md5($password)) {
-            throw new Exception(self::LOGIN_BADPASS);
+            throw new UsersException(self::LOGIN_BADPASS);
         }
         $user = self::load($data);
         $user->login();
@@ -425,7 +466,7 @@ QUERY
                 do {
                     $user->activation = bin2hex(openssl_random_pseudo_bytes(24));
                 } while (DB::getInstance(Users::getDB())
-                           ->fetchOne('SELECT count(*) FROM user WHERE activation=?', [$user->activation]));
+                    ->fetchOne('SELECT count(*) FROM `user` WHERE `activation`=?', [$user->activation]));
                 $user->active = 0;
                 break;
             case 'moderate':
@@ -453,7 +494,7 @@ QUERY
                     'code' => $this->activation,
                     'confirm' => $method
                 ];
-                \Difra\Mailer::getInstance()->createMail($this->email, 'mail_registration', $mailData);
+                Mailer::getInstance()->createMail($this->email, 'mail_registration', $mailData);
                 break;
             default:
                 throw new Exception('Unknown activation method: ' . $method);

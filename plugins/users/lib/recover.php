@@ -12,6 +12,12 @@ use Difra\Plugins\Users;
  */
 class Recover
 {
+    /**
+     * Send password change link
+     * @param string $login
+     * @return bool|string
+     * @throws \Difra\Exception
+     */
     public static function send($login)
     {
         if (is_null($login) or $login === '' or $login === false) {
@@ -38,43 +44,57 @@ class Recover
         } while ($d);
         $db->query("INSERT INTO `user_recover` (`recover`,`user`) VALUES (?,?)", [$key, $data['id']]);
         Mailer::getInstance()->CreateMail(
-            $data['email'], 'mail_recover', ['code' => $key, 'ttl' => Users::getRecoverTTL()]
+            $data['email'],
+            'mail_recover',
+            ['code' => $key, 'ttl' => Users::getRecoverTTL()]
         );
         return true;
     }
 
+    /** Invalid password change link */
     const RECOVER_INVALID = 'recover_invalid';
+    /** Password change link was used previously */
     const RECOVER_USED = 'recover_used';
+    /** Password change link is outdated */
     const RECOVER_OUTDATED = 'recover_outdated';
 
+    /**
+     * Verify password change link
+     * @param $key
+     * @param bool|false $returnUser
+     * @return bool|User|string
+     * @throws UsersException
+     */
     public static function verify($key, $returnUser = false)
     {
         $db = DB::getInstance(Users::getDB());
         $data = $db->fetchRow('SELECT * FROM `user_recover` WHERE `recover`=?', [$key]);
         if (empty($data)) {
-            return self::RECOVER_INVALID;
+            throw new UsersException(self::RECOVER_INVALID);
         }
         if ($data['used']) {
-            return self::RECOVER_USED;
+            throw new UsersException(self::RECOVER_USED);
         }
         $date = $data['date_requested'];
         $date = explode(' ', $date);
         $day = explode('-', $date[0]);
         $time = explode(':', $date[1]);
         $day1 = mktime($time[0], $time[1], $time[2], $day[1], $day[2], $day[0]);
-        if ($day1 and (time() - $day1 > 3600 * Users::RECOVER_TTL)) {
-            return self::RECOVER_OUTDATED;
+        if ($day1 and (time() - $day1 > 3600 * Users::getRecoverTTL())) {
+            throw new UsersException(self::RECOVER_OUTDATED);
         }
-        if (!$returnUser) {
-            return true;
-        }
-        return User::getById($data['user']);
+        return $returnUser ? User::getById($data['user']) : true;
     }
 
+    /**
+     * Flag password change code as used
+     * @param string $key
+     * @throws UsersException
+     */
     public static function setUsed($key)
     {
         if (!$key) {
-            return;
+            throw new UsersException(self::RECOVER_INVALID);
         }
         DB::getInstance(Users::getDB())->query(
             'UPDATE `user_recover` SET `used`=1 WHERE `recover`=?',
@@ -82,20 +102,17 @@ class Recover
         );
     }
 
-//    public function recoverSetPassword($key, $pw1, $pw2)
-//    {
-//        $db = MySQL::getInstance();
-//        $data = $db->fetch("SELECT * FROM `user_recover` WHERE `user`='" . $db->escape($key) . "'");
-//        if (empty($data)) {
-//            return self::RECOVER_INVALID;
-//        }
-//        $data = $data[0];
-//        if (($r = $this->setPassword($data['user_id'], $pw1, $pw2)) !== true) {
-//            return $r;
-//        }
-//        $db->query(
-//            'UPDATE `user_recover` SET `used`=1,`date_used`=NOW() WHERE `recover`=\'' . $db->escape($key) . "'"
-//        );
-//        return true;
-//    }
+    /**
+     * Change password by recovery key
+     * @param string $key
+     * @param string $password
+     * @return User
+     */
+    public static function recoverSetPassword($key, $password)
+    {
+        $user = self::verify($key, true);
+        $user->setPassword($password);
+        self::setUsed($key);
+        return $user;
+    }
 }

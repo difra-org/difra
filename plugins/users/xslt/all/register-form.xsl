@@ -41,9 +41,9 @@
             <input type="text"
                    name="capcha"
                    style="width: 170px;"
-                   placeholder="{$locale/auth/placeholders/capcha}"/>
+                   placeholder="{$locale/auth/placeholders/captcha}"/>
             <span class="status">
-                <xsl:value-of select="$locale/auth/fieldDescs/capcha"/>
+                <xsl:value-of select="$locale/auth/fieldDescs/captcha"/>
             </span>
         </div>
 

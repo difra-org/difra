@@ -3,6 +3,7 @@
 use Difra\Ajaxer;
 use Difra\Locales;
 use Difra\Plugins\Users, Difra\Param;
+use Difra\Plugins\Users\Register;
 use Difra\Plugins\Users\User;
 use Difra\View;
 
@@ -62,42 +63,37 @@ class LoginController extends Difra\Controller
         Ajaxer::reload();
     }
 
-//    /**
-//     * Смена пароля с указанием старого
-//     * @param Difra\Param\AjaxString $oldpassword
-//     * @param Difra\Param\AjaxString $password1
-//     * @param Difra\Param\AjaxString $password2
-//     * @return void
-//     */
-//    public function changepasswordAjaxActionAuth(
-//        Param\AjaxString $oldpassword,
-//        Param\AjaxString $password1,
-//        Param\AjaxString $password2
-//    ) {
-//
-//        $ok = true;
-//        if (!Users::getInstance()->verifyPassword($oldpassword)) {
-//            Ajaxer::status('oldpassword', Locales::get('auth/password/bad_old'), 'problem');
-//            $ok = false;
-//        }
-//        if (!$password1 or !$password1->val()) {
-//            Ajaxer::status('password1', Locales::get('auth/register/password1_empty'), 'problem');
-//            $ok = false;
-//        } elseif (strlen($password1->val()) < 6) {
-//            Ajaxer::status('password1', Locales::get('auth/register/password1_short'), 'problem');
-//            $ok = false;
-//        }
-//        if (!$password2 or !$password2->val()) {
-//            Ajaxer::status('password2', Locales::get('auth/register/password2_empty'), 'problem');
-//            $ok = false;
-//        } elseif ($password1->val() != $password2->val()) {
-//            Ajaxer::status('password2', Locales::get('auth/register/passwords_diff'), 'problem');
-//            $ok = false;
-//        }
-//        if ($ok) {
-//            Ajaxer::notify(Locales::get('auth/password/changed'));
-//            Ajaxer::reset();
-//        }
-//    }
+    /**
+     * Change password
+     * @param Difra\Param\AjaxString $oldpassword
+     * @param Difra\Param\AjaxString $password1
+     * @param Difra\Param\AjaxString $password2
+     */
+    public function passwordAjaxActionAuth(
+        Param\AjaxString $oldpassword,
+        Param\AjaxString $password1,
+        Param\AjaxString $password2
+    ) {
+        $user = User::getCurrent();
+        if (!$user->verifyPassword($oldpassword)) {
+            Ajaxer::status('oldpassword', Locales::get('auth/password/bad_old'), 'problem');
+            $ok = false;
+        } else {
+            Ajaxer::status('oldpassword', Locales::get('auth/password/old_ok'), 'ok');
+            $ok = true;
+        }
+        $reg = new Register();
+        $reg->setPassword1($password1->val());
+        $reg->setPassword2($password2->val());
+        if (!$reg->validatePasswords()) {
+            $reg->callAjaxerEvents();
+            return;
+        }
+        if (!$ok) {
+            return;
+        }
+        Ajaxer::notify(Locales::get('auth/password/changed'));
+        Ajaxer::reset();
+    }
 }
 

@@ -8,7 +8,7 @@
 				</h2>
 				<div class="container">
 					<input type="text"
-					       name="email"
+					       name="login"
 					       placeholder="{$locale/auth/placeholders/email}"/>
 					<div class="required" style="display:none">
 						<div class="arrow"/>
@@ -47,7 +47,7 @@
 
 				<div id="remember_password">
 					<a href="#"
-					   onclick="ajaxer.close(this);ajaxer.query('/auth/recovery')">
+					   onclick="ajaxer.close(this);ajaxer.query('/recover')">
 						<xsl:value-of select="$locale/auth/forms/recoverPassword"/>
 					</a>
 				</div>
