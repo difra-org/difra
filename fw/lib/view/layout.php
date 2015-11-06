@@ -5,6 +5,10 @@ namespace Difra\View;
 use Difra\Config;
 use Difra\Exception;
 
+/**
+ * Class Layout
+ * @package Difra\View
+ */
 class Layout
 {
     /** @var \DOMDocument */
@@ -15,12 +19,20 @@ class Layout
     /** @var \DOMElement[] */
     private $elements = [];
 
+    /**
+     * Singleton
+     * @return Layout
+     */
     public static function getInstance()
     {
         static $instance = null;
         return $instance ?: $instance = new self;
     }
 
+    /**
+     * Constructor
+     * @throws Exception
+     */
     private function __construct()
     {
         // create output XML
@@ -59,6 +71,11 @@ class Layout
         }
     }
 
+    /**
+     * Get layout element XML node
+     * @param $name
+     * @return \DOMElement
+     */
     public static function &getElement($name)
     {
         if ($name == 'root') {
@@ -71,6 +88,10 @@ class Layout
         return $me->elements[$name];
     }
 
+    /**
+     * Get all layout elements
+     * @return \DOMElement[]
+     */
     public static function &getAll()
     {
         return self::getInstance()->elements;

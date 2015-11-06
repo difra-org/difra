@@ -13,6 +13,10 @@ use Difra\Locales;
 use Difra\Resourcer;
 use Difra\View;
 
+/**
+ * Class XML
+ * @package Difra\View
+ */
 class XML
 {
     /**

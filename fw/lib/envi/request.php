@@ -12,8 +12,11 @@ use Difra\View\HttpError;
  */
 class Request
 {
+    /** @var bool Ajaxer request flag */
     private static $isAjax = false;
+    /** @var bool Form submitted via iframe flag */
     private static $isIframe = false;
+    /** @var array Request parameters */
     private static $parameters = [];
 
     /**

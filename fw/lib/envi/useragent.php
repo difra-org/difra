@@ -10,6 +10,7 @@ use Difra\Libs\XML\DOM;
  */
 class UserAgent
 {
+    /** @var array Browser user agents */
     private static $agents = [
         'OPR' => 'Opera',
         'Chrome' => 'Chrome',
@@ -19,12 +20,14 @@ class UserAgent
         'Safari' => 'Safari',
         'Trident' => 'IE'
     ];
+    /** @var array Browser engines */
     private static $engines = [
         'AppleWebKit' => 'WebKit',
         'Gecko' => 'Gecko',
         'Presto' => 'Presto',
         'Trident' => 'Trident'
     ];
+    /** @var array Browser operating systems */
     private static $oses = [
         'Windows' => 'Windows',
         'Macintosh' => 'Macintosh',
@@ -51,6 +54,7 @@ class UserAgent
         }
     }
 
+    /** @var string User agent information */
     private static $userAgent = null;
 
     /**
@@ -71,6 +75,7 @@ class UserAgent
         ];
     }
 
+    /** @var string User agent identifier */
     private static $agentId = null;
 
     /**
@@ -91,6 +96,7 @@ class UserAgent
         return self::$agentId = false;
     }
 
+    /** @var string User agent  */
     private static $agent = null;
 
     /**
@@ -120,6 +126,7 @@ class UserAgent
         return self::$agent = false;
     }
 
+    /** @var string Browser engine */
     private static $engine = null;
 
     /**
@@ -140,7 +147,9 @@ class UserAgent
         return self::$engine = false;
     }
 
+    /** @var string Operating system */
     private static $os = null;
+    /** @var string Raw OS (?) */
     private static $rawOS = null;
 
     /**
@@ -162,6 +171,7 @@ class UserAgent
         return self::$os = false;
     }
 
+    /** @var string Browser version */
     private static $version = null;
 
     /**
@@ -210,6 +220,7 @@ class UserAgent
         return self::$version;
     }
 
+    /** @var string User agent string */
     private static $uaString = null;
 
     /**
@@ -227,6 +238,7 @@ class UserAgent
         return self::$uaString = false;
     }
 
+    /** @var array User agent array */
     private static $uaArray = null;
 
     /**
@@ -246,6 +258,7 @@ class UserAgent
         return self::$uaArray = $ua;
     }
 
+    /** @var string User agent CSS class */
     private static $uaClass = null;
 
     /**
@@ -275,11 +288,12 @@ class UserAgent
         return self::$uaClass = trim(implode(' ', $uac));
     }
 
+    /** @var string Browser host device type */
     private static $device = null;
 
     /**
      * Get user agent device name
-     * @return null
+     * @return string
      */
     public static function getDevice()
     {

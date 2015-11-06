@@ -6,6 +6,10 @@ use Difra\Controller;
 use Difra\Envi;
 use Difra\View;
 
+/**
+ * Class Adm
+ * @package Difra\Controller
+ */
 class Adm extends Controller
 {
     /**

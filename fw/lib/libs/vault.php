@@ -2,6 +2,7 @@
 
 namespace Difra\Libs;
 
+use Difra\DB;
 use Difra\Envi;
 use Difra\Envi\Session;
 use Difra\MySQL;
@@ -20,9 +21,9 @@ class Vault
      */
     public static function add($data)
     {
-        $db = MySQL::getInstance();
+        $db = self::getDB();
         $db->query('DELETE FROM `vault` WHERE `created`<DATE_SUB(now(),INTERVAL 3 HOUR)');
-        $db->query("INSERT INTO `vault` SET `data`='" . $db->escape($data) . "'");
+        $db->query('INSERT INTO `vault` SET `data`=?', [$data]);
         if ($id = $db->getLastId()) {
             Session::start();
             if (!isset($_SESSION['vault'])) {
@@ -44,8 +45,7 @@ class Vault
         if (!isset($_SESSION['vault']) or !isset($_SESSION['vault'][$id])) {
             return null;
         }
-        $db = MySQL::getInstance();
-        return $db->fetchOne("SELECT `data` FROM `vault` WHERE `id`='" . $db->escape($id) . "'");
+        return self::getDB()->fetchOne('SELECT `data` FROM `vault` WHERE `id`=?', [$id]);
     }
 
     /**
@@ -59,8 +59,8 @@ class Vault
             return;
         }
         unset($_SESSION['vault'][$id]);
-        $db = MySQL::getInstance();
-        $db->query("DELETE FROM `vault` WHERE `id`='" . $db->escape($id) . "'");
+        $db = self::getDB();
+        $db->query('DELETE FROM `vault` WHERE `id`=?', [$id]);
         $db->query('DELETE FROM `vault` WHERE `created`<DATE_SUB(now(),INTERVAL 3 HOUR)');
     }
 
@@ -121,5 +121,14 @@ class Vault
                 }
             }
         }
+    }
+
+    /**
+     * @return DB\Adapters\Common
+     * @throws \Difra\Exception
+     */
+    public static function getDB()
+    {
+        return DB::getInstance('vault');
     }
 }

@@ -11,6 +11,7 @@ use Difra\DB\Adapters\MySQL;
  */
 class DB
 {
+    /** @var array Configuration instances */
     private static $adapters = [];
 
     /**
@@ -37,6 +38,10 @@ class DB
         }
     }
 
+    /**
+     * Get configuration
+     * @return mixed
+     */
     private static function &getConfig()
     {
         static $cfg = null;

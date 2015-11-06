@@ -11,13 +11,18 @@ use Difra\Envi\Setup;
 class Locales
 {
     // TODO: switch default language to english
+    /** @var string Default locale */
     public $locale = 'ru_RU';
     /**
      * @var \DOMDocument
      */
     public $localeXML = null;
+    // TODO: replace this values with locale's built in methods?
+    /** @var array Date formats */
     public $dateFormats = ['ru_RU' => 'd.m.y', 'en_US' => 'm-d-y'];
+    /** @var array Date and time formats */
     public $dateTimeFormats = ['ru_RU' => 'd.m.y H:i:s', 'en_US' => 'm-d-y h:i:s A'];
+    /** @var bool Locale is loaded flag */
     private $loaded = false;
 
     /**
@@ -30,6 +35,9 @@ class Locales
         $this->locale = $locale;
     }
 
+    /**
+     * Forbid cloning
+     */
     private function __clone()
     {
     }

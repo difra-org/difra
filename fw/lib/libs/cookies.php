@@ -14,8 +14,11 @@ use Difra\Locales;
  */
 class Cookies
 {
+    /** @var int Cookie expiration */
     private $expireTime = 0;
+    /** @var string Cookie domain */
     private $domain = null;
+    /** @var string Cookie path */
     private $path = null;
 
     /**

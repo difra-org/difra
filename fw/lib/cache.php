@@ -9,12 +9,19 @@ namespace Difra;
  */
 class Cache
 {
+    /** Auto detect */
     const INST_AUTO = 'Auto detect';
+    /** Memcached module */
     const INST_MEMCACHED = 'MemCached';
+    /** Memcache module */
     const INST_MEMCACHE = 'Memcache';
+    /** Xcache */
     const INST_XCACHE = 'XCache';
+    /** Shared memory */
     const INST_SHAREDMEM = 'Shared Memory';
+    /** Stub */
     const INST_NONE = 'None';
+    /** Default */
     const INST_DEFAULT = self::INST_AUTO;
     /**
      * Configured cache adapters.
@@ -36,6 +43,10 @@ class Cache
         return self::getAdapter($configName);
     }
 
+    /**
+     * Detect available adapter
+     * @return string
+     */
     private static function detect()
     {
         static $autoDetected = null;
@@ -63,6 +74,11 @@ class Cache
         return $autoDetected = self::INST_NONE;
     }
 
+    /**
+     * Factory
+     * @param string $configName
+     * @return Cache\MemCache|Cache\MemCached|Cache\None|Cache\SharedMemory|Cache\XCache
+     */
     private static function getAdapter($configName)
     {
         if (isset(self::$adapters[$configName])) {

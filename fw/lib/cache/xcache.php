@@ -12,6 +12,7 @@ use Difra\Exception;
  */
 class XCache extends Common
 {
+    /** @var string Adapter name */
     public $adapter = Cache::INST_XCACHE;
 
     /**

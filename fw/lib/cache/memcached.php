@@ -14,8 +14,11 @@ class MemCached extends Common
 {
     /** @var \Memcached */
     private static $memcache = null;
+    /** @var string Serialize data flag */
     private static $serialize = true;
+    /** @var int TTL */
     private static $lifetime = 0;
+    /** @var string Adapter name */
     public $adapter = Cache::INST_MEMCACHED;
 
     /**
