@@ -7,7 +7,6 @@ use Difra\Controller;
 use Difra\Debugger;
 use Difra\Envi\Request;
 use Difra\View;
-use Difra\View\HttpError as ViewException;
 
 /**
  * Class Output
@@ -26,7 +25,7 @@ class Output {
     final public static function start()
     {
         $controller = Controller::getInstance();
-        if (!empty(Controller::hasUnusedParameters())) {
+        if (Controller::hasUnusedParameters()) {
             $controller->putExpires(true);
             throw new HttpError(404);
         } elseif (!is_null(self::$output)) {

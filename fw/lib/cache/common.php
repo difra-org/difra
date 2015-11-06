@@ -15,6 +15,7 @@ abstract class Common
 {
     //abstract static public function isAvailable();
 
+    /** Session prefix */
     const SESS_PREFIX = 'session:';
     /** @var string */
     public $adapter = null;
@@ -116,8 +117,9 @@ abstract class Common
             return;
         }
 
+        /** @noinspection PhpUnusedParameterInspection */
         session_set_save_handler(
-        // open
+            // open
             function ($s, $n) {
                 return true;
             },

@@ -4,6 +4,7 @@ namespace Difra\View;
 
 /**
  * Class Normalizer
+ * XSLT for converting XHTML to HTML5
  * @package Difra\View
  */
 class Normalizer

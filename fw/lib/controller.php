@@ -16,6 +16,7 @@ abstract class Controller
 {
     /** Default web server-side caching time, seconds */
     const DEFAULT_CACHE = 60;
+    /** @var array URI parts to be used as parameters */
     protected static $parameters = [];
     /** @var bool */
     public $isAjaxAction = false;
@@ -274,13 +275,12 @@ abstract class Controller
         }
     }
 
+    /**
+     * Are unused parameters still left?
+     * @return bool
+     */
     public static function hasUnusedParameters()
     {
         return !empty(self::$parameters);
-    }
-
-    public function getOutput()
-    {
-        return $this->output;
     }
 }

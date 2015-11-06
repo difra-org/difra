@@ -13,10 +13,15 @@ class MemCache extends Common
 {
     /** @var \Memcache */
     private static $memcache = null;
+    /** @var string Memcached server */
     private static $server = false;
+    /** @var int Memcached port */
     private static $port = 0;
+    /** @var bool Serialize values? */
     private static $serialize = false;
+    /** @var int TTL */
     private static $lifetime = 0;
+    /** @var string Adapter name */
     public $adapter = Cache::INST_MEMCACHE;
 
     /**

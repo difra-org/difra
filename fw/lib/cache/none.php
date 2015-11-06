@@ -11,6 +11,7 @@ use Difra\Cache;
  */
 class None extends Common
 {
+    /** @var string Adapter name */
     public $adapter = Cache::INST_NONE;
 
     /**

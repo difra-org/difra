@@ -237,6 +237,7 @@ abstract class Common
         return $this->pdo->lastInsertId();
     }
 
+    /** @var int Last affected rows number */
     private $lastAffectedRows = null;
 
     /**

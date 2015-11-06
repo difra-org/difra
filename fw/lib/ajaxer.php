@@ -9,8 +9,11 @@ namespace Difra;
  */
 class Ajaxer
 {
+    /** @var array Non-action responses */
     private static $response = [];
+    /** @var array Action responses */
     private static $actions = [];
+    /** @var bool Form problem flag */
     private static $problem = false;
 
     /**

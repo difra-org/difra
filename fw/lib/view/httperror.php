@@ -13,7 +13,9 @@ use Difra\View;
  */
 class HttpError extends \Exception
 {
+    /** @var int|null|string Error */
     public static $error = null;
+    /** @var array HTTP errors */
     public static $errors = [
         100 => 'Continue',
         101 => 'Switching Protocols',

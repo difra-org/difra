@@ -8,6 +8,7 @@ namespace Difra\Libs\Debug;
  */
 class ErrorConstants
 {
+    /** @var array PHP errors matching */
     private $errors = [
         E_ERROR => 'E_ERROR',
         E_WARNING => 'E_WARNING',

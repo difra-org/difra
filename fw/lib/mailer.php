@@ -8,6 +8,7 @@ namespace Difra;
  */
 class Mailer
 {
+    // TODO: add configuration values
     private $fromText = 'Robot';
     private $fromMail = 'robot@example.com'; // TODO: move this to configuration and throw exception if it's not set
 

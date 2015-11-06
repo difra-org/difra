@@ -10,26 +10,44 @@ use Difra\Envi\Request;
  */
 class Debugger
 {
+    /** Debugging is disabled */
     const DEBUG_DISABLED = 0;
+    /** Debugging is enabled */
     const DEBUG_ENABLED = 1;
+    /** Console is disabled */
     const CONSOLE_DISABLED = 0;
+    /** Console is enabled, but switched off by developer */
     const CONSOLE_OFF = 1;
+    /** Console is enabled */
     const CONSOLE_ON = 2; // console disabled
+    /** Caches are disabled */
     const CACHES_DISABLED = 0; // console enabled, but not active
+    /** Caches are enabled */
     const CACHES_ENABLED = 1; // console enabled and active
+    /** Display errors */
     const ERRORS_SHOW = 1;
+    /** Don't display errors */
     const ERRORS_HIDE = 0;
-    /** @var bool */
-    static public $shutdown = false;
+
+    /** @var int Debugger state */
     private static $enabled = self::DEBUG_DISABLED;
+    /** @var int Console state */
     private static $console = self::CONSOLE_DISABLED;
+    /** @var int Caches state */
     private static $caches = self::CACHES_ENABLED;
+    /** @var int Display errors state */
     private static $errors = self::ERRORS_HIDE;
+    /** @var array Console data */
     private static $output = [];
+    /** @var bool Error flag */
     private static $hadError = false;
+    /** @var string If there was a handled exception, don't capture it on shutdown */
     private static $handledByException = null;
     /** @var array Last error message captured by captureNormal (let captureShutdown skip it) */
     private static $handledByNormal = null;
+
+    /** @var bool Shut down flag (to prevent undesired output) */
+    static public $shutdown = false;
 
     /**
      * Is debugging enabled?

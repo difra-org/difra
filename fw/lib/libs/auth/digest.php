@@ -3,7 +3,7 @@
 namespace Difra\Libs\Auth;
 
 use Difra\Envi\Session;
-use Difra\View\HttpError as ViewException;
+use Difra\View\HttpError;
 
 /**
  * Class Digest
@@ -12,8 +12,11 @@ use Difra\View\HttpError as ViewException;
  */
 class Digest
 {
+    /** @var string Auth realm */
     public $realm = 'Restricted area';
+    /** @var array Users list */
     private $users = [];
+    /** @var bool Stale */
     private $stale = false;
 
     /**
