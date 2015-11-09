@@ -145,8 +145,7 @@ class User
         }
         $users = [];
         foreach ($usersData as $data) {
-            $user = new self;
-            $user->load($data);
+            $user = User::load($data);
             $users[] = $user;
         }
         return $users;
@@ -159,6 +158,7 @@ class User
     public function getXML($node, $createNode = false)
     {
         $subNode = $createNode ? $node->appendChild($node->ownerDocument->createElement('user')) : $node;
+        $subNode->setAttribute('id', $this->id);
         $subNode->setAttribute('email', $this->email);
         $subNode->setAttribute('login', $this->login);
         $subNode->setAttribute('active', $this->active);
@@ -499,5 +499,14 @@ QUERY
             default:
                 throw new Exception('Unknown activation method: ' . $method);
         }
+    }
+
+    /**
+     * Activate user (by administrator)
+     */
+    public function activateManual()
+    {
+        $this->active = true;
+        $this->activation = null;
     }
 }

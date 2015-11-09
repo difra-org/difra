@@ -1,11 +1,10 @@
 /**
- * Script for switching pages with Ctrl+Left and Ctrl+Right.
- * TODO: fix it to work with Alt+arrow under Mac OS X.
+ * Script for switching pages with Ctrl/Alt+Left and Ctrl/Alt+Right.
  */
 
 $(document).on('keydown', function (e) {
 
-    if (e.ctrlKey) {
+    if (e.ctrlKey || e.altKey) {
         //noinspection SwitchStatementWithNoDefaultBranchJS
         switch (e.keyCode) {
             case 0x27: // right arrow

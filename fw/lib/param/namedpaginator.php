@@ -31,4 +31,12 @@ class NamedPaginator extends Common
     {
         return call_user_func_array(array($this->value, $method), $args);
     }
+
+    /**
+     * @return Paginator
+     */
+    public function val()
+    {
+        return $this->value;
+    }
 }
