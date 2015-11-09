@@ -1,4 +1,5 @@
 <?php
+use Difra\Libs\Images;
 
 /**
  * Class UpController
@@ -22,7 +23,7 @@ class UpController extends \Difra\Controller
                 . \Difra\Locales::get('editor/upload-error') . "');</script>");
         }
 
-        $img = \Difra\Libs\Images::getInstance()->convert(file_get_contents($_FILES['upload']['tmp_name']));
+        $img = Images::convert(file_get_contents($_FILES['upload']['tmp_name']));
         if (!$img) {
             die("<script type=\"text/javascript\">window.parent.CKEDITOR.tools.callFunction($funcnum,'','"
                 . \Difra\Locales::get('editor/upload-notimage') . "');</script>");

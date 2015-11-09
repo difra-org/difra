@@ -181,12 +181,10 @@ class rss
 				$logoImage = $settings['logo']->val();
 				unset($settings['logo']);
 
-				$Images = Images::getInstance();
-
 				@mkdir(DIR_DATA . 'rss', 0777, true);
 
 				try {
-					$rawImg = $Images->createThumbnail($logoImage, 256, 256, 'png');
+					$rawImg = Images::createThumbnail($logoImage, 256, 256, 'png');
 				} catch (\Difra\Exception $ex) {
 					throw new \Difra\Exception('Bad image format.');
 				}

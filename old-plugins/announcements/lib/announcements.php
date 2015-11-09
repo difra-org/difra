@@ -80,15 +80,13 @@ class Announcements
             throw new Exception('Directory is not writeable!');
         }
 
-        $Images = Images::getInstance();
-
         $img = $fileData instanceof AjaxFile ? $fileData->val() : $fileData;
 
         try {
-            $rawImg = $Images->data2image($img);
+            $rawImg = Images::data2image($img);
 
-            $newImg = $Images->scaleAndCrop($rawImg, $this->settings['width'], $this->settings['height'], 'png');
-            $bigImg = $Images->scaleAndCrop($rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png');
+            $newImg = Images::scaleAndCrop($rawImg, $this->settings['width'], $this->settings['height'], 'png');
+            $bigImg = Images::scaleAndCrop($rawImg, $this->settings['bigWidth'], $this->settings['bigHeight'], 'png');
         } catch (Exception $ex) {
             throw new Exception('Bad image format. ' . $ex->getMessage());
         }
