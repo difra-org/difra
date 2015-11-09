@@ -3,6 +3,7 @@
 use Difra\Ajaxer;
 use Difra\Locales;
 use Difra\Plugins, Difra\Param;
+use Difra\Plugins\Users\User;
 
 /**
  * Class AdmUsersListController
@@ -19,20 +20,36 @@ class AdmUsersListController extends Difra\Controller\Adm
     public function indexAction(\Difra\Param\NamedPaginator $page = null)
     {
         $this->node = $this->root->appendChild($this->xml->createElement('userList'));
-        Plugins\Users\User::getListXML($this->node, $page ? $page->val() : null);
+        User::getListXML($this->node, $page->val());
     }
 
+    /**
+     * Edit user (form)
+     * @param Param\AnyInt $id
+     * @throws Plugins\Users\UsersException
+     */
     public function editAction(Param\AnyInt $id)
     {
         $this->node = $this->root->appendChild($this->xml->createElement('userEdit'));
-        $user = Plugins\Users\User::getById($id->val());
-        if (!$user) {
-            return;
+        try {
+            $user = User::getById($id->val());
+            if (!$user) {
+                return;
+            }
+            $user->getXML($this->node, false);
+        } catch (\Exception $ex) {
         }
-        $user->getXML($this->node, false);
-//        getUserXML($this->node, $id->val());
     }
 
+    /**
+     * Edit user (submit)
+     * @param Param\AnyInt $id
+     * @param Param\AjaxEmail $email
+     * @param Param\AjaxCheckbox $change_pw
+     * @param Param\AjaxString|null $new_pw
+     * @param Param\AjaxData|null $fieldName
+     * @param Param\AjaxData|null $fieldValue
+     */
     public function saveAjaxAction(
         Param\AnyInt $id,
         Param\AjaxEmail $email,
@@ -41,15 +58,12 @@ class AdmUsersListController extends Difra\Controller\Adm
         Param\AjaxData $fieldName = null,
         Param\AjaxData $fieldValue = null
     ) {
-        $userData = ['email' => $email->val(), 'change_pw' => $change_pw->val()];
-        $userData['new_pw'] = !is_null($new_pw) ? $new_pw->val() : null;
-
-        $userData['addonFields'] = !is_null($fieldName) ? $fieldName->val() : null;
-        $userData['addonValues'] = !is_null($fieldValue) ? $fieldValue->val() : null;
-
-        Plugins\Users::getInstance()->setUserLogin($id->val(), $userData);
-
-        if ($userData['change_pw'] != 0 && !is_null($userData['new_pw'])) {
+        $user = User::getById($id->val());
+        $user->setEmail($email->val());
+//        $userData['addonFields'] = !is_null($fieldName) ? $fieldName->val() : null;
+//        $userData['addonValues'] = !is_null($fieldValue) ? $fieldValue->val() : null;
+        if ($change_pw->val() and $new_pw and $new_pw->val()) {
+            $user->setPassword($new_pw->val());
             Ajaxer::notify(Locales::get('auth/adm/userDataSavedPassChanged'));
         } else {
             Ajaxer::notify(Locales::get('auth/adm/userDataSaved'));
@@ -57,33 +71,35 @@ class AdmUsersListController extends Difra\Controller\Adm
         Ajaxer::refresh();
     }
 
+    /**
+     * Ban user
+     * @param Param\AnyInt $id
+     * @throws Plugins\Users\UsersException
+     */
     public function banAjaxAction(Param\AnyInt $id)
     {
-        \Difra\Plugins\Users::getInstance()->ban($id->val());
+        User::getById($id->val())->setBanned(true);
         Ajaxer::refresh();
     }
 
+    /**
+     * Unban user
+     * @param Param\AnyInt $id
+     * @throws Plugins\Users\UsersException
+     */
     public function unbanAjaxAction(Param\AnyInt $id)
     {
-        \Difra\Plugins\Users::getInstance()->unban($id->val());
+        User::getById($id->val())->setBanned(false);
         Ajaxer::refresh();
     }
 
-    public function moderatorAjaxAction(Param\AnyInt $id)
-    {
-        \Difra\Plugins\Users::getInstance()->setModerator($id->val());
-        Ajaxer::refresh();
-    }
-
-    public function unmoderatorAjaxAction(Param\AnyInt $id)
-    {
-        \Difra\Plugins\Users::getInstance()->unSetModerator($id->val());
-        Ajaxer::refresh();
-    }
-
+    /**
+     * Manual user activation
+     * @param Param\AnyInt $id
+     */
     public function activateAjaxAction(Param\AnyInt $id)
     {
-        Plugins\Users::getInstance()->manualActivation($id->val());
+        User::getById($id->val())->activateManual();
         Ajaxer::refresh();
     }
 }

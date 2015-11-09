@@ -500,4 +500,13 @@ QUERY
                 throw new Exception('Unknown activation method: ' . $method);
         }
     }
+
+    /**
+     * Activate user (by administrator)
+     */
+    public function activateManual()
+    {
+        $this->active = true;
+        $this->activation = null;
+    }
 }
