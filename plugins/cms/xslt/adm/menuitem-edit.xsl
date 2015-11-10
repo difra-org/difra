@@ -144,7 +144,7 @@
 							</th>
 							<td>
 								<input type="text" name="label" class="full-width"
-								       value="{@linkLabel}"/>
+								       value="{@label}"/>
 							</td>
 						</tr>
 						<tr>
