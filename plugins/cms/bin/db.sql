@@ -1,12 +1,13 @@
 CREATE TABLE `cms` (
     `id`     INT(11) NOT NULL AUTO_INCREMENT,
-    `tag`    CHAR(250)        DEFAULT NULL,
     `hidden` TINYINT(1)       DEFAULT '0',
+    `tag`    CHAR(250)        DEFAULT NULL,
+    `modified` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     `title`  TEXT,
     `body`   MEDIUMTEXT,
     PRIMARY KEY (`id`),
-    KEY `tag` (`tag`) USING HASH,
-    KEY `hidden` (`hidden`) USING HASH
+    KEY `hidden` (`hidden`) USING HASH,
+    KEY `tag` (`tag`) USING HASH
 )
     ENGINE = InnoDB
     DEFAULT CHARSET = `utf8`;
@@ -34,7 +35,7 @@ CREATE TABLE `cms_menu_items` (
     PRIMARY KEY (`id`),
     KEY `menu_id` (`menu`) USING HASH,
     KEY `page_id` (`page`) USING HASH,
-    KEY `position` (`position`),
+    KEY `position` (`position`) USING BTREE,
     CONSTRAINT `fk_cms_menu_items_menu` FOREIGN KEY (`menu`) REFERENCES `cms_menu` (`id`)
         ON DELETE CASCADE
         ON UPDATE CASCADE,

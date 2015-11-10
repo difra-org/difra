@@ -108,14 +108,21 @@ class CMS
      */
     public static function getSitemap()
     {
-        $data = CMS::getDB()->fetch('SELECT `tag` FROM `cms`');
+        $data = CMS::getDB()->fetch('SELECT `tag`,`modified` FROM `cms` WHERE `hidden`=0');
         $res = [];
         if (empty($data)) {
             return false;
         }
         $host = 'http://' . Envi::getHost();
         foreach ($data as $t) {
-            $res[] = ['loc' => $host . $t['tag']];
+            $rec = ['loc' => $host . $t['tag']];
+            if (!empty($t['modified'])) {
+                $mod = explode(' ', $t['modified']);
+                if (sizeof($mod) == 2) {
+                    $rec['lastmod'] = $mod[0];
+                }
+            }
+            $res[] = $rec;
         }
         return $res;
     }
