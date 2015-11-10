@@ -81,7 +81,6 @@ class Events
 
     /**
      * Register event handler
-     * TODO: replace class and method with unnamed functions as a handlers
      * @param string $type Event name
      * @param string $class Handler class (should contain getInstance() singleton method)
      * @param bool|string $method Handler method (if false, only getInstance() will be called)

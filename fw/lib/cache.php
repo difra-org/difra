@@ -55,7 +55,7 @@ class Cache
         }
         if (!Debugger::isCachesEnabled()) {
             Debugger::addLine('Caching disabled by Debug Mode settings');
-            return $autoDetected;
+            return self::INST_NONE;
         }
         if (Cache\XCache::isAvailable()) {
             Debugger::addLine('Auto-detected cache type: XCache');
@@ -78,6 +78,7 @@ class Cache
      * Factory
      * @param string $configName
      * @return Cache\MemCache|Cache\MemCached|Cache\None|Cache\SharedMemory|Cache\XCache
+     * @throws Exception
      */
     private static function getAdapter($configName)
     {
@@ -97,8 +98,7 @@ class Cache
             case self::INST_NONE:
                 return self::$adapters[$configName] = new Cache\None();
             default:
-                // todo: wrong adapter name: warning?
-                return self::getAdapter(self::INST_NONE);
+                throw new Exception("Unknown cache adapter type: $configName");
         }
     }
 }
