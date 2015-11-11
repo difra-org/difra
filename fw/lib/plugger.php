@@ -26,7 +26,7 @@ class Plugger
 
         // default database dependency
         try {
-            if (DB::getInstance()->fetchOne('SELECT \'pong\'') == 'pong') {
+            if (DB::getInstance()->fetchOne('SELECT \'pong\'') === 'pong') {
                 self::$provisions['database'] = ['db'];
             }
         } catch (Exception $ex) {
