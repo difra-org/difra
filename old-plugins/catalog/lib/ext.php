@@ -363,7 +363,7 @@ class Ext
 			$path = DIR_DATA . 'catalog/ext/';
 			@mkdir($path, 0777, true);
 			$smallImage =
-				\Difra\Libs\Images::getInstance()->scaleAndCrop($image, $this->imgWidth, $this->imgHeight, 'png', true);
+				\Difra\Libs\Images::scaleAndCrop($image, $this->imgWidth, $this->imgHeight, 'png', true);
 			if (!$smallImage) {
 				return self::BAD_IMAGE;
 			}
@@ -396,7 +396,7 @@ class Ext
 			$path = DIR_DATA . 'catalog/ext/';
 			@mkdir($path, 0777, true);
 			$smallImage =
-				\Difra\Libs\Images::getInstance()->scaleAndCrop($image, $this->imgWidth, $this->imgHeight, 'png', true);
+				\Difra\Libs\Images::scaleAndCrop($image, $this->imgWidth, $this->imgHeight, 'png', true);
 			if (!$smallImage) {
 				return self::BAD_IMAGE;
 			}

@@ -2,6 +2,8 @@
 
 namespace Difra\Envi;
 
+use Difra\Envi;
+
 /**
  * Class Version
  * @package Difra\Envi
@@ -27,17 +29,21 @@ class Version
         }
         // version number
         $revisionArr = [self::VERSION, self::POSTFIX];
-        // fw revision
-        $fwVer = self::getSVNRev(DIR_FW);
-        if ($fwVer !== false) {
-            $revisionArr[] = $fwVer;
-        } elseif (preg_match('/\d+/', self::REVISION, $match)) {
-            $revisionArr[] = $match[0];
-        }
-        // site revision
-        $siteVer = self::getSVNRev(DIR_ROOT);
-        if ($siteVer !== false) {
-            $revisionArr[] = $siteVer;
+        if (Envi::isProduction()) {
+            // fw revision
+            $fwVer = self::getSVNRev(DIR_FW);
+            if ($fwVer !== false) {
+                $revisionArr[] = $fwVer;
+            } elseif (preg_match('/\d+/', self::REVISION, $match)) {
+                $revisionArr[] = $match[0];
+            }
+            // site revision
+            $siteVer = self::getSVNRev(DIR_ROOT);
+            if ($siteVer !== false) {
+                $revisionArr[] = $siteVer;
+            }
+        } else {
+            $revisionArr[] = time();
         }
         return $revision = implode('.', $revisionArr);
     }

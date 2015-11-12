@@ -3,6 +3,8 @@
 namespace Difra\Plugins;
 
 use Difra;
+use Difra\Libs\Images;
+use Difra\Site;
 
 /**
  * Статусы:
@@ -130,7 +132,7 @@ class videoManager
 
 		$db = \Difra\MySQL::getInstance();
 		$query = "SELECT `id`, `video`, `status`, `name`, `date`, `thumbs`, `length`, `hasPoster`, `original_file` FROM `videos`
-				WHERE `site`='" . \Difra\Site::getInstance()->getHost() . "' ORDER BY `date` ASC";
+				WHERE `site`='" . Site::getInstance()->getHost() . "' ORDER BY `date` ASC";
 		$db->fetchXML($node, $query);
 	}
 
@@ -158,7 +160,7 @@ class videoManager
 			foreach ($this->videoSizes as $size) {
 
 				$res = @file_put_contents($this->postersDir . '/' . $videoHash . '_' . $size . '_0' . '.png',
-					\Difra\Libs\Images::getInstance()->createThumbnail($poster, $size, $size, 'png'));
+					Images::createThumbnail($poster, $size, $size, 'png'));
 				if ($res === false) {
 					return 'badPosterSave';
 				}
@@ -166,14 +168,14 @@ class videoManager
 
 			// отдельно сохраняем маленькую превьюшку для админки
 			$res = @file_put_contents($this->postersDir . '/' . $videoHash . '_thumb.png',
-				\Difra\Libs\Images::getInstance()->createThumbnail($poster, 78, 78, 'png'));
+				Images::createThumbnail($poster, 78, 78, 'png'));
 			if ($res === false) {
 				return 'badPosterSave';
 			}
 		}
 
 		$query = "INSERT INTO `videos` (`video`, `site`, `name`, `original_file`, `date`, `status`, `hasPoster`)
-				VALUES ('" . $videoHash . "', '" . \Difra\Site::getInstance()->getHost() . "', '" . $db->escape($name) .
+				VALUES ('" . $videoHash . "', '" . Difra\Envi::getHost(true) . "', '" . $db->escape($name) .
 				 "', '" .
 				 $db->escape($file) . "', NOW(), 0, '" . intval($hasPoster) . "')";
 		$db->query($query);
@@ -255,7 +257,6 @@ class videoManager
 	 */
 	public function savePoster($video, $poster)
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		$video = $db->escape($video);
 
@@ -266,8 +267,7 @@ class videoManager
 		foreach ($this->videoSizes as $size) {
 
 			$res = @file_put_contents($this->postersDir . '/' . $video . '_' . $size . '_0' . '.png',
-				\Difra\Libs\Images::getInstance()
-								  ->createThumbnail($poster, $size, $size, 'png'));
+				Images::createThumbnail($poster, $size, $size, 'png'));
 			if ($res === false) {
 				return 'badPosterSave';
 			}
@@ -276,7 +276,7 @@ class videoManager
 		// отдельно сохраняем маленькую превьюшку для админки
 		$res = @file_put_contents(
 			$this->postersDir . '/' . $video . '_thumb.png',
-			\Difra\Libs\Images::getInstance()->createThumbnail($poster, 78, 78, 'png'));
+			Images::createThumbnail($poster, 78, 78, 'png'));
 		if ($res === false) {
 			return 'badPosterSave';
 		}
@@ -292,7 +292,6 @@ class videoManager
 	 */
 	public function changeName($id, $name)
 	{
-
 		$db = \Difra\MySQL::getInstance();
 		$db->query("UPDATE `videos` SET `name`='" . $db->escape($name) . "' WHERE `id`='" . intval($id) . "'");
 	}

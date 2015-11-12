@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins\Gallery;
 
+use Difra\Libs\Images;
+
 class Album
 {
 	private $id = null;
@@ -365,7 +367,6 @@ class Album
 		$this->save();
 		$this->load();
 		$Config = \Difra\Config::getInstance();
-		$Images = \Difra\Libs\Images::getInstance();
 		$waterMarkOn = $Config->getValue('gallery', 'watermark');
 		$waterMarkOnPreview = $Config->getValue('gallery', 'waterOnPreview');
 		$waterText = $Config->getValue('gallery', 'waterText');
@@ -386,23 +387,23 @@ class Album
 			foreach ($this->imgSizes as $k => $size) {
 				if ($size) {
 
-					$tmpImg = $Images->scaleAndCrop($img, $size[0], $size[1], $this->format);
+					$tmpImg = Images::scaleAndCrop($img, $size[0], $size[1], $this->format);
 					if ($waterMarkOn && $waterMarkOnPreview) {
 						if ($waterText != '') {
-							$tmpImg = $Images->setWatermark($tmpImg, $waterText, null, $this->format, 7);
+							$tmpImg = Images::setWatermark($tmpImg, $waterText, null, $this->format, 7);
 						} elseif ($watermarkImage) {
-							$tmpImg = $Images->setWatermark($tmpImg, null, $watermarkImage, $this->format, 7);
+							$tmpImg = Images::setWatermark($tmpImg, null, $watermarkImage, $this->format, 7);
 						}
 					}
 					file_put_contents($path . $imgId . $k . '.' . $this->format, $tmpImg);
 				} else {
 
-					$tmpImg = $Images->convert($img, $this->format);
+					$tmpImg = Images::convert($img, $this->format);
 					if ($waterMarkOn) {
 						if ($waterText != '') {
-							$tmpImg = $Images->setWatermark($tmpImg, $waterText, null, $this->format, 15);
+							$tmpImg = Images::setWatermark($tmpImg, $waterText, null, $this->format, 15);
 						} elseif ($watermarkImage) {
-							$tmpImg = $Images->setWatermark($tmpImg, null, $watermarkImage, $this->format, 15);
+							$tmpImg = Images::setWatermark($tmpImg, null, $watermarkImage, $this->format, 15);
 						}
 					}
 					file_put_contents($path . $imgId . $k . '.' . $this->format, $tmpImg);

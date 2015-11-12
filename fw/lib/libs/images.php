@@ -11,16 +11,18 @@ use Difra\Param\AjaxFile;
  */
 final class Images
 {
-    // TODO: make class static
     /**
-     * Singleton
-     * @static
-     * @return Images
+     * Forbid object creation
      */
-    public static function getInstance()
+    private function __construct()
     {
-        static $self = null;
-        return $self ? $self : $self = new self;
+    }
+
+    /**
+     * Forbid object cloning
+     */
+    private function __clone()
+    {
     }
 
     /**
@@ -29,7 +31,7 @@ final class Images
      * @throws Exception
      * @return \Imagick|null
      */
-    public function data2image($data)
+    public static function data2image($data)
     {
         if ($data instanceof AjaxFile) {
             $data = $data->val();
@@ -51,7 +53,7 @@ final class Images
      * @param string $type
      * @return string mixed
      */
-    public function image2data($img, $type = 'png')
+    private static function image2data($img, $type = 'png')
     {
         $img->setImageFormat($type);
         if ($img->getImageWidth() * $img->getImageHeight() > 40000) {
@@ -73,23 +75,23 @@ final class Images
      * @param string $type
      * @return bool|string
      */
-    public function convert($data, $type = 'png')
+    public static function convert($data, $type = 'png')
     {
-        $img = $this->data2image($data);
-        return $img ? $this->image2data($img, $type) : false;
+        $img = self::data2image($data);
+        return $img ? self::image2data($img, $type) : false;
     }
 
     /**
-     * Resizes image from binary string to given resolution keeping aspect ratio
+     * Resize image from binary string to given resolution keeping aspect ratio
      * @param string|AjaxFile $data binary string with image in it
      * @param int $maxWidth maximum height of thumbnail
      * @param int $maxHeight maximum width of thumbnail
      * @param string $type resulting image type
      * @return string
      */
-    public function createThumbnail($data, $maxWidth, $maxHeight, $type = 'png')
+    public static function createThumbnail($data, $maxWidth, $maxHeight, $type = 'png')
     {
-        $img = $this->data2image($data);
+        $img = self::data2image($data);
         $w = $img->getimagewidth();
         $h = $img->getimageheight();
         if ($maxWidth < $w or $maxHeight < $h) {
@@ -102,7 +104,7 @@ final class Images
             }
             $img->resizeImage($nw, $nh, \Imagick::FILTER_LANCZOS, 0.9, false);
         }
-        return $this->image2data($img, $type);
+        return self::image2data($img, $type);
     }
 
     /**
@@ -113,11 +115,11 @@ final class Images
      * @param string $type resulting image type
      * @return string
      */
-    public function scaleAndCrop($data, $maxWidth, $maxHeight, $type = 'png')
+    public static function scaleAndCrop($data, $maxWidth, $maxHeight, $type = 'png')
     {
-        $img = $this->data2image($data);
+        $img = self::data2image($data);
         $img->cropThumbnailImage($maxWidth, $maxHeight);
-        return $this->image2data($img, $type);
+        return self::image2data($img, $type);
     }
 
     /**
@@ -130,7 +132,7 @@ final class Images
      * @param float|int $opacity
      * @return string
      */
-    public function setWatermark(
+    public static function setWatermark(
         $image,
         $text = null,
         $watermarkImage = null,
@@ -142,12 +144,12 @@ final class Images
             return $image;
         }
 
-        $originalImage = $this->data2image($image);
+        $originalImage = self::data2image($image);
         if (!is_null($watermarkImage) && $watermarkImage != '') {
-            $watermarkImage = $this->data2image($watermarkImage);
+            $watermarkImage = self::data2image($watermarkImage);
         }
 
-        if (!is_null($text) && $text != '') {
+        if (!is_null($text) && $text !== '') {
 
             // text watermark
             $watermarkImage = new \Imagick();
@@ -176,7 +178,7 @@ final class Images
         // verify if watermark fits image
 
         if ($image_width < $watermark_width + $padding || $image_height < $watermark_height + $padding) {
-            return $this->image2data($originalImage, $type);
+            return self::image2data($originalImage, $type);
         }
 
         // define watermark position
@@ -209,7 +211,7 @@ final class Images
             $textColor = 'white';
         }
 
-        if (!is_null($text) && $text != '') {
+        if (!is_null($text) && $text !== '') {
             $draw->setFillColor(new \ImagickPixel($textColor));
             $draw->setFillOpacity($opacity);
             $watermarkImage->annotateimage($draw, 0, 0, 0, $text);
@@ -221,6 +223,6 @@ final class Images
         // Put watermark
         $originalImage->compositeImage($watermarkImage, \Imagick::COMPOSITE_OVER, $min[0], $min[1]);
 
-        return $this->image2data($originalImage, $type);
+        return self::image2data($originalImage, $type);
     }
 }

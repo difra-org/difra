@@ -70,7 +70,7 @@ class AdmGalleryConfigController extends \Difra\Controller
 			$path = DIR_DATA . 'gallery/';
 			@mkdir($path, 0777, true);
 			file_put_contents($path . 'watermark.png',
-				\Difra\Libs\Images::getInstance()->convert($waterFile->val(), 'png'));
+				\Difra\Libs\Images::convert($waterFile->val(), 'png'));
 		}
 		$this->ajax->notify($this->locale->getXPath('gallery/adm/config/saved'));
 	}

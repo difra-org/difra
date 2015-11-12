@@ -3,6 +3,7 @@
 namespace Difra\Plugins\Catalog;
 
 use Difra\Envi\Session;
+use Difra\Libs\Images;
 use Difra\Locales;
 use Difra\MySQL;
 
@@ -683,7 +684,7 @@ class Item
         $useScaleAndCrop = \Difra\Config::getInstance()->getValue('catalog', 'usescale');
 
         try {
-            $rawImg = \Difra\Libs\Images::getInstance()->data2image($image);
+            $rawImg = Images::data2image($image);
         } catch (\Difra\Exception $ex) {
             throw new \Difra\Exception('Bad image format.');
         }
@@ -697,12 +698,12 @@ class Item
             if ($size) {
 
                 if (is_null($useScaleAndCrop) || intval($useScaleAndCrop) == 0) {
-                    $newImg = \Difra\Libs\Images::getInstance()->createThumbnail($rawImg, $size[0], $size[1], 'png');
+                    $newImg = Images::createThumbnail($rawImg, $size[0], $size[1], 'png');
                 } else {
-                    $newImg = \Difra\Libs\Images::getInstance()->scaleAndCrop($rawImg, $size[0], $size[1], 'png');
+                    $newImg = Images::scaleAndCrop($rawImg, $size[0], $size[1], 'png');
                 }
             } else {
-                $newImg = \Difra\Libs\Images::getInstance()->convert($rawImg, 'png');
+                $newImg = Images::convert($rawImg, 'png');
             }
             if (file_put_contents($path . $imgId . $k . '.png', $newImg) === false) {
                 throw new \Difra\Exception('Can\'t save image file.');

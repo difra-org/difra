@@ -22,10 +22,8 @@ abstract class Controller
     public $isAjaxAction = false;
     /** @var bool|int Web server-side page caching (false = no, int = seconds, true = DEFAULT_CACHE) */
     public $cache = false;
-
     /** @var string */
     protected $method = null;
-
     /**
      * View/Output links
      */
@@ -33,7 +31,6 @@ abstract class Controller
     public $output = null;
     /** @var string */
     public $outputType = 'text/plain';
-
     /**
      * View/Layout links
      */
@@ -158,8 +155,7 @@ abstract class Controller
         $namedParameters = [];
         foreach ($actionParameters as $parameter) {
             $class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
-            if (call_user_func(["$class", "getSource"]) == 'query' and call_user_func(["$class", "isNamed"])
-            ) {
+            if (call_user_func(["$class", "getSource"]) == 'query' and call_user_func(["$class", "isNamed"])) {
                 $namedParameters[] = $parameter->getName();
             }
         }
@@ -170,7 +166,8 @@ abstract class Controller
             $name = $parameter->getName();
             $class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
             switch (call_user_func(["$class", "getSource"])) {
-                case 'query':        // parameter comes from query
+                // query parameters
+                case 'query':
                     if (call_user_func(["$class", "isNamed"])) {
                         // named parameter
                         if (sizeof(self::$parameters) >= 2 and self::$parameters[0] == $name) {
@@ -209,7 +206,8 @@ abstract class Controller
                         }
                     }
                     break;
-                case 'ajax':        // parameters comes from ajax
+                // ajax parameters
+                case 'ajax':
                     $value = Request::getParam($name);
                     if (!is_null($value) and $value !== '') {
                         if (!call_user_func(["$class", "verify"], $value)) {

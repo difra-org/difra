@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins;
 
+use Difra\Libs\Images;
+
 class Portfolio
 {
 	/**
@@ -52,7 +54,6 @@ class Portfolio
 		@mkdir($savePath, 0777, true);
 
 		$db = \Difra\MySQL::getInstance();
-		$Images = \Difra\Libs\Images::getInstance();
 
 		$pos = intval($db->fetchOne("SELECT MAX(`position`) FROM `portfolio_images` WHERE `portfolio`='" . intval($id) .
 									"'")) + 1;
@@ -65,9 +66,9 @@ class Portfolio
 			foreach ($imgSizes as $k => $size) {
 
 				if ($size) {
-					$tmpImg = $Images->createThumbnail($img, $size[0], $size[1]);
+					$tmpImg = Images::createThumbnail($img, $size[0], $size[1]);
 				} else {
-					$tmpImg = $Images->convert($img, 'png');
+					$tmpImg = Images::convert($img, 'png');
 				}
 
 				$fSize = file_put_contents($savePath . $imgId . '-' . $k . '.png', $tmpImg);

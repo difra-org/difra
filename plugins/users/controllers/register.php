@@ -94,9 +94,9 @@ class RegisterController extends Difra\Controller
         $register->register();
 
         if ($redirect) {
-        Cookies::getInstance()->notify(
-            Locales::get('auth/register/complete-' . Users::getActivationMethod())
-        );
+            Cookies::getInstance()->notify(
+                Locales::get('auth/register/complete-' . Users::getActivationMethod())
+            );
             View::redirect('/');
         } else {
             Ajaxer::notify(

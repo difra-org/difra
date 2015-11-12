@@ -63,32 +63,14 @@ class Sitemap
                 }
             }
         }
+
         // Get sitemap data
         $sitemap = self::getSitemap();
-        // If cache is disabled, just output data
-        if ($cache->adapter == 'None') {
-            if (is_null($page)) {
-                if ($autoIndex and sizeof($sitemap) <= self::PERPAGE) {
-                    return self::makeSitemapXML($sitemap);
-                } else {
-                    return self::makeIndexXML(floor((sizeof($sitemap) - 1) / self::PERPAGE) + 1);
-                }
-            } else {
-                if ($autoIndex and sizeof($sitemap) <= self::PERPAGE) {
-                    return false;
-                }
-                $urls = array_slice($sitemap, ($page - 1) * self::PERPAGE, self::PERPAGE);
-                if (empty($urls)) {
-                    return false;
-                }
-                return self::makeSitemapXML($urls);
-            }
-        }
-        // Process data and update cache
         $res = false;
         $pagesNum = floor((sizeof($sitemap) - 1) / self::PERPAGE) + 1;
         $cache->put('sitemap_pages', $pagesNum);
-        // Sitemap data fits one sitemap.xml file
+
+        // When sitemap data fits one sitemap.xml file, it's one page
         if ($autoIndex and sizeof($sitemap) <= self::PERPAGE) {
             $xml = self::makeSitemapXML($sitemap);
             $cache->put('sitemap_index', $xml);
@@ -97,11 +79,12 @@ class Sitemap
             }
             return $xml;
         }
+
         // More than one sitemap page
-        $xml = self::makeIndexXML(floor((sizeof($sitemap) - 1) / self::PERPAGE) + 1);
-        $cache->put('sitemap_index', $xml);
+        $indexXML = self::makeIndexXML(floor((sizeof($sitemap) - 1) / self::PERPAGE) + 1);
+        $cache->put('sitemap_index', $indexXML);
         if (is_null($page)) {
-            $res = $xml;
+            $res = $indexXML;
         }
         for ($pageN = 1; $pageN <= $pagesNum; $pageN++) {
             $urls = array_slice($sitemap, ($pageN - 1) * self::PERPAGE, self::PERPAGE);
