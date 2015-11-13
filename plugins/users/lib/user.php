@@ -418,10 +418,7 @@ class User
     public static function loginByPassword($login, $password, $longSession)
     {
         $data = DB::getInstance(Users::getDB())->fetchRow(
-            <<<QUERY
-            SELECT * FROM `user` WHERE (`email` = :login OR `login` = :login)
-QUERY
-            ,
+            "SELECT * FROM `user` WHERE (`email` = :login OR `login` = :login)",
             [
                 'login' => $login,
                 'password' => $password
