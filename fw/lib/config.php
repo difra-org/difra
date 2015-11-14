@@ -57,7 +57,7 @@ class Config
         try {
             $db = DB::getInstance();
             $db->query('DELETE FROM `config`');
-            $db->query('INSERT INTO `config` SET `config`=?',[serialize($diff)]);
+            $db->query('INSERT INTO `config` SET `config`=?', [serialize($diff)]);
             Cache::getInstance()->remove('config');
         } catch (Exception $e) {
             $e->notify();
@@ -120,12 +120,16 @@ class Config
             if (is_file(DIR_ROOT . '/config.php')) {
                 /** @noinspection PhpIncludeInspection */
                 $conf2 = include(DIR_ROOT . 'config.php');
-                $newConfig = $this->merge($newConfig, $conf2);
+                if (is_array($conf2)) {
+                    $newConfig = $this->merge($newConfig, $conf2);
+                }
             }
             if (is_file(DIR_SITE . '/config.php')) {
                 /** @noinspection PhpIncludeInspection */
                 $conf2 = include(DIR_SITE . 'config.php');
-                $newConfig = $this->merge($newConfig, $conf2);
+                if (is_array($conf2)) {
+                    $newConfig = $this->merge($newConfig, $conf2);
+                }
             }
         }
         return $newConfig;
