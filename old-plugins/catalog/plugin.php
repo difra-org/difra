@@ -6,7 +6,7 @@ class Plugin extends \Difra\Plugin
 {
 	protected $version = 5;
 	protected $description = 'Catalog';
-	protected $require = 'mysql';
+	protected $require = 'database';
 
 	public function init()
 	{

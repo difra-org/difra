@@ -4,7 +4,7 @@ namespace Difra\Plugins\Announcements;
 
 class Plugin extends \Difra\Plugin
 {
-	protected $require = ['users', 'editor', 'jqueryui', 'mysql'];
+	protected $require = ['users', 'editor', 'jqueryui', 'database'];
 	protected $version = 5;
 	protected $description = 'Announcements';
 

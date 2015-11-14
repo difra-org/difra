@@ -13,7 +13,7 @@ class Plugin extends \Difra\Plugin
 	/** @var string */
 	protected $description = 'SAPE webmaster support';
 	/** @var array */
-	protected $require = ['mysql'];
+	protected $require = ['database'];
 
 	public function init()
 	{
