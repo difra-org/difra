@@ -10,9 +10,8 @@ use Difra\Envi\Setup;
  */
 class Locales
 {
-    // TODO: switch default language to english
     /** @var string Default locale */
-    public $locale = 'ru_RU';
+    public $locale = 'en_US';
     /**
      * @var \DOMDocument
      */

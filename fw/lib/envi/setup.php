@@ -48,7 +48,7 @@ class Setup
                 $locale = $configLocale;
             }
         }
-        self::$locale = $locale ?: 'ru_RU';
+        self::$locale = $locale ?: 'en_US';
         setlocale(LC_ALL, [self::$locale . '.UTF-8', self::$locale . '.utf8']);
         setlocale(LC_NUMERIC, ['en_US.UTF-8', 'en_US.utf8']);
     }
