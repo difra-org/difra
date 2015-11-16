@@ -2,7 +2,7 @@
 
 namespace Difra\Libs;
 
-include_once(DIR_FW . 'lib/libs/esapi/trunk/src/ESAPI.php');
+include_once(DIR_FW . 'lib/Libs/ESAPI/trunk/src/ESAPI.php');
 
 /**
  * Class ESAPI
