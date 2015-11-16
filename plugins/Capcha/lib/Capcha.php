@@ -96,7 +96,7 @@ class Capcha
                     $image->gaussianBlurImage(15, 3);
                     for ($n = 0; $n < strlen($text); $n++) {
                         $i = $order[$n];
-                        $draw->setFont(__DIR__ . '/capcha/DejaVuSans.ttf');
+                        $draw->setFont(__DIR__ . '/Capcha/DejaVuSans.ttf');
                         $draw->setFontSize(
                             $j
                                 ? rand($sizeY * 3 / 5, $sizeY * 5 / 6)
