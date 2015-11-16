@@ -37,21 +37,13 @@ class Autoloader
      */
     public static function class2file($class)
     {
-        $class = ltrim($class, '\\');
-        $parts = explode('\\', $class);
+        $parts = explode('\\', ltrim($class, '\\'));
 
-        // framework and plugins
         if ($parts[0] === 'Difra') {
-            if (sizeof($parts) > 4 and
-                $parts[0] == 'Difra' and $parts[1] == 'Plugins' and $parts[3] == 'Objects'
-            ) {
-                $plugin = $parts[2];
-                $parts = array_slice($parts, 4);
-                $path = DIR_PLUGINS . "$plugin/objects/";
-            } elseif ($parts[0] == 'Difra' and $parts[1] == 'Plugins') {
+            if ($parts[1] == 'Plugins') {
                 $name = $parts[2];
-                // search for Plugins/Name classes in plugins/name/lib/name.php
                 if (sizeof($parts) == 3) {
+                    // Difra\Plugins\Name -> plugins/Name/lib/Name.php
                     $parts[] = $name;
                 }
                 $parts = array_slice($parts, 3);
