@@ -5,7 +5,12 @@ namespace Difra\Plugins;
 use Difra\Controller;
 use Difra\DB;
 use Difra\Envi;
+use Difra\Envi\Action;
 use Difra\MySQL;
+use Difra\Plugins\CMS\Menu;
+use Difra\Plugins\CMS\MenuItem;
+use Difra\Plugins\CMS\Page;
+use Difra\Plugins\CMS\Snippet;
 use Difra\View;
 
 /**
@@ -14,6 +19,7 @@ use Difra\View;
  */
 class CMS
 {
+    /** Database configuration */
     const DB = 'cms';
 
     /**
@@ -31,8 +37,8 @@ class CMS
      */
     public static function run()
     {
-        if ($page = CMS\Page::find()) {
-            Envi\Action::setCustomAction('\Difra\Plugins\CMS\Controller', 'pageAction', [$page]);
+        if ($page = Page::find()) {
+            Action::setCustomAction('\Difra\Plugins\CMS\Controller', 'pageAction', [$page]);
         }
     }
 
@@ -55,7 +61,7 @@ class CMS
      */
     public static function getMenuXML($node)
     {
-        $data = CMS\Menu::getList();
+        $data = Menu::getList();
         if (empty($data)) {
             return false;
         }
@@ -76,7 +82,7 @@ class CMS
      */
     public static function getMenuItemsXML($node, $menuId)
     {
-        $data = CMS\Menuitem::getList($menuId);
+        $data = MenuItem::getList($menuId);
         if (empty($data)) {
             return false;
         }
@@ -99,7 +105,7 @@ class CMS
 
         $controller = Controller::getInstance();
         $snippetNode = $controller->realRoot->appendChild($controller->xml->createElement('snippets'));
-        CMS\Snippet::getAllXML($snippetNode);
+        Snippet::getAllXML($snippetNode);
     }
 
     /**
@@ -142,7 +148,7 @@ class CMS
      */
     public function getListXML($node, $visible = null)
     {
-        $data = CMS\Page::getList($visible);
+        $data = Page::getList($visible);
         if (empty($data)) {
             return false;
         }
@@ -160,7 +166,7 @@ class CMS
      */
     public function getMenuListXML($node)
     {
-        $data = CMS\Menu::getList();
+        $data = Menu::getList();
         if (empty($data)) {
             return false;
         }
@@ -179,7 +185,7 @@ class CMS
      */
     public function getMenuItemXML($node, $id)
     {
-        CMS\Menuitem::get($id)->getXML($node);
+        MenuItem::get($id)->getXML($node);
     }
 
     /**
@@ -189,7 +195,7 @@ class CMS
      */
     public function getAvailablePagesForItemXML($node, $id)
     {
-        $item = CMS\Menuitem::get($id);
+        $item = MenuItem::get($id);
         $this->getAvailablePagesXML($node, $item->getMenuId());
     }
 
@@ -200,7 +206,7 @@ class CMS
      */
     public function getAvailablePagesXML($node, $menuId)
     {
-        $current = CMS\Menuitem::getList($menuId);
+        $current = MenuItem::getList($menuId);
         $currentIds = [];
         if (!empty($current)) {
             foreach ($current as $item) {

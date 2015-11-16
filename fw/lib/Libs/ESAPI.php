@@ -17,7 +17,7 @@ class ESAPI
     public static function getInstance()
     {
         static $_instance = null;
-        return $_instance ? $_instance : $_instance = new \ESAPI(DIR_FW . 'lib/libs/esapi/ESAPI.xml');
+        return $_instance ? $_instance : $_instance = new \ESAPI(DIR_FW . 'lib/Libs/ESAPI/ESAPI.xml');
     }
 
     /**

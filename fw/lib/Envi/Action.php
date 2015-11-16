@@ -66,10 +66,10 @@ class Action
             self::saveCache('404');
             throw new HttpError(404);
         }
-        self::$controllerUri =
-            '/' .
-            implode('/',
-                sizeof($parts) ? array_slice($controllerUriParts, 0, -sizeof($parts)) : $controllerUriParts);
+        self::$controllerUri = '/' . implode(
+                '/',
+                sizeof($parts) ? array_slice($controllerUriParts, 0, -sizeof($parts)) : $controllerUriParts
+            );
 
         /** @noinspection PhpIncludeInspection */
         include_once(self::$controllerFile);

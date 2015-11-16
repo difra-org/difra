@@ -73,9 +73,9 @@ class AdmContentMenuController extends \Difra\Controller
         \Difra\Param\AjaxInt $parent = null
     ) {
         if ($id) {
-            $item = \Difra\Plugins\CMS\Menuitem::get($id->val());
+            $item = \Difra\Plugins\CMS\MenuItem::get($id->val());
         } else {
-            $item = \Difra\Plugins\CMS\Menuitem::create();
+            $item = \Difra\Plugins\CMS\MenuItem::create();
         }
         $item->setMenu($menu->val());
         $item->setParent($parent ? $parent->val() : null);
@@ -99,9 +99,9 @@ class AdmContentMenuController extends \Difra\Controller
         \Difra\Param\AjaxInt $parent = null
     ) {
         if ($id) {
-            $item = \Difra\Plugins\CMS\Menuitem::get($id->val());
+            $item = \Difra\Plugins\CMS\MenuItem::get($id->val());
         } else {
-            $item = \Difra\Plugins\CMS\Menuitem::create();
+            $item = \Difra\Plugins\CMS\MenuItem::create();
         }
         $item->setMenu($menu->val());
         $item->setParent($parent ? $parent->val() : null);
@@ -129,7 +129,7 @@ class AdmContentMenuController extends \Difra\Controller
                 . '</form>'
             );
         } else {
-            \Difra\Plugins\CMS\Menuitem::get($id->val())->delete();
+            \Difra\Plugins\CMS\MenuItem::get($id->val())->delete();
             \Difra\Ajaxer::refresh();
             \Difra\Ajaxer::close();
         }
@@ -141,7 +141,7 @@ class AdmContentMenuController extends \Difra\Controller
      */
     public function upAjaxAction(\Difra\Param\AnyInt $id)
     {
-        \Difra\Plugins\CMS\Menuitem::get($id->val())->moveUp();
+        \Difra\Plugins\CMS\MenuItem::get($id->val())->moveUp();
         \Difra\Ajaxer::refresh();
     }
 
@@ -151,7 +151,7 @@ class AdmContentMenuController extends \Difra\Controller
      */
     public function downAjaxAction(\Difra\Param\AnyInt $id)
     {
-        \Difra\Plugins\CMS\Menuitem::get($id->val())->moveDown();
+        \Difra\Plugins\CMS\MenuItem::get($id->val())->moveDown();
         \Difra\Ajaxer::refresh();
     }
 }

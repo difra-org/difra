@@ -11,7 +11,7 @@ use Difra\Plugins\CMS;
  * Class Menuitem
  * @package Difra\Plugins\CMS
  */
-class Menuitem
+class MenuItem
 {
     /** @var int */
     private $id = null;
@@ -37,7 +37,7 @@ class Menuitem
     /**
      * Create menu element
      * @static
-     * @return Menuitem
+     * @return MenuItem
      */
     public static function create()
     {
@@ -48,7 +48,7 @@ class Menuitem
      * Get menu element by id
      * @static
      * @param int $id
-     * @return Menuitem
+     * @return MenuItem
      */
     public static function get($id)
     {
@@ -62,7 +62,7 @@ class Menuitem
      * Get elements list for menu with id=$menuId
      * @static
      * @param int $menuId
-     * @return Menuitem[]|bool
+     * @return MenuItem[]|bool
      */
     public static function getList($menuId)
     {

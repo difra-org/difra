@@ -50,7 +50,7 @@ class Plugger
             if (is_dir(DIR_PLUGINS) and $dir = opendir(DIR_PLUGINS)) {
                 while (false !== ($subdir = readdir($dir))) {
                     if ($subdir != '.' and $subdir != '..' and is_dir(DIR_PLUGINS . '/' . $subdir)) {
-                        if (is_readable(DIR_PLUGINS . "/$subdir/plugin.php")) {
+                        if (is_readable(DIR_PLUGINS . "/$subdir/Plugin.php")) {
                             $plugins[] = $subdir;
                         }
                     }
@@ -75,7 +75,7 @@ class Plugger
         if (!empty($dirs)) {
             foreach ($dirs as $dir) {
                 /** @noinspection PhpIncludeInspection */
-                include(DIR_PLUGINS . '/' . $dir . '/plugin.php');
+                include(DIR_PLUGINS . '/' . $dir . '/Plugin.php');
                 $ucf = ucfirst($dir);
                 $plugins[$dir] = call_user_func(["\\Difra\\Plugins\\$ucf\\Plugin", "getInstance"]);
             }

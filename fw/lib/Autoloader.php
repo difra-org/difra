@@ -45,11 +45,11 @@ class Autoloader
             if (sizeof($parts) > 4 and
                 $parts[0] == 'Difra' and $parts[1] == 'Plugins' and $parts[3] == 'Objects'
             ) {
-                $plugin = strtolower($parts[2]);
+                $plugin = $parts[2];
                 $parts = array_slice($parts, 4);
                 $path = DIR_PLUGINS . "$plugin/objects/";
             } elseif ($parts[0] == 'Difra' and $parts[1] == 'Plugins') {
-                $name = strtolower($parts[2]);
+                $name = $parts[2];
                 // search for Plugins/Name classes in plugins/name/lib/name.php
                 if (sizeof($parts) == 3) {
                     $parts[] = $name;
@@ -76,7 +76,7 @@ class Autoloader
             // default case
             $path = DIR_ROOT . 'lib/';
         }
-        return $path . strtolower(implode('/', $parts)) . '.php';
+        return $path . implode('/', $parts) . '.php';
     }
 
     /**
