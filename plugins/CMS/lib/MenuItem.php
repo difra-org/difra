@@ -8,7 +8,7 @@ use Difra\MySQL;
 use Difra\Plugins\CMS;
 
 /**
- * Class Menuitem
+ * Class MenuItem
  * @package Difra\Plugins\CMS
  */
 class MenuItem
@@ -52,10 +52,10 @@ class MenuItem
      */
     public static function get($id)
     {
-        $menuitem = new self;
-        $menuitem->id = $id;
-        $menuitem->loaded = false;
-        return $menuitem;
+        $menuItem = new self;
+        $menuItem->id = $id;
+        $menuItem->loaded = false;
+        return $menuItem;
     }
 
     /**
@@ -70,12 +70,14 @@ class MenuItem
             $cacheKey = 'cms_menuitem_list_' . $menuId;
             $cache = Cache::getInstance();
             if (!$data = $cache->get($cacheKey)) {
-                $data = CMS::getDB()->fetch(<<<SQL
-SELECT `cms_menu_items`.*,`cms`.`id` as `page_id`,`cms`.`tag`,`cms`.`hidden`,`cms`.`title`
+                $data = CMS::getDB()->fetch(
+                    <<<SQL
+                                        SELECT `cms_menu_items`.*,`cms`.`id` AS `page_id`,`cms`.`tag`,`cms`.`hidden`,`cms`.`title`
 FROM `cms_menu_items` LEFT JOIN `cms` ON `cms_menu_items`.`page`=`cms`.`id`
 WHERE `menu`=? ORDER BY `position`
 SQL
-                    , [$menuId]
+                    ,
+                    [$menuId]
                 );
                 $cache->put($cacheKey, $data);
             }
@@ -84,25 +86,25 @@ SQL
             }
             $res = [];
             foreach ($data as $menuData) {
-                $menuitem = new self;
-                $menuitem->id = $menuData['id'];
-                $menuitem->menu = $menuData['menu'];
-                $menuitem->parent = $menuData['parent'];
-                $menuitem->visible = $menuData['visible'];
-                $menuitem->page = $menuData['page'];
+                $menuItem = new self;
+                $menuItem->id = $menuData['id'];
+                $menuItem->menu = $menuData['menu'];
+                $menuItem->parent = $menuData['parent'];
+                $menuItem->visible = $menuData['visible'];
+                $menuItem->page = $menuData['page'];
                 if (!empty($menuData['tag'])) {
-                    $menuitem->pageData = [
+                    $menuItem->pageData = [
                         'id' => $menuData['page_id'],
                         'tag' => $menuData['tag'],
                         'hidden' => $menuData['hidden'],
                         'title' => $menuData['title']
                     ];
                 } else {
-                    $menuitem->link = $menuData['link'];
-                    $menuitem->linkLabel = $menuData['link_label'];
+                    $menuItem->link = $menuData['link'];
+                    $menuItem->linkLabel = $menuData['link_label'];
                 }
-                $menuitem->loaded = true;
-                $res[] = $menuitem;
+                $menuItem->loaded = true;
+                $res[] = $menuItem;
             }
             return $res;
         } catch (\Exception $e) {
@@ -128,8 +130,9 @@ SQL
         $db = CMS::getDB();
         if (!$this->id) {
             $pos = $db->fetchOne('SELECT MAX(`position`) FROM `cms_menu_items`');
-            $db->query(<<<SQL
-INSERT INTO `cms_menu_items` SET
+            $db->query(
+                <<<SQL
+                INSERT INTO `cms_menu_items` SET
     `menu`=:menu,
     `position`=:position,
     `parent`=:parent,
@@ -138,7 +141,8 @@ INSERT INTO `cms_menu_items` SET
     `link`=:link,
     `link_label`=:link_label
 SQL
-                , [
+                ,
+                [
                     'menu' => $this->menu,
                     'position' => intval($pos) + 1,
                     'parent' => $this->parent ?: null,
@@ -150,17 +154,19 @@ SQL
             );
             $this->id = $db->getLastId();
         } else {
-            $db->query(<<<'SQL'
-UPDATE `cms_menu_items` SET
+            $db->query(
+                <<<'SQL'
+                UPDATE `cms_menu_items` SET
     `menu`=:menu,
     `parent`=:parent,
     `visible`=:visible,
     `page`=:page,
     `link`=:link,
-    `link_label`=:link_label,
+    `link_label`=:link_label
     WHERE `id`=:id
 SQL
-                , [
+                ,
+                [
                     'id' => $this->id,
                     'menu' => $this->menu,
                     'parent' => $this->parent ?: null,
@@ -372,14 +378,20 @@ SQL
     {
         $this->load();
         $db = CMS::getDB();
+        $values = [
+            'menu' => $this->menu
+        ];
+        if ($this->parent) {
+            $parentCondition = '`parent`=:parent';
+            $values['parent'] = $this->parent;
+        } else {
+            $parentCondition = '`parent` IS NULL';
+        }
         $items = $db->fetch(
             "SELECT `id`,`position` FROM `cms_menu_items`
-                WHERE `menu`=:menu
-                AND `parent`" . ($this->parent ? "=" . $db->escape($this->parent) : ' IS NULL')
-            . " ORDER BY `position`",
-            [
-                'menu' => $this->menu
-            ]
+              WHERE `menu`=:menu AND $parentCondition
+              ORDER BY `position`",
+            $values
         );
         $newSort = [];
         $pos = 1;
@@ -416,13 +428,20 @@ SQL
     {
         $this->load();
         $db = CMS::getDB();
+        $values = [
+            'menu' => $this->menu
+        ];
+        if ($this->parent) {
+            $parentCondition = '`parent`=:parent';
+            $values['parent'] = $this->parent;
+        } else {
+            $parentCondition = '`parent` IS NULL';
+        }
         $items = CMS::getDB()->fetch(
             "SELECT `id`,`position` FROM `cms_menu_items`
-                WHERE
-                    `menu`=:menu
-                    AND `parent`" . ($this->parent ? '=' . $db->escape($this->parent) : ' IS NULL')
-            . " ORDER BY `position`",
-            ['menu' => $this->menu]
+              WHERE `menu`=:menu AND $parentCondition
+              ORDER BY `position`",
+            $values
         );
         $newSort = [];
         $pos = 1;

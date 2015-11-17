@@ -44,8 +44,9 @@ class Normalizer
 		</xsl:if>
 	</xsl:template>
 
-	<xsl:template match="*[name()='area']|*[name()='base']|*[name()='br']|*[name()='col']|*[name()='command']|*[name()='embed']|*[name()='hr']|*[name()='img']|
-	*[name()='input']|*[name()='keygen']|*[name()='link']|*[name()='meta']|*[name()='param']|*[name()='source']|*[name()='track']|*[name()='wbr']">
+	<xsl:template match="*[name()='area']|*[name()='base']|*[name()='br']|*[name()='col']|*[name()='command']|
+	*[name()='embed']|*[name()='hr']|*[name()='img']|*[name()='input']|*[name()='keygen']|*[name()='link']|
+	*[name()='meta']|*[name()='param']|*[name()='source']|*[name()='track']|*[name()='wbr']">
 		<xsl:text disable-output-escaping="yes">&lt;</xsl:text>
 		<xsl:value-of select="name()"/>
 		<xsl:for-each select="./@*">

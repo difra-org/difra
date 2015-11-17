@@ -35,7 +35,7 @@ class Snippet
      * @param int $id
      * @return self|null
      */
-    static public function getById($id)
+    public static function getById($id)
     {
         $data = CMS::getDB()->fetchRow('SELECT * FROM `cms_snippets` WHERE `id`=?', [$id]);
         return self::data2obj($data);
@@ -47,7 +47,7 @@ class Snippet
      * @param array $data
      * @return Snippet|null
      */
-    static private function data2obj($data)
+    private static function data2obj($data)
     {
         if (empty($data)) {
             return null;
@@ -66,7 +66,7 @@ class Snippet
      * @param string $name
      * @return Snippet|null
      */
-    static public function getByName($name)
+    public static function getByName($name)
     {
         $data = CMS::getDB()->fetchRow('SELECT * FROM `cms_snippets` WHERE `name`=?', [$name]);
         return self::data2obj($data);
@@ -77,7 +77,7 @@ class Snippet
      * @static
      * @param \DOMNode $node
      */
-    static public function getAllXML($node)
+    public static function getAllXML($node)
     {
         $cache = Cache::getInstance();
         $res = $cache->get(self::CACHE_KEY);
@@ -102,7 +102,7 @@ class Snippet
      * @static
      * @return self[]
      */
-    static public function getList()
+    public static function getList()
     {
         $data = CMS::getDB()->fetch('SELECT * FROM `cms_snippets`');
         $res = [];
@@ -119,7 +119,7 @@ class Snippet
      * @static
      * @return Snippet
      */
-    static public function create()
+    public static function create()
     {
         return new self;
     }
@@ -159,7 +159,7 @@ class Snippet
     /**
      * Clear cache
      */
-    static public function cleanCache()
+    public static function cleanCache()
     {
         Cache::getInstance()->remove(self::CACHE_KEY);
     }

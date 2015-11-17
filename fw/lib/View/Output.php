@@ -12,8 +12,8 @@ use Difra\View;
  * Class Output
  * @package Difra\View
  */
-class Output {
-
+class Output
+{
     /** @var string */
     public static $output = null;
     /** @var string */

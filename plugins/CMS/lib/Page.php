@@ -167,7 +167,6 @@ class Page
                     'body' => $this->body,
                     'hidden' => $this->hidden ? '1' : '0'
                 ]
-
             );
             Cache::getInstance()->remove('cms_page_' . $this->id);
         }

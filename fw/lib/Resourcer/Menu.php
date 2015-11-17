@@ -10,7 +10,9 @@ use Difra\Debugger;
  */
 class Menu extends Abstracts\XML
 {
+    /** @var string Menu resourcer */
     protected $type = 'menu';
+    /** @var bool Don't view resource */
     protected $printable = false;
 
     /**
@@ -27,7 +29,7 @@ class Menu extends Abstracts\XML
         } else {
             $prefix = '/' . $instance;
         }
-        $this->_recursiveProcessor($xml, $prefix, 'menu', $instance);
+        $this->recursiveProcessor($xml, $prefix, 'menu', $instance);
     }
 
     /**
@@ -37,7 +39,7 @@ class Menu extends Abstracts\XML
      * @param string $instance
      * @internal param string $url
      */
-    private function _recursiveProcessor($node, $href, $prefix, $instance)
+    private function recursiveProcessor($node, $href, $prefix, $instance)
     {
         /** @var \SimpleXMLElement $subNode */
         foreach ($node as $subname => $subNode) {
@@ -56,7 +58,7 @@ class Menu extends Abstracts\XML
             };
             $subNode->addAttribute('pseudoHref', $newHref);
             $subNode->addAttribute('xpath', 'locale/menu/' . $instance . '/' . $newPrefix);
-            $this->_recursiveProcessor($subNode, $newHref, $newPrefix, $instance);
+            $this->recursiveProcessor($subNode, $newHref, $newPrefix, $instance);
         }
     }
 }

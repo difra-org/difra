@@ -35,7 +35,10 @@ class Session
     public static function remove()
     {
         if (!empty($_COOKIE['resume'])) {
-            DB::getInstance(Users::getDB())->query("DELETE FROM `user_session` WHERE `session`=?", [$_COOKIE['resume']]);
+            DB::getInstance(Users::getDB())->query(
+                "DELETE FROM `user_session` WHERE `session`=?",
+                [$_COOKIE['resume']]
+            );
             Cookies::getInstance()->remove('resume');
         }
     }
@@ -52,19 +55,18 @@ class Session
 
         try {
             // find session in db
-            $session = DB::getInstance()->fetchRow(<<<QUERY
-SELECT `s`.`ip`, `s`.`user`
-    FROM `user_session` `s`
-    WHERE `s`.`session`=?
-QUERY
-                , [$_COOKIE['resume']]
+            $session = DB::getInstance()->fetchRow(
+                "SELECT `ip`, `user` FROM `user_session` WHERE `session`=?",
+                [$_COOKIE['resume']]
             );
             if (empty($session)) {
                 throw new Exception('Long session not found in database');
             }
 
             // check ip
-            if ($session['ip'] & ip2long(Users::IP_MASK) != ip2long($_SERVER['REMOTE_ADDR']) & ip2long(Users::IP_MASK)) {
+            if ($session['ip'] & ip2long(Users::IP_MASK) != ip2long($_SERVER['REMOTE_ADDR']) &
+                ip2long(Users::IP_MASK)
+            ) {
                 throw new Exception('Long session IP does not match');
             }
 

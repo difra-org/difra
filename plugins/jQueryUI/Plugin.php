@@ -11,4 +11,3 @@ class Plugin extends \Difra\Plugin
     {
     }
 }
-

@@ -2,7 +2,8 @@
 
 use Difra\Ajaxer;
 use Difra\Locales;
-use Difra\Plugins, Difra\Param;
+use Difra\Plugins;
+use Difra\Param;
 use Difra\Plugins\Users\User;
 
 /**
@@ -103,4 +104,3 @@ class AdmUsersListController extends Difra\Controller\Adm
         Ajaxer::refresh();
     }
 }
-

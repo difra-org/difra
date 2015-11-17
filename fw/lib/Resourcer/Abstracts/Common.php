@@ -36,7 +36,7 @@ abstract class Common
      * Singleton
      * @return self
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instances = [];
         $name = get_called_class();

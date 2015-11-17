@@ -19,7 +19,7 @@ class Users
      * Get database name for users plugin
      * @return string
      */
-    static public function getDB()
+    public static function getDB()
     {
         return self::DB;
     }
@@ -28,7 +28,7 @@ class Users
      * Are user names enabled?
      * @return bool
      */
-    static public function isLoginNamesEnabled()
+    public static function isLoginNamesEnabled()
     {
         return (bool)Config::getInstance()->getValue('auth', 'logins');
     }
@@ -37,7 +37,7 @@ class Users
      * Is password2 field enabled?
      * @return bool|mixed
      */
-    static public function isPassword2Enabled()
+    public static function isPassword2Enabled()
     {
         $en = Config::getInstance()->getValue('auth', 'password2');
         return is_null($en) ? true : $en;
@@ -57,4 +57,3 @@ class Users
         return self::RECOVER_TTL;
     }
 }
-

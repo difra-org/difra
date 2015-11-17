@@ -22,6 +22,7 @@ class MySQL extends Common
      */
     protected function getConnectionString()
     {
-        return "{$this->config['type']}:host={$this->config['hostname']};dbname={$this->config['database']};charset=utf8";
+        return
+            "{$this->config['type']}:host={$this->config['hostname']};dbname={$this->config['database']};charset=utf8";
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Difra\Plugins\CMS;
 
-use Difra, Difra\Plugins;
 use Difra\Cache;
 use Difra\Plugins\CMS;
 

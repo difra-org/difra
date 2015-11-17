@@ -6,7 +6,8 @@ use Difra\Locales;
 use Difra\Param\AjaxCheckbox;
 use Difra\Param\AjaxString;
 use Difra\Param\AnyString;
-use Difra\Plugins\Users, Difra\Param;
+use Difra\Plugins\Users;
+use Difra\Param;
 use Difra\Plugins\Users\Register;
 use Difra\Plugins\Users\UsersException;
 use Difra\View;
@@ -133,4 +134,3 @@ class RegisterController extends Difra\Controller
         \Difra\View::redirect('/');
     }
 }
-

@@ -6,6 +6,11 @@ use Difra\Envi;
 use Difra\Libs\ESAPI;
 use Difra\Libs\XML\DOM;
 
+/**
+ * Class HTML
+ * HTML filter.
+ * @package Difra\Param\Filters
+ */
 class HTML
 {
     /** @var array Allowed tag=>parameter=>filterMethod */
@@ -62,7 +67,7 @@ class HTML
      * Singleton
      * @return self
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;

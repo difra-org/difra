@@ -22,5 +22,4 @@ class Adm extends Controller
             $this->root->setAttribute('title', Envi::getHost() . '/adm');
         }
     }
-
 }

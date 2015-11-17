@@ -2,7 +2,8 @@
 
 use Difra\Ajaxer;
 use Difra\Locales;
-use Difra\Plugins\Users, Difra\Param;
+use Difra\Plugins\Users;
+use Difra\Param;
 use Difra\Plugins\Users\Register;
 use Difra\Plugins\Users\User;
 use Difra\View;
@@ -96,4 +97,3 @@ class LoginController extends Difra\Controller
         Ajaxer::reset();
     }
 }
-

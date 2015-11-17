@@ -26,7 +26,7 @@ class CMS
      * @static
      * @return CMS
      */
-    static public function getInstance()
+    public static function getInstance()
     {
         static $_instance = null;
         return $_instance ? $_instance : $_instance = new self;

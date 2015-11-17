@@ -18,4 +18,3 @@ class JS extends Common
         return JS\JSMin::minify($data);
     }
 }
-	

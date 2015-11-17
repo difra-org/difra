@@ -24,4 +24,3 @@ class CSS extends Common
         return $data;
     }
 }
-
