@@ -21,7 +21,7 @@
 			<xsl:variable name="instance" select="/root/menu/@instance"/>
 			<ul>
 				<xsl:for-each select="*[not(@hidden=1) and (not(@href='') or ./*)]">
-					<xsl:sort select="@priority" order="descending"/>
+					<xsl:sort select="@priority" order="descending" data-type="number"/>
 					<xsl:variable name="selected">
 						<xsl:choose>
 							<xsl:when test="@pseudoHref=''">
