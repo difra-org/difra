@@ -6,11 +6,11 @@
 	</rule>
 
 	<exclude-pattern>../fw/lib/bootstrap.php</exclude-pattern>
-	<exclude-pattern>../fw/lib/libs/esapi</exclude-pattern>
-	<exclude-pattern>../fw/lib/libs/less</exclude-pattern>
-	<exclude-pattern>../plugins/editor/ckeditor</exclude-pattern>
-	<exclude-pattern>../plugins/jqueryui/css</exclude-pattern>
-	<exclude-pattern>../plugins/jqueryui/js</exclude-pattern>
+	<exclude-pattern>../fw/lib/Libs/ESAPI</exclude-pattern>
+	<exclude-pattern>../fw/lib/Libs/Less</exclude-pattern>
+	<exclude-pattern>../plugins/Editor/ckeditor</exclude-pattern>
+	<exclude-pattern>../plugins/jQueryUI/css</exclude-pattern>
+	<exclude-pattern>../plugins/jQueryUI/js</exclude-pattern>
 	<exclude-pattern>../old-plugins</exclude-pattern>
 	<exclude-pattern>../fw/js/all/jquery</exclude-pattern>
 	<exclude-pattern>../tests</exclude-pattern>
