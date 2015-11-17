@@ -187,13 +187,8 @@ abstract class Controller
                         array_shift($namedParameters);
                     } else {
                         // unnamed parameter
-                        if (
-                            !empty(self::$parameters)
-                            and (
-                                !$parameter->isOptional()
-                                or empty($namedParameters)
-                                or self::$parameters[0] != $namedParameters[0]
-                            )
+                        if (!empty(self::$parameters) and (!$parameter->isOptional() or empty($namedParameters) or
+                                self::$parameters[0] != $namedParameters[0])
                         ) {
                             if (!call_user_func(["$class", 'verify'], self::$parameters[0])) {
                                 throw new View\HttpError(404);

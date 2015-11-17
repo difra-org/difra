@@ -28,7 +28,6 @@ class Debugger
     const ERRORS_SHOW = 1;
     /** Don't display errors */
     const ERRORS_HIDE = 0;
-
     /** @var int Debugger state */
     private static $enabled = self::DEBUG_DISABLED;
     /** @var int Console state */
@@ -45,7 +44,6 @@ class Debugger
     private static $handledByException = null;
     /** @var array Last error message captured by captureNormal (let captureShutdown skip it) */
     private static $handledByNormal = null;
-
     /** @var bool Shut down flag (to prevent undesired output) */
     static public $shutdown = false;
 
@@ -108,11 +106,8 @@ class Debugger
         self::$caches = self::CACHES_DISABLED;
         self::$errors = self::ERRORS_SHOW;
 
-        if (
-            // console is disabled by configuration
-            (!is_null($confConsole = Config::getInstance()->getValue('debug', 'console')) and !$confConsole)
-            or
-            // no XSL extension, can't render console
+        // console is disabled by configuration or no XSL extension is available
+        if ((!is_null($confConsole = Config::getInstance()->getValue('debug', 'console')) and !$confConsole) or
             !extension_loaded('xsl')
         ) {
             self::$console = self::CONSOLE_DISABLED;
@@ -120,11 +115,7 @@ class Debugger
         }
 
         // debug is disabled by a cookie or GET parameter
-        if (
-            (isset($_GET['debug']) and !$_GET['debug'])
-            or
-            (isset($_COOKIE['debug']) and !$_COOKIE['debug'])
-        ) {
+        if ((isset($_GET['debug']) and !$_GET['debug']) or (isset($_COOKIE['debug']) and !$_COOKIE['debug'])) {
             self::$enabled = self::DEBUG_DISABLED;
             self::$console = self::CONSOLE_OFF;
             self::$errors = self::ERRORS_HIDE;

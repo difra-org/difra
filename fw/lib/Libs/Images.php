@@ -150,7 +150,6 @@ final class Images
         }
 
         if (!is_null($text) && $text !== '') {
-
             // text watermark
             $watermarkImage = new \Imagick();
 
@@ -196,7 +195,7 @@ final class Images
         foreach ($positions as $position) {
             $colors =
                 $originalImage->getImageRegion($watermark_width, $watermark_height, $position[0], $position[1])
-                              ->getImageColors();
+                    ->getImageColors();
 
             if ($min === null || $colors <= $min_colors) {
                 $min = $position;

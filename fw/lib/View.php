@@ -54,7 +54,6 @@ class View
 
         // transform template
         if ($html = $xslProcessor->transformToDoc($xml)) {
-
             $html = self::normalize($html);
 
             if ($dontEcho) {

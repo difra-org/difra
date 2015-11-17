@@ -93,20 +93,9 @@ class JSMin
             case self::ACTION_DELETE_A_B:
                 $this->b = $this->next();
 
-                if ($this->b === '/'
-                    && ($this->a === '(' || $this->a === ',' || $this->a === '='
-                        || $this->a === ':'
-                        || $this->a === '['
-                        || $this->a === '!'
-                        || $this->a === '&'
-                        || $this->a === '|'
-                        || $this->a === '?'
-                        || $this->a === '{'
-                        || $this->a === '}'
-                        || $this->a === ';'
-                        || $this->a === "\n")
+                if ($this->b === '/' &&
+                    in_array($this->a, ['(', ',', '=', ':', '[', '!', '&', '|', '?', '{', '}', ';', "\n"])
                 ) {
-
                     $this->output .= $this->a . $this->b;
 
                     while (true) {
