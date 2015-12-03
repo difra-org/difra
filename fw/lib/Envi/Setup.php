@@ -27,10 +27,14 @@ class Setup
         ini_set('session.cookie_domain', '.' . Envi::getHost(true));
 
         // set default time zone
-        if (!ini_get('date.timezone')) {
-            date_default_timezone_set('Europe/Moscow');
+        if (self::$timeZone = Config::getInstance()->get('timezone')) {
+            date_default_timezone_set(self::$timeZone);
+        } elseif (self::$timeZone = ini_get('date.timezone')) {
+        } else {
+            self::$timeZone = 'Europe/Berlin';
+            date_default_timezone_set(self::$timeZone);
         }
-        
+
         self::setLocale();
     }
 
@@ -60,5 +64,27 @@ class Setup
     public static function getLocale()
     {
         return self::$locale;
+    }
+
+    /** @var string Time zone name */
+    private static $timeZone = null;
+
+    /**
+     * Get time zone
+     * @return string
+     */
+    public static function getTimeZone()
+    {
+        return self::$timeZone;
+    }
+
+    /**
+     * Get time zone as DateTimeZone object
+     * @return \DateTimeZone
+     */
+    public static function getDTZone()
+    {
+        static $dtz = null;
+        return $dtz ?: $dtz = new \DateTimeZone(self::getTimeZone());
     }
 }
