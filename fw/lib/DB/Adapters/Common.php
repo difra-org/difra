@@ -204,16 +204,22 @@ abstract class Common
     }
 
     /**
-     * Fetch single row
+     * Fetch single column
      * @param string $query
      * @param array $parameters
+     * @param int $column_number
      * @return array|bool
      */
-    public function fetchColumn($query, $parameters = [])
+    public function fetchColumn($query, $parameters = [], $column_number = 0)
     {
         $sth = $this->prepare($query);
         $sth->execute($parameters);
-        return $sth->fetchColumn();
+
+        $data = [];
+        while (($row = $sth->fetchColumn($column_number)) !== false) {
+            $data[] = $row;
+        }
+        return $data;
     }
 
     /**
