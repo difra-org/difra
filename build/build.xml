@@ -73,8 +73,8 @@
 			<arg value="-l"/>
 			<fileset dir="${basedir}/..">
 				<include name="**/*.php"/>
-				<exclude name="**/fw/lib/libs/esapi/**"/>
-				<exclude name="**/fw/lib/libs/less/**"/>
+				<exclude name="**/fw/lib/Libs/ESAPI/**"/>
+				<exclude name="**/fw/lib/Libs/Less/**"/>
 				<exclude name="**/old-plugins/**"/>
 				<exclude name="**/tests/**"/>
 				<modified/>
@@ -89,9 +89,9 @@
 		<exec executable="${phploc}" taskname="phploc">
 			<arg value="--count-tests" />
 			<arg value="--exclude"/>
-			<arg value="${basedir}/../fw/lib/libs/esapi/"/>
+			<arg value="${basedir}/../fw/lib/Libs/ESAPI/"/>
 			<arg value="--exclude"/>
-			<arg value="${basedir}/../fw/lib/libs/less/"/>
+			<arg value="${basedir}/../fw/lib/Libs/Less/"/>
 			<arg value="--exclude"/>
 			<arg value="${basedir}/../tests/"/>
 			<arg value="--exclude"/>
@@ -110,9 +110,9 @@
 			<arg value="--log-csv" />
 			<arg path="${basedir}/logs/phploc.csv" />
 			<arg value="--exclude"/>
-			<arg value="${basedir}/../fw/lib/libs/esapi/"/>
+			<arg value="${basedir}/../fw/lib/Libs/ESAPI/"/>
 			<arg value="--exclude"/>
-			<arg value="${basedir}/../fw/lib/libs/less/"/>
+			<arg value="${basedir}/../fw/lib/Libs/Less/"/>
 			<arg value="--exclude"/>
 			<arg value="${basedir}/../tests/"/>
 			<arg value="--exclude"/>
@@ -130,7 +130,7 @@
 			<arg value="--jdepend-xml=${basedir}/logs/jdepend.xml"/>
 			<arg value="--jdepend-chart=${basedir}/pdepend/dependencies.svg"/>
 			<arg value="--overview-pyramid=${basedir}/pdepend/overview-pyramid.svg"/>
-			<arg value="--ignore=fw/lib/libs/esapi,fw/lib/libs/less,tests,old-plugins"/>
+			<arg value="--ignore=fw/lib/Libs/ESAPI,fw/lib/Libs/Less,tests,old-plugins"/>
 			<arg path="${basedir}/.."/>
 		</exec>
 		<property name="pdepend.done" value="true"/>
@@ -144,7 +144,7 @@
 			<arg value="text"/>
 			<arg value="${basedir}/phpmd.xml"/>
 			<arg value="--exclude"/>
-			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less,${basedir}/../tests,${basedir}/../old-plugins/"/>
+			<arg path="${basedir}/../fw/lib/Libs/ESAPI,${basedir}/../fw/lib/Libs/Less,${basedir}/../tests,${basedir}/../old-plugins/"/>
 		</exec>
 		<property name="phpmd.done" value="true"/>
 	</target>
@@ -160,7 +160,7 @@
 			<arg value="--reportfile"/>
 			<arg value="${basedir}/logs/pmd.xml"/>
 			<arg value="--exclude"/>
-			<arg path="${basedir}/../fw/lib/libs/esapi,${basedir}/../fw/lib/libs/less,${basedir}/../tests,${basedir}/../old-plugins"/>
+			<arg path="${basedir}/../fw/lib/Libs/ESAPI,${basedir}/../fw/lib/Libs/Less,${basedir}/../tests,${basedir}/../old-plugins"/>
 		</exec>
 		<property name="phpmd.done" value="true"/>
 	</target>
@@ -195,9 +195,9 @@
 		description="Find duplicate code using PHPCPD and print human readable output. Intended for usage on the command line before committing.">
 		<exec executable="${phpcpd}" taskname="phpcpd">
 			<arg value="--exclude"/>
-			<arg value="fw/lib/libs/esapi"/>
+			<arg value="fw/lib/Libs/ESAPI"/>
 			<arg value="--exclude"/>
-			<arg value="fw/lib/libs/less"/>
+			<arg value="fw/lib/Libs/Less"/>
 			<arg value="--exclude"/>
 			<arg value="tests"/>
 			<arg value="--exclude"/>
@@ -215,9 +215,9 @@
 			<arg value="--log-pmd"/>
 			<arg value="${basedir}/logs/pmd-cpd.xml"/>
 			<arg value="--exclude"/>
-			<arg value="fw/lib/libs/esapi"/>
+			<arg value="fw/lib/Libs/ESAPI"/>
 			<arg value="--exclude"/>
-			<arg value="fw/lib/libs/less"/>
+			<arg value="fw/lib/Libs/Less"/>
 			<arg value="--exclude"/>
 			<arg value="tests"/>
 			<arg value="--exclude"/>

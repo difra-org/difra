@@ -3,8 +3,8 @@
 	<project name="Difra" source="${basedir}/.." workdir="${basedir}/phpdox">
 		<collector publiconly="false">
 			<include mask="*.php"/>
-			<exclude mask="**/fw/lib/libs/esapi/**"/>
-			<exclude mask="**/fw/lib/libs/less/**"/>
+			<exclude mask="**/fw/lib/Libs/ESAPI/**"/>
+			<exclude mask="**/fw/lib/Libs/Less/**"/>
 			<exclude mask="**/tests/**"/>
 			<exclude mask="**/old-plugins/**"/>
 		</collector>
