@@ -112,6 +112,16 @@
             <login_invalid>Недопустимое имя пользователя.</login_invalid>
             <login_dupe>Такое имя пользователя уже занято.</login_dupe>
             <login_ok>Подходящее имя пользователя.</login_ok>
+            <login_short>
+                <part1>Имя пользователя не должно быть короче </part1>
+                <part2> символ</part2>
+                <part3>.</part3>
+            </login_short>
+            <login_long>
+                <part1>Имя пользователя не должно быть длиннее </part1>
+                <part2> символ</part2>
+                <part3>.</part3>
+            </login_long>
             <complete-email>Спасибо за регистрацию. Теперь вам на почту должно придти письмо со ссылкой на
                 активацию вашей учётной записи.
             </complete-email>

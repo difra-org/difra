@@ -105,6 +105,16 @@
             <login_empty>Choose user name.</login_empty>
             <login_invalid>Invalid user name.</login_invalid>
             <login_dupe>This user name is not available.</login_dupe>
+            <login_short>
+                <part1>User name should not be shorter than </part1>
+                <part2> character</part2>
+                <part3>.</part3>
+            </login_short>
+            <login_long>
+                <part1>User name should not be longer than </part1>
+                <part2> character</part2>
+                <part3>.</part3>
+            </login_long>
             <login_ok>User name looks good.</login_ok>
             <complete-email>Thank you for your registration. Now you should get e-mail message with link for
                 activation of your registration.

@@ -6,6 +6,7 @@ use Difra\Ajaxer;
 use Difra\Exception;
 use Difra\Locales;
 use Difra\DB;
+use Difra\Locales\Wordforms;
 use Difra\Plugger;
 use Difra\Plugins\Users;
 
@@ -32,8 +33,10 @@ class Register
     const REGISTER_LOGIN_EMPTY = 'login_empty';
     const REGISTER_LOGIN_INVALID = 'login_invalid';
     const REGISTER_LOGIN_EXISTS = 'login_dupe';
+    const REGISTER_LOGIN_SHORT = 'login_short';
+    const REGISTER_LOGIN_LONG = 'login_long';
     const REGISTER_LOGIN_OK = 'login_ok';
-    const LOGIN_REGEX = '/^[a-zA-Z0-9]([a-zA-Z0-9._-]{0,79})$/';
+    const LOGIN_REGEX = '/^[a-zA-Z0-9]([a-zA-Z0-9._-]*)$/';
     const EMAIL_REGEX = '/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/';
     const MIN_PASSWORD_LENGTH = 6;
     private $failures = [];
@@ -132,7 +135,7 @@ class Register
             }
             throw new Exception('User names are disabled');
         }
-        $this->login = $login;
+        $this->login = (string)$login;
         $this->valid = false;
     }
 
@@ -152,6 +155,10 @@ class Register
                 return $this->failures['login'] = self::REGISTER_LOGIN_EMPTY;
             } elseif (!self::isLoginValid($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_INVALID;
+            } elseif ($this->login < Users::getLoginMinChars()) {
+                return $this->failures['login'] = self::REGISTER_LOGIN_SHORT;
+            } elseif ($this->login > Users::getLoginMaxChars()) {
+                return $this->failures['login'] = self::REGISTER_LOGIN_LONG;
             } elseif (!$fast and !self::isLoginAvailable($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_EXISTS;
             } else {
@@ -160,6 +167,10 @@ class Register
         } elseif ($this->login !== '') {
             if (!self::isLoginValid($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_INVALID;
+            } elseif ($this->login < Users::getLoginMinChars()) {
+                return $this->failures['login'] = self::REGISTER_LOGIN_SHORT;
+            } elseif ($this->login > Users::getLoginMaxChars()) {
+                return $this->failures['login'] = self::REGISTER_LOGIN_LONG;
             } elseif (!$fast and !self::isLoginAvailable($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_EXISTS;
             }
@@ -334,7 +345,40 @@ class Register
         }
         if (!empty($this->failures)) {
             foreach ($this->failures as $field => $result) {
-                Ajaxer::status($field, Locales::get('auth/register/' . $result), 'error');
+                switch ($result) {
+                    case self::REGISTER_LOGIN_SHORT:
+                        $loginMinChars = Users::getLoginMinChars();
+                        Ajaxer::status(
+                            $field,
+                            Locales::get('auth/register/login_short/part1')
+                            . $loginMinChars
+                            . Wordforms::getInstance()->getQuantityForm(
+                                Locales::get('auth/register/login_long/part2'),
+                                Wordforms::GENDER_MALE | Wordforms::CASE_GENITIVE,
+                                $loginMinChars
+                            )
+                            . Locales::get('auth/register/login_short/part3'),
+                            'error'
+                        );
+                        break;
+                    case self::REGISTER_LOGIN_LONG:
+                        $loginMaxChars = Users::getLoginMaxChars();
+                        Ajaxer::status(
+                            $field,
+                            Locales::get('auth/register/login_long/part1')
+                            . $loginMaxChars
+                            . Wordforms::getInstance()->getQuantityForm(
+                                Locales::get('auth/register/login_long/part2'),
+                                Wordforms::GENDER_MALE | Wordforms::CASE_GENITIVE,
+                                $loginMaxChars
+                            )
+                            . Locales::get('auth/register/login_long/part3'),
+                            'error'
+                        );
+                        break;
+                    default:
+                        Ajaxer::status($field, Locales::get('auth/register/' . $result), 'error');
+                }
             }
             return false;
         }

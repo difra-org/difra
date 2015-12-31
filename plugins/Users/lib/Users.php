@@ -44,6 +44,26 @@ class Users
     }
 
     /**
+     * Get minimum login length
+     * @return int
+     */
+    public static function getLoginMinChars()
+    {
+        $min = Config::getInstance()->getValue('auth', 'login_min');
+        return $min ?: 1;
+    }
+
+    /**
+     * Get maximum login length
+     * @return int
+     */
+    public static function getLoginMaxChars()
+    {
+        $max = Config::getInstance()->getValue('auth', 'login_max');
+        return ($max and $max < 80) ? $max : 80;
+    }
+
+    /**
      * Get activation method (email, moderate or none)
      * @return string
      */
