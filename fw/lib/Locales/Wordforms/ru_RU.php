@@ -43,7 +43,7 @@ class ru_RU extends Common
         /** @noinspection PhpUnusedParameterInspection */
         $form = 0
     ) {
-        switch ($form & (Wordforms::MASK_GENDER|Wordforms::MASK_CASE|Wordforms::MASK_NUMBER)) {
+        switch ($form & (Wordforms::MASK_GENDER | Wordforms::MASK_CASE | Wordforms::MASK_NUMBER)) {
             case Wordforms::GENDER_MALE | Wordforms::CASE_NOMINATIVE | Wordforms::NUMBER_SINGLE:
                 // мужской род, именительный падеж, единственное число
                 return $word;
