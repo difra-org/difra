@@ -5,7 +5,8 @@
             <rememberMe>Remember me</rememberMe>
             <recoverPassword>password recovery</recoverPassword>
             <enter>Enter</enter>
-            <recoverPasswordTitle>Recover password:</recoverPasswordTitle>
+            <recoverPasswordTitle>Password recovery</recoverPasswordTitle>
+            <recoverPasswordFormTitle>Choose new password:</recoverPasswordFormTitle>
             <recover>Recover</recover>
             <enterNewPassword>Enter new password.</enterNewPassword>
             <enterNewPassword2>Enter new password once more.</enterNewPassword2>

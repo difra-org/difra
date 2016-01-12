@@ -5,7 +5,8 @@
             <rememberMe>Запомнить меня</rememberMe>
             <recoverPassword>восстановить пароль</recoverPassword>
             <enter>Войти</enter>
-            <recoverPasswordTitle>Восстановить пароль:</recoverPasswordTitle>
+            <recoverPasswordTitle>Восстановление пароля</recoverPasswordTitle>
+            <recoverPasswordFormTitle>Введите новый пароль:</recoverPasswordFormTitle>
             <recover>Восстановить</recover>
             <enterNewPassword>Введите новый пароль.</enterNewPassword>
             <enterNewPassword2>Введите новый пароль ещё раз.</enterNewPassword2>
