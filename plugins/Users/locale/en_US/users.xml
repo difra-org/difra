@@ -63,6 +63,7 @@
         <login>
             <not_found>There is no user with such an e-mail address.</not_found>
             <bad_password>Invalid password.</bad_password>
+            <bad_login_or_password>Invalid user name or password.</bad_login_or_password>
             <inactive>This account is not activated. Please check your mail.</inactive>
             <banned>This account is locked.</banned>
             <recovered>Please check your e-mail for further instructions about how to reset your password.</recovered>

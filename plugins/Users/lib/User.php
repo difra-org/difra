@@ -22,6 +22,8 @@ class User
     const LOGIN_INACTIVE = 'inactive';
     /** Login: bad password */
     const LOGIN_BADPASS = 'bad_password';
+    /** Login: bad login or password */
+    const LOGIN_BAD_LOGIN_OR_PASSWORD = 'bad_login_or_password';
     /** @var int */
     private $id = null;
     /** @var string */
@@ -88,7 +90,7 @@ class User
             $this->id = $db->getLastId();
             self::$cache[$this->id] = $this;
         }
-        $this->modified = [];
+        $this->modified = false;
     }
 
     /**
@@ -198,8 +200,11 @@ class User
      */
     public function setEmail($email)
     {
+        if ($email == $this->email) {
+            return;
+        }
         $this->email = $email;
-        $this->modified[] = 'email';
+        $this->modified = true;
     }
 
     /**
@@ -217,8 +222,11 @@ class User
      */
     public function setLogin($login)
     {
+        if ($this->login == $login) {
+            return;
+        }
         $this->login = $login;
-        $this->modified[] = 'login';
+        $this->modified = true;
     }
 
     /**
@@ -236,8 +244,12 @@ class User
      */
     public function setPassword($password)
     {
-        $this->password = sha1($password);
-        $this->modified[] = 'password';
+        $hash = sha1($password);
+        if ($this->password == $hash) {
+            return;
+        }
+        $this->password = $hash;
+        $this->modified = true;
     }
 
     /**
@@ -274,8 +286,11 @@ class User
      */
     public function setBanned($banned)
     {
+        if ($this->banned == $banned) {
+            return;
+        }
         $this->banned = $banned ? 1 : 0;
-        $this->modified[] = 'banned';
+        $this->modified = true;
     }
 
     /**
@@ -300,7 +315,7 @@ class User
      * Get user's additional info array
      * @return \mixed[]
      */
-    public function &getInfo()
+    public function getInfo()
     {
         return $this->info;
     }
@@ -311,12 +326,16 @@ class User
      */
     public function setInfo($info)
     {
+        if (serialize($this->info) == serialize($info)) {
+            return;
+        }
         $this->info = $info;
+        $this->modified = true;
     }
 
     /**
      * Activate user by e-mail
-     * @param $key
+     * @param string $key
      * @return int
      * @throws Exception
      */
@@ -339,7 +358,7 @@ class User
 
     /**
      * Get user by id
-     * @param $id
+     * @param int $id
      * @return User
      * @throws UsersException
      */
@@ -425,10 +444,10 @@ class User
             ]
         );
         if (empty($data)) {
-            throw new UsersException(self::LOGIN_NOTFOUND);
+            throw new UsersException(Users::isSingleError() ? self::LOGIN_BAD_LOGIN_OR_PASSWORD : self::LOGIN_NOTFOUND);
         }
         if ($data['password'] !== sha1($password) and $data['password'] !== md5($password)) {
-            throw new UsersException(self::LOGIN_BADPASS);
+            throw new UsersException(Users::isSingleError() ? self::LOGIN_BAD_LOGIN_OR_PASSWORD : self::LOGIN_BADPASS);
         }
         $user = self::load($data);
         $user->login();

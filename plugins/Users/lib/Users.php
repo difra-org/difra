@@ -76,4 +76,9 @@ class Users
     {
         return self::RECOVER_TTL;
     }
+
+    public static function isSingleError()
+    {
+        return Config::getInstance()->getValue('auth', 'single_error') ?: false;
+    }
 }

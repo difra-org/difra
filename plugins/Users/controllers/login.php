@@ -96,6 +96,7 @@ class LoginController extends Controller
         if (!$ok) {
             return;
         }
+        $user->setPassword($password1->val());
         $this->afterPasswordChange();
     }
 

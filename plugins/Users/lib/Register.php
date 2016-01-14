@@ -155,9 +155,9 @@ class Register
                 return $this->failures['login'] = self::REGISTER_LOGIN_EMPTY;
             } elseif (!self::isLoginValid($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_INVALID;
-            } elseif ($this->login < Users::getLoginMinChars()) {
+            } elseif (strlen($this->login) < Users::getLoginMinChars()) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_SHORT;
-            } elseif ($this->login > Users::getLoginMaxChars()) {
+            } elseif (strlen($this->login) > Users::getLoginMaxChars()) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_LONG;
             } elseif (!$fast and !self::isLoginAvailable($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_EXISTS;
@@ -167,9 +167,9 @@ class Register
         } elseif ($this->login !== '') {
             if (!self::isLoginValid($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_INVALID;
-            } elseif ($this->login < Users::getLoginMinChars()) {
+            } elseif (strlen($this->login) < Users::getLoginMinChars()) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_SHORT;
-            } elseif ($this->login > Users::getLoginMaxChars()) {
+            } elseif (strlen($this->login) > Users::getLoginMaxChars()) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_LONG;
             } elseif (!$fast and !self::isLoginAvailable($this->login)) {
                 return $this->failures['login'] = self::REGISTER_LOGIN_EXISTS;
