@@ -11,7 +11,7 @@ debug.toggle = function () {
 };
 
 debug.switchTab = function () {
-    $('#debug li.selected').removeClass('selected');
+    $('#debug').find('li.selected').removeClass('selected');
     $(this).parent('li').addClass('selected');
 };
 

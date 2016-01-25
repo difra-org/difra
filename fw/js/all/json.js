@@ -1,4 +1,4 @@
-var JSON = JSON || {};
+var JSON = {};
 
 JSON.stringify = JSON.stringify || function (obj) {
 

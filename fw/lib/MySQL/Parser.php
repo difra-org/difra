@@ -22,6 +22,7 @@ class Parser
             foreach ($currentChunks as $chunks) {
                 if ($class = self::getChunksClass($chunks)) {
                     $classList[$class] = 1;
+                    /** @noinspection PhpUndefinedMethodInspection */
                     $class::create($chunks);
                 }
             }

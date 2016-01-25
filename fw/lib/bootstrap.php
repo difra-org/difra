@@ -8,15 +8,19 @@ if (isset($_)) {
 }
 if (!defined('DIR_ROOT')) {
     if (!empty($_SERVER['VHOST_ROOT'])) {
+        /** @noinspection PhpConstantReassignmentInspection */
         define('DIR_ROOT', rtrim($_SERVER['VHOST_ROOT'], '/') . '/');
     } else {
+        /** @noinspection PhpConstantReassignmentInspection */
         define('DIR_ROOT', dirname(dirname(__DIR__)) . '/');
     }
 }
 if (!defined('DIR_DIFRA')) {
     if (!empty($_SERVER['VHOST_DIFRA'])) {
+        /** @noinspection PhpConstantReassignmentInspection */
         define('DIR_DIFRA', rtrim($_SERVER['VHOST_DIFRA'], '/') . '/');
     } else {
+        /** @noinspection PhpConstantReassignmentInspection */
         define('DIR_DIFRA', DIR_ROOT);
     }
 }

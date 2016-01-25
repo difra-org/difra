@@ -513,6 +513,7 @@ $(document).on('submit', 'form.ajaxer', function (event) {
     form.attr('uuid', uuid);
     form.append('<input type="hidden" name="_method" value="iframe"/>');
     // add iframe for form target
+    //noinspection HtmlUnknownTarget
     var frame = $('<iframe id="ajaxerFrame" name="ajaxerFrame" style="display:none" src="/iframe"></iframe>');
     frame.one('load', function (event) {
         ajaxer.initIframe(form, event)

@@ -1,6 +1,6 @@
 $(document).on('click dblclick', '#menu_adm > ul > li', function () {
     $(this).addClass('clicked');
-    $("#menu_adm > ul > li").each(function () {
+    $('#menu_adm').find('> ul > li').each(function () {
         if (!$(this).hasClass('clicked')) {
             $(this).children('ul').slideUp('fast');
         }
