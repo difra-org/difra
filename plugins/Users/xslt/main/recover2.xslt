@@ -2,10 +2,13 @@
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" xmlns="http://www.w3.org/1999/xhtml" version="1.0">
 	<xsl:template match="recover2">
 		<div id="recover2">
-			<form action="/auth/recover3/{@code}" class="ajaxer">
+			<form action="/recover/submit/{@code}" class="ajaxer" id="auth-password-recovery">
 				<h2 id="recovery_title">
 					<xsl:value-of select="$locale/auth/forms/recoverPasswordTitle"/>
 				</h2>
+				<h3>
+					<xsl:value-of select="$locale/auth/forms/recoverPasswordFormTitle"/>
+				</h3>
 				<div class="container">
 					<div class="holder p">
 						<input type="password"

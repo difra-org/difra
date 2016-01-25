@@ -300,4 +300,9 @@ class Ajaxer
             ]
         );
     }
+
+    public static function addCustomAction($action)
+    {
+        self::addAction($action);
+    }
 }

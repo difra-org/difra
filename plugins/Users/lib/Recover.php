@@ -31,7 +31,6 @@ class Recover
         if (empty($data)) {
             return User::LOGIN_NOTFOUND;
         }
-        $data = $data[0];
         if (!$data['active']) {
             return User::LOGIN_INACTIVE;
         }
@@ -43,6 +42,7 @@ class Recover
             $d = $db->fetchOne('SELECT count(*) FROM `user_recover` WHERE `recover`=\'' . $key . "'");
         } while ($d);
         $db->query("INSERT INTO `user_recover` (`recover`,`user`) VALUES (?,?)", [$key, $data['id']]);
+        $db->query("DELETE FROM `user_recover` WHERE `date_requested`<DATE_SUB(NOW(),INTERVAL 1 YEAR)");
         Mailer::getInstance()->CreateMail(
             $data['email'],
             'mail_recover',

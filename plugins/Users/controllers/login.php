@@ -7,11 +7,12 @@ use Difra\Param;
 use Difra\Plugins\Users\Register;
 use Difra\Plugins\Users\User;
 use Difra\View;
+use Difra\Controller;
 
 /**
  * Class LoginController
  */
-class LoginController extends Difra\Controller
+class LoginController extends Controller
 {
 //    /**
 //     * Форма логина
@@ -80,19 +81,27 @@ class LoginController extends Difra\Controller
             Ajaxer::status('oldpassword', Locales::get('auth/password/bad_old'), 'problem');
             $ok = false;
         } else {
-            Ajaxer::status('oldpassword', Locales::get('auth/password/old_ok'), 'ok');
             $ok = true;
         }
         $reg = new Register();
         $reg->setPassword1($password1->val());
         $reg->setPassword2($password2->val());
         if (!$reg->validatePasswords()) {
+            if ($ok) {
+                Ajaxer::status('oldpassword', Locales::get('auth/password/old_ok'), 'ok');
+            }
             $reg->callAjaxerEvents();
             return;
         }
         if (!$ok) {
             return;
         }
+        $user->setPassword($password1->val());
+        $this->afterPasswordChange();
+    }
+
+    protected function afterPasswordChange()
+    {
         Ajaxer::notify(Locales::get('auth/password/changed'));
         Ajaxer::reset();
     }

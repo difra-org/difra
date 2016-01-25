@@ -5,7 +5,8 @@
             <rememberMe>Remember me</rememberMe>
             <recoverPassword>password recovery</recoverPassword>
             <enter>Enter</enter>
-            <recoverPasswordTitle>Recover password:</recoverPasswordTitle>
+            <recoverPasswordTitle>Password recovery</recoverPasswordTitle>
+            <recoverPasswordFormTitle>Choose new password:</recoverPasswordFormTitle>
             <recover>Recover</recover>
             <enterNewPassword>Enter new password.</enterNewPassword>
             <enterNewPassword2>Enter new password once more.</enterNewPassword2>
@@ -62,6 +63,7 @@
         <login>
             <not_found>There is no user with such an e-mail address.</not_found>
             <bad_password>Invalid password.</bad_password>
+            <bad_login_or_password>Invalid user name or password.</bad_login_or_password>
             <inactive>This account is not activated. Please check your mail.</inactive>
             <banned>This account is locked.</banned>
             <recovered>Please check your e-mail for further instructions about how to reset your password.</recovered>
@@ -105,6 +107,16 @@
             <login_empty>Choose user name.</login_empty>
             <login_invalid>Invalid user name.</login_invalid>
             <login_dupe>This user name is not available.</login_dupe>
+            <login_short>
+                <part1>User name should not be shorter than </part1>
+                <part2> character</part2>
+                <part3>.</part3>
+            </login_short>
+            <login_long>
+                <part1>User name should not be longer than </part1>
+                <part2> character</part2>
+                <part3>.</part3>
+            </login_long>
             <login_ok>User name looks good.</login_ok>
             <complete-email>Thank you for your registration. Now you should get e-mail message with link for
                 activation of your registration.
