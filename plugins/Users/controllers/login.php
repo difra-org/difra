@@ -97,10 +97,13 @@ class LoginController extends Controller
             return;
         }
         $user->setPassword($password1->val());
-        $this->afterPasswordChange();
+        $this->afterPasswordChangeAjax();
     }
 
-    protected function afterPasswordChange()
+    /**
+     * After ajax password change stuff
+     */
+    protected function afterPasswordChangeAjax()
     {
         Ajaxer::notify(Locales::get('auth/password/changed'));
         Ajaxer::reset();
