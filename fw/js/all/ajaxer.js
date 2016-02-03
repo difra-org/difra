@@ -663,26 +663,26 @@ ajaxer.watcher = function () {
     if (mc) {
         mc = $.parseJSON(mc);
         ajaxer.query(mc.url);
-        $.cookie('query', null, {
-            path: "/", domain: config.mainhost ? '.' + config.mainhost : false
+        $.cookie('query', '', {
+            path: "/", domain: config.mainhost ? '.' + config.mainhost : false, expires: -1
         });
     }
     mc = $.cookie('notify');
     if (mc) {
         mc = $.parseJSON(mc);
-        if (mc.type == 'error') {
+        if (typeof mc.type != 'undefined' && mc.type == 'error') {
             ajaxer.error(mc.lang, mc.message);
         } else {
             ajaxer.notify(mc.lang, mc.message);
         }
         /** @namespace config.mainhost */
         if (typeof config.mainhost === 'undefined') {
-            $.cookie('notify', null, {
-                path: "/", domain: '.' + window.location.host
+            $.cookie('notify', '', {
+                path: "/", domain: '.' + window.location.host, expires: -1
             });
         } else {
-            $.cookie('notify', null, {
-                path: "/", domain: '.' + config.mainhost
+            $.cookie('notify', '', {
+                path: "/", domain: '.' + config.mainhost, expires: -1
             });
         }
     }
