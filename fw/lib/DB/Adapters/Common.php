@@ -198,6 +198,7 @@ abstract class Common
      */
     public function fetchRow($query, $parameters = [])
     {
+        Debugger::addDBLine('DB', $query);
         $sth = $this->prepare($query);
         $sth->execute($parameters);
         return $sth->fetch();
@@ -212,6 +213,7 @@ abstract class Common
      */
     public function fetchColumn($query, $parameters = [], $column_number = 0)
     {
+        Debugger::addDBLine('DB', $query);
         $sth = $this->prepare($query);
         $sth->execute($parameters);
 
