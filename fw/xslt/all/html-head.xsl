@@ -49,7 +49,9 @@
 
 
 			<script type="text/javascript">
+				<!--suppress CheckValidXmlInScriptTagBody -->
 				<xsl:text>var config={};</xsl:text>
+				<!--suppress CheckValidXmlInScriptTagBody -->
 				<xsl:value-of select="/root/@jsConfig"/>
 			</script>
 

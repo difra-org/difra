@@ -11,7 +11,7 @@ $(document).on('touchstart', '.scrollable', function (event) {
     if ($(event.target).closest('.scrollable,.unscrollable').hasClass('.unscrollable')) {
         return;
     }
-    var startY = event.touches[0].pageY;
+    //var startY = event.touches[0].pageY;
     var startTopScroll = this.scrollTop;
 
     if (startTopScroll <= 0) {

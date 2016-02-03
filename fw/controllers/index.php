@@ -1,5 +1,6 @@
 <?php
 
+/** @noinspection PhpUndefinedClassInspection */
 /**
  * Class IndexController
  * Default index controller.

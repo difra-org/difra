@@ -30,6 +30,7 @@ trait HTML
      */
     public function saveImages($path, $urlPrefix)
     {
+        /** @noinspection PhpUndefinedFieldInspection */
         Vault::saveImages($this->value, $path, $urlPrefix);
         $this->savedImages = true;
     }
@@ -49,6 +50,7 @@ trait HTML
                 E_USER_NOTICE
             );
         }
+        /** @noinspection PhpUndefinedFieldInspection */
         return $this->value;
     }
 

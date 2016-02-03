@@ -15,7 +15,7 @@
  * switch        fires after destruct when script understands that page switch will be successful
  */
 
-var switcher = [];
+var switcher = {};
 
 switcher.basePath = '/';
 switcher.hashChanged = false;
@@ -41,7 +41,7 @@ switcher.ajaxConfig = {
         $(document).triggerHandler('destruct');
         if (!switcher.noPush) {
             if (typeof history.pushState == 'function') {
-                history.pushState({url: switcher.url}, null, switcher.url);
+                history.pushState({url: switcher.url}, '', switcher.url);
             } else { // browser does not support pushState, use hashes
                 switcher.hashChanged = true;
                 window.location = switcher.basePath + '#!' + switcher.url;
@@ -151,7 +151,7 @@ $(document).ready(function () {
         switcher.page(document.location.hash.substring(2), true);
         if (typeof history.replaceState == 'function') {
             switcher.hashChanged = true;
-            history.replaceState({url: switcher.url}, null, switcher.url);
+            history.replaceState({url: switcher.url}, '', switcher.url);
         }
     } else if (typeof history.pushState != 'function' && document.location.hash.substring(0, 2) != '#!' &&
         content.length) {

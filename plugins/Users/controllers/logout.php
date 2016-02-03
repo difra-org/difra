@@ -23,6 +23,14 @@ class LogoutController extends \Difra\Controller
     public function indexAjaxAction()
     {
         User::logout();
+        $this->afterLogoutAjax();
+    }
+
+    /**
+     * After ajax logout stuff
+     */
+    protected function afterLogoutAjax()
+    {
         // TODO: redirect to / if page requires auth
         Ajaxer::reload();
     }

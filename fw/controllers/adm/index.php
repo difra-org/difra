@@ -14,6 +14,9 @@ class AdmIndexController extends Difra\Controller
 
     public function indexAction()
     {
+        if ($this->hasUnusedParameters()) {
+            throw new \Difra\View\HttpError(404);
+        }
         \Difra\View::redirect('/adm/status');
     }
 }
