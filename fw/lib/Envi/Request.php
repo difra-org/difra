@@ -83,7 +83,7 @@ class Request
     {
         $res = [];
         if (!empty($_POST['json'])) {
-            $res = json_decode($_POST['json'], true);
+            $res = json_decode(str_replace(array("\n","\r"),"\\n",$_POST['json']), true);
         }
         return $res;
     }
