@@ -2,6 +2,7 @@
 
 namespace Difra\Envi;
 
+use Difra\Config;
 use Difra\Envi;
 
 /**
@@ -13,7 +14,7 @@ class Version
     /** Framework version */
     const VERSION = '6.0';
     /** Version postfix */
-    const POSTFIX = 'alpha2';
+    const POSTFIX = '1';
     /** Revision */
     const REVISION = '$Rev: 1160 $';
 
@@ -25,6 +26,9 @@ class Version
     {
         static $revision = null;
         if (!is_null($revision)) {
+            return $revision;
+        }
+        if ($revision = Config::getInstance()->get('version')) {
             return $revision;
         }
         // version number
@@ -49,6 +53,16 @@ class Version
     }
 
     /**
+     * Get framework version
+     * @param bool $long
+     * @return string
+     */
+    public static function getFrameworkVersion($long = true)
+    {
+        return ($long ? self::VERSION . '.' . self::POSTFIX : self::VERSION) . (Envi::isProduction() ? '' : '/' . time());
+    }
+
+    /**
      * Get revision number from Subversion files
      * @param string $dir Path to search for subversion files
      * @return int|bool
@@ -59,7 +73,7 @@ class Version
         if (class_exists('\SQLite3') and is_readable($dir . '.svn/wc.db')) {
             try {
                 $sqlite = new \SQLite3($dir . '.svn/wc.db');
-                $res = $sqlite->query('SELECT MAX(revision) FROM `NODES`');
+                $res = $sqlite->query('SELECT MAX(`revision`) FROM `nodes`');
                 $res = $res->fetchArray();
                 return $res[0];
             } catch (\Exception $ex) {

@@ -146,28 +146,32 @@
 			</tbody>
 		</table>
 		<xsl:apply-templates select="unify" mode="stats"/>
+		<xsl:apply-templates mode="stats"/>
+	</xsl:template>
+
+	<xsl:template match="mysql" mode="stats">
 		<h2>
 			<xsl:value-of select="$locale/adm/stats/database/title"/>
 		</h2>
 		<xsl:choose>
-			<xsl:when test="stats/mysql/@error">
+			<xsl:when test="@error">
 				<div class="error">
-					<xsl:value-of select="stats/mysql/@error"/>
+					<xsl:value-of select="@error"/>
 				</div>
 			</xsl:when>
 			<xsl:when
-				test="count(stats/mysql/table[@diff=1])=0 and count(stats/mysql/table[@nodef=1])=0 and count(stats/mysql/table[@nogoal=1])=0">
+					test="count(table[@diff=1])=0 and count(table[@nodef=1])=0 and count(table[@nogoal=1])=0">
 				<div class="message">
 					<xsl:value-of select="$locale/adm/stats/database/status-ok"/>
 				</div>
 			</xsl:when>
 			<xsl:otherwise>
-				<xsl:apply-templates select="stats/mysql/table" mode="diff"/>
+				<xsl:apply-templates select="table" mode="diff"/>
 			</xsl:otherwise>
 		</xsl:choose>
 	</xsl:template>
 
-	<xsl:template match="stats/mysql/table" mode="diff">
+	<xsl:template match="table" mode="diff">
 		<xsl:choose>
 			<xsl:when test="@diff=1">
 				<table>
