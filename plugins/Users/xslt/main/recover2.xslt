@@ -9,7 +9,7 @@
 				<h3>
 					<xsl:value-of select="$locale/auth/forms/recoverPasswordFormTitle"/>
 				</h3>
-				<div class="container">
+				<div class="container password1">
 					<div class="holder p">
 						<input type="password"
 						       name="password1"
@@ -27,7 +27,7 @@
 						<div class="field-description errorIcon-back invalid-text"/>
 					</div>
 				</div>
-				<div class="container">
+				<div class="container password2">
 					<div class="holder p">
 						<input type="password"
 						       name="password2"

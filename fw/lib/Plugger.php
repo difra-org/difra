@@ -170,7 +170,7 @@ class Plugger
                     }
                 }
             }
-            if ($data['version'] < (float)Envi\Version::VERSION) {
+            if ($data['version'] < (float)Envi\Version::getFrameworkVersion(false)) {
                 self::$pluginsData[$name]['old'] = true;
             }
         }

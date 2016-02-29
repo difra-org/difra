@@ -4,20 +4,15 @@
  * Class AdmStatusIndexController
  * Displays some stats.
  */
-class AdmStatusIndexController extends Difra\Controller
+class AdmStatusIndexController extends Difra\Controller\Adm
 {
-    public function dispatch()
-    {
-        \Difra\View::$instance = 'adm';
-    }
-
     public function indexAction()
     {
         /** @var \DOMElement $statusNode */
         $statusNode = $this->root->appendChild($this->xml->createElement('status'));
 
         // stats/difra
-        $statusNode->setAttribute('difra', \Difra\Envi\Version::getBuild());
+        $statusNode->setAttribute('difra', \Difra\Envi\Version::getFrameworkVersion(true));
         $statusNode->setAttribute('cache', \Difra\Cache::getInstance()->adapter);
         $statusNode->setAttribute('webserver', $_SERVER['SERVER_SOFTWARE']);
         $statusNode->setAttribute('phpversion', phpversion());
@@ -36,18 +31,18 @@ class AdmStatusIndexController extends Difra\Controller
         $statusNode->setAttribute('enabledPlugins', implode(', ', $enabledPlugins));
         $statusNode->setAttribute('disabledPlugins', implode(', ', $disabledPlugins));
 
-        // stats/mysql
-        /** @var \DOMElement $mysqlNode */
-        $mysqlNode = $statusNode->appendChild($this->xml->createElement('mysql'));
-        try {
-            \Difra\MySQL\Parser::getStatusXML($mysqlNode);
-        } catch (Exception $ex) {
-            $mysqlNode->setAttribute('error', $ex->getMessage() . ': ' . \Difra\MySQL::getInstance()->getError());
-        }
-
-        // stats of Unify tables
-        $unifyNode = $statusNode->appendChild($this->xml->createElement('unify'));
-        \Difra\Unify\DBAPI::getDbStatusXML($unifyNode);
+        // todo: move out DB checks
+//        // stats/mysql
+//        /** @var \DOMElement $mysqlNode */
+//        $mysqlNode = $statusNode->appendChild($this->xml->createElement('mysql'));
+//        try {
+//            \Difra\MySQL\Parser::getStatusXML($mysqlNode);
+//        } catch (Exception $ex) {
+//            $mysqlNode->setAttribute('error', $ex->getMessage() . ': ' . \Difra\MySQL::getInstance()->getError());
+//        }
+//        // stats of Unify tables
+//        $unifyNode = $statusNode->appendChild($this->xml->createElement('unify'));
+//        \Difra\Unify\DBAPI::getDbStatusXML($unifyNode);
 
         // stats/extensions
         /** @var $extensionsNode \DOMElement */

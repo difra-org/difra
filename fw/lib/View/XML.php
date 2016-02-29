@@ -63,8 +63,10 @@ class XML
                 and $_SERVER['HTTP_X_REQUESTED_WITH'] == 'SwitchPage'
             ) ? '1' : '0'
         );
-        // build number
+        // build and version number
         $node->setAttribute('build', Version::getBuild());
+        $node->setAttribute('framework', Version::getFrameworkVersion(false));
+        $node->setAttribute('frameworkLong', Version::getFrameworkVersion(true));
         // date
         /** @var $dateNode \DOMElement */
         $dateNode = $node->appendChild($xml->createElement('date'));

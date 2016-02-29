@@ -62,6 +62,16 @@ class Parser
             if (is_readable($path . '/bin/db.sql')) {
                 $tables[] = file_get_contents($path . '/bin/db.sql');
             }
+            if (is_dir($path . '/bin/db')) {
+                $files = scandir($path . '/bin/db');
+                if (!empty($files)) {
+                    foreach ($files as $file) {
+                        if (is_readable($path . '/bin/db/' . $file) and $file{0} !== '.') {
+                            $tables[] = file_get_contents($path . '/bin/db/' . $file);
+                        }
+                    }
+                }
+            }
         }
         return implode("\n", $tables);
     }
@@ -73,15 +83,14 @@ class Parser
      */
     public static function getCurrentSQL($asArray = false)
     {
-        $db = \Difra\MySQL::getInstance();
-        $tables = $db->fetch('SHOW TABLES');
+        $db = \Difra\DB::getInstance();
+        $tables = $db->fetchColumn('SHOW TABLES');
         if (empty($tables)) {
             return false;
         }
         $tablesSQL = [];
         foreach ($tables as $table) {
-            $tableName = array_pop($table);
-            $t = $db->fetchRow('SHOW CREATE TABLE `' . $db->escape($tableName) . '`');
+            $t = $db->fetchRow('SHOW CREATE TABLE `' . $db->escape($table) . '`');
             $tablesSQL[] = array_pop($t);
         }
         if ($asArray) {
