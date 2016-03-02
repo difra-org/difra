@@ -28,7 +28,9 @@ define('DIR_FW', DIR_DIFRA . 'fw/');
 define('DIR_PLUGINS', DIR_DIFRA . 'plugins/');
 require_once(DIR_FW . 'lib/Envi.php');
 define('DIR_SITE', DIR_ROOT . 'sites/' . \Difra\Envi::getSubsite() . '/');
-define('DIR_DATA', !empty($_SERVER['VHOST_DATA']) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/');
+if (!defined('DIR_DATA')) {
+    define('DIR_DATA', !empty($_SERVER['VHOST_DATA']) ? $_SERVER['VHOST_DATA'] . '/' : DIR_ROOT . 'data/');
+}
 
 require_once(DIR_FW . 'lib/Autoloader.php');
 \Difra\Autoloader::register();
