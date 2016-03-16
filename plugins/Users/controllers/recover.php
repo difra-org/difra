@@ -89,7 +89,7 @@ class RecoverController extends \Difra\Controller
         $recoverNode = $this->root->appendChild($this->xml->createElement('recover2'));
         $recoverNode->setAttribute('code', $code->val());
 
-        Ajaxer::display(View::render($this->xml, 'auth-ajax', true));
+//        Ajaxer::display(View::render($this->xml, 'auth-ajax', true));
     }
 
     /**
@@ -128,8 +128,8 @@ class RecoverController extends \Difra\Controller
             return;
         }
         Recover::recoverSetPassword($code->val(), $password1->val());
-        Ajaxer::notify(Locales::get('auth/recover/done'));
-        Ajaxer::close();
+        Cookies::getInstance()->notify(Locales::get('auth/recover/done'));
+        Ajaxer::redirect('/');
     }
 
     /**
