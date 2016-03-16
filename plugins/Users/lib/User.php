@@ -123,10 +123,10 @@ class User
     public static function getListXML($node, $paginator, $createNode = false)
     {
         $subNode = $createNode ? $node->appendChild($node->ownerDocument->createElement('users')) : $node;
-        $paginator->getPaginatorXML($subNode);
         foreach (self::getList($paginator) as $user) {
             $user->getXML($subNode, true);
         }
+        $paginator->getPaginatorXML($subNode);
     }
 
     /**

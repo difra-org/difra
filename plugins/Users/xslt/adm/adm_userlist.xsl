@@ -45,6 +45,7 @@
 						<xsl:apply-templates select="user"/>
 					</tbody>
 				</table>
+				<xsl:apply-templates select="paginator"/>
 			</xsl:otherwise>
 		</xsl:choose>
 
