@@ -38,7 +38,7 @@ class LoginController extends Controller
     {
         try {
             User::loginByPassword($login->val(), $password->val(), ($rememberMe->val() == 1) ? true : false);
-            Ajaxer::reload();
+            $this->afterLoginAjax();
         } catch (\Difra\Exception $ex) {
             switch ($error = $ex->getMessage()) {
                 case User::LOGIN_BADPASS:
@@ -48,6 +48,14 @@ class LoginController extends Controller
                     Ajaxer::status('login', Locales::get('auth/login/' . $error), 'problem');
             }
         }
+    }
+
+    /**
+     * Method is called after successful ajax login
+     */
+    protected function afterLoginAjax()
+    {
+        Ajaxer::reload();
     }
 
     /**
