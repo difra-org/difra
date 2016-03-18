@@ -55,9 +55,10 @@ abstract class Common
     /**
      * Get cache record wrapper
      * @param $key
-     * @return string|null
+     * @param bool $versionCheck Check if version number changed
+     * @return null|string
      */
-    public function get($key)
+    public function get($key, $versionCheck = true)
     {
         $data = $this->realGet($this->prefix . $key);
         if (
@@ -65,7 +66,13 @@ abstract class Common
             or
             !isset($data['expires']) or $data['expires'] < time()
             or
-            !isset($data['version']) or $data['version'] != $this->version
+            (
+                $versionCheck and (
+                    !isset($data['version'])
+                    or
+                    $data['version'] != $this->version
+                )
+            )
         ) {
             return null;
         }
@@ -144,7 +151,7 @@ abstract class Common
             },
             // read
             function ($id) {
-                return Cache::getInstance()->get($this->sessionPrefix . $id) ?: '';
+                return Cache::getInstance()->get($this->sessionPrefix . $id, false) ?: '';
             },
             // write
             function ($id, $data) {
