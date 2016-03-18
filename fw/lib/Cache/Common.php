@@ -15,10 +15,15 @@ abstract class Common
 {
     //abstract static public function isAvailable();
 
-    /** Session prefix */
-    const SESS_PREFIX = 'session:';
     /** @var string */
     public $adapter = null;
+
+    /** @var string Version for cache */
+    private $version = null;
+    /** @var string Cache prefix */
+    private $prefix = null;
+    /** @var string Session prefix */
+    private $sessionPrefix = 'session:';
 
     /**
      * Constructor
@@ -28,6 +33,9 @@ abstract class Common
         if (!method_exists($this, 'isAvailable') or !$this::isAvailable()) {
             throw new Exception(__CLASS__ . ' requested, but that cache is not available!');
         }
+        $this->version = Envi\Version::getBuild();
+        $this->prefix = Envi::getSubsite() . ':';
+        $this->sessionPrefix = $this->prefix . 'session:';
     }
 
     /**
@@ -51,8 +59,14 @@ abstract class Common
      */
     public function get($key)
     {
-        $data = $this->realGet(Envi::getSubsite() . '_' . $key);
-        if (!$data or !isset($data['expires']) or $data['expires'] < time()) {
+        $data = $this->realGet($this->prefix . $key);
+        if (
+            !$data
+            or
+            !isset($data['expires']) or $data['expires'] < time()
+            or
+            !isset($data['version']) or $data['version'] != $this->version
+        ) {
             return null;
         }
         return $data['data'];
@@ -76,9 +90,10 @@ abstract class Common
     {
         $data = [
             'expires' => time() + $ttl,
-            'data' => $data
+            'data' => $data,
+            'version' => $this->version
         ];
-        $this->realPut(Envi::getSubsite() . '_' . $key, $data, $ttl);
+        $this->realPut($this->prefix . $key, $data, $ttl);
     }
 
     /**
@@ -95,7 +110,7 @@ abstract class Common
      */
     public function remove($key)
     {
-        $this->realRemove(Envi::getSubsite() . '_' . $key);
+        $this->realRemove($this->prefix . $key);
     }
 
     /**
@@ -119,7 +134,7 @@ abstract class Common
 
         /** @noinspection PhpUnusedParameterInspection */
         session_set_save_handler(
-            // open
+        // open
             function ($s, $n) {
                 return true;
             },
@@ -129,19 +144,19 @@ abstract class Common
             },
             // read
             function ($id) {
-                return Cache::getInstance()->get(self::SESS_PREFIX . $id) ?: '';
+                return Cache::getInstance()->get($this->sessionPrefix . $id) ?: '';
             },
             // write
             function ($id, $data) {
                 if (!$data) {
                     return false;
                 }
-                Cache::getInstance()->put(self::SESS_PREFIX . $id, $data, 86400); // 24h
+                Cache::getInstance()->put($this->sessionPrefix . $id, $data, 86400); // 24h
                 return true;
             },
             // destroy
             function ($id) {
-                Cache::getInstance()->remove(self::SESS_PREFIX . $id);
+                Cache::getInstance()->remove($this->sessionPrefix . $id);
             },
             // garbage collector
             function ($expire) {
