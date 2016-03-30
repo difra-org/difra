@@ -10,6 +10,7 @@
 			<menu_settings>Settings</menu_settings>
 			<menu_status>General information</menu_status>
 			<menu_development>Development</menu_development>
+			<menu_development_database>Database</menu_development_database>
 			<menu_development_plugins>Plugins</menu_development_plugins>
 			<menu_development_config>Configuration status</menu_development_config>
 			<menu_development_locales>Localization</menu_development_locales>

@@ -90,7 +90,7 @@ class Parser
         }
         $tablesSQL = [];
         foreach ($tables as $table) {
-            $t = $db->fetchRow('SHOW CREATE TABLE `' . $db->escape($table) . '`');
+            $t = $db->fetchRow("SHOW CREATE TABLE `$table`");
             $tablesSQL[] = array_pop($t);
         }
         if ($asArray) {
