@@ -168,11 +168,11 @@ class Config
         if (!is_null($this->config)) {
             return;
         }
-        $cache = Cache::getInstance();
-        if ($c = $cache->get('config')) {
-            $this->config = $c;
-            return;
-        }
+//        $cache = Cache::getInstance();
+//        if ($c = $cache->get('config')) {
+//            $this->config = $c;
+//            return;
+//        }
         $this->config = $this->loadFileConfigs();
         try {
             $conf = DB::getInstance()->fetchOne('SELECT `config` FROM `config` LIMIT 1');
@@ -180,7 +180,7 @@ class Config
             if (is_array($dbconf)) {
                 $this->config = $this->merge($this->config, $dbconf);
             }
-            $cache->put('config', $this->config);
+//            $cache->put('config', $this->config);
         } catch (Exception $ex) {
         }
     }

@@ -31,19 +31,6 @@ class AdmStatusIndexController extends Difra\Controller\Adm
         $statusNode->setAttribute('enabledPlugins', implode(', ', $enabledPlugins));
         $statusNode->setAttribute('disabledPlugins', implode(', ', $disabledPlugins));
 
-        // todo: move out DB checks
-//        // stats/mysql
-//        /** @var \DOMElement $mysqlNode */
-//        $mysqlNode = $statusNode->appendChild($this->xml->createElement('mysql'));
-//        try {
-//            \Difra\MySQL\Parser::getStatusXML($mysqlNode);
-//        } catch (Exception $ex) {
-//            $mysqlNode->setAttribute('error', $ex->getMessage() . ': ' . \Difra\MySQL::getInstance()->getError());
-//        }
-//        // stats of Unify tables
-//        $unifyNode = $statusNode->appendChild($this->xml->createElement('unify'));
-//        \Difra\Unify\DBAPI::getDbStatusXML($unifyNode);
-
         // stats/extensions
         /** @var $extensionsNode \DOMElement */
         $extensionsNode = $statusNode->appendChild($this->xml->createElement('extensions'));
