@@ -8,7 +8,7 @@
 class SitemapController extends \Difra\Controller
 {
     /** Cache lifetime */
-    const CACHE_TTL = 10800; // 3 hours
+    const CACHE_TTL = 900; // 15 minutes
 
     /**
      * This action handles rewrites from nginx for URLs like:

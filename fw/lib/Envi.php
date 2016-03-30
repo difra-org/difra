@@ -154,6 +154,27 @@ class Envi
     }
 
     /**
+     * Get request protocol (http, https)
+     * @return string
+     */
+    public static function getProtocol()
+    {
+        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443)
+            ? 'https'
+            : 'http';
+    }
+
+    /**
+     * Get URL prefix with protocol and host names
+     * @param bool $main
+     * @return string
+     */
+    public static function getURLPrefix($main = false)
+    {
+        return self::getProtocol() . '://' . self::getHost($main);
+    }
+
+    /**
      * Is production mode enabled?
      * Development mode is enabled by VHOST_DEVMODE='on' server variable.
      * @return bool
