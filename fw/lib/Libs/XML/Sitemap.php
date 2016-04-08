@@ -45,11 +45,11 @@ class Sitemap
             } catch (\Exception $e) {
             }
         }
-        foreach ($sitemap as &$rec) {
-            if ($rec['loc']{0} == '/') {
-                $rec['loc'] = Envi::getURLPrefix(true) . $rec['loc'];
-            }
-        }
+//        foreach ($sitemap as &$rec) {
+//            if ($rec['loc']{0} == '/') {
+//                $rec['loc'] = Envi::getURLPrefix(true) . $rec['loc'];
+//            }
+//        }
         return $sitemap;
     }
 
@@ -147,6 +147,9 @@ class Sitemap
                     $v = array_map('urlencode', $v);
                     $v[0] = $p;
                     $v = implode('/', $v);
+                    if($k == 'loc' and $v{0} == '/') {
+                        $v = Envi::getURLPrefix(true) . $v;
+                    }
                     $urlNode->appendChild($indexXML->createElement($k, $v));
                 }
             }

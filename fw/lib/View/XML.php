@@ -39,11 +39,13 @@ class XML
         $node->setAttribute('site', Envi::getSubsite());
         $node->setAttribute('host', $host = Envi::getHost());
         $node->setAttribute('mainhost', $mainhost = Envi::getHost(true));
+        $node->setAttribute('protocol', Envi::getProtocol());
+        $node->setAttribute('fullhost', Envi::getURLPrefix());
         $node->setAttribute('instance', $instance ? $instance : View::$instance);
         $node->setAttribute('uri', Envi::getUri());
         $node->setAttribute('controllerUri', Action::getControllerUri());
         if ($host != $mainhost) {
-            $node->setAttribute('urlprefix', 'http://' . $mainhost);
+            $node->setAttribute('urlprefix', Envi::getURLPrefix(true));
         }
         // get user agent
         Envi\UserAgent::getUserAgentXML($node);

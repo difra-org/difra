@@ -65,7 +65,7 @@
         <login>
             <not_found>Пользователя с таким e-mail нет.</not_found>
             <bad_password>Неправильный пароль.</bad_password>
-            <bad_login_or_password>Не правильный логин или пароль.</bad_login_or_password>
+            <bad_login_or_password>Неправильный логин или пароль.</bad_login_or_password>
             <inactive>Пользователь не активирован (проверьте почту).</inactive>
             <banned>Пользователь заблокирован.</banned>
             <recovered>Вам на почту высланы дальнейшие инструкции для восстановления пароля.</recovered>

@@ -93,7 +93,8 @@ class Envi
             'locale' => Envi\Setup::getLocale(),
             'host' => self::getSubsite(),
             'hostname' => self::getHost(),
-            'mainhost' => self::getHost(true)
+            'mainhost' => self::getHost(true),
+            'fullhost' => self::getURLPrefix()
         ];
     }
 
