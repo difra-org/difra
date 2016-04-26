@@ -42,19 +42,21 @@ class Locker
         }
         $started = microtime(true);
         while (1) {
+            // check lock
             $state = $cache->get($key);
-            if (!$state) {
+            if (!$state) { // no lock - try to acquire
                 $cache->put($key, $rnd, self::TTL);
                 usleep(self::DELAY_S);
-            } elseif ($state == $rnd) {
+            } elseif ($state == $rnd) { // got lock
                 $lock = new self;
                 $lock->key = $key;
                 $lock->rnd = $rnd;
                 return $lock;
-            } else {
+            } else { // locked by other process
                 usleep(self::DELAY_L);
             }
-            if (microtime(true) - $started > self::TTL) {
+            // check for time out
+            if (microtime(true) - $started > self::TIMEOUT) {
                 throw new \Exception('Failed to make lock');
             }
         }
