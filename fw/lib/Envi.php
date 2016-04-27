@@ -160,7 +160,10 @@ class Envi
      */
     public static function getProtocol()
     {
-        return (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443)
+        return (
+            (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            or
+            (!empty($_SERVER['SERVER_PORT']) and $_SERVER['SERVER_PORT'] == 443))
             ? 'https'
             : 'http';
     }
