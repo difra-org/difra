@@ -529,5 +529,6 @@ class User
     {
         $this->active = true;
         $this->activation = null;
+        $this->modified = true;
     }
 }
