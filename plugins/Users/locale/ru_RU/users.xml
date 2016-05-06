@@ -154,6 +154,8 @@
         </password>
         <adm>
             <h2-title>Пользователи</h2-title>
+            <total>Всего: </total>
+            <active>, активных: </active>
             <h3-useredit-common>Редактирование пользователя</h3-useredit-common>
             <h3-useredit-info>Дополнительная информация</h3-useredit-info>
             <users-empty>Нет ни одного пользователя.</users-empty>

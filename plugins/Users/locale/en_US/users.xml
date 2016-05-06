@@ -148,6 +148,8 @@
         </password>
         <adm>
             <h2-title>Users</h2-title>
+            <total>Total: </total>
+            <active>, active: </active>
             <h3-useredit-common>User edit</h3-useredit-common>
             <h3-useredit-info>Additional information</h3-useredit-info>
             <users-empty>There are no users.</users-empty>

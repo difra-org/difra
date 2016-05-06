@@ -10,6 +10,20 @@
 				<xsl:value-of select="$locale/auth/adm/users-empty"/>
 			</xsl:when>
 			<xsl:otherwise>
+				<div class="users-stats">
+					<span class="label">
+						<xsl:value-of select="$locale/auth/adm/total"/>
+					</span>
+					<span class="value">
+						<xsl:value-of select="@total"/>
+					</span>
+					<span class="label">
+						<xsl:value-of select="$locale/auth/adm/active"/>
+					</span>
+					<span class="value">
+						<xsl:value-of select="@active"/>
+					</span>
+				</div>
 				<table>
 					<colgroup>
 						<col style="width: 30px"/>
