@@ -108,7 +108,7 @@ class View
     public static function addExpires($ttl)
     {
         header('Expires: ' . gmdate('D, d M Y H:i:s', $ttl ? (time() + $ttl) : 0));
-        if (isset($SERVER['SERVER_SOFTWARE']) and substr($_SERVER['SERVER_SOFTWARE'], 0, 5) == 'nginx') {
+        if (isset($_SERVER['SERVER_SOFTWARE']) and substr($_SERVER['SERVER_SOFTWARE'], 0, 5) == 'nginx') {
             header('X-Accel-Expires: ' . ($ttl ? $ttl : 'off'));
         }
     }
