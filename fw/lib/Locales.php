@@ -49,7 +49,7 @@ class Locales
     public static function get($xpath)
     {
         /** @noinspection PhpDeprecationInspection */
-        return self::getInstance()->getXPath($xpath);
+        return @self::getInstance()->getXPath($xpath);
     }
 
     /**
