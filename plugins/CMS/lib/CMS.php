@@ -121,9 +121,8 @@ class CMS
         if (empty($data)) {
             return false;
         }
-        $host = 'http://' . Envi::getHost();
         foreach ($data as $t) {
-            $rec = ['loc' => $host . $t['tag']];
+            $rec = ['loc' => $t['tag']];
             if (!empty($t['modified'])) {
                 $rec['lastmod'] = $t['modified'];
             }

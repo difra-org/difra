@@ -93,7 +93,8 @@ class Envi
             'locale' => Envi\Setup::getLocale(),
             'host' => self::getSubsite(),
             'hostname' => self::getHost(),
-            'mainhost' => self::getHost(true)
+            'mainhost' => self::getHost(true),
+            'fullhost' => self::getURLPrefix()
         ];
     }
 
@@ -151,6 +152,30 @@ class Envi
             return $_SERVER['HTTP_HOST'];
         }
         return gethostname();
+    }
+
+    /**
+     * Get request protocol (http, https)
+     * @return string
+     */
+    public static function getProtocol()
+    {
+        return (
+            (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+            or
+            (!empty($_SERVER['SERVER_PORT']) and $_SERVER['SERVER_PORT'] == 443))
+            ? 'https'
+            : 'http';
+    }
+
+    /**
+     * Get URL prefix with protocol and host names
+     * @param bool $main
+     * @return string
+     */
+    public static function getURLPrefix($main = false)
+    {
+        return self::getProtocol() . '://' . self::getHost($main);
     }
 
     /**

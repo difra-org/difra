@@ -35,6 +35,21 @@ class Sitemap
                 }
             }
         }
+        if (file_exists($sitemapPHP = DIR_ROOT . '/lib/sitemap.php')) {
+            try {
+                /** @noinspection PhpIncludeInspection */
+                $sitemapData = include($sitemapPHP);
+                if (!empty($sitemapData) and $sitemapData !== 1) {
+                    $sitemap = array_merge($sitemap, $sitemapData);
+                }
+            } catch (\Exception $e) {
+            }
+        }
+//        foreach ($sitemap as &$rec) {
+//            if ($rec['loc']{0} == '/') {
+//                $rec['loc'] = Envi::getURLPrefix(true) . $rec['loc'];
+//            }
+//        }
         return $sitemap;
     }
 
@@ -106,7 +121,7 @@ class Sitemap
     {
         $indexXML = new \DOMDocument;
         $smiNode = $indexXML->appendChild($indexXML->createElementNS(self::NS, 'sitemapindex'));
-        $urlPref = 'http://' . Envi::getHost();
+        $urlPref = Envi::getURLPrefix();
         for ($i = 1; $i <= $pages; $i++) {
             $smNode = $smiNode->appendChild($indexXML->createElement('sitemap'));
             $smNode->appendChild($indexXML->createElement('loc', "$urlPref/sitemap-" . $i . '.xml'));
@@ -132,6 +147,9 @@ class Sitemap
                     $v = array_map('urlencode', $v);
                     $v[0] = $p;
                     $v = implode('/', $v);
+                    if($k == 'loc' and $v{0} == '/') {
+                        $v = Envi::getURLPrefix(true) . $v;
+                    }
                     $urlNode->appendChild($indexXML->createElement($k, $v));
                 }
             }

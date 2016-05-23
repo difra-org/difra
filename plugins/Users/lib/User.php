@@ -126,6 +126,11 @@ class User
         foreach (self::getList($paginator) as $user) {
             $user->getXML($subNode, true);
         }
+        $stats = DB::getInstance(Users::DB)->fetchRow(
+            'SELECT count(*) AS `total`, count(*) - count(`activation`) AS `active` FROM `user`'
+        );
+        $subNode->setAttribute('total', $stats['total']);
+        $subNode->setAttribute('active', $stats['active']);
         $paginator->getPaginatorXML($subNode);
     }
 
@@ -524,5 +529,6 @@ class User
     {
         $this->active = true;
         $this->activation = null;
+        $this->modified = true;
     }
 }
