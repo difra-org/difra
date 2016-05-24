@@ -147,7 +147,7 @@ class Sitemap
                     $v = array_map('urlencode', $v);
                     $v[0] = $p;
                     $v = implode('/', $v);
-                    if($k == 'loc' and $v{0} == '/') {
+                    if ($k == 'loc' and $v{0} == '/') {
                         $v = Envi::getURLPrefix(true) . $v;
                     }
                     $urlNode->appendChild($indexXML->createElement($k, $v));

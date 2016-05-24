@@ -253,7 +253,6 @@ class HTML
 
             // проверяем элемент
             if (array_key_exists($styleElements[0], $this->allowedStyles)) {
-
                 // проверяем значение
                 if ($this->allowedStyles[$styleElements[0]] === true) {
                     $returnStyle[] =

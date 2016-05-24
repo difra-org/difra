@@ -329,9 +329,9 @@ class ru_RU extends Common
 
         // todo: remove
         switch ($form & (Wordforms::MASK_GENDER | Wordforms::MASK_CASE | Wordforms::MASK_NUMBER)) {
-
-            // Male gender
-
+            /**
+             * Male gender
+             */
             case Wordforms::GENDER_MALE | Wordforms::CASE_NOMINATIVE | Wordforms::NUMBER_SINGLE:
                 // мужской род, именительный падеж, единственное число
                 return $word;
@@ -368,9 +368,9 @@ class ru_RU extends Common
             case Wordforms::GENDER_MALE | Wordforms::CASE_LOCATIVE | Wordforms::NUMBER_MULTIPLE:
                 // мужской род, предложный падеж, множественное число
                 return $word . 'ах';
-
-            // Female gender
-
+            /**
+             * Female gender
+             */
             case Wordforms::GENDER_FEMALE | Wordforms::CASE_NOMINATIVE | Wordforms::NUMBER_SINGLE:
                 // женский род, именительный падеж, единственное число
                 return $word;
@@ -407,9 +407,9 @@ class ru_RU extends Common
             case Wordforms::GENDER_FEMALE | Wordforms::CASE_LOCATIVE | Wordforms::NUMBER_MULTIPLE:
                 // женский род, предложный падеж, множественное число
                 return mb_substr($word, 0, mb_strlen($word) - 1) . 'ах';
-
-            // Neuter gender
-
+            /**
+             * Neuter gender
+             */
             case Wordforms::GENDER_NEUTER | Wordforms::CASE_NOMINATIVE | Wordforms::NUMBER_SINGLE:
                 // средний род, именительный падеж, единственное число
                 return $word;

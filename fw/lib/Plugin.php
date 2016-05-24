@@ -137,10 +137,10 @@ abstract class Plugin
     /**
      * Get Sitemap as an array with following elements:
      * [
-     *         'loc' => 'http://example.com/page',	// required
-     *         'lastmod' => '2005-01-01',
-     *         'changefreq' => 'monthly',
-     *         'priority' => 0.8
+     *     'loc' => 'http://example.com/page', // required
+     *     'lastmod' => '2005-01-01',
+     *     'changefreq' => 'monthly',
+     *     'priority' => 0.8
      * ]
      * @return array|bool
      */

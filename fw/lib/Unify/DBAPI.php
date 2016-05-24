@@ -125,7 +125,6 @@ class DBAPI extends Table
         }
         if (!empty($goalIndexes)) {
             foreach ($goalIndexes as $goalName => $goalIndex) {
-
                 if (!isset($currentIndexes[$goalName])) {
                     // goal index does not exist in db
                     return [

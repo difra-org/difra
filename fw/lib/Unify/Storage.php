@@ -19,7 +19,7 @@ abstract class Storage
      * Register object(s)
      * @param string[] $list
      */
-    final static public function registerObjects($list)
+    final public static function registerObjects($list)
     {
         if (!$list or empty($list)) {
             return;
@@ -54,7 +54,7 @@ abstract class Storage
      * @param $objKey
      * @return string|Item|null
      */
-    final static public function getClass($objKey)
+    final public static function getClass($objKey)
     {
         return isset(self::$classes[$objKey]) ? '\\' . self::$classes[$objKey] : null;
     }
