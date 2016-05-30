@@ -9,6 +9,7 @@ use Difra\DB;
 use Difra\Locales\Wordforms;
 use Difra\Plugger;
 use Difra\Plugins\Users;
+use Difra\Security\Validate;
 
 /**
  * Class Register
@@ -80,7 +81,7 @@ class Register
         if (!$this->ignoreEmpty) {
             if ($this->email === '') {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EMPTY;
-            } elseif (!self::isEmailValid($this->email)) {
+            } elseif (!Validate::email($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_INVALID;
             } elseif (!$fast and !self::isEmailAvailable($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EXISTS;
@@ -88,29 +89,13 @@ class Register
                 return $this->successful['email'] = self::REGISTER_EMAIL_OK;
             }
         } elseif ($this->email !== '') {
-            if (!self::isEmailValid($this->email)) {
+            if (!Validate::email($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_INVALID;
             } elseif (!$fast and !self::isEmailAvailable($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EXISTS;
             }
         }
         return null;
-    }
-
-    /**
-     * Validate e-mail address
-     * @param $email
-     * @return bool
-     */
-    private static function isEmailValid($email)
-    {
-        if (strpos($email, '..') !== false) {
-            return false;
-        }
-        return (bool)preg_match(
-            '/^[a-zA-Z0-9_-]([a-zA-Z0-9._-]*)+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/',
-            $email
-        );
     }
 
     /**
