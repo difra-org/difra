@@ -37,7 +37,6 @@ class Register
     const REGISTER_LOGIN_LONG = 'login_long';
     const REGISTER_LOGIN_OK = 'login_ok';
     const LOGIN_REGEX = '/^[a-zA-Z0-9]([a-zA-Z0-9._-]*)$/';
-    const EMAIL_REGEX = '/^[a-zA-Z0-9._-]+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/';
     const MIN_PASSWORD_LENGTH = 6;
     private $failures = [];
     private $successful = [];
@@ -105,7 +104,13 @@ class Register
      */
     private static function isEmailValid($email)
     {
-        return (bool)preg_match(self::EMAIL_REGEX, $email);
+        if (strpos($email, '..') !== false) {
+            return false;
+        }
+        return (bool)preg_match(
+            '/^[a-zA-Z0-9_-]([a-zA-Z0-9._-]*)+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/',
+            $email
+        );
     }
 
     /**

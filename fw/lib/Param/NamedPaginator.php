@@ -1,6 +1,7 @@
 <?php
 
 namespace Difra\Param;
+
 use Difra\Unify\Paginator;
 
 /**
@@ -29,7 +30,7 @@ class NamedPaginator extends Common
 
     public function __call($method, $args)
     {
-        return call_user_func_array(array($this->value, $method), $args);
+        return call_user_func_array([$this->value, $method], $args);
     }
 
     /**

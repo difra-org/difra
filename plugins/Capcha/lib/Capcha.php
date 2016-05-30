@@ -98,12 +98,7 @@ class Capcha
                         $i = $order[$n];
                         $draw->setFont(__DIR__ . '/Capcha/DejaVuSans.ttf');
                         $draw->setFontSize(
-                            $j
-                                ? rand($sizeY * 3 / 5, $sizeY * 5 / 6)
-                                : rand(
-                                $sizeY * 4 / 6,
-                                $sizeY * 5 / 6
-                            )
+                            $j ? rand($sizeY * 3 / 5, $sizeY * 5 / 6) : rand($sizeY * 4 / 6, $sizeY * 5 / 6)
                         );
                         $draw->setFontWeight(rand(100, 900));
                         $draw->setGravity(\imagick::GRAVITY_CENTER);

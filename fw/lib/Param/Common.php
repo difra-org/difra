@@ -72,7 +72,7 @@ abstract class Common
      * @param $str
      * @return string|null
      */
-    static function canonicalize($str)
+    private static function canonicalize($str)
     {
         try {
             return @ESAPI::encoder()->canonicalize($str);
