@@ -9,7 +9,7 @@ use Difra\DB;
 use Difra\Locales\Wordforms;
 use Difra\Plugger;
 use Difra\Plugins\Users;
-use Difra\Security\Validate;
+use Difra\Security\Filter\Email;
 
 /**
  * Class Register
@@ -81,7 +81,7 @@ class Register
         if (!$this->ignoreEmpty) {
             if ($this->email === '') {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EMPTY;
-            } elseif (!Validate::email($this->email)) {
+            } elseif (!Email::validate($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_INVALID;
             } elseif (!$fast and !self::isEmailAvailable($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EXISTS;
@@ -89,7 +89,7 @@ class Register
                 return $this->successful['email'] = self::REGISTER_EMAIL_OK;
             }
         } elseif ($this->email !== '') {
-            if (!Validate::email($this->email)) {
+            if (!Email::validate($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_INVALID;
             } elseif (!$fast and !self::isEmailAvailable($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EXISTS;
@@ -393,6 +393,9 @@ class Register
         $user->setLogin($this->login);
         $user->save();
         $user->autoActivation();
+        if (function_exists('postRegister')) {
+            postRegister($user);
+        }
     }
 
     /** Activation code not found */
