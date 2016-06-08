@@ -11,13 +11,12 @@ class Email implements Common
      */
     public static function validate($string)
     {
-        if (preg_match('([.@]{2,})', $string)) {
-            return false;
-        }
-        return (bool)preg_match(
-            '/^[a-zA-Z0-9_-]([a-zA-Z0-9._-]*)+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/',
-            $string
-        ) and (filter_var($string, FILTER_SANITIZE_EMAIL) !== false);
+        return
+            !preg_match('([.@]{2,})', $string)
+            and
+            preg_match('/^[a-zA-Z0-9_-]([a-zA-Z0-9._-]*)+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/', $string)
+            and
+            (filter_var($string, FILTER_SANITIZE_EMAIL) !== false);
     }
 
     /**
