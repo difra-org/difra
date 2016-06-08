@@ -531,4 +531,16 @@ class User
         $this->activation = null;
         $this->modified = true;
     }
+
+    public function setField($name, $value)
+    {
+        DB::getInstance(Users::getDB())->query(
+            'REPLACE INTO `user_field` SET `user`=:user,`name`=:name,`value`=:value',
+            [
+                'user' => $this->getId(),
+                'name' => $name,
+                'value' => $value
+            ]
+        );
+    }
 }
