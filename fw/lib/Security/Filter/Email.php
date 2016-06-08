@@ -11,7 +11,7 @@ class Email implements Common
      */
     public static function validate($string)
     {
-        if (mb_strpos($string, '..') !== false) {
+        if (preg_match('([.@]{2,})', $string)) {
             return false;
         }
         return (bool)preg_match(
