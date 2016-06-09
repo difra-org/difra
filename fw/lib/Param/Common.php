@@ -67,6 +67,12 @@ abstract class Common
             case 'datetime':
                 $this->value = Filter\Datetime::sanitize($value);
                 break;
+            case 'phone':
+                $this->value = Filter\Phone::sanitize($value);
+                break;
+            case 'bankcard':
+                $this->value = Filter\Bankcard::sanitize($value);
+                break;
             default:
                 throw new Exception('No wrapper for type ' . (static::type) . ' in Param\Common constructor.');
         }
@@ -126,7 +132,11 @@ abstract class Common
             case 'ip':
                 return filter_var($value, FILTER_VALIDATE_IP);
             case 'datetime':
-                return Filter\Datetime::sanitize($value);
+                return Filter\Datetime::validate($value);
+            case 'phone':
+                return Filter\Phone::validate($value);
+            case 'bankcard':
+                return Filter\Bankcard::validate($value);
             default:
                 throw new Exception('Can\'t check param of type: ' . static::type);
         }
@@ -167,6 +177,7 @@ abstract class Common
             case 'files':
                 $res = [];
                 foreach ($this->value as $file) {
+                    /** @var $file AjaxFile */
                     $res[] = $file->val();
                 }
                 return $res;
