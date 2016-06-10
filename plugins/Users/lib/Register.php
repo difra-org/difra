@@ -13,6 +13,7 @@ use Difra\Security\Filter\Email;
 
 /**
  * Class Register
+ * Object used for registration data validation and User::create call.
  * @package Difra\Plugins\Users
  */
 class Register
