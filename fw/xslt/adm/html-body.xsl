@@ -9,7 +9,7 @@
 				<div id="signature">
 					<a href="http://www.difra.org/">
 						<span id="signature_difra">
-							<xsl:value-of select="/root/@build"/>
+							<xsl:value-of select="/root/@frameworkLong"/>
 						</span>
 					</a>
 				</div>

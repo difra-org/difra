@@ -9,9 +9,11 @@ use Difra\DB;
 use Difra\Locales\Wordforms;
 use Difra\Plugger;
 use Difra\Plugins\Users;
+use Difra\Security\Filter\Email;
 
 /**
  * Class Register
+ * Object used for registration data validation and User::create call.
  * @package Difra\Plugins\Users
  */
 class Register
@@ -80,7 +82,7 @@ class Register
         if (!$this->ignoreEmpty) {
             if ($this->email === '') {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EMPTY;
-            } elseif (!self::isEmailValid($this->email)) {
+            } elseif (!Email::validate($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_INVALID;
             } elseif (!$fast and !self::isEmailAvailable($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EXISTS;
@@ -88,29 +90,13 @@ class Register
                 return $this->successful['email'] = self::REGISTER_EMAIL_OK;
             }
         } elseif ($this->email !== '') {
-            if (!self::isEmailValid($this->email)) {
+            if (!Email::validate($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_INVALID;
             } elseif (!$fast and !self::isEmailAvailable($this->email)) {
                 return $this->failures['email'] = self::REGISTER_EMAIL_EXISTS;
             }
         }
         return null;
-    }
-
-    /**
-     * Validate e-mail address
-     * @param $email
-     * @return bool
-     */
-    private static function isEmailValid($email)
-    {
-        if (strpos($email, '..') !== false) {
-            return false;
-        }
-        return (bool)preg_match(
-            '/^[a-zA-Z0-9_-]([a-zA-Z0-9._-]*)+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/',
-            $email
-        );
     }
 
     /**
@@ -408,6 +394,9 @@ class Register
         $user->setLogin($this->login);
         $user->save();
         $user->autoActivation();
+        if (function_exists('postRegister')) {
+            postRegister($user);
+        }
     }
 
     /** Activation code not found */

@@ -325,7 +325,6 @@ class ru_RU extends Common
                     [$form & Wordforms::MASK_NUMBER];
             }
         }
-        echo '[not found]';
 
         // todo: remove
         switch ($form & (Wordforms::MASK_GENDER | Wordforms::MASK_CASE | Wordforms::MASK_NUMBER)) {

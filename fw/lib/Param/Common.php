@@ -4,6 +4,7 @@ namespace Difra\Param;
 
 use Difra\Exception;
 use Difra\Libs\ESAPI;
+use Difra\Security\Filter;
 
 /**
  * Class Common
@@ -58,10 +59,19 @@ abstract class Common
                 $this->value = filter_var($value, FILTER_SANITIZE_URL);
                 break;
             case 'email':
-                $this->value = filter_var($value, FILTER_SANITIZE_EMAIL);
+                $this->value = Filter\Email::sanitize($value);
                 break;
             case 'ip':
                 $this->value = filter_var($value, FILTER_VALIDATE_IP) ? $value : null;
+                break;
+            case 'datetime':
+                $this->value = Filter\Datetime::sanitize($value);
+                break;
+            case 'phone':
+                $this->value = Filter\Phone::sanitize($value);
+                break;
+            case 'bankcard':
+                $this->value = Filter\Bankcard::sanitize($value);
                 break;
             default:
                 throw new Exception('No wrapper for type ' . (static::type) . ' in Param\Common constructor.');
@@ -118,10 +128,15 @@ abstract class Common
                 // TODO: заменить этот фильтр на ESAPI
                 return filter_var($value, FILTER_VALIDATE_URL);
             case 'email':
-                // TODO: заменить этот фильтр на ESAPI
-                return (false !== filter_var($value, FILTER_VALIDATE_EMAIL)) ? true : false;
+                return Filter\Email::validate($value);
             case 'ip':
                 return filter_var($value, FILTER_VALIDATE_IP);
+            case 'datetime':
+                return Filter\Datetime::validate($value);
+            case 'phone':
+                return Filter\Phone::validate($value);
+            case 'bankcard':
+                return Filter\Bankcard::validate($value);
             default:
                 throw new Exception('Can\'t check param of type: ' . static::type);
         }
@@ -162,6 +177,7 @@ abstract class Common
             case 'files':
                 $res = [];
                 foreach ($this->value as $file) {
+                    /** @var $file AjaxFile */
                     $res[] = $file->val();
                 }
                 return $res;

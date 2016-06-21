@@ -117,14 +117,17 @@ class ParamTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(\Difra\Param\AjaxEmail::verify([]));
         $this->assertFalse(\Difra\Param\AjaxEmail::verify('user@jam'));
         $this->assertTrue(\Difra\Param\AjaxEmail::verify('user@mail.jam'));
-        $this->assertTrue(\Difra\Param\AjaxEmail::verify('user@a-jam.ru'));
-        $this->assertTrue(\Difra\Param\AjaxEmail::verify('the.user@a-jam.ru'));
-        $this->assertFalse(\Difra\Param\AjaxEmail::verify('us.@difra.ru'));
-        $this->assertFalse(\Difra\Param\AjaxEmail::verify('.us@difra.ru'));
-        $this->assertFalse(\Difra\Param\AjaxEmail::verify('us..er@difra.ru'));
-        $this->assertTrue(\Difra\Param\AjaxEmail::verify('u.s.er@difra.ru'));
-        $this->assertFalse(\Difra\Param\AjaxEmail::verify('@a-jam.ru'));
+        $this->assertTrue(\Difra\Param\AjaxEmail::verify('user@difra.org'));
+        $this->assertTrue(\Difra\Param\AjaxEmail::verify('the.user@d-i-f-r-a.org'));
+        $this->assertFalse(\Difra\Param\AjaxEmail::verify('us.@difra.org'));
+        $this->assertFalse(\Difra\Param\AjaxEmail::verify('.us@difra.org'));
+        $this->assertFalse(\Difra\Param\AjaxEmail::verify('us..er@difra.org'));
+        $this->assertTrue(\Difra\Param\AjaxEmail::verify('u.s.er@difra.org'));
+        $this->assertFalse(\Difra\Param\AjaxEmail::verify('@difra.org'));
         $this->assertFalse(\Difra\Param\AjaxEmail::verify('user@'));
+        $this->assertFalse(\Difra\Param\AjaxEmail::verify('example@difra..org'));
+        $this->assertFalse(\Difra\Param\AjaxEmail::verify('example@difra.org.'));
+        $this->assertFalse(\Difra\Param\AjaxEmail::verify('example@.difra..org'));
 
         $i = new \Difra\Param\AjaxEmail('user@difra.ru');
         $this->assertEquals($i->val(), 'user@difra.ru');
