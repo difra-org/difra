@@ -166,8 +166,8 @@ editor.flush = function () {
 $(document).ready(editor.inject);
 
 // поддержка switcher
-$(document).bind('construct', editor.inject);
-$(document).bind('destruct', editor.clean);
+$(document).on('construct', editor.inject);
+$(document).on('destruct', editor.clean);
 
 // поддержка ajaxer
-$(document).bind('form-submit', editor.flush);
+$(document).on('form-submit', editor.flush);

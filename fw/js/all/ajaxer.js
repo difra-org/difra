@@ -688,4 +688,4 @@ ajaxer.watcher = function () {
     }
 };
 $(document).ready(ajaxer.watcher);
-$(document).bind('construct', ajaxer.watcher);
+$(document).on('construct', ajaxer.watcher);

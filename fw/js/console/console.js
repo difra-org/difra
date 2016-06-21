@@ -48,6 +48,6 @@ $(document).ready(function () {
         $('#debug').addClass('max');
     }
 });
-$(document).bind('construct', function () {
+$(document).on('construct', function () {
     debug.addReq('Ajax page loaded: ' + document.location.pathname);
 });
