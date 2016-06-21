@@ -384,6 +384,23 @@ class User
     }
 
     /**
+     * Get user by login name
+     * @param string $login
+     * @return User
+     * @throws Exception
+     * @throws UsersException
+     */
+    public static function getByLogin($login)
+    {
+        $data = DB::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `login`=?', [$login]);
+        if (empty($data)) {
+            throw new UsersException(self::LOGIN_NOTFOUND);
+        }
+        $user = self::load($data);
+        return $user;
+    }
+
+    /**
      * Get current user
      * @return User
      * @throws UsersException
