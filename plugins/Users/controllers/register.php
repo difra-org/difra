@@ -15,7 +15,7 @@ use Difra\View;
 /**
  * Class RegisterController
  */
-class RegisterController extends Difra\Controller
+class RegisterController extends \Difra\Controller
 {
     /**
      * Registration form (page)
@@ -124,13 +124,22 @@ class RegisterController extends Difra\Controller
     {
         try {
             Register::activate($code->val());
-            Cookies::getInstance()->notify(Locales::get('auth/activate/done'));
+            $this->afterActivate();
         } catch (UsersException $error) {
             Cookies::getInstance()->notify(
                 Locales::get('auth/activate/' . $error->getMessage()),
                 true
             );
+            \Difra\View::redirect('/');
         }
+    }
+
+    /**
+     * Redefine this method if you want custom actions after activation
+     */
+    protected function afterActivate()
+    {
+        Cookies::getInstance()->notify(Locales::get('auth/activate/done'));
         \Difra\View::redirect('/');
     }
 }
