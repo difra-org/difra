@@ -3,6 +3,7 @@
 	z-index: 99999;
 	font-family: Arial, Helvetica, Garuda, sans-serif;
 	font-size: 12px;
+	.border-box();
 
 	#debug_body {
 		ul {
@@ -58,7 +59,7 @@
 			bottom: 0;
 			left: 50%;
 			margin: 0 0 0 -18px;
-			height: 9px;
+			height: 10px;
 			width: 30px;
 			padding: 0;
 			background: rgba(255, 255, 255, 0.5);
@@ -71,6 +72,7 @@
 			cursor: pointer;
 			.transition(all 0.5s ease);
 			line-height: 21px;
+			//.box-sizing(content-box);
 
 			&:hover {
 				background: rgba(255, 255, 255, 0.8);
@@ -144,5 +146,10 @@
 	td {
 		padding: 0 5px;
 		vertical-align: top;
+	}
+
+	input[type="checkbox"] {
+		visibility: visible;
+		position: static;
 	}
 }
