@@ -2,6 +2,10 @@
 
 namespace Difra\Security\Filter;
 
+/**
+ * Class Datetime
+ * @package Difra\Security\Filter
+ */
 class Datetime implements Common
 {
     /** @var \Datetime[] */
