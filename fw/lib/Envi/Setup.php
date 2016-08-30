@@ -16,7 +16,9 @@ class Setup
      */
     public static function run()
     {
-        mb_internal_encoding('UTF-8');
+        if (function_exists('mb_internal_encoding')) {
+            mb_internal_encoding('UTF-8');
+        }
         ini_set('short_open_tag', false);
         ini_set('asp_tags', false);
         ini_set('mysql.trace_mode', false);
