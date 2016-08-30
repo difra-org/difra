@@ -12,7 +12,8 @@ class Autoloader
     /** @var array Class black list */
     private static $bl = ['sqlite3'];
     /** @var string[string] */
-    private static $psr4 = null;
+    private static $psr4 = [
+    ];
 
     /**
      * Auto loader method
@@ -92,8 +93,22 @@ class Autoloader
         }
     }
 
+    /**
+     * Init autoloader
+     */
     public static function init()
     {
-        self::$psr4 = Config::getInstance()->get('psr4') ?: null;
+        self::addPSR4(Config::getInstance()->get('psr4'));
+    }
+
+    /**
+     * Add PSR4 namespace => dir overrides
+     * @param array $ns2dir
+     */
+    public static function addPSR4($ns2dir)
+    {
+        if (!empty($ns2dir)) {
+            self::$psr4 = array_merge(self::$psr4, $ns2dir);
+        }
     }
 }

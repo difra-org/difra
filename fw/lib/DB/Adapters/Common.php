@@ -72,11 +72,12 @@ abstract class Common
     public function prepare($query)
     {
         $this->connect();
-        static $cache = [];
-        if (!isset($cache[$query])) {
-            return $cache[$query] = $this->pdo->prepare($query);
-        }
-        return $cache[$query];
+//        static $cache = [];
+//        if (!isset($cache[$query])) {
+//            return $cache[$query] = $this->pdo->prepare($query);
+//        }
+//        return $cache[$query];
+        return $this->pdo->prepare($query);
     }
 
     /**
@@ -87,11 +88,12 @@ abstract class Common
      */
     public function query($query, $parameters = [])
     {
+        Debugger::prepareDBLine();
         $sth = $this->prepare($query);
         $sth->execute($parameters);
+        Debugger::addDBLine('DB', $query);
         $this->lastAffectedRows = $sth->rowCount();
         $this->queries++;
-        Debugger::addDBLine('DB', $query);
     }
 
     /**
@@ -102,12 +104,14 @@ abstract class Common
      */
     public function multiQuery($query, $parametersSet = [])
     {
+        Debugger::prepareDBLine();
         $sth = $this->prepare($query);
         $this->lastAffectedRows = 0;
         foreach ($parametersSet as $parameters) {
             $sth->execute($parameters);
             $this->lastAffectedRows += $sth->rowCount();
         }
+        Debugger::addDBLine('DB', 'multiQuery (todo)'); // todo
     }
 
     /**
@@ -183,11 +187,13 @@ abstract class Common
      */
     public function fetch($query, $parameters = [])
     {
-        Debugger::addDBLine('DB', $query);
-        $this->queries++;
+        Debugger::prepareDBLine();
         $sth = $this->prepare($query);
         $sth->execute($parameters);
-        return $sth->fetchAll();
+        $result = $sth->fetchAll();
+        Debugger::addDBLine('DB', $query);
+        $this->queries++;
+        return $result;
     }
 
     /**
@@ -198,10 +204,12 @@ abstract class Common
      */
     public function fetchRow($query, $parameters = [])
     {
-        Debugger::addDBLine('DB', $query);
+        Debugger::prepareDBLine();
         $sth = $this->prepare($query);
         $sth->execute($parameters);
-        return $sth->fetch();
+        $result = $sth->fetch();
+        Debugger::addDBLine('DB', $query);
+        return $result;
     }
 
     /**
@@ -213,7 +221,7 @@ abstract class Common
      */
     public function fetchColumn($query, $parameters = [], $column_number = 0)
     {
-        Debugger::addDBLine('DB', $query);
+        Debugger::prepareDBLine();
         $sth = $this->prepare($query);
         $sth->execute($parameters);
 
@@ -221,6 +229,7 @@ abstract class Common
         while (($row = $sth->fetchColumn($column_number)) !== false) {
             $data[] = $row;
         }
+        Debugger::addDBLine('DB', $query);
         return $data;
     }
 
@@ -264,7 +273,12 @@ abstract class Common
     public function beginTransaction()
     {
         $this->connect();
-        $this->transaction = true;
+        if (Debugger::isEnabled()) {
+            $this->transaction = microtime(true);
+            Debugger::addDBLine('DB', 'Transaction start');
+        } else {
+            $this->transaction = true;
+        }
         return $this->pdo->beginTransaction();
     }
 
@@ -275,7 +289,11 @@ abstract class Common
     public function rollBack()
     {
         $this->transaction = false;
-        return $this->pdo->rollBack();
+        $result = $this->pdo->rollBack();
+        if (Debugger::isEnabled()) {
+            Debugger::addDBLine('DB', 'Transaction rolled back');
+        }
+        return $result;
     }
 
     /**
@@ -285,6 +303,10 @@ abstract class Common
     public function commit()
     {
         $this->transaction = false;
-        return $this->pdo->commit();
+        $result = $this->pdo->commit();
+        if (Debugger::isEnabled()) {
+            Debugger::addDBLine('DB', 'Transaction commited in ' . (number_format((microtime(true) - $this->transaction) * 1000, 1)) . ' ms');
+        }
+        return $result;
     }
 }

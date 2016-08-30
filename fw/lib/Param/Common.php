@@ -12,10 +12,21 @@ use Difra\Security\Filter;
  */
 abstract class Common
 {
+    // consts to be redefined
     const type = null;
     const source = null;
     const named = null;
     const auto = false;
+    // constants: source
+    const SOURCE_AJAX = 'ajax';
+    const SOURCE_QUERY = 'query';
+    // constants: named
+    const NAMED_TRUE = true;
+    const NAMED_FALSE = false;
+    // constants: date
+    const TYPE_DATE = 'date';
+    // fields
+    /** @var mixed */
     protected $value = null;
 
     /**
@@ -67,6 +78,9 @@ abstract class Common
             case 'datetime':
                 $this->value = Filter\Datetime::sanitize($value);
                 break;
+            case self::TYPE_DATE:
+                $this->value = Filter\Date::sanitize($value);
+                break;
             case 'phone':
                 $this->value = Filter\Phone::sanitize($value);
                 break;
@@ -91,6 +105,12 @@ abstract class Common
         }
     }
 
+    /**
+     * Verify parameter value
+     * @param $value
+     * @return bool
+     * @throws Exception
+     */
     public static function verify($value)
     {
         switch (static::type) {
@@ -133,6 +153,8 @@ abstract class Common
                 return filter_var($value, FILTER_VALIDATE_IP);
             case 'datetime':
                 return Filter\Datetime::validate($value);
+            case self::TYPE_DATE:
+                return Filter\Date::validate($value);
             case 'phone':
                 return Filter\Phone::validate($value);
             case 'bankcard':
@@ -142,21 +164,37 @@ abstract class Common
         }
     }
 
+    /**
+     * Get parameter source
+     * @return self::SOURCE_AJAX|self::SOURCE_QUERY
+     */
     public static function getSource()
     {
         return static::source;
     }
 
+    /**
+     * Is named field
+     * @return self::NAMED_TRUE|self::NAMED_FALSE
+     */
     public static function isNamed()
     {
         return static::named;
     }
 
+    /**
+     * Has auto value
+     * @return bool
+     */
     public static function isAuto()
     {
         return defined('static::auto') ? static::auto : false;
     }
 
+    /**
+     * Get string value
+     * @return string
+     */
     public function __toString()
     {
         $value = $this->val();
@@ -166,6 +204,10 @@ abstract class Common
         return (string)$this->val();
     }
 
+    /**
+     * Get field value
+     * @return mixed
+     */
     public function val()
     {
         switch (static::type) {
@@ -186,6 +228,10 @@ abstract class Common
         }
     }
 
+    /**
+     * Get raw $this->value value
+     * @return mixed|string
+     */
     public function raw()
     {
         return $this->value;

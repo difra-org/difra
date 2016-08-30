@@ -15,7 +15,7 @@ class Bankcard implements Common
      */
     public static function validate($string)
     {
-        return (bool)\Drafton\Libs\Bankcard::getType($string);
+        return (bool)\Difra\Libs\Bankcard::getType($string);
     }
 
     /**

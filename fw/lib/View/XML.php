@@ -77,6 +77,7 @@ class XML
         $dateCombined = array_combine($dateKeys, $dateValues);
         foreach ($dateCombined as $k => $v) {
             $dateNode->setAttribute($k, $v);
+            $dateNode->setAttribute('ts', time());
         }
         // debug flag
         $node->setAttribute('debug', Debugger::isEnabled() ? '1' : '0');

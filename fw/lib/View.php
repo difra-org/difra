@@ -87,7 +87,7 @@ class View
         $normalizerDoc->loadXML($normalizerXml);
         $normalizerProc = new \XSLTProcessor();
         $normalizerProc->importStylesheet($normalizerDoc);
-        return $normalizerProc->transformToXML($htmlDoc);
+        return $normalizerProc->transformToXml($htmlDoc);
     }
 
     /**

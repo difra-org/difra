@@ -1,6 +1,6 @@
 <?php
 
-namespace Drafton\Libs;
+namespace Difra\Libs;
 
 /**
  * Class Bankcard

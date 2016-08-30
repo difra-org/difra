@@ -15,7 +15,7 @@ class Paginator
     /** @var int Items per page */
     protected $perpage = 20;
     /** @var int|null Current page */
-    protected $page = null;
+    protected $page = 1;
     /** @var int Total items number */
     protected $total = null;
     /** @var int Pages number */

@@ -17,8 +17,6 @@
 
 var switcher = {};
 
-switcher.basePath = '/';
-switcher.hashChanged = false;
 switcher.noPush = false;
 switcher.url = false;
 switcher.referrer = false;
@@ -40,12 +38,7 @@ switcher.ajaxConfig = {
         }
         $(document).triggerHandler('destruct');
         if (!switcher.noPush) {
-            if (typeof history.pushState == 'function') {
-                history.pushState({url: switcher.url}, '', switcher.url);
-            } else { // browser does not support pushState, use hashes
-                switcher.hashChanged = true;
-                window.location = switcher.basePath + '#!' + switcher.url;
-            }
+            history.pushState({url: switcher.url}, '', switcher.url);
         }
         $(document).triggerHandler('switch');
 
@@ -117,67 +110,51 @@ switcher.page = function (url, noPush, data) {
     }
 };
 
-/**
- * Support "Back" and "Forward" browser buttons for browsers without pushState
- */
-window.onhashchange = function () {
-    if (switcher.hashChanged) {
-        switcher.hashChanged = false;
-        return;
-    }
-    if (document.location.hash.substring(0, 2) == '#!') {
-        switcher.page(document.location.hash.substring(2), true);
-    } else {
-        switcher.page(document.location.href, true);
-    }
+switcher.bind = function () {
+    $(document).on('click dblclick', 'a', function (event) {
+
+        // skip .ajaxer and .noAjaxer links
+        if ($(this).hasClass('ajaxer') || $(this).hasClass('noAjaxer')) {
+            return;
+        }
+
+        var href = $(this).attr('href');
+
+        // skip empty links, anchors and javascript
+        if (href == '' || href == '#') {
+            event.preventDefault();
+            return;
+        }
+        if (href.substr(0, 11) == 'javascript:' || href.substr(0, 1) == '#') {
+            return;
+        }
+
+        event.preventDefault();
+        switcher.page(href);
+    });
+    $(window).on('popstate', switcher.onpopstate);
 };
 
 /**
  * Support "Back" and "Forward" browser buttons
  */
-window.onpopstate = function () {
-    if (switcher.url && switcher.url != decodeURI(document.location.pathname) &&
-        switcher.url != document.location.hash.substring(2)) {
+switcher.onpopstate = function () {
+    if (switcher.url && switcher.url != decodeURI(document.location.pathname)) {
         switcher.page(document.location.href, true);
     }
 };
 
-/**
- * Init
- */
-$(document).ready(function () {
-    if (document.location.hash && document.location.hash.substring(0, 2) == '#!') {
-        // redirect /#!/some/page to /some/page in smart browsers
-        switcher.page(document.location.hash.substring(2), true);
-        if (typeof history.replaceState == 'function') {
-            switcher.hashChanged = true;
-            history.replaceState({url: switcher.url}, '', switcher.url);
-        }
-    } else if (typeof history.pushState != 'function' && document.location.hash.substring(0, 2) != '#!' &&
-        content.length) {
-        // redirect /some/page to /#!/some/page in stupid browsers
-        switcher.page(document.location.href);
-    } else {
-        if (!switcher.url) {
-            // remember current URL on first page load
-            switcher.url = decodeURI(document.location.pathname);
-        }
-    }
-});
-
-$(document).on('click dblclick', 'a', function (event) {
-    if ($(this).hasClass('ajaxer') || $(this).hasClass('noAjaxer')) {
-        // skip link if it has class .ajaxer or .noAjaxer
+switcher.init = function () {
+    // if there are no switcher elements, don't init
+    if (!$('.switcher:not(#debug)').length) {
         return;
     }
-
-    var href = $(this).attr('href');
-    if (href == '#') {
-        // do nothing on href="#" links
-        event.preventDefault();
-    } else if (href && href.substring(0, 11) != 'javascript:' && href.substr(0, 1) != '#') {
-        // link is not javascript and not anchor, use ajax page switching
-        event.preventDefault();
-        switcher.page($(this).attr('href'));
+    // remember current URL on first page load
+    if (!switcher.url) {
+        switcher.url = decodeURI(document.location.pathname);
     }
-});
+    // binds
+    switcher.bind();
+};
+
+$(document).ready(switcher.init);

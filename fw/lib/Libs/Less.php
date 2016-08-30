@@ -4,8 +4,6 @@ namespace Difra\Libs;
 
 use Difra\Debugger;
 
-include_once(DIR_FW . 'lib/Libs/Less/lessc.inc.php');
-
 /**
  * Class Less
  * LESS support.
@@ -14,24 +12,32 @@ include_once(DIR_FW . 'lib/Libs/Less/lessc.inc.php');
 class Less
 {
     /**
+     * Init Less.php library
+     * @throws \Exception
+     */
+    public static function init()
+    {
+        static $done = false;
+        if ($done)
+            return;
+        include(__DIR__ . '/Less/src/Autoloader.php');
+        \Less_Autoloader::register();
+        $done = true;
+    }
+
+    /**
      * Convert LESS to CSS
      * @param string $string
      * @return string
      */
     public static function compile($string)
     {
-        static $less = null;
-        if (!$less) {
-            $less = new \lessc;
-            if (!Debugger::isEnabled()) {
-                $less->setFormatter('compressed');
-                $less->setPreserveComments(false);
-            } else {
-                $less->setFormatter('lessjs');
-                $less->setPreserveComments(true);
-            }
-        }
-
-        return $less->compile($string);
+        self::init();
+        $parser = new \Less_Parser();
+        $parser->SetOptions([
+            'compress' => !Debugger::isEnabled()
+        ]);
+        $parser->parse($string);
+        return $parser->getCss();
     }
 }
