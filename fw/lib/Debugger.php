@@ -209,6 +209,20 @@ class Debugger
         ];
     }
 
+    /** @var float DB request timer */
+    private static $dbTimer = null;
+
+    /**
+     * DB request prepare
+     */
+    public static function prepareDBLine()
+    {
+        if (!self::$enabled) {
+            return;
+        }
+        self::$dbTimer = microtime(true);
+    }
+
     /**
      * Add console log for SQL requests
      * @param string $type
@@ -222,9 +236,12 @@ class Debugger
         self::$output[] = [
             'class' => 'db',
             'type' => $type,
-            'message' => $line,
+            'message' =>
+                (self::$dbTimer ? (number_format((microtime(true) - self::$dbTimer) * 1000, 1)) . ' ms: ' : '')
+                . $line,
             'timer' => self::getTimer()
         ];
+        self::$dbTimer = null;
     }
 
     /**

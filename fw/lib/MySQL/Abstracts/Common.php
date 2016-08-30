@@ -64,18 +64,34 @@ abstract class Common
     {
         if (!is_array($query)) {
             $this->connect();
-            $this->realQuery($query);
+            Debugger::prepareDBLine();
             $this->queries++;
             Debugger::addDBLine('MySQL', $query);
         } else {
             try {
+                if (Debugger::isEnabled()) {
+                    $timer = microtime(true);
+                    Debugger::addDBLine('MySQL', 'Transaction start');
+                }
                 $this->transactionStart();
                 foreach ($query as $subQuery) {
-                    $this->query($subQuery);
+                    $this->realQuery($subQuery);
+                    $this->queries++;
+                    Debugger::addDBLine('MySQL', $query);
                 }
                 $this->transactionCommit();
+                if (Debugger::isEnabled()) {
+                    /** @noinspection PhpUndefinedVariableInspection */
+                    Debugger::addDBLine(
+                        'MySQL',
+                        'Transaction commited in '
+                        . (number_format((microtime(true) - $timer) * 1000, 1))
+                        . 'ms'
+                    );
+                }
             } catch (Exception $ex) {
                 $this->transactionCancel();
+                Debugger::addDBLine('MySQL', 'Transaction failed: ' . $ex->getMessage());
                 throw new Exception('MySQL transaction failed because of ' . $ex->getMessage());
             }
         }
@@ -214,9 +230,11 @@ abstract class Common
     public function fetch($query, $replica = false)
     {
         $this->connect();
+        Debugger::prepareDBLine();
+        $result = $this->realFetch($query, $replica);
         Debugger::addDBLine('MySQL', $query);
         $this->queries++;
-        return $this->realFetch($query, $replica);
+        return $result;
     }
 
     /**
