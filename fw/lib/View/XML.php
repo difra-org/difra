@@ -75,9 +75,9 @@ class XML
         $dateKeys = ['d', 'e', 'A', 'a', 'm', 'B', 'b', 'Y', 'y', 'c', 'x', 'H', 'M', 'S'];
         $dateValues = explode('|', strftime('%' . implode('|%', $dateKeys)));
         $dateCombined = array_combine($dateKeys, $dateValues);
+        $dateNode->setAttribute('ts', time());
         foreach ($dateCombined as $k => $v) {
             $dateNode->setAttribute($k, $v);
-            $dateNode->setAttribute('ts', time());
         }
         // debug flag
         $node->setAttribute('debug', Debugger::isEnabled() ? '1' : '0');
