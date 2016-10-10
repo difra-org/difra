@@ -26,8 +26,7 @@ class Cookies
      */
     private function __construct()
     {
-        $this->domain = Envi::getHost(true);
-        $this->domain = (substr($this->domain, 0, 4) == 'www.') ? substr($this->domain, 3) : ('.' . $this->domain);
+        $this->domain = '.' . Envi::getHost(true);
         $this->path = '/';
     }
 
