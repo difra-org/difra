@@ -3,6 +3,7 @@
 namespace Difra\Plugins\Users;
 
 use Difra\Ajaxer;
+use Difra\Config;
 use Difra\Exception;
 use Difra\Locales;
 use Difra\DB;
@@ -429,6 +430,10 @@ class Register
 //            throw new UsersException(self::ACTIVATE_TIMEOUT);
 //        }
         $db->query("UPDATE `user` SET `active`='1',`activation`=NULL WHERE `activation`=?", [$key]);
+        if (Config::getInstance()->getValue('auth', 'login_on_activate')) {
+            $user = User::getById($data['id']);
+            $user->login();
+        }
         return true;
     }
 }
