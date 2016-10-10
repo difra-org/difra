@@ -3,6 +3,9 @@
 namespace Difra\Plugins\CMS;
 
 use Difra\Cache;
+use Difra\Controller;
+use Difra\Envi;
+use Difra\Envi\Action;
 use Difra\Exception;
 use Difra\MySQL;
 use Difra\Plugins\CMS;
@@ -59,6 +62,34 @@ class MenuItem
     }
 
     /**
+     * Load object from db row
+     * @param array $row
+     * @return MenuItem
+     */
+    static public function loadObj($row)
+    {
+        $menuItem = new self;
+        $menuItem->id = $row['id'];
+        $menuItem->menu = $row['menu'];
+        $menuItem->parent = $row['parent'];
+        $menuItem->visible = $row['visible'];
+        $menuItem->page = $row['page'];
+        if (!empty($row['tag'])) {
+            $menuItem->pageData = [
+                'id' => $row['page_id'],
+                'tag' => $row['tag'],
+                'hidden' => $row['hidden'],
+                'title' => $row['title']
+            ];
+        } else {
+            $menuItem->link = $row['link'];
+            $menuItem->linkLabel = $row['link_label'];
+        }
+        $menuItem->loaded = true;
+        return $menuItem;
+    }
+
+    /**
      * Get elements list for menu with id=$menuId
      * @static
      * @param int $menuId
@@ -70,14 +101,12 @@ class MenuItem
             $cacheKey = 'cms_menuitem_list_' . $menuId;
             $cache = Cache::getInstance();
             if (!$data = $cache->get($cacheKey)) {
-                $data = CMS::getDB()->fetch(
-                    <<<SQL
-                                        SELECT `cms_menu_items`.*,`cms`.`id` AS `page_id`,`cms`.`tag`,`cms`.`hidden`,`cms`.`title`
+                $data = CMS::getDB()->fetch(<<<SQL
+SELECT `cms_menu_items`.*,`cms`.`id` AS `page_id`,`cms`.`tag`,`cms`.`hidden`,`cms`.`title`
 FROM `cms_menu_items` LEFT JOIN `cms` ON `cms_menu_items`.`page`=`cms`.`id`
 WHERE `menu`=? ORDER BY `position`
 SQL
-                    ,
-                    [$menuId]
+                    , [$menuId]
                 );
                 $cache->put($cacheKey, $data);
             }
@@ -86,25 +115,7 @@ SQL
             }
             $res = [];
             foreach ($data as $menuData) {
-                $menuItem = new self;
-                $menuItem->id = $menuData['id'];
-                $menuItem->menu = $menuData['menu'];
-                $menuItem->parent = $menuData['parent'];
-                $menuItem->visible = $menuData['visible'];
-                $menuItem->page = $menuData['page'];
-                if (!empty($menuData['tag'])) {
-                    $menuItem->pageData = [
-                        'id' => $menuData['page_id'],
-                        'tag' => $menuData['tag'],
-                        'hidden' => $menuData['hidden'],
-                        'title' => $menuData['title']
-                    ];
-                } else {
-                    $menuItem->link = $menuData['link'];
-                    $menuItem->linkLabel = $menuData['link_label'];
-                }
-                $menuItem->loaded = true;
-                $res[] = $menuItem;
+                $res[] = self::loadObj($menuData);
             }
             return $res;
         } catch (\Exception $e) {
@@ -181,6 +192,9 @@ SQL
         $this->clearCache();
     }
 
+    /**
+     * Invalidate cache
+     */
     public function clearCache()
     {
         $cache = Cache::getInstance();
@@ -255,7 +269,11 @@ SQL
         $node->setAttribute('id', $this->id);
         $node->setAttribute('menu', $this->menu);
         $node->setAttribute('parent', $this->parent);
+        $controllerUri = Action::getControllerUri();
+        $uri = Envi::getUri();
+        $href = '';
         if ($this->page) {
+            // page
             if (empty($this->pageData)) {
                 $page = Page::get($this->page);
                 $this->pageData = [
@@ -268,14 +286,29 @@ SQL
             $hidden = (!$this->visible or $this->pageData['hidden']) ? '1' : '0';
             $node->setAttribute('type', 'page');
             $node->setAttribute('label', $this->pageData['title']);
-            $node->setAttribute('link', $this->pageData['tag']);
+            $node->setAttribute('link', $href = $this->pageData['tag']);
             $node->setAttribute('hidden', $hidden);
             $node->setAttribute('page', $this->pageData['id']);
         } elseif ($this->link) {
+            // link
             $node->setAttribute('type', 'link');
             $node->setAttribute('label', $this->linkLabel);
-            $node->setAttribute('link', $this->link);
+            $node->setAttribute('link', $href = $this->link);
             $node->setAttribute('hidden', !$this->visible ? '1' : '0');
+        } else {
+            // empty
+            $node->setAttribute('type', 'empty');
+            $node->setAttribute('label', $this->linkLabel);
+            $node->setAttribute('hidden', !$this->visible ? '1' : '0');
+        }
+        if ($href) {
+            if ($href == $uri) {
+                $node->setAttribute('match', 'exact');
+            } elseif ($href == $controllerUri) {
+                $node->setAttribute('match', 'partial');
+            } elseif (strpos($uri, $href) !== false) {
+                $node->setAttribute('match', 'partial');
+            }
         }
         return true;
     }
@@ -414,7 +447,7 @@ SQL
                 "UPDATE `cms_menu_items` SET `position`=:pos WHERE `id`=:id",
                 [
                     'pos' => $pos,
-                    'id' => $this->id
+                    'id' => $id
                 ]
             );
         }

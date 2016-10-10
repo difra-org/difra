@@ -45,6 +45,7 @@
 				<content>Содержимое</content>
 				<type-page>Статичная страница</type-page>
 				<type-link>Ссылка</type-link>
+				<type-empty>Пустой элемент</type-empty>
 				<link-label>Текст ссылки</link-label>
 				<submit>Сохранить</submit>
 				<no-pages>Нет доступных страниц для добавления.</no-pages>

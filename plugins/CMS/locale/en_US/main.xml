@@ -46,6 +46,7 @@
 				<type-page>Page</type-page>
 				<type-link>Link</type-link>
 				<link-label>Link text</link-label>
+				<type-empty>Empty element</type-empty>
 				<submit>Save</submit>
 				<no-pages>There are no pages that can be added.</no-pages>
 				<delete-item-confirm>Do you really want to delete menu element?</delete-item-confirm>
