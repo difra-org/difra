@@ -178,16 +178,6 @@ class CMS
     }
 
     /**
-     * Get menu item
-     * @param \DOMElement $node
-     * @param int $id
-     */
-    public function getMenuItemXML($node, $id)
-    {
-        MenuItem::get($id)->getXML($node);
-    }
-
-    /**
      * Get menu items for parent menu of menu element
      * @param \DOMElement $node
      * @param int $id
@@ -195,15 +185,16 @@ class CMS
     public function getAvailablePagesForItemXML($node, $id)
     {
         $item = MenuItem::get($id);
-        $this->getAvailablePagesXML($node, $item->getMenuId());
+        $this->getAvailablePagesXML($node, $item->getMenuId(), $item);
     }
 
     /**
      * Get pages list
      * @param \DOMElement $node
      * @param int $menuId
+     * @param MenuItem $currentItem
      */
-    public function getAvailablePagesXML($node, $menuId)
+    public function getAvailablePagesXML($node, $menuId, $currentItem = null)
     {
         $current = MenuItem::getList($menuId);
         $currentIds = [];
@@ -215,8 +206,10 @@ class CMS
         $all = CMS\Page::getList(true);
         if (!empty($all)) {
             foreach ($all as $item) {
-                if (in_array($item->getId(), $currentIds)) {
-                    continue;
+                if (!$currentItem or $item->getId() != $currentItem->getPage()) {
+                    if (in_array($item->getId(), $currentIds)) {
+                        continue;
+                    }
                 }
                 /** @var $pageNode \DOMElement */
                 $pageNode = $node->appendChild($node->ownerDocument->createElement('page'));

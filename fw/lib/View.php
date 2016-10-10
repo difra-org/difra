@@ -45,8 +45,8 @@ class View
             throw new Exception("XSLT load problem for instance '$instance'");
         }
 
-        $xslProcessor = new \XsltProcessor();
-        $xslProcessor->importStyleSheet($xslDom);
+        $xslProcessor = new \XSLTProcessor();
+        $xslProcessor->importStylesheet($xslDom);
 
         if (!$dontFillXML and !HttpError::$error and !Debugger::$shutdown) {
             View\XML::fillXML($xml, $instance);

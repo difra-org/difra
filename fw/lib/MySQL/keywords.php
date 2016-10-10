@@ -4,6 +4,7 @@
 
 return [
     'AUTO_INCREMENT' => 1,
+    'BIGINT' => 1,
     'BLOB' => 0,
     'CASCADE' => 1,
     'CHAR' => 0,
@@ -12,6 +13,7 @@ return [
     'CREATE' => 1,
     'DEFAULT' => 1,
     'DELETE' => 1,
+    'ENUM' => 1,
     'FLOAT' => 0,
     'FOREIGN' => 1,
     'INT' => 0,
@@ -22,6 +24,7 @@ return [
     'NULL' => 1,
     'ON' => 1,
     'PRIMARY' => 1,
+    'SMALLINT' => 1,
     'TABLE' => 1,
     'TEXT' => 0,
     'TIMESTAMP' => 0,

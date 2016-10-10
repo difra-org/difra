@@ -1,17 +1,13 @@
 <?php
 
 use Difra\Plugins\CMS;
+use Difra\Plugins\CMS\MenuItem;
 
 /**
  * Class AdmContentMenuController
  */
-class AdmContentMenuController extends \Difra\Controller
+class AdmContentMenuController extends \Difra\Controller\Adm
 {
-    public function dispatch()
-    {
-        \Difra\View::$instance = 'adm';
-    }
-
     /**
      * Menu list
      */
@@ -29,21 +25,23 @@ class AdmContentMenuController extends \Difra\Controller
     {
         /** @var $menuNode \DOMElement */
         $menuNode = $this->root->appendChild($this->xml->createElement('CMSMenuItems'));
-        $menuNode->setAttribute('id', $menuId);
-        if (!\Difra\Plugins\CMS::getInstance()->getMenuItemsXML($menuNode, $menuId->val())) {
-            //$this->view->httpError( 404 );
-        }
+        $menu = \Difra\Plugins\CMS\Menu::get($menuId->val());
+        $menu->getXML($menuNode);
+        \Difra\Plugins\CMS::getInstance()->getMenuItemsXML($menuNode, $menuId->val());
     }
 
     /**
      * Add menu element form
      * @param Difra\Param\AnyInt $menuId
+     * @param \Difra\Param\NamedString $parent Parent node
      */
-    public function addAction(\Difra\Param\AnyInt $menuId)
+    public function addAction(\Difra\Param\AnyInt $menuId, \Difra\Param\NamedString $parent = null)
     {
         /** @var $addNode \DOMElement */
         $addNode = $this->root->appendChild($this->xml->createElement('CMSMenuItemAdd'));
-        $addNode->setAttribute('id', $menuId->val());
+        $addNode->setAttribute('menu', $menuId->val());
+        $addNode->setAttribute('parent', $parent ? $parent->val() : null);
+        $this->getEditXML($addNode, $menuId->val());
         \Difra\Plugins\CMS::getInstance()->getAvailablePagesXML($addNode, $menuId->val());
     }
 
@@ -55,8 +53,22 @@ class AdmContentMenuController extends \Difra\Controller
     {
         /** @var $editNode \DOMElement */
         $editNode = $this->root->appendChild($this->xml->createElement('CMSMenuItemEdit'));
-        \Difra\Plugins\CMS::getInstance()->getMenuItemXML($editNode, $id->val());
+        $menuItem = MenuItem::get($id->val());
+        $menuItem->getXML($editNode);
+        $this->getEditXML($editNode, $menuItem->getMenuId());
         \Difra\Plugins\CMS::getInstance()->getAvailablePagesForItemXML($editNode, $id->val());
+    }
+
+    /**
+     * @param \DOMNode|\DOMElement $node
+     * @param int $menuId
+     */
+    private function getEditXML($node, $menuId)
+    {
+        $menu = \Difra\Plugins\CMS\Menu::get($menuId);
+        $node->setAttribute('depth', $menu->getDepth());
+        $parentsNode = $node->appendChild($this->xml->createElement('parents'));
+        \Difra\Plugins\CMS::getInstance()->getMenuItemsXML($parentsNode, $menu->getId());
     }
 
     /**
@@ -106,6 +118,30 @@ class AdmContentMenuController extends \Difra\Controller
         $item->setMenu($menu->val());
         $item->setParent($parent ? $parent->val() : null);
         $item->setLink($link);
+        $item->setLinkLabel($label);
+        \Difra\Ajaxer::redirect('/adm/content/menu/view/' . $menu->val());
+    }
+
+    /**
+     * Save empty menu element
+     * @param \Difra\Param\AjaxInt $menu
+     * @param \Difra\Param\AjaxString $label
+     * @param \Difra\Param\AjaxInt|null $id
+     * @param \Difra\Param\AjaxInt $parent
+     */
+    public function saveemptyAjaxAction(
+        \Difra\Param\AjaxInt $menu,
+        \Difra\Param\AjaxString $label,
+        \Difra\Param\AjaxInt $id = null,
+        \Difra\Param\AjaxInt $parent = null
+    ) {
+        if ($id) {
+            $item = \Difra\Plugins\CMS\MenuItem::get($id->val());
+        } else {
+            $item = \Difra\Plugins\CMS\MenuItem::create();
+        }
+        $item->setMenu($menu->val());
+        $item->setParent($parent ? $parent->val() : null);
         $item->setLinkLabel($label);
         \Difra\Ajaxer::redirect('/adm/content/menu/view/' . $menu->val());
     }

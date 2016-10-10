@@ -93,7 +93,15 @@ class RegisterController extends \Difra\Controller
         }
 
         $register->register();
+        $this->afterSuccess();
+    }
 
+    /**
+     * After success actions
+     * @param $redirect
+     */
+    protected function afterSuccess($redirect = false)
+    {
         if ($redirect) {
             Cookies::getInstance()->notify(
                 Locales::get('auth/register/complete-' . Users::getActivationMethod())

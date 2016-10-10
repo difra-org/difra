@@ -16,10 +16,10 @@ class Menu
     private $name = '';
     /** @var string */
     private $description = '';
+    /** @var int */
+    private $depth = 1;
     /** @var bool */
     private $modified = false;
-    /** @var bool */
-    private $loaded = true;
 
     /**
      * Create new menu
@@ -38,10 +38,19 @@ class Menu
      */
     public static function get($id)
     {
-        $menu = new self;
-        $menu->id = $id;
-        $menu->loaded = false;
-        return $menu;
+        static $menus = [];
+        if (isset($menus[$id])) {
+            return $menus[$id] ?: null;
+        }
+        $data = CMS::getDB()->fetchRow(
+            'SELECT * FROM `cms_menu` WHERE `id`=:id LIMIT 1',
+            ['id' => $id]
+        );
+        if (!$data) {
+            $menus[$id] = false;
+            return null;
+        }
+        return $menus[$id] = self::load($data);
     }
 
     /**
@@ -63,12 +72,7 @@ class Menu
             }
             $res = [];
             foreach ($data as $menuData) {
-                $menu = new self;
-                $menu->id = $menuData['id'];
-                $menu->name = $menuData['name'];
-                $menu->description = $menuData['description'];
-                $menu->loaded = true;
-                $res[] = $menu;
+                $res[] = self::load($menuData);
             }
             return $res;
         } catch (\Exception $e) {
@@ -81,9 +85,7 @@ class Menu
      */
     public function __destruct()
     {
-        if ($this->modified and $this->loaded) {
-            $this->save();
-        }
+        $this->save();
     }
 
     /**
@@ -91,20 +93,31 @@ class Menu
      */
     private function save()
     {
+        if (!$this->modified) {
+            return;
+        }
         $db = CMS::getDB();
+        $set = <<<SET
+  `name`=:name,
+  `description`=:description,
+  `depth`=:depth
+SET;
+        $values = [
+            'name' => $this->name,
+            'description' => $this->description,
+            'depth' => $this->depth
+        ];
         if (!$this->id) {
             $db->query(
-                'INSERT INTO `cms_menu` SET '
-                . "`name`='" . $db->escape($this->name) . "',"
-                . "`description`='" . $db->escape($this->description) . "'"
+                "INSERT INTO `cms_menu` SET $set",
+                $values
             );
             $this->id = $db->getLastId();
         } else {
+            $values['id'] = $this->id;
             $db->query(
-                'UPDATE `cms_menu` SET '
-                . "`name`='" . $db->escape($this->name) . "',"
-                . "`description`='" . $db->escape($this->description) . "'"
-                . " WHERE `id`='" . $db->escape($this->id) . "'"
+                "UPDATE `cms_menu` SET $set WHERE `id`=:id",
+                $values
             );
         }
         self::clearCache();
@@ -127,35 +140,26 @@ class Menu
      */
     public function getXML($node)
     {
-        if (!$this->load()) {
-            return false;
-        }
         $node->setAttribute('id', $this->id);
         $node->setAttribute('name', $this->name);
         $node->setAttribute('description', $this->description);
+        $node->setAttribute('depth', $this->depth);
         return true;
     }
 
     /**
-     * Load menu data
+     * Load menu object from database row
+     * @param array $row
      * @return bool
      */
-    private function load()
+    private static function load($row)
     {
-        if ($this->loaded) {
-            return true;
-        }
-        if (!$this->id) {
-            $this->save();
-        }
-        $data = CMS::getDB()->fetchRow('SELECT * FROM `cms_menu` WHERE `id`=?', [$this->id]);
-        if (!$data) {
-            return false;
-        }
-        $this->name = $data['name'];
-        $this->description = $data['description'];
-        $this->loaded = true;
-        return true;
+        $menu = new self;
+        $menu->id = $row['id'];
+        $menu->name = $row['name'];
+        $menu->description = $row['description'];
+        $menu->depth = $row['maxdepth'];
+        return $menu;
     }
 
     /**
@@ -163,7 +167,6 @@ class Menu
      */
     public function delete()
     {
-        $this->loaded = true;
         $this->modified = false;
         CMS::getDB()->query("DELETE FROM `cms_menu` WHERE `id`=?", [$this->id]);
         self::clearCache();
@@ -179,5 +182,13 @@ class Menu
             $this->save();
         }
         return $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getDepth()
+    {
+        return $this->depth;
     }
 }

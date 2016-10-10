@@ -60,14 +60,16 @@ class Ajaxer
      * Write $html contents to element $target
      * @param string $target jQuery element selector (e.g. '#targetId')
      * @param string $html Content for innerHTML
+     * @param bool $replace Force replacing element with $html instead of smart content replace
      */
-    public static function load($target, $html)
+    public static function load($target, $html, $replace = false)
     {
         self::addAction(
             [
                 'action' => 'load',
                 'target' => $target,
-                'html' => $html
+                'html' => $html,
+                'replace' => $replace
             ]
         );
     }
