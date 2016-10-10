@@ -110,7 +110,7 @@ ajaxer.process = function (data, form) {
                     this.reset(form);
                     break;
                 case 'load':		// update (replace) some DOM element
-                    this.load(action.target, action.html);
+                    this.load(action.target, action.html, action.replace);
                     break;
                 case 'exec':		// never use this if unsure, it's here only for very special cases
                     // this is possible security flow if you use it
@@ -311,14 +311,19 @@ ajaxer.reset = function (form) {
  * Update (replace) DOM element
  * @param target
  * @param html
+ * @param replace
  */
-ajaxer.load = function (target, html) {
+ajaxer.load = function (target, html, replace) {
 
-    var cut = $(html).filter(target);
-    if (cut.length) {
-        $(target).replaceWith(cut);
+    if (replace) {
+        $(target).replaceWith(html);
     } else {
-        $(target).html(html);
+        var cut = $(html).filter(target);
+        if (cut.length) {
+            $(target).replaceWith(cut);
+        } else {
+            $(target).html(html);
+        }
     }
     $(window).resize();
 };
