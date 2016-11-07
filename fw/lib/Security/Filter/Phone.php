@@ -2,6 +2,10 @@
 
 namespace Difra\Security\Filter;
 
+/**
+ * Class Phone
+ * @package Difra\Security\Filter
+ */
 class Phone implements Common
 {
     /**
@@ -12,7 +16,7 @@ class Phone implements Common
     public static function validate($string)
     {
         $ph = str_replace(['+', '(', ')', '-', ' '], '', $string);
-        return ctype_digit($ph) and mb_strlen($ph) == 11;
+        return ctype_digit($ph) and mb_strlen($ph) >= 8 and mb_strlen($ph) <= 12;
     }
 
     /**
