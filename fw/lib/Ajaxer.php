@@ -307,4 +307,20 @@ class Ajaxer
     {
         self::addAction($action);
     }
+
+    /**
+     * Post data (submit form data)
+     * @param string $url
+     * @param array $data
+     */
+    public static function post($url, $data)
+    {
+        self::addAction(
+            [
+                'action' => 'post',
+                'url' => $url,
+                'data' => $data
+            ]
+        );
+    }
 }

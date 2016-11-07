@@ -80,7 +80,7 @@ ajaxer.process = function (data, form) {
             ajaxer.triggerHandler('ajaxer-pre-' + action.action);
             switch (action.action) {
                 case 'notify':		// pop-up message
-                    this.notify(action.lang, action.message);
+                    this.notify(action.lang, action.message, 'notify');
                     break;
                 case 'require':		// required form element is not filled
                     this.require(form, action.name);
@@ -116,6 +116,9 @@ ajaxer.process = function (data, form) {
                     // this is possible security flow if you use it
                     this.exec(action.script);
                     break;
+                case 'post':        // send post request
+                    this.post(action.url, action.data);
+                    break;
                 default:
                     console.warn('Ajaxer action "' + action.action + '" not implemented');
             }
@@ -125,7 +128,7 @@ ajaxer.process = function (data, form) {
         this.notify({close: 'OK'}, 'Unknown error.');
         console.warn('Error: ', err.message);
         console.warn('Server returned:', data);
-        if (debug !== undefined) {
+        if (typeof debug !== 'undefined') {
             debug.addReq('Server returned data ajaxer could not parse: ' + data);
         }
     }
@@ -158,10 +161,10 @@ ajaxer.clean = function (form) {
  * @param lang                Locale data array
  * @param message        Message text
  */
-ajaxer.notify = function (lang, message) {
+ajaxer.notify = function (lang, message, type) {
 
     ajaxer.overlayShow('<p>' + message + '</p>' + '<a href="#" onclick="ajaxer.close(this)" class="button">' +
-        ( lang.close ? lang.close : 'OK' ) + '</a>');
+        ( lang.close ? lang.close : 'OK' ) + '</a>', type);
 };
 
 /**
@@ -171,7 +174,7 @@ ajaxer.notify = function (lang, message) {
  */
 ajaxer.error = function (lang, message) {
 
-    ajaxer.notify(lang, message);
+    ajaxer.notify(lang, message, 'error');
 };
 
 /**
@@ -337,6 +340,16 @@ ajaxer.exec = function (script) {
     eval(script);
 };
 
+ajaxer.post = function(url, data) {
+    var form = '<form action="' + url + '" method="post">';
+    $.each(data, function (k, v) {
+        form = form + '<input type="hidden" name="' + k + '" value="' + v + '">';
+    });
+    form = form + '</form>';
+    $('body').append(form);
+    $(form)[0].submit();
+};
+
 /**
  * Form elements statuses
  */
@@ -360,15 +373,6 @@ ajaxer.statusInit = function () {
 ajaxer.status = function (form, name, message, classname) {
 
     ajaxer.statuses[name] = {message: message, classname: classname, used: 0};
-    /*
-     // старый код функции ajaxer.status()
-     var status = $( form ).find( '[name=' + name + ']' ).parents( '.container' ).find( '.status' );
-     if( status ) {
-     status.fadeIn( 'fast' );
-     status.attr( 'class', 'status ' + classname );
-     status.html( message );
-     }
-     */
 };
 
 /**
@@ -440,9 +444,12 @@ ajaxer.statusUpdate = function (form) {
  * Display overlay
  * @param content
  */
-ajaxer.overlayShow = function (content) {
-
-    $('body').append('<div class="overlay" id="ajaxer-' + ajaxer.id + '">' +
+ajaxer.overlayShow = function (content, type) {
+    var overlayClass = 'overlay';
+    if (typeof type !== 'undefined') {
+        overlayClass += ' ' + type;
+    }
+    $('body').append('<div class="' + overlayClass + '" id="ajaxer-' + ajaxer.id + '">' +
         '<div class="overlay-container auto-center">' + '<div class="overlay-inner" style="display:none">' +
         '<div class="close-button action close" onclick="ajaxer.close(this)"></div>' + content + '</div>' + '</div>' +
         '</div>');
@@ -625,7 +632,7 @@ ajaxer.fetchProgress = function (uuid) {
  * <a href="/edit/page/75">Edit</a>
  * will lead to Ajaxer.js request to Ajaxer.php by url /edit/page/75 and process actions as requested by Ajaxer.php.
  */
-$(document).on('click dblclick', 'a.ajaxer', function (e) {
+$(document).on('click dblclick touchend', 'a.ajaxer', function (e) {
     var href = $(this).attr('href');
     if (href && href != '#') {
         ajaxer.query(href);
@@ -646,7 +653,7 @@ $(document).on('keypress', '.ajaxer input', function (e) {
 /**
  * Let element with .submit class submit form.
  */
-$(document).on('click dblclick', '.submit', function (e) {
+$(document).on('click dblclick touchend', '.submit', function (e) {
     $(this).parents('form').submit();
     e.preventDefault();
 });
@@ -654,7 +661,7 @@ $(document).on('click dblclick', '.submit', function (e) {
 /**
  * Let element with .reset class reset form.
  */
-$(document).on('click dblclick', '.reset', function (e) {
+$(document).on('click dblclick touchend', '.reset', function (e) {
     ajaxer.reset($(this).parents('form'));
     e.preventDefault();
 });
