@@ -111,6 +111,15 @@ class Paginator
     }
 
     /**
+     * Get links prefix
+     * @return string
+     */
+    public function getLinkPrefix()
+    {
+        return $this->linkPrefix;
+    }
+
+    /**
      * Set items number per page
      * @param int $perpage
      */

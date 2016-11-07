@@ -111,7 +111,7 @@ switcher.page = function (url, noPush, data) {
 };
 
 switcher.bind = function () {
-    $(document).on('click dblclick', 'a', function (event) {
+    $(document).on('click dblclick touchend', 'a', function (event) {
 
         // skip .ajaxer and .noAjaxer links
         if ($(this).hasClass('ajaxer') || $(this).hasClass('noAjaxer')) {

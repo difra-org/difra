@@ -130,8 +130,8 @@ abstract class Common
         try {
             $this->pdo = new \PDO(
                 $this->getConnectionString(),
-                $this->config['username'],
-                $this->config['password'],
+                !empty($this->config['username']) ? $this->config['username'] : null,
+                !empty($this->config['password']) ? $this->config['password'] : null,
                 [
                     \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
                     \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC
