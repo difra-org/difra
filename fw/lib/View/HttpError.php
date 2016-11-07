@@ -15,6 +15,7 @@ class HttpError extends \Exception
 {
     const E_CONTINUE = 100;
     const E_SWITCHING_PROTOCOLS = 101;
+    const E_PROCESSING = 102;
     const E_OK = 200;
     const E_CREATED = 201;
     const E_ACCEPTED = 202;
@@ -22,6 +23,8 @@ class HttpError extends \Exception
     const E_NO_CONTENT = 204;
     const E_RESET_CONTENT = 205;
     const E_PARTIAL_CONTENT = 206;
+    const E_MULTI_STATUS = 207;
+    const E_IM_USED = 208;
     const E_MULTIPLE_CHOICES = 300;
     const E_MOVED_PERMANENTLY = 301;
     const E_FOUND = 302;
@@ -47,17 +50,34 @@ class HttpError extends \Exception
     const E_UNSUPPORTED_MEDIA_TYPE = 415;
     const E_REQUESTED_RANGE_NOT_SATISFIABLE = 416;
     const E_EXPECTATION_FAILED = 417;
+    const E_I_AM_A_TEAPOT = 418;
+    const E_MISDIRECTED_REQUEST = 421;
+    const E_UNPROCESSABLE_ENTITY = 422;
+    const E_LOCKED = 423;
+    const E_FAILED_DEPENDENCY = 424;
+    const E_UNORDERED_COLLECTION = 425;
+    const E_UPGRADE_REQUIRED = 426;
+    const E_PRECONDITION_REQUIRED = 428;
+    const E_TOO_MANY_REQUESTS = 429;
+    const E_REQUEST_HEADER_FIELDS_TOO_LARGE = 431;
+    const E_UNAVAILABLE_FOR_LEGAL_REASONS = 451;
     const E_INTERNAL_SERVER_ERROR = 500;
     const E_NOT_IMPLEMENTED = 501;
     const E_BAD_GATEWAY = 502;
     const E_SERVICE_UNAVAILABLE = 503;
     const E_GATEWAY_TIMEOUT = 504;
     const E_HTTP_VERSION_NOT_SUPPORTED = 505;
+    const E_VARIANT_ALSO_NEGOTIATES = 506;
+    const E_INSUFFICIENT_STORAGE = 507;
+    const E_LOOP_DETECTED = 508;
+    const E_NOT_EXTENDED = 510;
+    const E_NETWORK_AUTHENTICATION_REQUIRED = 511;
 
     /** @var array HTTP errors */
     public static $errors = [
         self::E_CONTINUE => 'Continue',
         self::E_SWITCHING_PROTOCOLS => 'Switching Protocols',
+        self::E_PROCESSING => 'Processing',
         self::E_OK => 'OK',
         self::E_CREATED => 'Created',
         self::E_ACCEPTED => 'Accepted',
@@ -65,6 +85,8 @@ class HttpError extends \Exception
         self::E_NO_CONTENT => 'No Content',
         self::E_RESET_CONTENT => 'Reset Content',
         self::E_PARTIAL_CONTENT => 'Partial Content',
+        self::E_MULTI_STATUS => 'Multi-Status',
+        self::E_IM_USED => 'IM Used',
         self::E_MULTIPLE_CHOICES => 'Multiple Choices',
         self::E_MOVED_PERMANENTLY => 'Moved Permanently',
         self::E_FOUND => 'Found',
@@ -90,12 +112,28 @@ class HttpError extends \Exception
         self::E_UNSUPPORTED_MEDIA_TYPE => 'Unsupported Media Type',
         self::E_REQUESTED_RANGE_NOT_SATISFIABLE => 'Requested Range Not Satisfiable',
         self::E_EXPECTATION_FAILED => 'Expectation Failed',
+        self::E_LOCKED => 'Locked',
+        self::E_I_AM_A_TEAPOT => 'I\'m a teampot',
+        self::E_MISDIRECTED_REQUEST => 'Misdirected request',
+        self::E_UNPROCESSABLE_ENTITY => 'Unprocessable Entity',
+        self::E_FAILED_DEPENDENCY => 'Failed Dependency',
+        self::E_UNORDERED_COLLECTION => 'Unordered Collection',
+        self::E_UPGRADE_REQUIRED => 'Upgrade Required',
+        self::E_PRECONDITION_REQUIRED => 'Precondition Required',
+        self::E_TOO_MANY_REQUESTS => 'Too Many Requests',
+        self::E_REQUEST_HEADER_FIELDS_TOO_LARGE => 'Request Header Fields Too Large',
+        self::E_UNAVAILABLE_FOR_LEGAL_REASONS => 'Unavailable For Legal Reasons',
         self::E_INTERNAL_SERVER_ERROR => 'Internal Server Error',
         self::E_NOT_IMPLEMENTED => 'Not Implemented',
         self::E_BAD_GATEWAY => 'Bad Gateway',
         self::E_SERVICE_UNAVAILABLE => 'Service Unavailable',
         self::E_GATEWAY_TIMEOUT => 'Gateway Timeout',
-        self::E_HTTP_VERSION_NOT_SUPPORTED => 'HTTP Version Not Supported'
+        self::E_HTTP_VERSION_NOT_SUPPORTED => 'HTTP Version Not Supported',
+        self::E_VARIANT_ALSO_NEGOTIATES => 'Variant Also Negotiates',
+        self::E_INSUFFICIENT_STORAGE => 'Insufficient Storage',
+        self::E_LOOP_DETECTED => 'Loop Detected',
+        self::E_NOT_EXTENDED => 'Not Extended',
+        self::E_NETWORK_AUTHENTICATION_REQUIRED => 'Network Authentication Required'
     ];
 
     /** @var int|null|string Error */
