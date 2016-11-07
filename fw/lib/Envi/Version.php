@@ -14,7 +14,7 @@ class Version
     /** Framework version */
     const VERSION = '6.0';
     /** Version postfix */
-    const POSTFIX = '1';
+    const POSTFIX = '2';
     /** Revision */
     const REVISION = '$Rev: 1160 $';
 
