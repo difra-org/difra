@@ -35,7 +35,7 @@ abstract class Common
         }
         $this->version = Envi\Version::getBuild();
         $this->prefix = Envi::getSubsite() . ':';
-        $this->sessionPrefix = $this->prefix . 'session:';
+        $this->sessionPrefix = 'session:';
     }
 
     /**
