@@ -91,6 +91,7 @@ class Auth
     private function save()
     {
         Session::start();
+        session_regenerate_id(true);
         if ($this->isAuthorized()) {
             $_SESSION['auth'] = [
                 'email' => $this->email,
