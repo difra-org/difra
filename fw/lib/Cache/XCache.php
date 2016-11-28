@@ -3,7 +3,6 @@
 namespace Difra\Cache;
 
 use Difra\Cache;
-use Difra\Exception;
 
 /**
  * XCache adapter
@@ -29,7 +28,7 @@ class XCache extends Common
             if ($e = error_get_last() and $e['file'] == __FILE__) {
                 return false;
             }
-        } catch (Exception $ex) {
+        } catch (\Exception $ex) {
             return false;
         }
         return true;

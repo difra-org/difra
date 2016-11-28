@@ -19,10 +19,14 @@ class Cache
     const INST_XCACHE = 'XCache';
     /** Shared memory */
     const INST_SHAREDMEM = 'Shared Memory';
+    /** APCu */
+    const INST_APCU = 'APCu';
     /** Stub */
     const INST_NONE = 'None';
     /** Default */
     const INST_DEFAULT = self::INST_AUTO;
+    /** Default TTL (seconds) */
+    const DEFAULT_TTL = 300;
     /**
      * Configured cache adapters.
      * @var array
@@ -57,7 +61,10 @@ class Cache
             Debugger::addLine('Caching disabled by Debug Mode settings');
             return self::INST_NONE;
         }
-        if (Cache\XCache::isAvailable()) {
+        if (Cache\APCu::isAvailable()) {
+            Debugger::addLine('Auto-detected cache type: APCu');
+            return $autoDetected = self::INST_APCU;
+        } if (Cache\XCache::isAvailable()) {
             Debugger::addLine('Auto-detected cache type: XCache');
             return $autoDetected = self::INST_XCACHE;
         } elseif (Cache\MemCached::isAvailable()) {
@@ -77,7 +84,7 @@ class Cache
     /**
      * Factory
      * @param string $configName
-     * @return Cache\MemCache|Cache\MemCached|Cache\None|Cache\SharedMemory|Cache\XCache
+     * @return Cache\MemCache|Cache\MemCached|Cache\None|Cache\SharedMemory|Cache\XCache|Cache\APCu
      * @throws Exception
      */
     private static function getAdapter($configName)
@@ -87,6 +94,8 @@ class Cache
         }
 
         switch ($configName) {
+            case self::INST_APCU:
+                return self::$adapters[$configName] = new Cache\APCu();
             case self::INST_XCACHE:
                 return self::$adapters[$configName] = new Cache\XCache();
             case self::INST_SHAREDMEM:

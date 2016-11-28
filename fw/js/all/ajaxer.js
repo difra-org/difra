@@ -345,9 +345,9 @@ ajaxer.post = function(url, data) {
     $.each(data, function (k, v) {
         form = form + '<input type="hidden" name="' + k + '" value="' + v + '">';
     });
-    form = form + '</form>';
+    form = $(form + '</form>');
     $('body').append(form);
-    $(form)[0].submit();
+    form.submit();
 };
 
 /**
