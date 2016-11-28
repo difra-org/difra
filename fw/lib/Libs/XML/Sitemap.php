@@ -139,6 +139,7 @@ class Sitemap
         $indexXML = new \DOMDocument;
         $smiNode = $indexXML->appendChild($indexXML->createElementNS(self::NS, 'urlset'));
         if (!empty($urls)) {
+            $urlPrefix = Envi::getURLPrefix(true);
             foreach ($urls as $url) {
                 $urlNode = $smiNode->appendChild($indexXML->createElement('url'));
                 foreach ($url as $k => $v) {
@@ -148,7 +149,7 @@ class Sitemap
                     $v[0] = $p;
                     $v = implode('/', $v);
                     if ($k == 'loc' and $v{0} == '/') {
-                        $v = Envi::getURLPrefix(true) . $v;
+                        $v = $urlPrefix . $v;
                     }
                     $urlNode->appendChild($indexXML->createElement($k, $v));
                 }
