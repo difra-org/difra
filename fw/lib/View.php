@@ -20,11 +20,17 @@ class View
      * @param bool|string $specificInstance
      * @param bool $dontEcho
      * @param bool $dontFillXML
-     * @throws Exception
+     * @param bool $normalize
      * @return bool|string
+     * @throws Exception
      */
-    public static function render(&$xml, $specificInstance = false, $dontEcho = false, $dontFillXML = false)
-    {
+    public static function render(
+        &$xml,
+        $specificInstance = false,
+        $dontEcho = false,
+        $dontFillXML = false,
+        $normalize = true
+    ) {
         if ($specificInstance) {
             $instance = $specificInstance;
         } elseif (self::$instance) {
@@ -54,7 +60,12 @@ class View
 
         // transform template
         if ($html = $xslProcessor->transformToDoc($xml)) {
-            $html = self::normalize($html);
+            if ($normalize) {
+                $html = self::normalize($html);
+            } else {
+                $html->formatOutput = true;
+                $html = $html->saveXML();
+            }
 
             if ($dontEcho) {
                 return $html;
