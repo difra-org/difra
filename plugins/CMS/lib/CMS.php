@@ -4,9 +4,7 @@ namespace Difra\Plugins;
 
 use Difra\Controller;
 use Difra\DB;
-use Difra\Envi;
 use Difra\Envi\Action;
-use Difra\MySQL;
 use Difra\Plugins\CMS\Menu;
 use Difra\Plugins\CMS\MenuItem;
 use Difra\Plugins\CMS\Page;
@@ -110,7 +108,7 @@ class CMS
 
     /**
      * Get URL list for sitemap
-     * @return array
+     * @return array|false
      */
     public static function getSitemap()
     {
