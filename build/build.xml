@@ -13,7 +13,7 @@
 	<property name="phpunit" value="phpunit"/>
 
 	<target name="build-cli"
-		depends="lint,phpunit"
+		depends="prepare,lint,phpunit"
 		description="Performs static analysis, runs the tests, and generates project documentation (cli)"/>
 
 	<target name="build-ci"
