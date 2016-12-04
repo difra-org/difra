@@ -14,16 +14,6 @@ use Difra\Plugins\Users;
  */
 class User
 {
-    /** Login: user not found */
-    const LOGIN_NOTFOUND = 'not_found';
-    /** Login: user is banned */
-    const LOGIN_BANNED = 'banned';
-    /** Login: user is inactive */
-    const LOGIN_INACTIVE = 'inactive';
-    /** Login: bad password */
-    const LOGIN_BADPASS = 'bad_password';
-    /** Login: bad login or password */
-    const LOGIN_BAD_LOGIN_OR_PASSWORD = 'bad_login_or_password';
     /** @var int */
     private $id = null;
     /** @var string */
@@ -377,7 +367,7 @@ class User
             $user = $data ? self::load($data) : false;
         }
         if (!$user) {
-            throw new UsersException(self::LOGIN_NOTFOUND);
+            throw new UsersException(UsersException::LOGIN_NOTFOUND);
         }
 
         return $user;
@@ -394,7 +384,7 @@ class User
     {
         $data = DB::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `login`=?', [$login]);
         if (empty($data)) {
-            throw new UsersException(self::LOGIN_NOTFOUND);
+            throw new UsersException(UsersException::LOGIN_NOTFOUND);
         }
         $user = self::load($data);
         return $user;
@@ -428,11 +418,11 @@ class User
     {
         // check if user is banned
         if ($this->banned) {
-            throw new UsersException(self::LOGIN_BANNED);
+            throw new UsersException(UsersException::LOGIN_BANNED);
         }
         // check if user is not active
         if (!$this->active) {
-            throw new UsersException(self::LOGIN_INACTIVE);
+            throw new UsersException(UsersException::LOGIN_INACTIVE);
         }
         Auth::getInstance()->login(
             $this->email,
@@ -466,10 +456,12 @@ class User
             ]
         );
         if (empty($data)) {
-            throw new UsersException(Users::isSingleError() ? self::LOGIN_BAD_LOGIN_OR_PASSWORD : self::LOGIN_NOTFOUND);
+            throw new UsersException(Users::isSingleError() ? UsersException::LOGIN_BAD_LOGIN_OR_PASSWORD
+                : UsersException::LOGIN_NOTFOUND);
         }
         if ($data['password'] !== sha1($password) and $data['password'] !== md5($password)) {
-            throw new UsersException(Users::isSingleError() ? self::LOGIN_BAD_LOGIN_OR_PASSWORD : self::LOGIN_BADPASS);
+            throw new UsersException(Users::isSingleError() ? UsersException::LOGIN_BAD_LOGIN_OR_PASSWORD
+                : UsersException::LOGIN_BADPASS);
         }
         $user = self::load($data);
         $user->login();

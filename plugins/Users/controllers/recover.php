@@ -53,7 +53,8 @@ class RecoverController extends \Difra\Controller
             Ajaxer::close();
             Ajaxer::notify(Locales::get('auth/login/recovered'));
         } catch (Exception $ex) {
-            Ajaxer::status('email', Locales::get('auth/login/' . $ex->getMessage()), 'problem');
+//            Ajaxer::status('email', Locales::get('auth/login/' . $ex->getMessage()), 'problem');
+            Ajaxer::error(Locales::get('auth/login/' . $ex->getMessage()));
         }
     }
 

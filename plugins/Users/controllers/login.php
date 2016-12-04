@@ -2,11 +2,10 @@
 
 use Difra\Ajaxer;
 use Difra\Locales;
-use Difra\Plugins\Users;
 use Difra\Param;
 use Difra\Plugins\Users\Register;
 use Difra\Plugins\Users\User;
-use Difra\View;
+use Difra\Plugins\Users\UsersException;
 use Difra\Controller;
 
 /**
@@ -15,7 +14,7 @@ use Difra\Controller;
 class LoginController extends Controller
 {
 //    /**
-//     * Форма логина
+//     * Login form
 //     * @return void
 //     */
 //    public function indexAction()
@@ -39,14 +38,21 @@ class LoginController extends Controller
         try {
             User::loginByPassword($login->val(), $password->val(), ($rememberMe->val() == 1) ? true : false);
             $this->afterLoginAjax();
-        } catch (\Difra\Exception $ex) {
+        } catch (UsersException $ex) {
             switch ($error = $ex->getMessage()) {
-                case User::LOGIN_BADPASS:
+                case UsersException::LOGIN_BADPASS:
                     Ajaxer::status('password', Locales::get('auth/login/' . $error), 'problem');
                     break;
+//                case UsersException::LOGIN_INACTIVE:
+//                    Ajaxer::close();
+//                    Ajaxer::display('test');
+//                    break;
                 default:
                     Ajaxer::status('login', Locales::get('auth/login/' . $error), 'problem');
             }
+        } catch (\Difra\Exception $ex) {
+            $ex->notify();
+//            Ajaxer::status('login', Locales::get('auth/login/' . $ex->getMessage()), 'problem');
         }
     }
 

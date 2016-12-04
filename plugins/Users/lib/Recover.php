@@ -21,7 +21,7 @@ class Recover
     public static function send($login)
     {
         if (is_null($login) or $login === '' or $login === false) {
-            return User::LOGIN_NOTFOUND;
+            return UsersException::LOGIN_NOTFOUND;
         }
         $db = DB::getInstance(Users::getDB());
         $data = $db->fetchRow(
@@ -29,13 +29,13 @@ class Recover
             ['login' => $login]
         );
         if (empty($data)) {
-            return User::LOGIN_NOTFOUND;
+            return UsersException::LOGIN_NOTFOUND;
         }
         if (!$data['active']) {
-            return User::LOGIN_INACTIVE;
+            return UsersException::LOGIN_INACTIVE;
         }
         if ($data['banned']) {
-            return User::LOGIN_BANNED;
+            return UsersException::LOGIN_BANNED;
         }
         do {
             $key = bin2hex(openssl_random_pseudo_bytes(12));
