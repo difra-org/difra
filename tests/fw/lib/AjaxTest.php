@@ -82,7 +82,8 @@ class AjaxTest extends PHPUnit_Framework_TestCase
         $actions[] = [
             'action' => 'load',
             'target' => 'someid',
-            'html' => 'some <b>content</b>'
+            'html' => 'some <b>content</b>',
+            'replace' => false
         ];
 
         \Difra\Ajaxer::close();
