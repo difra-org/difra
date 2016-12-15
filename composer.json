@@ -27,5 +27,10 @@
             "type": "vcs",
             "url": "https://git.a-jam.net/scm/difra/difra.git"
         }
-    ]
+    ],
+    "autoload": {
+        "psr-4": {
+            "Difra": "src"
+        }
+    }
 }
