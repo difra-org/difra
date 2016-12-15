@@ -5,6 +5,16 @@
 		<h2>
 			<xsl:value-of select="$locale/auth/adm/h2-title"/>
 		</h2>
+		<form action="{/root/@controllerUri}" method="get">
+            <label for="user-search-name">
+            <xsl:value-of select="$locale/auth/adm/search/name"/>
+            <xsl:text>: </xsl:text>
+            </label>
+            <input type="search" name="name" id="user-search-name" value="{search/@name}"/>
+            <xsl:text> &#160; </xsl:text>
+            <input type="submit"/>
+        </form>
+        <br/>
 		<xsl:choose>
 			<xsl:when test="not(user)">
 				<xsl:value-of select="$locale/auth/adm/users-empty"/>
@@ -87,7 +97,17 @@
 				<xsl:value-of select="@id"/>
 			</td>
 			<td>
-				<xsl:value-of select="@email"/>
+                <xsl:choose>
+                    <xsl:when test="not(@login) or @login=''">
+                        <xsl:value-of select="@email"/>
+                    </xsl:when>
+                    <xsl:otherwise>
+                        <xsl:value-of select="@login"/>
+                        <xsl:text> (</xsl:text>
+                        <xsl:value-of select="@email"/>
+                        <xsl:text>)</xsl:text>
+                    </xsl:otherwise>
+                </xsl:choose>
 			</td>
 			<td>
 				<xsl:value-of select="@registered"/>

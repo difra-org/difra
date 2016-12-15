@@ -185,6 +185,9 @@
             <addonFields>Дополнительные поля</addonFields>
             <fieldName>Дополнительное поле</fieldName>
             <fieldValue>Значение</fieldValue>
+            <search>
+                <name>Логин или почта</name>
+            </search>
         </adm>
         <info>
             <name>Имя</name>

@@ -171,6 +171,9 @@
             <moderator>Make moderator</moderator>
             <unModerator>Remove moderator</unModerator>
             <moderator_flag>moderator</moderator_flag>
+            <search>
+                <name>Login or email</name>
+            </search>
         </adm>
         <info>
             <name>Name</name>

@@ -18,10 +18,16 @@ class AdmUsersListController extends Difra\Controller\Adm
      * Users list
      * @param Param\NamedPaginator $page
      */
-    public function indexAction(\Difra\Param\NamedPaginator $page = null)
+    public function indexAction(\Difra\Param\NamedPaginator $page)
     {
         $this->node = $this->root->appendChild($this->xml->createElement('userList'));
-        User::getListXML($this->node, $page->val());
+        /** @var \DOMElement $searchNode */
+        $searchNode = $this->node->appendChild($this->xml->createElement('search'));
+        $search = [];
+        if (!empty($_GET['name'])) {
+            $searchNode->setAttribute('name', $search['name'] = $_GET['name']);
+        }
+        User::getListXML($this->node, $page->val(), false, $search);
     }
 
     /**

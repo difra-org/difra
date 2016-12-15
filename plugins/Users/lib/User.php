@@ -91,7 +91,7 @@ class User
     private static function load($data)
     {
         $user = new self;
-        $user->id = $data['id'];
+        $user->id = (int)$data['id'];
         $user->email = $data['email'];
         $user->login = $data['login'];
         $user->password = $data['password'];
@@ -109,11 +109,12 @@ class User
      * @param \DOMElement $node
      * @param \Difra\Unify\Paginator $paginator
      * @param bool $createNode
+     * @param array $search
      */
-    public static function getListXML($node, $paginator, $createNode = false)
+    public static function getListXML($node, $paginator, $createNode = false, $search = null)
     {
         $subNode = $createNode ? $node->appendChild($node->ownerDocument->createElement('users')) : $node;
-        foreach (self::getList($paginator) as $user) {
+        foreach (self::getList($paginator, $search) as $user) {
             $user->getXML($subNode, true);
         }
         $stats = DB::getInstance(Users::DB)->fetchRow(
@@ -126,19 +127,37 @@ class User
 
     /**
      * @param \Difra\Unify\Paginator $paginator
-     * @return self[]
-     * @throws \Difra\Exception
+     * @param array $search
+     * @return User[]
+     * @throws Exception
      */
-    public static function getList($paginator = null)
+    public static function getList($paginator = null, $search = null)
     {
         $db = DB::getInstance(Users::DB);
+
+        $whereArr = [];
+        $whereParams = [];
+        if (!empty($search)) {
+            foreach($search as $k => $v) {
+                switch ($k) {
+                    case 'name':
+                        $whereArr[] = '(`login` LIKE :name OR `email` LIKE :name)';
+                        $whereParams['name'] = $v . '%';
+                        break;
+                    default:
+                        throw new \Difra\Exception('Unknown user search key: ' . $k);
+                }
+            }
+        }
+        $where = empty($whereArr) ? '' : ('WHERE ' . implode(' AND ', $whereArr));
+
         if ($paginator) {
             $limits = $paginator->getPaginatorLimit();
-            $usersData = $db->fetch("SELECT * FROM `user` LIMIT {$limits[0]},{$limits[1]}");
-            $total = $db->fetchOne('SELECT COUNT(*) FROM `user`');
+            $usersData = $db->fetch("SELECT * FROM `user` $where LIMIT {$limits[0]},{$limits[1]}", $whereParams);
+            $total = $db->fetchOne("SELECT COUNT(*) FROM `user` $where", $whereParams);
             $paginator->setTotal($total);
         } else {
-            $usersData = $db->fetch('SELECT * FROM `user`');
+            $usersData = $db->fetch("SELECT * FROM `user` $where", $whereParams);
         }
         $users = [];
         foreach ($usersData as $data) {
@@ -150,7 +169,8 @@ class User
 
     /**
      * @param \DOMElement $node
-     * @param bool|false $createNode
+     * @param bool $createNode
+     * @return \DOMElement
      */
     public function getXML($node, $createNode = false)
     {
@@ -169,6 +189,7 @@ class User
                 $infoNode->setAttribute($k, $v);
             }
         }
+        return $node;
     }
 
     /**
@@ -370,7 +391,7 @@ class User
             throw new UsersException(UsersException::LOGIN_NOTFOUND);
         }
 
-        return $user;
+        return self::$cache[$id] = $user;
     }
 
     /**
@@ -383,6 +404,26 @@ class User
     public static function getByLogin($login)
     {
         $data = DB::getInstance(Users::getDB())->fetchRow('SELECT * FROM `user` WHERE `login`=?', [$login]);
+        if (empty($data)) {
+            throw new UsersException(UsersException::LOGIN_NOTFOUND);
+        }
+        $user = self::load($data);
+        return $user;
+    }
+
+    /**
+     * Get user by login name or e-mail
+     * @param string $login
+     * @return User
+     * @throws Exception
+     * @throws UsersException
+     */
+    public static function getByLoginOrMail($login)
+    {
+        $data = DB::getInstance(Users::getDB())->fetchRow(
+            'SELECT * FROM `user` WHERE `login`=:login OR `email`=:login',
+            ['login' => $login]
+        );
         if (empty($data)) {
             throw new UsersException(UsersException::LOGIN_NOTFOUND);
         }
