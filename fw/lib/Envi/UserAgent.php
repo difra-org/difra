@@ -10,6 +10,9 @@ use Difra\Libs\XML\DOM;
  */
 class UserAgent
 {
+    const AGENT_SAFARI = 'Safari';
+    // todo: move strings to constants
+
     /** @var array Browser user agents */
     private static $agents = [
         'OPR' => 'Opera',
@@ -17,7 +20,7 @@ class UserAgent
         'CriOS' => 'Chrome',
         'Firefox' => 'Firefox',
         'Opera' => 'Opera',
-        'Safari' => 'Safari',
+        'Safari' => self::AGENT_SAFARI,
         'Trident' => 'IE'
     ];
     /** @var array Browser engines */
