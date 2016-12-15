@@ -164,6 +164,7 @@ abstract class Common
             // destroy
             function ($id) {
                 Cache::getInstance()->remove($this->sessionPrefix . $id);
+                return true;
             },
             // garbage collector
             function ($expire) {
