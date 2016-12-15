@@ -35,7 +35,7 @@ class Paginator
 
     /**
      * Return LIMIT values for SQL
-     * @return string
+     * @return array
      */
     public function getPaginatorLimit()
     {
