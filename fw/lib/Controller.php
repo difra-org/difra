@@ -56,17 +56,21 @@ abstract class Controller
         Layout::getInstance()->linkController($this);
         $this->output =& Output::$output;
         $this->outputType =& Output::$outputType;
-
-        // run dispatcher
-        Debugger::addLine('Started controller dispatcher');
-        $this->dispatch();
-        Debugger::addLine('Finished controller dispatcher');
     }
 
     /**
      * Controller dispatcher
+     * Executed before action call.
      */
     public function dispatch()
+    {
+    }
+
+    /**
+     * Controller arrival
+     * Executed after action call.
+     */
+    public function arrival()
     {
     }
 
@@ -93,6 +97,16 @@ abstract class Controller
     }
 
     /**
+     * Run dispatch()
+     */
+    public static function runDispatch()
+    {
+        Debugger::addLine('Started Controller->dispatch()');
+        self::getInstance()->dispatch();
+        Debugger::addLine('Finished controller->dispatch()');
+    }
+
+    /**
      * Run suitable action
      */
     final public static function run()
@@ -105,6 +119,13 @@ abstract class Controller
         Debugger::addLine('Started action ' . Action::$method);
         $controller->callAction();
         Debugger::addLine('Finished action ' . Action::$method);
+    }
+
+    public static function runArrival()
+    {
+        Debugger::addLine('Started Controller->arrival()');
+        self::getInstance()->arrival();
+        Debugger::addLine('Finished Controller->arrival()');
     }
 
     /**

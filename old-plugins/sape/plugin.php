@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins\SAPE;
 
+use Difra\Events;
+
 /**
  * Class Plugin
  * @package Difra\Plugins\SAPE
@@ -18,7 +20,7 @@ class Plugin extends \Difra\Plugin
 	public function init()
 	{
 
-		\Difra\Events::register('dispatch', '\Difra\Plugins\SAPE', 'addXML');
-		\Difra\Events::register('dispatch', '\Difra\Plugins\SAPE', 'addSitemapHTML');
+		Events::register(Events::EVENT_ACTION_DONE, '\Difra\Plugins\SAPE', 'addXML');
+		Events::register(Events::EVENT_ACTION_DONE, '\Difra\Plugins\SAPE', 'addSitemapHTML');
 	}
 }

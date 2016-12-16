@@ -8,25 +8,38 @@ namespace Difra;
  */
 class Events
 {
+    const EVENT_CORE_INIT = 'core-init';
+    const EVENT_CONFIG_LOAD = 'config';
+    const EVENT_PLUGIN_LOAD = 'plugins-load';
+    const EVENT_PLUGIN_INIT = 'plugins-init';
+    const EVENT_ACTION_REDEFINE = 'pre-action';
+    const EVENT_ACTION_SEARCH = 'action-find';
+    const EVENT_ACTION_DISPATCH = 'action-dispatch';
+    const EVENT_ACTION_PRE_RUN = 'init-done';
+    const EVENT_ACTION_RUN = 'action-run';
+    const EVENT_ACTION_ARRIVAL = 'action-arrival';
+    const EVENT_ACTION_DONE = 'dispatch';
+    const EVENT_RENDER_INIT = 'render-init';
+    const EVENT_RENDER_RUN = 'render-run';
+    const EVENT_RENDER_DONE = 'done';
     /** @var array */
     private static $types = [
-        'core-init', // init some classes
-        'plugins-load', // load plugins
-        'config', // load configuration
-        'plugins-init', // init plugins
+        self::EVENT_CORE_INIT, // init some classes
+        self::EVENT_CONFIG_LOAD, // load configuration
+        self::EVENT_PLUGIN_LOAD, // load plugins
+        self::EVENT_PLUGIN_INIT, // init plugins
 
-        'pre-action', // this event lets you define controller and action
-        'action-find', // default controller and action detect
-        'init-done', // event between controller+action detection and action run
+        self::EVENT_ACTION_REDEFINE, // this event lets you define controller and action
+        self::EVENT_ACTION_SEARCH, // default controller and action detect
+        self::EVENT_ACTION_DISPATCH, // run controller->dispatch()
+        self::EVENT_ACTION_PRE_RUN, // event between controller+action detection and action run
+        self::EVENT_ACTION_RUN, // run action
+        self::EVENT_ACTION_ARRIVAL, // run controller->arrival()
+        self::EVENT_ACTION_DONE, // run dispatchers
 
-        'action-run', // run action
-
-        'dispatch', // run dispatchers
-
-        'render-init', // init view
-        'render-run', // render view
-
-        'done' // after page render
+        self::EVENT_RENDER_INIT, // init view
+        self::EVENT_RENDER_RUN, // render view
+        self::EVENT_RENDER_DONE // after page render
     ];
     /** @var array */
     private static $events = null;
@@ -63,15 +76,18 @@ class Events
             self::$events[$type] = [];
         }
 
-        self::register('core-init', 'Difra\\Debugger', 'init');
-        self::register('core-init', 'Difra\\Envi\\Setup', 'run');
-        self::register('core-init', 'Difra\\Envi\\Session', 'init');
-        self::register('core-init', 'Difra\\Autoloader', 'init');
-        self::register('plugins-load', 'Difra\\Plugger', 'init');
+        self::register(self::EVENT_CORE_INIT, 'Difra\\Debugger', 'init');
+        self::register(self::EVENT_CORE_INIT, 'Difra\\Envi\\Setup', 'run');
+        self::register(self::EVENT_CORE_INIT, 'Difra\\Envi\\Session', 'init');
+        self::register(self::EVENT_CORE_INIT, 'Difra\\Autoloader', 'init');
+
+        self::register(self::EVENT_PLUGIN_LOAD, 'Difra\\Plugger', 'init');
         if (Envi::getMode() == 'web') {
-            self::register('action-find', 'Difra\\Controller', 'init');
-            self::register('action-run', 'Difra\\Controller', 'run');
-            self::register('render-run', 'Difra\\View\\Output', 'start');
+            self::register(self::EVENT_ACTION_SEARCH, 'Difra\\Controller', 'init');
+            self::register(self::EVENT_ACTION_DISPATCH, 'Difra\\Controller', 'runDispatch');
+            self::register(self::EVENT_ACTION_RUN, 'Difra\\Controller', 'run');
+            self::register(self::EVENT_ACTION_ARRIVAL, 'Difra\\Controller', 'runArrival');
+            self::register(self::EVENT_RENDER_RUN, 'Difra\\View\\Output', 'start');
         }
         if (file_exists($initPHP = (DIR_ROOT . '/lib/init.php'))) {
             /** @noinspection PhpIncludeInspection */

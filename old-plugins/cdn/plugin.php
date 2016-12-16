@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins\CDN;
 
+use Difra\Events;
+
 class Plugin extends \Difra\Plugin
 {
     protected $version = 3.1;
@@ -11,6 +13,6 @@ class Plugin extends \Difra\Plugin
     public function init()
     {
 
-        \Difra\Events::register('dispatch', '\Difra\Plugins\CDN', 'selectHost');
+        \Difra\Events::register(Events::EVENT_ACTION_DONE, '\Difra\Plugins\CDN', 'selectHost');
     }
 }

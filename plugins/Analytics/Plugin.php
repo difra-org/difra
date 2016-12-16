@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins\Analytics;
 
+use Difra\Events;
+
 /**
  * Class Plugin
  * @package Difra\Plugins\Analytics
@@ -17,6 +19,6 @@ class Plugin extends \Difra\Plugin
 
     public function init()
     {
-        \Difra\Events::register('dispatch', '\Difra\Plugins\Analytics', 'addAnalyticsXML');
+        Events::register(Events::EVENT_ACTION_DONE, '\Difra\Plugins\Analytics', 'addAnalyticsXML');
     }
 }
