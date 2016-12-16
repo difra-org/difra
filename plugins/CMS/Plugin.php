@@ -20,9 +20,9 @@ class Plugin extends \Difra\Plugin
 
     public function init()
     {
-        Events::register('pre-action', '\Difra\Plugins\CMS', 'run');
-        Events::register('dispatch', '\Difra\Plugins\CMS', 'addMenuXML');
-        Events::register('dispatch', '\Difra\Plugins\CMS', 'addSnippetsXML');
+        Events::register(Events::EVENT_ACTION_REDEFINE, '\Difra\Plugins\CMS', 'run');
+        Events::register(Events::EVENT_ACTION_DONE, '\Difra\Plugins\CMS', 'addMenuXML');
+        Events::register(Events::EVENT_ACTION_DONE, '\Difra\Plugins\CMS', 'addSnippetsXML');
     }
 
     /**

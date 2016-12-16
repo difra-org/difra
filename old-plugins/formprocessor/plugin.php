@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins\FormProcessor;
 
+use Difra\Events;
+
 class Plugin extends \Difra\Plugin
 {
     protected $version = 3.1;
@@ -10,6 +12,6 @@ class Plugin extends \Difra\Plugin
     public function init()
     {
 
-        \Difra\Events::register('pre-action', '\Difra\Plugins\FormProcessor', 'run');
+        \Difra\Events::register(Events::EVENT_ACTION_PRE_RUN, '\Difra\Plugins\FormProcessor', 'run');
     }
 }

@@ -2,6 +2,8 @@
 
 namespace Difra\Plugins\VideoManager;
 
+use Difra\Events;
+
 class Plugin extends \Difra\Plugin
 {
     protected $version = 3.1;
@@ -10,6 +12,6 @@ class Plugin extends \Difra\Plugin
     public function init()
     {
 
-        \Difra\Events::register('dispatch', '\Difra\Plugins\videoManager', 'getHttpPath');
+        Events::register(Events::EVENT_ACTION_DONE, '\Difra\Plugins\videoManager', 'getHttpPath');
     }
 }
