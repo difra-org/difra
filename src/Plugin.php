@@ -28,6 +28,7 @@ abstract class Plugin
     final public function __construct()
     {
         $this->class = get_class($this);
+        Main::addPlugin($this);
     }
 
     /**
@@ -74,6 +75,10 @@ abstract class Plugin
         return $info;
     }
 
+    /**
+     * Plugin init
+     * @return mixed
+     */
     abstract public function init();
 
     /**

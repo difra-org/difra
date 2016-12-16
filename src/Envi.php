@@ -44,7 +44,7 @@ class Envi
         if (is_null(self::$requestedUri)) {
             if (!is_null(self::$customUri)) {
                 self::$requestedUri = self::$customUri;
-            } elseif (!empty($_SERVER['URI'])) { // это для редиректов запросов из nginx
+            } elseif (!empty($_SERVER['URI'])) { // used to define urls like 'sitemap.xml'
                 self::$requestedUri = $_SERVER['URI'];
             } elseif (!empty($_SERVER['REQUEST_URI'])) {
                 self::$requestedUri = $_SERVER['REQUEST_URI'];
