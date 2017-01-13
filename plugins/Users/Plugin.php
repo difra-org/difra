@@ -17,6 +17,8 @@ class Plugin extends \Difra\Plugin
 
     public function init()
     {
-        Events::register(Events::EVENT_CONFIG_LOAD, '\Difra\Plugins\Users\Session', 'load');
+        // Load session instead of events. EVENT_CONFIG_LOAD happens before EVENT_PLUGIN_INIT
+        // Events::register(Events::EVENT_CONFIG_LOAD, '\Difra\Plugins\Users\Session', 'load');
+        \Difra\Plugins\Users\Session::load();
     }
 }
