@@ -12,7 +12,7 @@ class AdmStatusIndexController extends Difra\Controller\Adm
         $statusNode = $this->root->appendChild($this->xml->createElement('status'));
 
         // stats/difra
-        $statusNode->setAttribute('difra', \Difra\Envi\Version::getFrameworkVersion(true));
+        $statusNode->setAttribute('difra', \Difra\Envi\Version::getFrameworkVersion());
         $statusNode->setAttribute('cache', \Difra\Cache::getInstance()->adapter);
         $statusNode->setAttribute('webserver', $_SERVER['SERVER_SOFTWARE']);
         $statusNode->setAttribute('phpversion', phpversion());

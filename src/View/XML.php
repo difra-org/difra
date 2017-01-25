@@ -67,8 +67,8 @@ class XML
         );
         // build and version number
         $node->setAttribute('build', Version::getBuild());
-        $node->setAttribute('framework', Version::getFrameworkVersion(false));
-        $node->setAttribute('frameworkLong', Version::getFrameworkVersion(true));
+        $node->setAttribute('framework', Version::getFrameworkVersion());
+        $node->setAttribute('frameworkLong', Version::getFrameworkVersion()); // todo: remove
         // date
         /** @var $dateNode \DOMElement */
         $dateNode = $node->appendChild($xml->createElement('date'));
