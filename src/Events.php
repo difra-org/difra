@@ -2,6 +2,8 @@
 
 namespace Difra;
 
+use Difra\Envi\Roots;
+
 /**
  * Class Events
  * @package Difra
@@ -90,9 +92,13 @@ class Events
             self::register(self::EVENT_ACTION_ARRIVAL, 'Difra\\Controller', 'runArrival');
             self::register(self::EVENT_RENDER_RUN, 'Difra\\View\\Output', 'start');
         }
-        if (file_exists($initPHP = (DIR_ROOT . '/lib/init.php'))) {
-            /** @noinspection PhpIncludeInspection */
-            include_once($initPHP);
+        if (!empty($initRoots = Roots::getUserRoots())) {
+            foreach ($initRoots as $initRoot) {
+                if (file_exists($initPHP = ($initRoot . '/src/init.php'))) {
+                    /** @noinspection PhpIncludeInspection */
+                    include_once($initPHP);
+                }
+            }
         }
     }
 

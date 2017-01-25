@@ -40,9 +40,7 @@ class Roots
         return $directories = array_merge(
             ['fw' => $me->fw],
             $me->plugins,
-            ['main' => $me->main],
-            $me->application ? [$me->application] : [],
-            $me->additional
+            self::getUserRoots($reverse)
         );
     }
 
@@ -90,5 +88,28 @@ class Roots
     public static function addRoot($directory)
     {
         self::getInstance()->additional[] = $directory;
+    }
+
+    /**
+     * Get user controlled roots (main, application, additional)
+     * @param bool $reverse
+     * @return array|null
+     */
+    public static function getUserRoots($reverse = false)
+    {
+        $directories = null;
+        $directoriesReversed = null;
+        if ($reverse) {
+            return $directoriesReversed ?: $directoriesReversed = array_reverse(self::get());
+        }
+        if (!is_null($directories)) {
+            return $directories;
+        }
+        $me = self::getInstance();
+        return $directories = array_merge(
+            ['main' => $me->main],
+            $me->application ? [$me->application] : [],
+            $me->additional
+        );
     }
 }
