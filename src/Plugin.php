@@ -49,10 +49,15 @@ abstract class Plugin
      */
     final private function __construct()
     {
+        // get class
         $this->class = static::class;
+        // get path
         $reflection = new \ReflectionClass($this->class);
         $this->path = dirname($reflection->getFileName());
-        $this->name = $reflection->getShortName();
+        // get name
+        $chunks = explode('\\', $this->class);
+        end($chunks);
+        $this->name = prev($chunks);
     }
 
     /**
