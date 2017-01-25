@@ -7,7 +7,7 @@ use Difra\Controller;
 use Difra\Debugger;
 use Difra\Envi;
 use Difra\Exception;
-use Difra\Plugger;
+use Difra\Plugin;
 use Difra\Resourcer;
 use Difra\View;
 use Difra\View\HttpError;
@@ -192,10 +192,9 @@ class Action
         if (!is_null($controllerDirs)) {
             return $controllerDirs;
         }
-        $controllerDirs = Plugger::getPaths();
-        $controllerDirs = array_merge([DIR_SITE, DIR_ROOT, DIR_FW], $controllerDirs);
+        $controllerDirs = Roots::get(true);
         foreach ($controllerDirs as $k => $v) {
-            $controllerDirs[$k] = $v . 'controllers/';
+            $controllerDirs[$k] = $v . '/controllers';
         }
         return $controllerDirs;
     }

@@ -79,9 +79,10 @@ class Events
         self::register(self::EVENT_CORE_INIT, 'Difra\\Debugger', 'init');
         self::register(self::EVENT_CORE_INIT, 'Difra\\Envi\\Setup', 'run');
         self::register(self::EVENT_CORE_INIT, 'Difra\\Envi\\Session', 'init');
-        self::register(self::EVENT_CORE_INIT, 'Difra\\Autoloader', 'init');
+//        self::register(self::EVENT_CORE_INIT, 'Difra\\Autoloader', 'init');
 
-        self::register(self::EVENT_PLUGIN_LOAD, 'Difra\\Plugger', 'init');
+//        self::register(self::EVENT_PLUGIN_LOAD, 'Difra\\Plugger', 'init');
+        self::register(self::EVENT_PLUGIN_INIT, 'Difra\\Plugin', 'initAll');
         if (Envi::getMode() == 'web') {
             self::register(self::EVENT_ACTION_SEARCH, 'Difra\\Controller', 'init');
             self::register(self::EVENT_ACTION_DISPATCH, 'Difra\\Controller', 'runDispatch');
