@@ -10,38 +10,52 @@ use Difra\Envi\Roots;
  */
 class Events
 {
+    /** Init core */
     const EVENT_CORE_INIT = 'core-init';
+    /** Load configuration */
     const EVENT_CONFIG_LOAD = 'config';
+    /** For plugins system initialization */
     const EVENT_PLUGIN_LOAD = 'plugins-load';
+    /** For plugins' early hooks */
     const EVENT_PLUGIN_INIT = 'plugins-init';
+    /** For events before action processing */
     const EVENT_ACTION_REDEFINE = 'pre-action';
+    /** Search matching action event */
     const EVENT_ACTION_SEARCH = 'action-find';
+    /** Run controller->dispatch() */
     const EVENT_ACTION_DISPATCH = 'action-dispatch';
+    /** For events before action exec */
     const EVENT_ACTION_PRE_RUN = 'init-done';
+    /** Action exec */
     const EVENT_ACTION_RUN = 'action-run';
+    /** For events after action exec */
     const EVENT_ACTION_ARRIVAL = 'action-arrival';
+    /** For events run last */
     const EVENT_ACTION_DONE = 'dispatch';
+    /** Initialize render data */
     const EVENT_RENDER_INIT = 'render-init';
+    /** Run render */
     const EVENT_RENDER_RUN = 'render-run';
+    /** For events to be run after render */
     const EVENT_RENDER_DONE = 'done';
     /** @var array */
     private static $types = [
-        self::EVENT_CORE_INIT, // init some classes
-        self::EVENT_CONFIG_LOAD, // load configuration
-        self::EVENT_PLUGIN_LOAD, // load plugins
-        self::EVENT_PLUGIN_INIT, // init plugins
+        self::EVENT_CORE_INIT,
+        self::EVENT_CONFIG_LOAD,
+        self::EVENT_PLUGIN_LOAD,
+        self::EVENT_PLUGIN_INIT,
 
-        self::EVENT_ACTION_REDEFINE, // this event lets you define controller and action
-        self::EVENT_ACTION_SEARCH, // default controller and action detect
-        self::EVENT_ACTION_DISPATCH, // run controller->dispatch()
-        self::EVENT_ACTION_PRE_RUN, // event between controller+action detection and action run
-        self::EVENT_ACTION_RUN, // run action
-        self::EVENT_ACTION_ARRIVAL, // run controller->arrival()
-        self::EVENT_ACTION_DONE, // run dispatchers
+        self::EVENT_ACTION_REDEFINE,
+        self::EVENT_ACTION_SEARCH,
+        self::EVENT_ACTION_DISPATCH,
+        self::EVENT_ACTION_PRE_RUN,
+        self::EVENT_ACTION_RUN,
+        self::EVENT_ACTION_ARRIVAL,
+        self::EVENT_ACTION_DONE,
 
-        self::EVENT_RENDER_INIT, // init view
-        self::EVENT_RENDER_RUN, // render view
-        self::EVENT_RENDER_DONE // after page render
+        self::EVENT_RENDER_INIT,
+        self::EVENT_RENDER_RUN,
+        self::EVENT_RENDER_DONE
     ];
     /** @var array */
     private static $events = null;
@@ -78,19 +92,18 @@ class Events
             self::$events[$type] = [];
         }
 
-        self::register(self::EVENT_CORE_INIT, 'Difra\\Debugger', 'init');
-        self::register(self::EVENT_CORE_INIT, 'Difra\\Envi\\Setup', 'run');
-        self::register(self::EVENT_CORE_INIT, 'Difra\\Envi\\Session', 'init');
-//        self::register(self::EVENT_CORE_INIT, 'Difra\\Autoloader', 'init');
+        self::register(self::EVENT_CORE_INIT, 'Difra\Debugger::init');
+        self::register(self::EVENT_CORE_INIT, 'Difra\Envi\Setup::run');
+        self::register(self::EVENT_CORE_INIT, '\Difra\Envi\Session::init');
+//        self::register(self::EVENT_CORE_INIT, '\Difra\Autoloader::init');
 
-//        self::register(self::EVENT_PLUGIN_LOAD, 'Difra\\Plugger', 'init');
-        self::register(self::EVENT_PLUGIN_INIT, 'Difra\\Plugin', 'initAll');
+        self::register(self::EVENT_PLUGIN_LOAD, '\Difra\Plugin::initAll');
         if (Envi::getMode() == 'web') {
-            self::register(self::EVENT_ACTION_SEARCH, 'Difra\\Controller', 'init');
-            self::register(self::EVENT_ACTION_DISPATCH, 'Difra\\Controller', 'runDispatch');
-            self::register(self::EVENT_ACTION_RUN, 'Difra\\Controller', 'run');
-            self::register(self::EVENT_ACTION_ARRIVAL, 'Difra\\Controller', 'runArrival');
-            self::register(self::EVENT_RENDER_RUN, 'Difra\\View\\Output', 'start');
+            self::register(self::EVENT_ACTION_SEARCH, '\Difra\Controller::init');
+            self::register(self::EVENT_ACTION_DISPATCH, '\Difra\Controller::runDispatch');
+            self::register(self::EVENT_ACTION_RUN, '\Difra\Controller::run');
+            self::register(self::EVENT_ACTION_ARRIVAL, '\Difra\Controller::runArrival');
+            self::register(self::EVENT_RENDER_RUN, '\Difra\View\Output::start');
         }
         if (!empty($initRoots = Roots::getUserRoots())) {
             foreach ($initRoots as $initRoot) {
@@ -105,20 +118,16 @@ class Events
     /**
      * Register event handler
      * @param string $type Event name
-     * @param string $class Handler class (should contain getInstance() singleton method)
-     * @param bool|string $method Handler method (if false, only getInstance() will be called)
+     * @param callable $callback
      * @throws Exception
      */
-    public static function register($type, $class, $method = false)
+    public static function register($type, callable $callback)
     {
         self::init();
         if (!in_array($type, self::$types)) {
             throw new Exception('Invalid event type: ' . $type);
         }
-        self::$events[$type][] = [
-            'class' => $class,
-            'method' => $method
-        ];
+        self::$events[$type][] = $callback;
     }
 
     /**
@@ -133,10 +142,9 @@ class Events
         }
         foreach ($handlers as $handler) {
             Debugger::addEventLine(
-                'Handler for ' . $event . ': ' . $handler['class'] . '->' . ($handler['method']
-                    ? $handler['method'] : 'getInstance') . ' started'
+                "Handler for $event: $handler started"
             );
-            call_user_func([$handler['class'], $handler['method']]);
+            call_user_func($handler);
         }
     }
 }
