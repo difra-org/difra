@@ -2,6 +2,8 @@
 
 namespace Difra;
 
+use Difra\Envi\Roots;
+
 /**
  * Class Envi
  * @package Difra
@@ -124,7 +126,7 @@ class Envi
         }
 
         // automatic behavior: try to compare host name to existing directories in sites folder
-        $sitesLocation = DIR_ROOT . 'sites/';
+        $sitesLocation = Roots::getRoot() . '/sites/';
         while ($host) {
             if (is_dir($sitesLocation . $host)) {
                 return $site = $host;
