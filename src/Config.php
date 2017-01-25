@@ -2,6 +2,8 @@
 
 namespace Difra;
 
+use Difra\Envi\Roots;
+
 /**
  * Project configuration
  * Class Config
@@ -13,17 +15,6 @@ class Config
     private $config = null;
     /** @var bool Modified flag */
     private $modified = false;
-    /** @var array Default configuration */
-    private $defaultConfig = [
-        'instances' => [
-            'main' => [
-                'withAll' => true
-            ],
-            'adm' => [
-                'withAll' => true
-            ]
-        ]
-    ];
 
     /**
      * Singleton
@@ -114,25 +105,19 @@ class Config
      */
     private function loadFileConfigs()
     {
-        static $newConfig = null;
-        if (is_null($newConfig)) {
-            $newConfig = $this->defaultConfig;
-            if (is_file(DIR_ROOT . '/config.php')) {
+        static $config = null;
+        if (!is_null($config)) {
+            return $config;
+        }
+        $config = [];
+        foreach (Roots::get() as $root) {
+            if (is_file($file = $root . '/config.php')) {
                 /** @noinspection PhpIncludeInspection */
-                $conf2 = include(DIR_ROOT . 'config.php');
-                if (is_array($conf2)) {
-                    $newConfig = $this->merge($newConfig, $conf2);
-                }
-            }
-            if (is_file(DIR_SITE . '/config.php')) {
-                /** @noinspection PhpIncludeInspection */
-                $conf2 = include(DIR_SITE . 'config.php');
-                if (is_array($conf2)) {
-                    $newConfig = $this->merge($newConfig, $conf2);
-                }
+                $newConfig = include($file);
+                $config = $this->merge($config, $newConfig);
             }
         }
-        return $newConfig;
+        return $config;
     }
 
     /**
@@ -176,9 +161,9 @@ class Config
         $this->config = $this->loadFileConfigs();
         try {
             $conf = DB::getInstance()->fetchOne('SELECT `config` FROM `config` LIMIT 1');
-            $dbconf = @unserialize($conf);
-            if (is_array($dbconf)) {
-                $this->config = $this->merge($this->config, $dbconf);
+            $dynamicConfig = @unserialize($conf);
+            if (is_array($dynamicConfig)) {
+                $this->config = $this->merge($this->config, $dynamicConfig);
             }
 //            $cache->put('config', $this->config);
         } catch (Exception $ex) {

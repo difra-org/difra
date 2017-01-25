@@ -112,4 +112,22 @@ class Roots
             $me->additional
         );
     }
+
+    /**
+     * Get project root
+     * @return string
+     */
+    public static function getRoot()
+    {
+        return self::getInstance()->main;
+    }
+
+    /**
+     * Get framework root
+     * @return string
+     */
+    public static function getFW()
+    {
+        return self::getInstance()->fw;
+    }
 }
