@@ -1,9 +1,0 @@
-<locale>
-	<menu>
-		<adm>
-			<menu_gallery>Фотогалерея</menu_gallery>
-			<menu_gallery_albums>Содержимое фотогалереи</menu_gallery_albums>
-			<menu_gallery_config>Настройки фотогалереи</menu_gallery_config>
-		</adm>
-	</menu>
-</locale>

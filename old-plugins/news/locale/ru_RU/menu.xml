@@ -1,9 +1,0 @@
-<locale>
-    <menu>
-        <adm>
-            <menu_news>Новости</menu_news>
-            <menu_news_add>Добавить новость</menu_news_add>
-            <menu_news_settings>Настройки</menu_news_settings>
-        </adm>
-    </menu>
-</locale>
