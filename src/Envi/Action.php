@@ -218,7 +218,7 @@ class Action
         $depth = 0;
         $controllerDirs = $dirs = self::getControllerPaths();
         foreach ($parts as $part) {
-            $path .= "$part/";
+            $path .= "/$part";
             $newDirs = [];
             foreach ($controllerDirs as $nextDir) {
                 if (is_dir($nextDir . $path)) {
