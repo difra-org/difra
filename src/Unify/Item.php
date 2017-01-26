@@ -2,6 +2,7 @@
 
 namespace Difra\Unify;
 
+use Difra\Envi\Roots;
 use Difra\Exception;
 use Difra\MySQL;
 
@@ -166,7 +167,7 @@ abstract class Item extends DBAPI
                     $this->_saveImages[$name] = $property;
                 } else {
                     $property->saveImages(
-                        DIR_DATA . '/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue(),
+                        Roots::getData() . '/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue(),
                         '/u/' . $this->getObjKey() . "/{$name}/" . $this->getPrimaryValue()
                     );
                     $set[] = '`' . $db->escape($name) . "`='" . $db->escape($property) . "'";
