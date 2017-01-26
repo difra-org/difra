@@ -23,6 +23,8 @@ class Roots
     private $additional = [];
     /** @var string Selected application root */
     private $application = null;
+    /** @var string Data directory */
+    private $data = null;
 
     /**
      * Get roots list
@@ -66,6 +68,11 @@ class Roots
         $this->plugins = Plugin::getPaths();
         $this->main = dirname($this->fw, 3);
 //        $this->application = null; // todo
+        if (!empty($_SERVER['VHOST_DATA'])) {
+            $this->data = $_SERVER['VHOST_DATA'];
+        } else {
+            $this->data = dirname($this->main) . '/data';
+        }
     }
 
     /**
@@ -141,5 +148,10 @@ class Roots
     public static function getFW()
     {
         return self::getInstance()->fw;
+    }
+
+    public static function getData()
+    {
+        return self::getInstance()->data;
     }
 }
