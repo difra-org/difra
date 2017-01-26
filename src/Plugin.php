@@ -129,4 +129,13 @@ abstract class Plugin
     {
         return (bool)$this->enabled;
     }
+
+    /**
+     * Get plugin name
+     * @return mixed|string
+     */
+    public function getName()
+    {
+        return $this->name;
+    }
 }
