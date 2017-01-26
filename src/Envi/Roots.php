@@ -10,6 +10,9 @@ use Difra\Plugin;
  */
 class Roots
 {
+    const FIRST_FW = 'asc';
+    const FIRST_APP = 'desc';
+
     /** @var string Framework root */
     private $fw = null;
     /** @var string[] Plugin roots */
@@ -23,24 +26,24 @@ class Roots
 
     /**
      * Get roots list
-     * @param bool $reverse
-     * @return array|null
+     * @param bool $order
+     * @return string[]
      */
-    public static function get($reverse = false)
+    public static function get($order)
     {
         $directories = null;
         $directoriesReversed = null;
-        if ($reverse) {
-            return $directoriesReversed ?: $directoriesReversed = array_reverse(self::get());
+        if ($order == self::FIRST_APP) {
+            return $directoriesReversed ?: $directoriesReversed = array_reverse(self::get(self::FIRST_FW));
         }
         if (!is_null($directories)) {
             return $directories;
         }
         $me = self::getInstance();
         return $directories = array_merge(
-            ['fw' => $me->fw],
+            [$me->fw],
             $me->plugins,
-            self::getUserRoots($reverse)
+            self::getUserRoots($order)
         );
     }
 
@@ -92,22 +95,22 @@ class Roots
 
     /**
      * Get user controlled roots (main, application, additional)
-     * @param bool $reverse
+     * @param bool $order
      * @return array|null
      */
-    public static function getUserRoots($reverse = false)
+    public static function getUserRoots($order = self::FIRST_FW)
     {
         $directories = null;
         $directoriesReversed = null;
-        if ($reverse) {
-            return $directoriesReversed ?: $directoriesReversed = array_reverse(self::get());
+        if ($order == self::FIRST_APP) {
+            return $directoriesReversed ?: $directoriesReversed = array_reverse(self::getUserRoots(self::FIRST_FW));
         }
         if (!is_null($directories)) {
             return $directories;
         }
         $me = self::getInstance();
         return $directories = array_merge(
-            ['main' => $me->main],
+            [$me->main],
             $me->application ? [$me->application] : [],
             $me->additional
         );
