@@ -9,7 +9,6 @@
 	<development href="" priority="20" sup="1">
 		<database/>
 		<config/>
-		<plugins/>
 		<locales/>
 	</development>
 	<!--
