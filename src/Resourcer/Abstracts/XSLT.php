@@ -8,6 +8,9 @@ namespace Difra\Resourcer\Abstracts;
  */
 abstract class XSLT extends Common
 {
+    /**
+     * @inheritdoc
+     */
     protected function processData($instance)
     {
         /*
