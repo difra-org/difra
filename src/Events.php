@@ -94,8 +94,8 @@ class Events
 
         self::register(self::EVENT_CORE_INIT, 'Difra\Debugger::init');
         self::register(self::EVENT_CORE_INIT, 'Difra\Envi\Setup::run');
-        self::register(self::EVENT_CORE_INIT, '\Difra\Envi\Session::init');
-//        self::register(self::EVENT_CORE_INIT, '\Difra\Autoloader::init');
+        self::register(self::EVENT_CORE_INIT, 'Difra\Envi\Session::init');
+//        self::register(self::EVENT_CORE_INIT, 'Difra\Autoloader::init');
 
         self::register(self::EVENT_PLUGIN_LOAD, '\Difra\Plugin::initAll');
         if (Envi::getMode() == 'web') {
