@@ -12,6 +12,8 @@ use Difra\Resourcer\Locale;
  */
 class Localemanage
 {
+    // todo: revisit/fix locale management
+
     /**
      * Singleton
      * @return Localemanage

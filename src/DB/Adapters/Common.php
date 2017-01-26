@@ -3,7 +3,6 @@
 namespace Difra\DB\Adapters;
 
 use Difra\Debugger;
-use Difra\Envi;
 use Difra\Exception;
 
 /**

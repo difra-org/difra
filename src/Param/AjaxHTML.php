@@ -14,9 +14,12 @@ class AjaxHTML extends Common
     const filtered = false;
     use Traits\HTML;
 
+    /** @noinspection PhpMissingParentConstructorInspection */
+    /**
+     * @inheritdoc
+     */
     public function __construct($value = '')
     {
-
         $this->raw = $value;
         $this->value = Filters\HTML::getInstance()->process($value, self::filtered);
     }

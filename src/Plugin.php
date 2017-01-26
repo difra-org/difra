@@ -111,4 +111,22 @@ abstract class Plugin
     {
         return false;
     }
+
+    /**
+     * Get plugins array
+     * @return Plugin[]
+     */
+    public static function getList()
+    {
+        return self::$plugins;
+    }
+
+    /**
+     * Is plugin enabled?
+     * @return bool
+     */
+    public function isEnabled()
+    {
+        return (bool)$this->enabled;
+    }
 }

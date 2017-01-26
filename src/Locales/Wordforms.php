@@ -3,7 +3,6 @@
 namespace Difra\Locales;
 
 use Difra\Envi\Setup;
-use Difra\Locales;
 
 class Wordforms
 {

@@ -232,7 +232,6 @@ class SharedMemory extends Common
     /**
      * Clean cache implementation
      * @param string $mode
-     * @return boolean true if no problem
      */
     public function clean($mode = '')
     {

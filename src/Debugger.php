@@ -380,7 +380,6 @@ class Debugger
      * Add console data to output XML
      * @param \DOMNode|\DOMElement $node
      * @param bool $standalone
-     * @return string
      */
     public static function debugXML($node, $standalone = false)
     {

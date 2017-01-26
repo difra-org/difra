@@ -5,7 +5,6 @@ namespace Difra\Libs;
 use Difra\DB;
 use Difra\Envi;
 use Difra\Envi\Session;
-use Difra\MySQL;
 
 /**
  * Class Vault

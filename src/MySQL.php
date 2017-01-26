@@ -22,6 +22,7 @@ class MySQL
     const INST_NONE = 'none';
     /** Default adapter */
     const INST_DEFAULT = self::INST_AUTO;
+    /** @var array Adapters registry */
     private static $adapters = [];
 
     /**

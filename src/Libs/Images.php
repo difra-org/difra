@@ -154,7 +154,8 @@ final class Images
             $watermarkImage = new \Imagick();
 
             $draw = new \ImagickDraw();
-            $draw->setFont(DIR_FW . 'lib/libs/capcha/DejaVuSans.ttf');
+            // todo: need new solution
+//            $draw->setFont(DIR_FW . 'lib/libs/capcha/DejaVuSans.ttf');
             $draw->setFontSize(10);
             $draw->setGravity(\imagick::GRAVITY_CENTER);
 

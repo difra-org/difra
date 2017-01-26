@@ -6,8 +6,6 @@ use Difra\Envi;
 use Difra\Mailer\Exception\Temp;
 use Difra\Mailer\SMTP\Reply;
 
-/** @noinspection PhpInconsistentReturnPointsInspection */
-
 /**
  * Class SMTP
  * Send mail using SMTP
@@ -153,6 +151,7 @@ class SMTP extends Common
         }
     }
 
+    /** @noinspection PhpInconsistentReturnPointsInspection */
     /**
      * @param $command
      * @param int $timeout
@@ -179,7 +178,6 @@ class SMTP extends Common
 
     /**
      * Send mail
-     * @return mixed
      */
     public function send()
     {

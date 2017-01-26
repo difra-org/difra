@@ -498,7 +498,7 @@ class ru_RU extends Common
             return self::getForm($word, $form & Wordforms::MASK_GENDER | $case | $number);
         }
 
-        if (!in_array(($quantity % 100), array(11, 12, 13, 14, 15, 16, 17, 18, 19)) and ($quantity % 10 == 1)) {
+        if (!in_array(($quantity % 100), [11, 12, 13, 14, 15, 16, 17, 18, 19]) and ($quantity % 10 == 1)) {
             return self::getForm($word, $form & ~Wordforms::MASK_NUMBER | Wordforms::NUMBER_SINGLE);
         } else {
             return self::getForm($word, $form & ~Wordforms::MASK_NUMBER | Wordforms::NUMBER_MULTIPLE);
@@ -539,6 +539,7 @@ class ru_RU extends Common
                 }
                 return self::DECLINE_UNKNOWN;
         }
+        return self::DECLINE_UNKNOWN;
     }
 
     /**

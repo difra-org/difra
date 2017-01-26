@@ -143,12 +143,15 @@ class Reply
         return $obj;
     }
 
+    /**
+     * Constructor
+     */
     private function __construct()
     {
-
     }
 
     /**
+     * Get result code
      * @return int
      */
     public function getCode()
@@ -157,6 +160,7 @@ class Reply
     }
 
     /**
+     * Get result text
      * @return string
      */
     public function getText()
@@ -165,6 +169,7 @@ class Reply
     }
 
     /**
+     * Get result type
      * @return string
      */
     public function getResult()
@@ -173,6 +178,7 @@ class Reply
     }
 
     /**
+     * Extended result line
      * @return boolean
      */
     public function isExtended()
@@ -181,6 +187,7 @@ class Reply
     }
 
     /**
+     * Get source line
      * @return mixed
      */
     public function getSource()
@@ -189,6 +196,7 @@ class Reply
     }
 
     /**
+     * Get additional result lines
      * @return self[]
      */
     public function getExtends()
@@ -197,6 +205,7 @@ class Reply
     }
 
     /**
+     * Set additional result lines
      * @param self[] $extends
      */
     public function setExtends($extends)

@@ -126,6 +126,15 @@ class Roots
     }
 
     /**
+     * Get application root
+     * @return string
+     */
+    public static function getApplication()
+    {
+        return self::getInstance()->application;
+    }
+
+    /**
      * Get framework root
      * @return string
      */

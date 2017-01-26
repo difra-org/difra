@@ -260,7 +260,7 @@ abstract class Common
         $res = false;
         if ($this->find($instance)) {
             $this->processDirs($instance);
-//            /** @noinspection PhpMethodParametersCountMismatchInspection */
+            /** @noinspection PhpMethodParametersCountMismatchInspection */
             $res = $this->processData($instance, $withSources);
         }
         $res = $this->processText($res);
@@ -455,20 +455,6 @@ abstract class Common
             $files = array_merge($files, $this->resources[$instance]['files']);
         }
         return $files;
-    }
-
-    /**
-     * Should 'all' directories be included?
-     * @param string $instance
-     * @return bool
-     */
-    private function withAll($instance)
-    {
-        $instances = Config::getInstance()->get('instances');
-        return
-            isset($instances[$instance]) and
-            isset($instances[$instance]['withAll']) and
-            $instances[$instance]['withAll'];
     }
 
     /**

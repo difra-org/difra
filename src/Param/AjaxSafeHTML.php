@@ -14,6 +14,10 @@ class AjaxSafeHTML extends Common
     const filtered = true;
     use Traits\HTML;
 
+    /** @noinspection PhpMissingParentConstructorInspection */
+    /**
+     * @inheritdoc
+     */
     public function __construct($value = '')
     {
         $this->raw = $value;

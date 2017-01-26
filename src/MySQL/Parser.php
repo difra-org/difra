@@ -2,6 +2,8 @@
 
 namespace Difra\MySQL;
 
+use Difra\Envi\Roots;
+
 /**
  * Class Parser
  * @package Difra\MySQL
@@ -12,7 +14,6 @@ class Parser
     /**
      * Compare current mysql tables and bin/db.sql files. Return result to XML.
      * @param $node
-     * @return array|bool
      */
     public static function getStatusXML($node)
     {
@@ -54,9 +55,7 @@ class Parser
      */
     public static function getGoalSQL()
     {
-        $paths = \Difra\Plugger::getPaths();
-        $paths[] = DIR_FW;
-        $paths[] = DIR_ROOT;
+        $paths = Roots::get(Roots::FIRST_FW);
         $tables = [];
         foreach ($paths as $path) {
             if (is_readable($path . '/bin/db.sql')) {

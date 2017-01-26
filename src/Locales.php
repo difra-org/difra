@@ -27,7 +27,6 @@ class Locales
     /**
      * Constructor
      * @param $locale
-     * @return \Difra\Locales
      */
     private function __construct($locale)
     {

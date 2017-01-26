@@ -2,12 +2,14 @@
 
 namespace Difra\Security\Filter;
 
+/**
+ * Class Email
+ * @package Difra\Security\Filter
+ */
 class Email implements Common
 {
     /**
-     * Validate input string
-     * @param string $string
-     * @return bool
+     * @inheritdoc
      */
     public static function validate($string)
     {
@@ -20,9 +22,7 @@ class Email implements Common
     }
 
     /**
-     * Sanitize input string
-     * @param string $string
-     * @return string
+     * @inheritdoc
      */
     public static function sanitize($string)
     {

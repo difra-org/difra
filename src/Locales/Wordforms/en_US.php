@@ -2,8 +2,10 @@
 
 namespace Difra\Locales\Wordforms;
 
-use Difra\Locales\Wordforms;
-
+/**
+ * Class en_US
+ * @package Difra\Locales\Wordforms
+ */
 class en_US extends Common
 {
     /**

@@ -77,7 +77,6 @@ class Ajaxer
     /**
      * Adds ajaxer action to ajax reply data.
      * @param array $action Ajaxer actions array.
-     * @return $this
      */
     private static function addAction($action)
     {
@@ -303,6 +302,10 @@ class Ajaxer
         );
     }
 
+    /**
+     * Add custom action
+     * @param $action
+     */
     public static function addCustomAction($action)
     {
         self::addAction($action);

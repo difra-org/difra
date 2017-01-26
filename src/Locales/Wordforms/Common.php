@@ -4,6 +4,10 @@ namespace Difra\Locales\Wordforms;
 
 use Difra\Locales\Wordforms;
 
+/**
+ * Class Common
+ * @package Difra\Locales\Wordforms
+ */
 class Common
 {
     /** @var array Languages list for language */

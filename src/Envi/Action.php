@@ -7,7 +7,6 @@ use Difra\Controller;
 use Difra\Debugger;
 use Difra\Envi;
 use Difra\Exception;
-use Difra\Plugin;
 use Difra\Resourcer;
 use Difra\View;
 use Difra\View\HttpError;

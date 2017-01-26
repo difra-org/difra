@@ -49,6 +49,9 @@ class Layout
         }
     }
 
+    /**
+     * Prevent cloning
+     */
     private function __clone()
     {
     }

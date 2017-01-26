@@ -14,7 +14,7 @@ class None extends Common
     }
 
     /**
-     * Заглушка для realQuery
+     * realQuery stub
      * @param string $query
      */
     protected function realQuery($query)
@@ -22,7 +22,7 @@ class None extends Common
     }
 
     /**
-     * Заглушка для realFetch
+     * realFetch stub
      * @param string $query
      * @param bool $replica
      * @return array|null
@@ -33,7 +33,7 @@ class None extends Common
     }
 
     /**
-     * Заглушка для getAffectedRows
+     * getAffectedRows stub
      * @return int
      */
     protected function getAffectedRows()
@@ -42,7 +42,7 @@ class None extends Common
     }
 
     /**
-     * Заглушка для getLastId
+     * getLastId stub
      * @return int
      */
     protected function getLastId()
@@ -51,7 +51,7 @@ class None extends Common
     }
 
     /**
-     * Заглушка для realEscape
+     * realEscape stub
      * @param $string
      * @return string
      */

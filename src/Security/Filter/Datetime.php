@@ -37,6 +37,9 @@ class Datetime implements Common
         return self::$cache[$string]->format('Y-m-d H:i:s');
     }
 
+    /**
+     * @inheritdoc
+     */
     private static function parse($string)
     {
         try {

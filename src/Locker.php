@@ -26,6 +26,7 @@ class Locker
     /** @var int */
     private $rnd = null;
 
+    /** @noinspection PhpInconsistentReturnPointsInspection */
     /**
      * Lock
      * @param string $skey
@@ -80,6 +81,9 @@ class Locker
     {
     }
 
+    /**
+     * Destructor
+     */
     public function __destruct()
     {
         $this->remove();

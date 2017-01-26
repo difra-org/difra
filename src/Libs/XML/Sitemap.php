@@ -4,7 +4,6 @@ namespace Difra\Libs\XML;
 
 use Difra\Cache;
 use Difra\Envi;
-use Difra\Plugger;
 use Difra\View;
 
 /**
@@ -16,7 +15,7 @@ class Sitemap
     /** xml namespace */
     const NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
     /** links per page */
-    const PERPAGE = 150;
+    const PERPAGE = 500;
 
     /**
      * Collect sitemap data from plugins
@@ -25,7 +24,7 @@ class Sitemap
     public static function getSitemap()
     {
         $sitemap = [];
-        $plugins = Plugger::getAllPlugins();
+        $plugins = \Difra\Plugin::getList();
         if (!empty($plugins)) {
             foreach ($plugins as $plugin) {
                 if ($plugin->isEnabled()) {
@@ -35,14 +34,22 @@ class Sitemap
                 }
             }
         }
-        if (file_exists($sitemapPHP = DIR_ROOT . '/lib/sitemap.php')) {
-            try {
-                /** @noinspection PhpIncludeInspection */
-                $sitemapData = include($sitemapPHP);
-                if (!empty($sitemapData) and $sitemapData !== 1) {
-                    $sitemap = array_merge($sitemap, $sitemapData);
+        foreach (
+            [
+                Envi\Roots::getRoot(),
+                Envi\Roots::getApplication()
+            ]
+            as $root
+        ) {
+            if (file_exists($sitemapPHP = $root . '/lib/sitemap.php')) {
+                try {
+                    /** @noinspection PhpIncludeInspection */
+                    $sitemapData = include($sitemapPHP);
+                    if (!empty($sitemapData) and $sitemapData !== 1) {
+                        $sitemap = array_merge($sitemap, $sitemapData);
+                    }
+                } catch (\Exception $e) {
                 }
-            } catch (\Exception $e) {
             }
         }
 //        foreach ($sitemap as &$rec) {

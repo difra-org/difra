@@ -44,7 +44,7 @@ class APCu extends Common
      */
     public function test($id)
     {
-        apcu_exists($id);
+        return apcu_exists($id);
     }
 
     /**

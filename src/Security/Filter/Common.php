@@ -2,6 +2,10 @@
 
 namespace Difra\Security\Filter;
 
+/**
+ * Interface Common
+ * @package Difra\Security\Filter
+ */
 interface Common
 {
     /**
