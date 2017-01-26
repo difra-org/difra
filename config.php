@@ -2,10 +2,14 @@
 return [
     'instances' => [
         'main' => [
-            'withAll' => true
+            'include' => [
+                'all' => true
+            ]
         ],
         'adm' => [
-            'withAll' => true
+            'include' => [
+                'all' => true
+            ]
         ]
     ]
 ];
