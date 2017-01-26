@@ -5,13 +5,8 @@
  * Administrator interface index page.
  * Redirects to stats now.
  */
-class AdmIndexController extends Difra\Controller
+class AdmIndexController extends Difra\Controller\Adm
 {
-    public function dispatch()
-    {
-        \Difra\View::$instance = 'adm';
-    }
-
     public function indexAction()
     {
         if ($this->hasUnusedParameters()) {
