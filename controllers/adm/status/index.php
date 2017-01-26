@@ -19,7 +19,7 @@ class AdmStatusIndexController extends Difra\Controller\Adm
 
         // stats/plugins
         /** @var $pluginsNode \DOMElement */
-        $plugins = \Difra\Plugger::getAllPlugins();
+        $plugins = \Difra\Plugin::getList();
         $enabledPlugins = $disabledPlugins = [];
         foreach ($plugins as $plugin) {
             if ($plugin->isEnabled()) {
@@ -66,10 +66,12 @@ class AdmStatusIndexController extends Difra\Controller\Adm
 
         /** @var $permNode \DOMElement */
         $permNode = $statusNode->appendChild($statusNode->ownerDocument->createElement('permissions'));
-        if (!is_dir(DIR_DATA)) {
-            $permNode->setAttribute('data', 'Directory ' . DIR_DATA . ' does not exist!');
-        } elseif (!is_writable(DIR_DATA)) {
-            $permNode->setAttribute('data', 'Directory ' . DIR_DATA . ' is not writeable!');
+        $dataDir = \Difra\Envi\Roots::getData();
+        echo $dataDir;
+        if (!is_dir($dataDir)) {
+            $permNode->setAttribute('data', 'Directory ' . $dataDir . ' does not exist!');
+        } elseif (!is_writable($dataDir)) {
+            $permNode->setAttribute('data', 'Directory ' . $dataDir . ' is not writeable!');
         }
     }
 }
