@@ -6,9 +6,9 @@ use Difra\Cache;
 use Difra\Config;
 use Difra\Controller;
 use Difra\Debugger;
+use Difra\Envi\Roots;
 use Difra\Envi\Version;
 use Difra\Exception;
-use Difra\Plugger;
 use Difra\View;
 
 /**
@@ -260,6 +260,7 @@ abstract class Common
         $res = false;
         if ($this->find($instance)) {
             $this->processDirs($instance);
+//            /** @noinspection PhpMethodParametersCountMismatchInspection */
             $res = $this->processData($instance, $withSources);
         }
         $res = $this->processText($res);
@@ -272,45 +273,62 @@ abstract class Common
      * @param string $instance
      * @return bool
      */
-    private function find($instance)
+    private function find($parentInstance)
     {
-        // TODO: cache $found and $parents by $type and $instance
-
-        static $paths = null;
-        if (is_null($paths)) {
-            $paths = Plugger::getPaths();
-            $paths = array_merge(
-                [
-                    DIR_SITE,
-                    DIR_ROOT
-                ],
-                $paths,
-                [
-                    DIR_FW
-                ]
-            );
-        }
-
         $found = false;
-        $parents = [];
-        if (!empty($paths)) {
-            foreach ($paths as $dir) {
-                if (is_dir($d = "{$dir}{$this->type}/{$instance}")) {
+        $paths = Roots::get(Roots::FIRST_APP);
+        $instances = $this->getIncludes($parentInstance);
+        $directories = [];
+        foreach ($paths as $dir) {
+            foreach ($instances as $instance) {
+                if (is_dir($d = "{$dir}/{$this->type}/{$instance}")) {
                     $found = true;
-                    $parents[] = $d;
-                }
-                if ($this->withAll($instance) and is_dir($d = "{$dir}{$this->type}/all")) {
-                    $found = true;
-                    $parents[] = $d;
+                    $directories[] = $d;
                 }
             }
         }
-
         if (!$found) {
             return false;
         }
-        $this->addDirs($instance, $parents);
+        $this->addDirs($parentInstance, $directories);
         return true;
+    }
+
+    /**
+     * Get included instances
+     * @param $instance
+     * @return string[]
+     */
+    protected function getIncludes($instance)
+    {
+        static $dependencies = null;
+        if (is_null($dependencies)) {
+            $dependencies = Config::getInstance()->get('instances') ?: [];
+        }
+        $instances[$instance] = 0;
+        $needLoad = true;
+        while ($needLoad) {
+            $needLoad = false;
+            $sourceInstances = $instances;
+            foreach ($sourceInstances as $instance => $loaded) {
+                if ($loaded) {
+                    continue;
+                }
+                if (empty($dependencies[$instance]) or empty($dependencies[$instance]['include'])) {
+                    $instances[$instance] = 1;
+                    continue;
+                }
+                foreach ($dependencies[$instance]['include'] as $dependency => $enabled) {
+                    if (isset($instances[$dependency]) or !$enabled) {
+                        continue;
+                    }
+                    $instances[$dependency] = 0;
+                    $needLoad = true;
+                }
+                $instances[$instance] = 1;
+            }
+        }
+        return array_keys($instances);
     }
 
     /**
@@ -320,23 +338,9 @@ abstract class Common
      */
     public function findInstances()
     {
-        $parents = [
-            DIR_FW . $this->type,
-            DIR_ROOT . $this->type,
-            DIR_SITE . $this->type,
-        ];
-        $paths = Plugger::getPaths();
-        if (!empty($paths)) {
-            foreach ($paths as $dir) {
-                $parents[] = "{$dir}/{$this->type}";
-            }
-        }
-
-        if (empty($parents)) {
-            return false;
-        }
         $instances = [];
-        foreach ($parents as $path) {
+        foreach (Roots::get(Roots::FIRST_FW) as $parent) {
+            $path = "$parent/{$this->type}";
             if (!is_dir($path)) {
                 continue;
             }
