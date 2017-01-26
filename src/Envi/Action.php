@@ -192,7 +192,7 @@ class Action
         if (!is_null($controllerDirs)) {
             return $controllerDirs;
         }
-        $controllerDirs = Roots::get(true);
+        $controllerDirs = Roots::get(Roots::FIRST_APP);
         foreach ($controllerDirs as $k => $v) {
             $controllerDirs[$k] = $v . '/controllers';
         }
@@ -248,18 +248,18 @@ class Action
         $cName = $controllerFile = null;
         if (!empty($parts)) {
             foreach ($dirs as $tmpDir) {
-                if (is_file($tmpDir . $parts[0] . '.php')) {
+                if (is_file("$tmpDir/{$parts[0]}.php")) {
                     $cName = $parts[0];
-                    $controllerFile = "{$tmpDir}{$cName}.php";
+                    $controllerFile = "{$tmpDir}/{$cName}.php";
                     break;
                 }
             }
         }
         if (!$cName) {
             foreach ($dirs as $tmpDir) {
-                if (is_file($tmpDir . 'index.php')) {
+                if (is_file($tmpDir . '/index.php')) {
                     $cName = 'index';
-                    $controllerFile = "{$tmpDir}index.php";
+                    $controllerFile = "{$tmpDir}/index.php";
                     break;
                 }
             }
