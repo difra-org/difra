@@ -150,8 +150,21 @@ class Roots
         return self::getInstance()->fw;
     }
 
+    /**
+     * Get data dir path
+     * @return string
+     */
     public static function getData()
     {
         return self::getInstance()->data;
+    }
+
+    /**
+     * Set data dir path
+     * @param $path
+     */
+    public static function setData($path)
+    {
+        self::getInstance()->data = $path;
     }
 }
