@@ -53,7 +53,7 @@ abstract class Plugin
         $this->class = static::class;
         // get path
         $reflection = new \ReflectionClass($this->class);
-        $this->path = dirname($reflection->getFileName());
+        $this->path = dirname($reflection->getFileName(), 2);
         // get name
         $chunks = explode('\\', $this->class);
         end($chunks);
