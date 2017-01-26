@@ -2,7 +2,7 @@
 
 namespace Difra\Libs;
 
-include_once(DIR_FW . 'lib/Libs/ESAPI/trunk/src/ESAPI.php');
+include_once(__DIR__ . '/ESAPI/trunk/src/ESAPI.php');
 
 /**
  * Class ESAPI
@@ -17,7 +17,7 @@ class ESAPI
     public static function getInstance()
     {
         static $_instance = null;
-        return $_instance ? $_instance : $_instance = new \ESAPI(DIR_FW . 'lib/Libs/ESAPI/ESAPI.xml');
+        return $_instance ? $_instance : $_instance = new \ESAPI(__DIR__ . '/ESAPI/ESAPI.xml');
     }
 
     /**
