@@ -121,6 +121,9 @@ abstract class Controller
         Debugger::addLine('Finished action ' . Action::$method);
     }
 
+    /**
+     * Run arrival()
+     */
     public static function runArrival()
     {
         Debugger::addLine('Started Controller->arrival()');
