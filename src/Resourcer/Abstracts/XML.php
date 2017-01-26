@@ -52,6 +52,7 @@ abstract class XML extends Common
                         $xml1->$name->attributes()->$key = $value;
                     }
                 }
+                /** @noinspection PhpParamsInspection */
                 $this->mergeXML($xml1->$name, $node, $filename);
             } else {
                 $new = $xml1->addChild($name, trim($node) ? $node : '');
