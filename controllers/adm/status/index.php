@@ -67,7 +67,6 @@ class AdmStatusIndexController extends Difra\Controller\Adm
         /** @var $permNode \DOMElement */
         $permNode = $statusNode->appendChild($statusNode->ownerDocument->createElement('permissions'));
         $dataDir = \Difra\Envi\Roots::getData();
-        echo $dataDir;
         if (!is_dir($dataDir)) {
             $permNode->setAttribute('data', 'Directory ' . $dataDir . ' does not exist!');
         } elseif (!is_writable($dataDir)) {
