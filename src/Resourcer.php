@@ -12,7 +12,7 @@ class Resourcer
      * Resourcers factory
      * @param string $type
      * @param bool $quiet
-     * @return Resourcer\CSS|Resourcer\JS|Resourcer\XSLT|Resourcer\Menu|Resourcer\Locale
+     * @return Resourcer\Abstracts\Common
      * @throws Exception
      */
     public static function getInstance($type, $quiet = false)
