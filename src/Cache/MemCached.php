@@ -28,18 +28,21 @@ class MemCached extends Common
     public static function isAvailable()
     {
         try {
-            if (!extension_loaded('memcached')) {
-                return false;
+            if (!is_null(self::$memcache)) {
+                return self::$memcache ? true : false;
             }
-            if (self::$memcache) {
-                return true;
+            if (!extension_loaded('memcached')) {
+                return self::$memcache = false;
             }
 
-            self::$memcache = new \MemCached;
-            $currentServers = self::$memcache->getServerList();
-            if (empty($currentServers)) {
-                return false;
-            }
+            $memcache = new \MemCached;
+            // todo: load from config
+            $memcache->addServer('127.0.0.1', '11211');
+            // if ($memcache->getStats() < 0) { // returns ['127.0.0.1:11211'=>['pid'=>-1,...]]
+            //     return self::$memcache = false;
+            // }
+            self::$memcache = $memcache;
+
             return true;
         } catch (Exception $ex) {
             return false;
