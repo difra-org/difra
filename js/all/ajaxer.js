@@ -67,9 +67,12 @@ ajaxer.process = function (data, form) {
         }
         var dataObj = $.parseJSON(data);
         /** @namespace dataObj.actions */
-        if (typeof dataObj === 'undefined' || typeof dataObj.actions === 'undefined') {
+        if (typeof dataObj === 'undefined') {
             //noinspection ExceptionCaughtLocallyJS
             throw "data error";
+        }
+        if (typeof dataObj.actions === 'undefined') {
+            dataObj.actions = [];
         }
         for (var key in dataObj.actions) {
             //noinspection JSUnfilteredForInLoop
@@ -95,7 +98,7 @@ ajaxer.process = function (data, form) {
                     this.redirect(action.url);
                     break;
                 case 'display':		// display some HTML in overlay
-                    this.display(action.html);
+                    this.display(action.html, action.type);
                     break;
                 case 'reload':		// refresh page
                     this.reload();
@@ -125,7 +128,7 @@ ajaxer.process = function (data, form) {
             ajaxer.triggerHandler('ajaxer-' + action.action);
         }
     } catch (err) {
-        this.notify({close: 'OK'}, 'Unknown error.');
+        this.notify({close: 'OK'}, 'error');
         console.warn('Error: ', err.message);
         console.warn('Server returned:', data);
         if (typeof debug !== 'undefined') {
@@ -163,7 +166,7 @@ ajaxer.clean = function (form) {
  */
 ajaxer.notify = function (lang, message, type) {
 
-    ajaxer.overlayShow('<p>' + message + '</p>' + '<a href="#" onclick="ajaxer.close(this)" class="button">' +
+    ajaxer.overlayShow('<p>' + message + '</p><a href="#" onclick="ajaxer.close(this)" class="button">' +
         ( lang.close ? lang.close : 'OK' ) + '</a>', type);
 };
 
@@ -240,7 +243,7 @@ ajaxer.require = function (form, name) {
 };
 
 /**
- * Add "element is filled not correctly" problem flag
+ * Incorrect form field value
  * @param form
  * @param name
  * @param message
@@ -286,10 +289,11 @@ ajaxer.reload = function () {
 /**
  * Display overlay with some HTML
  * @param html
+ * @param type
  */
-ajaxer.display = function (html) {
+ajaxer.display = function (html, type) {
 
-    ajaxer.overlayShow(html);
+    ajaxer.overlayShow(html, type);
 };
 
 /**
@@ -340,7 +344,12 @@ ajaxer.exec = function (script) {
     eval(script);
 };
 
-ajaxer.post = function(url, data) {
+/**
+ * Send POST request
+ * @param url
+ * @param data
+ */
+ajaxer.post = function (url, data) {
     var form = '<form action="' + url + '" method="post">';
     $.each(data, function (k, v) {
         form = form + '<input type="hidden" name="' + k + '" value="' + v + '">';
@@ -400,33 +409,26 @@ ajaxer.statusUpdate = function (form) {
         if (typeof obj.attr('original-text') == "undefined") {
             obj.attr('original-text', obj.html());
         }
-        if (name in
-            ajaxer.statuses) {
+        if (name in ajaxer.statuses) {
             // it looks like status text or status style has updated
-            obj.animate({opacity: 0}, 'fast', function () {
-                if (obj.attr('status-class')) {
-                    if (obj.attr('status-class') != ajaxer.statuses[name].classname) {
-                        obj.removeClass(obj.attr('status-class'));
-                        obj.removeAttr('status-class');
-                        obj.attr('status-class', ajaxer.statuses[name].classname);
-                        obj.addClass(ajaxer.statuses[name].classname);
-                    }
-                } else {
-                    obj.attr('status-class', ajaxer.statuses[name].classname);
-                    obj.addClass(ajaxer.statuses[name].classname);
+            if (container.attr('status-class')) {
+                if (container.attr('status-class') != ajaxer.statuses[name].classname) {
+                    container.removeClass(obj.attr('status-class'));
+                    container.removeAttr('status-class');
+                    container.attr('status-class', ajaxer.statuses[name].classname);
+                    container.addClass(ajaxer.statuses[name].classname);
                 }
-                obj.html(ajaxer.statuses[name].message);
-                obj.animate({opacity: 1}, 'fast');
-            });
+            } else {
+                container.attr('status-class', ajaxer.statuses[name].classname);
+                container.addClass(ajaxer.statuses[name].classname);
+            }
+            obj.html(ajaxer.statuses[name].message);
             ajaxer.statuses[name].used = 1;
-        } else if (obj.attr('status-class')) {
+        } else if (container.attr('status-class')) {
             // element has no special status anymore, restore it
-            obj.animate({opacity: 0}, 'fast', function () {
-                obj.removeClass(obj.attr('status-class'));
-                obj.removeAttr('status-class');
-                obj.html(obj.attr('original-text'));
-                obj.animate({opacity: 1}, 'fast');
-            });
+            container.removeClass(container.attr('status-class'));
+            container.removeAttr('status-class');
+            obj.html(obj.attr('original-text'));
         }
     });
     // warning for elements ajaxer could not find
@@ -443,10 +445,11 @@ ajaxer.statusUpdate = function (form) {
 /**
  * Display overlay
  * @param content
+ * @param type
  */
 ajaxer.overlayShow = function (content, type) {
     var overlayClass = 'overlay';
-    if (typeof type !== 'undefined') {
+    if (type) {
         overlayClass += ' ' + type;
     }
     $('body').append('<div class="' + overlayClass + '" id="ajaxer-' + ajaxer.id + '">' +
@@ -612,8 +615,8 @@ ajaxer.fetchProgress = function (uuid) {
             loading.fadeIn();
 
             //noinspection JSJQueryEfficiency
-            $('#loading').css('background-image',
-                'none').append('<div id="upprog" class="auto-center"><div class="td1"></div></div>');
+            $('#loading').css('background-image', 'none').append(
+                '<div id="upprog" class="auto-center"><div class="td1"></div></div>');
             autocenter();
             progressbar = $('#upprog');
         }

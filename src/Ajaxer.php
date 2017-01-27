@@ -230,13 +230,15 @@ class Ajaxer
     /**
      * Show html content in overlay
      * @param string $html innerHTML content
+     * @param string $type type of overlay
      */
-    public static function display($html)
+    public static function display($html, $type = null)
     {
         self::addAction(
             [
                 'action' => 'display',
-                'html' => $html
+                'html' => $html,
+                'type' => $type
             ]
         );
     }

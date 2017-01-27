@@ -6,8 +6,13 @@
  + Added additional resource/application roots support
  + Resourcer: dependencies support
  + Support for additional XSL namespaces in XSL resources
+ + Added Ajaxer::post action to submit POST data
  * Event handlers are Callables now
  * Cleaned out old SVN versioning code
+ * Ajaxer overlay z-index changed to 9999
+ * Empty ajaxer reply doesn't trigger error anymore
+ * Ajaxer::status html structure changed
+ * Ajaxer::display type (CSS class) parameter added
  - Removed Autoloader, using Composer autoloader
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class
