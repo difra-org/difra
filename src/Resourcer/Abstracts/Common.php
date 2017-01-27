@@ -201,6 +201,7 @@ abstract class Common
             $cacheKey = "{$instance}_{$this->type}";
             if (!is_null($cached = $cache->get($cacheKey))) {
                 if ($cache->get($cacheKey . '_build') == Version::getBuild()) {
+                    Debugger::addLine("Using cached resource {$this->type}/{$instance}");
                     return $cached;
                 }
             }
@@ -256,7 +257,7 @@ abstract class Common
      */
     private function realCompile($instance, $withSources = false)
     {
-        Debugger::addLine("Resource {$this->type}/{$instance} compile started");
+        $time = microtime(true);
         $res = false;
         if ($this->find($instance)) {
             $this->processDirs($instance);
@@ -264,7 +265,9 @@ abstract class Common
             $res = $this->processData($instance, $withSources);
         }
         $res = $this->processText($res);
-        Debugger::addLine("Resource {$this->type}/{$instance} compile finished");
+        Debugger::addLine(
+            "Resource {$this->type}/{$instance} compiled in " . round(1000 * (microtime(true) - $time), 2) . 'ms'
+        );
         return $res;
     }
 
