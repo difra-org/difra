@@ -40,9 +40,14 @@ abstract class XSLT extends Common
         $dom->loadXML($template);
         $usedNames = [];
         $usedMatches = [];
+        $namespaces = [];
         foreach ($files as $filename) {
             $template = new \DOMDocument();
             $template->load($filename['raw']);
+            $xpath = new \DOMXPath($template);
+            foreach ($xpath->query('namespace::*', $template->documentElement) as $nsNode) {
+                $namespaces[$nsNode->nodeName] = $nsNode->nodeValue;
+            }
             /** @var \DOMElement $child */
             foreach ($template->documentElement->childNodes as $child) {
                 switch ($child->nodeType) {
@@ -78,6 +83,12 @@ abstract class XSLT extends Common
                 $dom->documentElement->appendChild($dom->importNode($child, true));
             }
         }
+        if (!empty($namespaces)) {
+            foreach ($namespaces as $k => $v) {
+                $dom->documentElement->setAttribute($k, $v);
+            }
+        }
+
         return $dom->saveXML();
     }
 }

@@ -5,6 +5,7 @@
  + New entry point: just include vendor/autoloader.php and call \Difra::main()
  + Added additional resource/application roots support
  + Resourcer: dependencies support
+ + Support for additional XSL namespaces in XSL resources
  * Event handlers are Callables now
  * Cleaned out old SVN versioning code
  - Removed Autoloader, using Composer autoloader
