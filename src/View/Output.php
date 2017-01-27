@@ -15,7 +15,10 @@ use Difra\View;
  */
 class Output
 {
-    /** @var string */
+    const CONTENT_TEXT_XML = 'text/xml';
+    const CONTENT_APPLICATION_XML = 'application/xml';
+    const CONTENT_APPLICATION_JSON = 'application/json';
+    /** @var string|array */
     public static $output = null;
     /** @var string */
     public static $outputType = 'text/plain';
@@ -32,7 +35,11 @@ class Output
         } elseif (!is_null(self::$output)) {
             $controller->putExpires();
             header('Content-Type: ' . self::$outputType . '; charset="utf-8"');
-            echo self::$output;
+            if (!is_array(self::$output)) {
+                echo self::$output;
+            } else {
+                self::autoRender();
+            }
             View::$rendered = true;
         } elseif (Debugger::isEnabled() and isset($_GET['xml']) and $_GET['xml']) {
             if ($_GET['xml'] == '2') {
@@ -67,6 +74,28 @@ class Output
                     die();
                 }
             }
+        }
+    }
+
+    /**
+     * Auto render certain content types
+     */
+    protected static function autoRender()
+    {
+        switch (self::$outputType) {
+//            case self::CONTENT_APPLICATION_XML:
+//            case self::CONTENT_TEXT_XML:
+//                header('Content-Type: text/plain');
+//                $doc = new \DOMDocument();
+//                $xml = $doc->appendChild($doc->createElement('xml'));
+//                self::domTree($xml, self::$output);
+//                $doc->formatOutput = Debugger::isEnabled();
+//                echo $doc->saveXML();
+//                break;
+            case self::CONTENT_APPLICATION_JSON:
+                echo json_encode(self::$output, Ajaxer::getJsonFlags());
+                break;
+            default:
         }
     }
 }
