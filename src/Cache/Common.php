@@ -56,7 +56,7 @@ abstract class Common
      * Get cache record wrapper
      * @param $key
      * @param bool $versionCheck Check if version number changed
-     * @return null|string
+     * @return mixed|null
      */
     public function get($key, $versionCheck = true)
     {
