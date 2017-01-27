@@ -44,15 +44,19 @@ class View
             throw new Exception("XSLT resource not found");
         }
 
+        $time = microtime(true);
         $xslDom = new \DomDocument;
         $xslDom->resolveExternals = true;
         $xslDom->substituteEntities = true;
         if (!$xslDom->loadXML($resource)) {
             throw new Exception("XSLT load problem for instance '$instance'");
         }
+        Debugger::addLine('XSLT XML loaded in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
 
+        $time = microtime(true);
         $xslProcessor = new \XSLTProcessor();
         $xslProcessor->importStylesheet($xslDom);
+        Debugger::addLine('XSLTProcessor initialized in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
 
         if (!$dontFillXML and !HttpError::$error and !Debugger::$shutdown) {
             View\XML::fillXML($xml, $instance);
