@@ -10,13 +10,13 @@ use Difra\Resourcer\Locale;
  * Class Localemanage
  * @package Difra\Adm
  */
-class Localemanage
+class LocaleManage
 {
     // todo: revisit/fix locale management
 
     /**
      * Singleton
-     * @return Localemanage
+     * @return LocaleManage
      */
     public static function getInstance()
     {
