@@ -8,7 +8,7 @@
     "homepage": "https://www.difra.org",
     "license": "BSD-2-Clause",
     "require": {
-        "php": ">=7.0.0",
+        "php": "~7.0.0",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-date": "*",
@@ -20,7 +20,8 @@
         "ext-session": "*",
         "ext-SimpleXML": "*",
         "ext-xsl": "*",
-        "ext-zlib": "*"
+        "ext-zlib": "*",
+        "oyejorge/less.php": "~1.7.0"
     },
     "repositories": [
         {
