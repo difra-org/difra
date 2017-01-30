@@ -19,10 +19,10 @@ class Roots
     private $plugins = [];
     /** @var string Main application root */
     private $main = null;
-    /** @var string[] Additional application root */
-    private $additional = [];
     /** @var string Selected application root */
     private $application = null;
+    /** @var string[] Additional application root */
+    private $additional = [];
     /** @var string Data directory */
     private $data = null;
 
@@ -118,8 +118,8 @@ class Roots
         $me = self::getInstance();
         return $directories = array_merge(
             [$me->main],
-            $me->application ? [$me->application] : [],
-            $me->additional
+            $me->additional,
+            $me->application ? [$me->application] : []
         );
     }
 
