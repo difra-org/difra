@@ -6,7 +6,7 @@ use Difra\Debugger;
 
 /**
  * Class Less
- * LESS support.
+ * LESS wrapper.
  * @package Difra\Libs
  */
 class Less
@@ -17,12 +17,12 @@ class Less
      */
     public static function init()
     {
-        static $done = false;
-        if ($done)
-            return;
-        include(__DIR__ . '/Less/src/Autoloader.php');
-        \Less_Autoloader::register();
-        $done = true;
+//        static $done = false;
+//        if ($done)
+//            return;
+//        include(__DIR__ . '/Less/src/Autoloader.php');
+//        \Less_Autoloader::register();
+//        $done = true;
     }
 
     /**
