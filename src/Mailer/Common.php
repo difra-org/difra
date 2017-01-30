@@ -62,28 +62,6 @@ abstract class Common
     }
 
     /**
-     * Send e-mail message
-     * @param string $email To:
-     * @param string $subject Subject:
-     * @param string $body Message body
-     * @param string|bool $fromMail From: (address)
-     * @param string|bool $fromName From: (name)
-     * @throws Exception
-     * @deprecated
-     */
-    public function sendMail($email, $subject, $body, $fromMail = false, $fromName = false)
-    {
-        $this->setTo($email);
-        if ($fromMail) {
-            $this->setFrom([$fromMail, $fromName]);
-        }
-        $this->setSubject($subject);
-        $this->setBody($body);
-
-        $this->send();
-    }
-
-    /**
      * Get headers
      * @param bool $implode
      * @param bool $full
@@ -278,6 +256,7 @@ abstract class Common
      * @param string $to
      * @param string $template
      * @param array $data
+     * @deprecated
      */
     public function createMail($to, $template, $data)
     {
