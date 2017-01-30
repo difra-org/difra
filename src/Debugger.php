@@ -463,7 +463,11 @@ $post
 $cookie
 MSG;
         $output .= '</pre>';
-        Mailer::getInstance()->sendMail(self::getNotificationMail(), 'Slow script', print_r($output, true));
+        $mailer = Mailer::getInstance();
+        $mailer->setTo(self::getNotificationMail());
+        $mailer->setSubject('Slow script');
+        $mailer->setBody(print_r($output, true));
+        $mailer->send();
     }
 
     /**
