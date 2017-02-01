@@ -17,7 +17,7 @@ class DB
 
     /**
      * @param string $instance
-     * @return MySQL
+     * @return MySQL|Sqlite
      * @throws \Difra\Exception
      */
     public static function getInstance($instance = 'default')
