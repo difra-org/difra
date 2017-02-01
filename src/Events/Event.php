@@ -3,7 +3,6 @@
 namespace Difra\Events;
 
 use Difra\Debugger;
-use Difra\Envi;
 use Difra\Exception;
 
 /**
