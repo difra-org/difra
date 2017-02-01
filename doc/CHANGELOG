@@ -8,6 +8,7 @@
  + Support for additional XSL namespaces in XSL resources
  + Added Ajaxer::post action to submit POST data
  + Added automatic JSON render support if View::$output is array and View::$outputType == View::CONTENT_APPLICATION_JSON
+ + New Event system with custom events support
  * Event handlers are Callables now
  * Cleaned out old SVN versioning code
  * Ajaxer overlay z-index changed to 9999
@@ -17,3 +18,4 @@
  - Removed Autoloader, using Composer autoloader
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class
+ - Removed Difra\Events class
