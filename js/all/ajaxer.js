@@ -161,8 +161,9 @@ ajaxer.clean = function (form) {
 
 /**
  * Display text message
- * @param lang                Locale data array
- * @param message        Message text
+ * @param lang          Locale data array
+ * @param message       Message text
+ * @param type          Notification type (CSS class)
  */
 ajaxer.notify = function (lang, message, type) {
 
