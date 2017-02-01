@@ -140,7 +140,9 @@ class Event
                     break;
                 }
                 Debugger::addEventLine(
-                    "Handler for {$this->name}: $handler started"
+                    is_string($handler)
+                        ? "Default handler for {$this->name}: $handler started"
+                        : "Default handler for {$this->name}: (closure) started"
                 );
                 call_user_func($handler, $this);
             }
