@@ -15,6 +15,7 @@
  * Empty ajaxer reply doesn't trigger error anymore
  * Ajaxer::status html structure changed
  * Ajaxer::display type (CSS class) parameter added
+ * View is not static anymore
  - Removed Autoloader, using Composer autoloader
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class

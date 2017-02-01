@@ -14,25 +14,59 @@ class View
     public static $rendered = false;
     /** @var string XSLT Resourcer instance */
     public static $instance = 'main';
+    // options
+    /** @var string Template instance */
+    private $templateInstance = null;
+    /** @var bool Echo output (return otherwise) */
+    private $echo = true;
+    /** @var bool Fill XML with various data */
+    private $fillXML = true;
+    /** @var bool Normalize output HTML */
+    private $normalize = true;
 
     /**
-     * @param \DOMDocument $xml
-     * @param bool|string $specificInstance
-     * @param bool $dontEcho
-     * @param bool $dontFillXML
-     * @param bool $normalize
-     * @return bool|string
-     * @throws Exception
+     * Set template instance
+     * @param string $templateInstance
      */
-    public static function render(
-        &$xml,
-        $specificInstance = false,
-        $dontEcho = false,
-        $dontFillXML = false,
-        $normalize = true
-    ) {
-        if ($specificInstance) {
-            $instance = $specificInstance;
+    public function setTemplateInstance(string $templateInstance)
+    {
+        $this->templateInstance = $templateInstance;
+    }
+
+    /**
+     * Set echo flag
+     * @param bool $echo
+     */
+    public function setEcho(bool $echo)
+    {
+        $this->echo = $echo;
+    }
+
+    /**
+     * Set fill XML flag
+     * @param bool $fillXML
+     */
+    public function setFillXML(bool $fillXML)
+    {
+        $this->fillXML = $fillXML;
+    }
+
+    /**
+     * Set normalize flag
+     * @param bool $normalize
+     */
+    public function setNormalize(bool $normalize)
+    {
+        $this->normalize = $normalize;
+    }
+
+    /**
+     * Render
+     */
+    public function process(&$xml)
+    {
+        if ($this->templateInstance) {
+            $instance = $this->templateInstance;
         } elseif (self::$instance) {
             $instance = self::$instance;
         } else {
@@ -58,20 +92,20 @@ class View
         $xslProcessor->importStylesheet($xslDom);
         Debugger::addLine('XSLTProcessor initialized in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
 
-        if (!$dontFillXML and !HttpError::$error and !Debugger::$shutdown) {
+        if ($this->fillXML and !HttpError::$error and !Debugger::$shutdown) {
             View\XML::fillXML($xml, $instance);
         }
 
         // transform template
         if ($html = $xslProcessor->transformToDoc($xml)) {
-            if ($normalize) {
+            if ($this->normalize) {
                 $html = self::normalize($html);
             } else {
                 $html->formatOutput = true;
                 $html = $html->saveXML();
             }
 
-            if ($dontEcho) {
+            if (!$this->echo) {
                 return $html;
             }
 
@@ -88,6 +122,31 @@ class View
             throw new Exception($errormsg ? $errormsg['message'] : "Can't render templates");
         }
         return true;
+    }
+
+    /**
+     * @param \DOMDocument $xml
+     * @param bool|string $specificInstance
+     * @param bool $dontEcho
+     * @param bool $dontFillXML
+     * @param bool $normalize
+     * @return bool|string
+     * @throws Exception
+     * @deprecated
+     */
+    public static function render(
+        &$xml,
+        $specificInstance = false,
+        $dontEcho = false,
+        $dontFillXML = false,
+        $normalize = true
+    ) {
+        $view = new self;
+        $view->setTemplateInstance($specificInstance);
+        $view->setEcho(!$dontEcho);
+        $view->setFillXML(!$dontFillXML);
+        $view->setNormalize($normalize);
+        return $view->process($xml);
     }
 
     /**
