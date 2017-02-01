@@ -47,4 +47,11 @@ class Mailer
     private function __construct()
     {
     }
+
+    /**
+     * Prevent cloning
+     */
+    private function __clone()
+    {
+    }
 }
