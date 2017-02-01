@@ -116,9 +116,6 @@ class Event
      */
     protected function start()
     {
-        if ($this->completed) {
-            throw new Exception('Event is completed');
-        }
         if ($this->running) {
             throw new Exception('Event is already running');
         }
@@ -130,7 +127,9 @@ class Event
                     break;
                 }
                 Debugger::addEventLine(
-                    "Handler for {$this->name}: $handler started"
+                    is_string($handler)
+                        ? "Handler for {$this->name}: $handler started"
+                        : "Handler for {$this->name}: (closure) started"
                 );
                 call_user_func($handler, $this);
             }
@@ -173,7 +172,7 @@ class Event
      */
     protected function realRegisterDefaultHandler(callable $handler)
     {
-        $this->handlers[] = $handler;
+        $this->defaultHandlers[] = $handler;
     }
 
     /**
