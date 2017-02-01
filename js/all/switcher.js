@@ -91,7 +91,7 @@ switcher.page = function (url, noPush, data) {
     if (typeof debug != 'undefined') {
         debug.addReq('Switching page: ' + url);
     }
-    switcher.noPush = noPush ? true : false;
+    switcher.noPush = !!noPush;
     switcher.referrer = switcher.url;
     switcher.url = url;
     if (typeof data == 'undefined') {
