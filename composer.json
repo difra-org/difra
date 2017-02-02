@@ -1,28 +1,42 @@
 {
-        "name": "difra/difra",
-        "description": "Difra framework",
-        "keywords": ["framework","php"],
-        "homepage": "http://www.difra.org",
-        "license": "BSD-2-Clause",
-        "require": {
-                "php": ">=5.6.0",
-		"ext-ctype": "*",
-		"ext-curl": "*",
-		"ext-date": "*",
-		"ext-dom": "*",
-		"ext-json": "*",
-		"ext-mbstring": "*",
-		"ext-pdo_mysql": "*",
-		"ext-Reflection": "*",
-		"ext-session": "*",
-		"ext-SimpleXML": "*",
-		"ext-xsl": "*",
-		"ext-zlib": "*"
-        },
-	"repositories": [
-		{
-        		"type": "vcs",
-        		"url": "https://git.a-jam.net/scm/difra/difra.git"
-        	}
-	]
+    "name": "difra/difra",
+    "description": "Difra framework",
+    "keywords": [
+        "framework",
+        "php"
+    ],
+    "dist": {
+        "url": "https://www.difra.org/download/difra-7.0.0-alpha1.zip",
+        "type": "zip"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://git.a-jam.net/scm/difra/difra.git"
+        }
+    ],
+    "homepage": "https://www.difra.org",
+    "license": "BSD-2-Clause",
+    "require": {
+        "php": "~7.0.0",
+        "ext-ctype": "*",
+        "ext-curl": "*",
+        "ext-date": "*",
+        "ext-dom": "*",
+        "ext-json": "*",
+        "ext-mbstring": "*",
+        "ext-pdo_mysql": "*",
+        "ext-Reflection": "*",
+        "ext-session": "*",
+        "ext-SimpleXML": "*",
+        "ext-xsl": "*",
+        "ext-zlib": "*",
+        "oyejorge/less.php": "~1.7.0"
+    },
+    "autoload": {
+        "classmap": ["src/main.php"],
+        "psr-4": {
+            "Difra\\": "src"
+        }
+    }
 }

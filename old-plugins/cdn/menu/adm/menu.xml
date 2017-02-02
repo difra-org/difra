@@ -1,6 +1,0 @@
-<menu>
-	<CDN href="" sup="1">
-		<hosts href="/adm/cdn/hosts"/>
-		<settings href="/adm/cdn/settings"/>
-	</CDN>
-</menu>

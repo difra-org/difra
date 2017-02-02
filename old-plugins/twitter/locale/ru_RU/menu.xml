@@ -1,8 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<locale>
-	<menu>
-		<adm>
-			<menu_settings_twitter>Настройки OAuth и Twitter API</menu_settings_twitter>
-		</adm>
-	</menu>
-</locale>

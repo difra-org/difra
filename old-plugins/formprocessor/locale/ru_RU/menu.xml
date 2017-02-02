@@ -1,9 +1,0 @@
-<locale>
-    <menu>
-        <adm>
-            <menu_formprocessor>Процессор форм</menu_formprocessor>
-            <menu_formprocessor_create>Создать форму</menu_formprocessor_create>
-            <menu_formprocessor_manage>Управление формами</menu_formprocessor_manage>
-        </adm>
-    </menu>
-</locale>

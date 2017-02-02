@@ -1,0 +1,22 @@
+7.0.0
+ + New Difra\Envi\Roots class for paths control instead of DIR_* variables
+ + Composer support
+ + New Plugin system: plugins can be installed using composer now
+ + New entry point: just include vendor/autoloader.php and call \Difra::main()
+ + Added additional resource/application roots support
+ + Resourcer: dependencies support
+ + Support for additional XSL namespaces in XSL resources
+ + Added Ajaxer::post action to submit POST data
+ + Added automatic JSON render support if View::$output is array and View::$outputType == View::CONTENT_APPLICATION_JSON
+ + New Event system with custom events support
+ * Event handlers are Callables now
+ * Cleaned out old SVN versioning code
+ * Ajaxer overlay z-index changed to 9999
+ * Empty ajaxer reply doesn't trigger error anymore
+ * Ajaxer::status html structure changed
+ * Ajaxer::display type (CSS class) parameter added
+ * View is not static anymore
+ - Removed Autoloader, using Composer autoloader
+ - Removed adm/development/plugins page
+ - Removed Difra\Plugger class
+ - Removed Difra\Events class
