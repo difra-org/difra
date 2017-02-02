@@ -5,6 +5,16 @@
         "framework",
         "php"
     ],
+    "dist": {
+        "url": "https://www.difra.org/download/difra-7.0.0-alpha1.zip",
+        "type": "zip"
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://git.a-jam.net/scm/difra/difra.git"
+        }
+    ],
     "homepage": "https://www.difra.org",
     "license": "BSD-2-Clause",
     "require": {
@@ -23,12 +33,6 @@
         "ext-zlib": "*",
         "oyejorge/less.php": "~1.7.0"
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "https://git.a-jam.net/scm/difra/difra.git"
-        }
-    ],
     "autoload": {
         "classmap": ["src/main.php"],
         "psr-4": {
