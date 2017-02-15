@@ -1,3 +1,7 @@
+7.1.0
+ + Added SyslogUPD logging method
+ * Refactored Logger
+
 7.0.0
  + New Difra\Envi\Roots class for paths control instead of DIR_* variables
  + Composer support
