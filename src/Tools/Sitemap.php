@@ -1,9 +1,10 @@
 <?php
 
-namespace Difra\Libs\XML;
+namespace Difra\Tools;
 
 use Difra\Cache;
 use Difra\Envi;
+use Difra\Events\Event;
 use Difra\View;
 
 /**
@@ -17,47 +18,32 @@ class Sitemap
     /** links per page */
     const PERPAGE = 500;
 
+    const EVENT_NAME = 'sitemap';
+
+    /** @var array Sitemap data */
+    private static $sitemap = [];
+
     /**
-     * Collect sitemap data from plugins
-     * @return array
+     * Init sitemap gathering
      */
-    public static function getSitemap()
+    public static function init()
     {
-        $sitemap = [];
-        $plugins = \Difra\Plugin::getList();
-        if (!empty($plugins)) {
-            foreach ($plugins as $plugin) {
-                if ($plugin->isEnabled()) {
-                    if ($sm = $plugin->getSitemap()) {
-                        $sitemap = array_merge($sitemap, $sm);
-                    }
-                }
-            }
+        static $done = false;
+        if (!$done) {
+            $done = true;
+            Event::getInstance(self::EVENT_NAME)->trigger();
         }
-        foreach (
-            [
-                Envi\Roots::getRoot(),
-                Envi\Roots::getApplication()
-            ]
-            as $root
-        ) {
-            if (file_exists($sitemapPHP = $root . '/lib/sitemap.php')) {
-                try {
-                    /** @noinspection PhpIncludeInspection */
-                    $sitemapData = include($sitemapPHP);
-                    if (!empty($sitemapData) and $sitemapData !== 1) {
-                        $sitemap = array_merge($sitemap, $sitemapData);
-                    }
-                } catch (\Exception $e) {
-                }
-            }
+    }
+
+    /**
+     * Add data to sitemap
+     * @param $data
+     */
+    public static function add($data)
+    {
+        if (!empty($data)) {
+            self::$sitemap = array_merge(self::$sitemap, $data);
         }
-//        foreach ($sitemap as &$rec) {
-//            if ($rec['loc']{0} == '/') {
-//                $rec['loc'] = Envi::getURLPrefix(true) . $rec['loc'];
-//            }
-//        }
-        return $sitemap;
     }
 
     /**
@@ -87,14 +73,14 @@ class Sitemap
         }
 
         // Get sitemap data
-        $sitemap = self::getSitemap();
+        self::init();
         $res = false;
-        $pagesNum = floor((sizeof($sitemap) - 1) / self::PERPAGE) + 1;
+        $pagesNum = floor((sizeof(self::$sitemap) - 1) / self::PERPAGE) + 1;
         $cache->put('sitemap_pages', $pagesNum);
 
         // When sitemap data fits one sitemap.xml file, it's one page
-        if ($autoIndex and sizeof($sitemap) <= self::PERPAGE) {
-            $xml = self::makeSitemapXML($sitemap);
+        if ($autoIndex and sizeof(self::$sitemap) <= self::PERPAGE) {
+            $xml = self::makeSitemapXML(self::$sitemap);
             $cache->put('sitemap_index', $xml);
             if ($page) {
                 return false;
@@ -103,13 +89,13 @@ class Sitemap
         }
 
         // More than one sitemap page
-        $indexXML = self::makeIndexXML(floor((sizeof($sitemap) - 1) / self::PERPAGE) + 1);
+        $indexXML = self::makeIndexXML(floor((sizeof(self::$sitemap) - 1) / self::PERPAGE) + 1);
         $cache->put('sitemap_index', $indexXML);
         if (is_null($page)) {
             $res = $indexXML;
         }
         for ($pageN = 1; $pageN <= $pagesNum; $pageN++) {
-            $urls = array_slice($sitemap, ($pageN - 1) * self::PERPAGE, self::PERPAGE);
+            $urls = array_slice(self::$sitemap, ($pageN - 1) * self::PERPAGE, self::PERPAGE);
             $xml = self::makeSitemapXML($urls);
             $cache->put('sitemap_' . $pageN, $xml);
             if ($page == $pageN) {
