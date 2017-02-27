@@ -132,7 +132,11 @@ class Event
                 Debugger::addEventLine(
                     is_string($handler)
                         ? "Handler for {$this->name}: $handler started"
-                        : "Handler for {$this->name}: (closure) started"
+                        : (
+                    is_array($handler)
+                        ? "Handler for {$this->name}: {$handler[0]}::{$handler[1]} started"
+                        : "Handler for {$this->name}: [closure] started"
+                    )
                 );
                 call_user_func($handler, $this);
             }
@@ -144,8 +148,12 @@ class Event
                 }
                 Debugger::addEventLine(
                     is_string($handler)
-                        ? "Default handler for {$this->name}: $handler started"
-                        : "Default handler for {$this->name}: (closure) started"
+                        ? "Handler for {$this->name}: $handler started"
+                        : (
+                    is_array($handler)
+                        ? "Handler for {$this->name}: {$handler[0]}::{$handler[1]} started"
+                        : "Handler for {$this->name}: [closure] started"
+                    )
                 );
                 call_user_func($handler, $this);
             }
