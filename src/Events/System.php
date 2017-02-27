@@ -49,6 +49,7 @@ class System extends Event
      */
     public static function run()
     {
+        self::init();
         foreach (self::$systemEvents as $eventType => $eventRun) {
             if ($eventType === Event::RUN_WEB && Envi::getMode() != Envi::MODE_WEB) {
                 continue;
