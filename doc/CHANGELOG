@@ -21,3 +21,4 @@
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class
  - Removed Difra\Events class
+ - Removed lib/init.php run

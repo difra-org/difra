@@ -19,7 +19,7 @@ class System extends Event
     protected function __construct($name)
     {
         self::init();
-        if (!in_array($name, self::$systemEvents)) {
+        if (!isset(self::$systemEvents[$name])) {
             throw new Exception('System event access to non-system event is not allowed');
         }
         parent::__construct($name);
@@ -49,7 +49,10 @@ class System extends Event
      */
     public static function run()
     {
-        foreach (self::$systemEvents as $eventType) {
+        foreach (self::$systemEvents as $eventType => $eventRun) {
+            if ($eventType === Event::RUN_WEB && Envi::getMode() != Envi::MODE_WEB) {
+                continue;
+            }
             self::getInstance($eventType)->start();
         }
     }
@@ -64,17 +67,21 @@ class System extends Event
             return;
         }
         $done = true;
-        self::getInstance(Event::EVENT_CORE_INIT)->realRegisterDefaultHandler('Difra\Debugger::init');
-        self::getInstance(Event::EVENT_CORE_INIT)->realRegisterDefaultHandler('Difra\Envi\Setup::run');
-        self::getInstance(Event::EVENT_CORE_INIT)->realRegisterDefaultHandler('Difra\Envi\Session::init');
+        self::getInstance(Event::EVENT_CORE_INIT)->realRegisterDefaultHandler([\Difra\Debugger::class, 'init']);
+        self::getInstance(Event::EVENT_CORE_INIT)->realRegisterDefaultHandler([\Difra\Envi\Setup::class, 'run']);
+        self::getInstance(Event::EVENT_CORE_INIT)->realRegisterDefaultHandler([\Difra\Envi\Session::class, 'init']);
+        self::getInstance(Event::EVENT_PLUGIN_LOAD)->realRegisterDefaultHandler([\Difra\Plugin::class, 'initAll']);
 
-        self::getInstance(Event::EVENT_PLUGIN_LOAD)->realRegisterDefaultHandler('\Difra\Plugin::initAll');
-        if (Envi::getMode() == 'web') {
-            self::getInstance(Event::EVENT_ACTION_SEARCH)->realRegisterDefaultHandler('\Difra\Controller::init');
-            self::getInstance(Event::EVENT_ACTION_DISPATCH)->realRegisterDefaultHandler('\Difra\Controller::runDispatch');
-            self::getInstance(Event::EVENT_ACTION_RUN)->realRegisterDefaultHandler('\Difra\Controller::run');
-            self::getInstance(Event::EVENT_ACTION_ARRIVAL)->realRegisterDefaultHandler('\Difra\Controller::runArrival');
-            self::getInstance(Event::EVENT_RENDER_RUN)->realRegisterDefaultHandler('\Difra\View\Output::start');
-        }
+        self::getInstance(Event::EVENT_ACTION_SEARCH)->realRegisterDefaultHandler([\Difra\Controller::class, 'init']);
+        self::getInstance(Event::EVENT_ACTION_DISPATCH)->realRegisterDefaultHandler([
+            \Difra\Controller::class,
+            'runDispatch'
+        ]);
+        self::getInstance(Event::EVENT_ACTION_RUN)->realRegisterDefaultHandler([\Difra\Controller::class, 'run']);
+        self::getInstance(Event::EVENT_ACTION_ARRIVAL)->realRegisterDefaultHandler([
+            \Difra\Controller::class,
+            'runArrival'
+        ]);
+        self::getInstance(Event::EVENT_RENDER_RUN)->realRegisterDefaultHandler([\Difra\View\Output::class, 'start']);
     }
 }

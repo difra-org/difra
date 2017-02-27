@@ -11,13 +11,16 @@ use Difra\Envi\Roots;
 class Envi
 {
     /** @var string Environment mode (web, cli, include) */
-    protected static $mode = 'include';
+    protected static $mode = self::MODE_CLI;
     /** @var string|null Custom URI (useful for unit testing) */
     private static $customUri = null;
     /** @var string|null Current URI */
     private static $requestedUri = null;
     /** @var string|null Current URI without urldecode() */
     private static $requestedUriRaw = null;
+
+    const MODE_WEB = 'web';
+    const MODE_CLI = 'cli';
 
     /**
      * Get environment mode

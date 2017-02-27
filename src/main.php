@@ -13,15 +13,7 @@ class Difra
      */
     public static function main()
     {
-        \Difra\Envi::setMode(!empty($_SERVER['REQUEST_METHOD']) ? 'web' : 'cli');
-        if (!empty($initRoots = Roots::getUserRoots())) {
-            foreach ($initRoots as $initRoot) {
-                if (file_exists($initPHP = ($initRoot . '/src/init.php'))) {
-                    /** @noinspection PhpIncludeInspection */
-                    include_once($initPHP);
-                }
-            }
-        }
+        \Difra\Envi::setMode(!empty($_SERVER['REQUEST_METHOD']) ? \Difra\Envi::MODE_WEB : \Difra\Envi::MODE_CLI);
         System::run();
     }
 }

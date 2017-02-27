@@ -39,24 +39,28 @@ class Event
     const EVENT_RENDER_RUN = 'render-run';
     /** For events to be run after render */
     const EVENT_RENDER_DONE = 'done';
+    /** Run in all modes */
+    const RUN_ALL = 'all';
+    /** Run in web mode */
+    const RUN_WEB = 'web';
     /** @var array */
     protected static $systemEvents = [
-        self::EVENT_CORE_INIT,
-        self::EVENT_CONFIG_LOAD,
-        self::EVENT_PLUGIN_LOAD,
-        self::EVENT_PLUGIN_INIT,
+        self::EVENT_CORE_INIT => self::RUN_ALL,
+        self::EVENT_CONFIG_LOAD => self::RUN_ALL,
+        self::EVENT_PLUGIN_LOAD => self::RUN_ALL,
+        self::EVENT_PLUGIN_INIT => self::RUN_ALL,
 
-        self::EVENT_ACTION_REDEFINE,
-        self::EVENT_ACTION_SEARCH,
-        self::EVENT_ACTION_DISPATCH,
-        self::EVENT_ACTION_PRE_RUN,
-        self::EVENT_ACTION_RUN,
-        self::EVENT_ACTION_ARRIVAL,
-        self::EVENT_ACTION_DONE,
+        self::EVENT_ACTION_REDEFINE => self::RUN_WEB,
+        self::EVENT_ACTION_SEARCH => self::RUN_WEB,
+        self::EVENT_ACTION_DISPATCH => self::RUN_WEB,
+        self::EVENT_ACTION_PRE_RUN => self::RUN_WEB,
+        self::EVENT_ACTION_RUN => self::RUN_WEB,
+        self::EVENT_ACTION_ARRIVAL => self::RUN_WEB,
+        self::EVENT_ACTION_DONE => self::RUN_WEB,
 
-        self::EVENT_RENDER_INIT,
-        self::EVENT_RENDER_RUN,
-        self::EVENT_RENDER_DONE
+        self::EVENT_RENDER_INIT => self::RUN_WEB,
+        self::EVENT_RENDER_RUN => self::RUN_WEB,
+        self::EVENT_RENDER_DONE => self::RUN_WEB
     ];
     // event object fields
     /** @var string Event name */
@@ -85,7 +89,7 @@ class Event
         if (isset($instances[$name])) {
             return $instances[$name];
         }
-        if (in_array($name, self::$systemEvents)) {
+        if (isset(self::$systemEvents[$name])) {
             return $instances[$name] = new System($name);
         } else {
             return $instances[$name] = new Event($name);
