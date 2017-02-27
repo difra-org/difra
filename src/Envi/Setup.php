@@ -29,6 +29,7 @@ class Setup
         ini_set('session.cookie_domain', '.' . Envi::getHost(true));
 
         // set default time zone
+        // todo: use date_default_timezone_get()
         if (self::$timeZone = Config::getInstance()->get('timezone')) {
             date_default_timezone_set(self::$timeZone);
         } elseif (self::$timeZone = ini_get('date.timezone')) {
