@@ -19,7 +19,7 @@ class SyslogUDP extends Common
     protected function realWrite($message, $level)
     {
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-        $date = date('c');//'M d H:i:s');
+        $date = date('c');
         $host = $this->config['hostname'] ?? Envi::getHost(true);
         foreach (explode("\n", $message) as $line) {
             $syslog_message = "<22>$date $host {$this->logName}:$line";
