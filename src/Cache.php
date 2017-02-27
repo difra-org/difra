@@ -59,7 +59,7 @@ class Cache
         }
         if (!Debugger::isCachesEnabled()) {
             Debugger::addLine('Caching disabled by Debug Mode settings');
-            return self::INST_NONE;
+            return $autoDetected = self::INST_NONE;
         }
         if (Cache\APCu::isAvailable()) {
             Debugger::addLine('Auto-detected cache type: APCu');
