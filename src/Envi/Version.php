@@ -12,7 +12,7 @@ use Difra\Envi;
 class Version
 {
     /** Framework version */
-    const VERSION = '7.0.0';
+    const VERSION = '7.0.0-alpha3';
 
     /**
      * Get site or framework version
