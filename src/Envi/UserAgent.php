@@ -57,7 +57,7 @@ class UserAgent
         }
     }
 
-    /** @var string User agent information */
+    /** @var string[] User agent information */
     private static $userAgent = null;
 
     /**
