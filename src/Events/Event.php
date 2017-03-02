@@ -143,7 +143,7 @@ class Event
         }
         if (!empty($this->defaultHandlers)) {
             foreach ($this->defaultHandlers as $handler) {
-                if ($this->preventDefault) {
+                if ($this->preventDefault or $this->stopPropagation) {
                     break;
                 }
                 Debugger::addEventLine(
