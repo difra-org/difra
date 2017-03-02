@@ -65,7 +65,11 @@ class Output
         } elseif (!View::$rendered) {
             $controller->putExpires();
             try {
-                View::render($controller->xml);
+                $view = new View();
+                $view->setEcho(true);
+                $view->setFillXML(true);
+                $view->setNormalize(true);
+                $view->process($controller->xml);
             } catch (HttpError $ex) {
                 if (!Debugger::isConsoleEnabled()) {
                     throw new HttpError(HttpError::E_INTERNAL_SERVER_ERROR);

@@ -18,9 +18,9 @@ class View
     /** @var string Template instance */
     private $templateInstance = null;
     /** @var bool Echo output (return otherwise) */
-    private $echo = true;
+    private $echo = false;
     /** @var bool Fill XML with various data */
-    private $fillXML = true;
+    private $fillXML = false;
     /** @var bool Normalize output HTML */
     private $normalize = true;
 
