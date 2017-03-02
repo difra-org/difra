@@ -95,7 +95,7 @@ ajaxer.process = function (data, form) {
                     this.status(form, action.name, action.message, action.classname);
                     break;
                 case 'redirect':	// http redirect
-                    this.redirect(action.url);
+                    this.redirect(action.url, action.reload);
                     break;
                 case 'display':		// display some HTML in overlay
                     this.display(action.html, action.type);
@@ -270,10 +270,10 @@ ajaxer.invalid = function (form, name, message) {
  * HTTP-like redirect
  * @param url
  */
-ajaxer.redirect = function (url) {
+ajaxer.redirect = function (url, reload) {
 
-    if (typeof(switcher) == 'undefined') {
-        document.location(url);
+    if (reload || typeof(switcher) == 'undefined') {
+        document.location = url;
     } else {
         switcher.page(url);
     }

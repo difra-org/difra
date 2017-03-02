@@ -205,12 +205,13 @@ class Ajaxer
      * Redirect
      * @param string $url
      */
-    public static function redirect($url)
+    public static function redirect($url, $reload = false)
     {
         self::addAction(
             [
                 'action' => 'redirect',
-                'url' => $url
+                'url' => $url,
+                'reload' => $reload ? 1 : 0
             ]
         );
     }
