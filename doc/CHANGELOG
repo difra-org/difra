@@ -7,6 +7,7 @@
  + Resourcer: dependencies support
  + Support for additional XSL namespaces in XSL resources
  + Added Ajaxer::post action to submit POST data
+ + Added reload parameter to Ajaxer::redirect()
  + Added automatic JSON render support if View::$output is array and View::$outputType == View::CONTENT_APPLICATION_JSON
  + New Event system with custom events support
  + Added SyslogUDP logger target
