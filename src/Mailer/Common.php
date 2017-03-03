@@ -26,6 +26,8 @@ abstract class Common
     protected $subject = '';
     /** @var string Body */
     protected $body = '';
+    /** @var string[] Additional headers */
+    protected $headers = [];
 
     /**
      * Send mail
@@ -71,14 +73,14 @@ abstract class Common
     {
         $from = $this->formatFrom();
         $to = $this->formatTo();
-        $headers = [
+        $headers = array_merge([
             "Mime-Version: 1.0",
             "Content-Type: text/html; charset=\"UTF-8\"",
             "Date: " . date('r'),
             "Message-Id: <" . md5(microtime()) . '-' . md5($from . implode('', $to)) . '@' . Envi::getHost(true) . '>',
             'Content-Transfer-Encoding: 8bit',
             "From: $from"
-        ];
+        ], $this->headers);
         if ($full) {
             foreach ($this->formatTo() as $to) {
                 $headers[] = "To: $to";
@@ -86,6 +88,23 @@ abstract class Common
             $headers[] = "Subject: " . $this->formatSubject();
         }
         return $implode ? implode(self::EOL, $headers) : $headers;
+    }
+
+    /**
+     * Add additional header
+     * @param string $header
+     */
+    public function addHeader($header)
+    {
+        $this->headers[] = $header;
+    }
+
+    /**
+     * Clean additional headers
+     */
+    public function cleanHeaders()
+    {
+        $this->headers = [];
     }
 
     /**
