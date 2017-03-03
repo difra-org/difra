@@ -23,6 +23,16 @@ class View
     private $fillXML = false;
     /** @var bool Normalize output HTML */
     private $normalize = true;
+    /** @var \XSLTProcessor */
+    private $xslProcessor = null;
+
+    /**
+     * View constructor
+     */
+    public function __construct()
+    {
+        $this->templateInstance = self::$instance ?: 'main';
+    }
 
     /**
      * Set template instance
@@ -30,7 +40,11 @@ class View
      */
     public function setTemplateInstance(string $templateInstance)
     {
+        if ($this->templateInstance === $templateInstance) {
+            return;
+        }
         $this->templateInstance = $templateInstance;
+        $this->xslProcessor = null;
     }
 
     /**
@@ -39,7 +53,11 @@ class View
      */
     public function setEcho(bool $echo)
     {
+        if ($this->echo === $echo) {
+            return;
+        }
         $this->echo = $echo;
+        $this->xslProcessor = null;
     }
 
     /**
@@ -48,7 +66,11 @@ class View
      */
     public function setFillXML(bool $fillXML)
     {
+        if ($this->fillXML === $fillXML) {
+            return;
+        }
         $this->fillXML = $fillXML;
+        $this->xslProcessor = null;
     }
 
     /**
@@ -57,7 +79,11 @@ class View
      */
     public function setNormalize(bool $normalize)
     {
+        if ($this->normalize === $normalize) {
+            return;
+        }
         $this->normalize = $normalize;
+        $this->xslProcessor = null;
     }
 
     /**
@@ -65,39 +91,34 @@ class View
      */
     public function process(&$xml)
     {
-        if ($this->templateInstance) {
-            $instance = $this->templateInstance;
-        } elseif (self::$instance) {
-            $instance = self::$instance;
-        } else {
-            $instance = 'main';
-        }
-        Debugger::addLine("Render start (instance '$instance')");
+        Debugger::addLine("Render start (instance '{$this->templateInstance}')");
 
-        if (!$resource = Resourcer::getInstance('xslt')->compile($instance)) {
-            throw new Exception("XSLT resource not found");
-        }
+        if (is_null($this->xslProcessor)) {
+            if (!$resource = Resourcer::getInstance('xslt')->compile($this->templateInstance)) {
+                throw new Exception("XSLT resource not found");
+            }
 
-        $time = microtime(true);
-        $xslDom = new \DomDocument;
-        $xslDom->resolveExternals = true;
-        $xslDom->substituteEntities = true;
-        if (!$xslDom->loadXML($resource)) {
-            throw new Exception("XSLT load problem for instance '$instance'");
-        }
-        Debugger::addLine('XSLT XML loaded in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
+            $time = microtime(true);
+            $xslDom = new \DomDocument;
+            $xslDom->resolveExternals = true;
+            $xslDom->substituteEntities = true;
+            if (!$xslDom->loadXML($resource)) {
+                throw new Exception("XSLT load problem for instance '{$this->templateInstance}'");
+            }
+            Debugger::addLine('XSLT XML loaded in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
 
-        $time = microtime(true);
-        $xslProcessor = new \XSLTProcessor();
-        $xslProcessor->importStylesheet($xslDom);
-        Debugger::addLine('XSLTProcessor initialized in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
+            $time = microtime(true);
+            $this->xslProcessor = new \XSLTProcessor();
+            $this->xslProcessor->importStylesheet($xslDom);
+            Debugger::addLine('XSLTProcessor initialized in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
 
-        if ($this->fillXML and !HttpError::$error and !Debugger::$shutdown) {
-            View\XML::fillXML($xml, $instance);
+            if ($this->fillXML and !HttpError::$error and !Debugger::$shutdown) {
+                View\XML::fillXML($xml, $this->templateInstance);
+            }
         }
 
         // transform template
-        if ($html = $xslProcessor->transformToDoc($xml)) {
+        if ($html = $this->xslProcessor->transformToDoc($xml)) {
             if ($this->normalize) {
                 $html = self::normalize($html);
             } else {
