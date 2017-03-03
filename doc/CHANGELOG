@@ -11,6 +11,7 @@
  + Added automatic JSON render support if View::$output is array and View::$outputType == View::CONTENT_APPLICATION_JSON
  + New Event system with custom events support
  + Added SyslogUDP logger target
+ + New reworked Mailer with SMTP and multiple new features
  * Event handlers are Callables now
  * Cleaned out old SVN versioning code
  * Ajaxer overlay z-index changed to 9999
