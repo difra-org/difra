@@ -393,8 +393,11 @@ ajaxer.statusUpdate = function (form) {
 
     $(form).find('.status').each(function (i, obj1) {
         var obj = $(obj1);
-        // получаем имя элемента, к которому относится это поле статуса
+
         var container = obj.closest('.container');
+        if (typeof container == 'undefined') {
+            container = obj.parent();
+        }
         if (typeof container == 'undefined') {
             return;
         }
@@ -413,16 +416,10 @@ ajaxer.statusUpdate = function (form) {
         if (name in ajaxer.statuses) {
             // it looks like status text or status style has updated
             if (container.attr('status-class')) {
-                if (container.attr('status-class') != ajaxer.statuses[name].classname) {
-                    container.removeClass(obj.attr('status-class'));
-                    container.removeAttr('status-class');
-                    container.attr('status-class', ajaxer.statuses[name].classname);
-                    container.addClass(ajaxer.statuses[name].classname);
-                }
-            } else {
-                container.attr('status-class', ajaxer.statuses[name].classname);
-                container.addClass(ajaxer.statuses[name].classname);
+                container.removeClass(container.attr('status-class'));
             }
+            container.attr('status-class', ajaxer.statuses[name].classname);
+            container.addClass(ajaxer.statuses[name].classname);
             obj.html(ajaxer.statuses[name].message);
             ajaxer.statuses[name].used = 1;
         } else if (container.attr('status-class')) {
