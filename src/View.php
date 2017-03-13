@@ -20,11 +20,17 @@ class View
     /** @var bool Echo output (return otherwise) */
     private $echo = false;
     /** @var bool Fill XML with various data */
-    private $fillXML = false;
+    private $fillXML = self::FILL_XML_NONE;
     /** @var bool Normalize output HTML */
     private $normalize = true;
     /** @var \XSLTProcessor */
     private $xslProcessor = null;
+    const FILL_XML_NONE = 0;
+    const FILL_XML_LOCALE = 1;
+    const FILL_XML_MENU = 1 << 1;
+    const FILL_XML_OTHER = 1 << 2;
+    const FILL_XML_ALL = self::FILL_XML_LOCALE | self::FILL_XML_MENU | self::FILL_XML_OTHER;
+    const FILL_XML_PAGE = self::FILL_XML_ALL;
 
     /**
      * View constructor
@@ -62,10 +68,17 @@ class View
 
     /**
      * Set fill XML flag
-     * @param bool $fillXML
+     * @param int $fillXML
      */
-    public function setFillXML(bool $fillXML)
+    public function setFillXML($fillXML)
     {
+        // backwards compatibility
+        if ($fillXML === true) {
+            $fillXML = self::FILL_XML_ALL;
+        } elseif ($fillXML === false) {
+            $fillXML = self::FILL_XML_NONE;
+        }
+
         if ($this->fillXML === $fillXML) {
             return;
         }
@@ -88,6 +101,9 @@ class View
 
     /**
      * Render
+     * @param \DOMElement|\DOMNode $xml
+     * @return bool|string
+     * @throws Exception
      */
     public function process(&$xml)
     {
@@ -112,8 +128,8 @@ class View
             $this->xslProcessor->importStylesheet($xslDom);
             Debugger::addLine('XSLTProcessor initialized in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
 
-            if ($this->fillXML and !HttpError::$error and !Debugger::$shutdown) {
-                View\XML::fillXML($xml, $this->templateInstance);
+            if (!HttpError::$error and !Debugger::$shutdown) {
+                View\XML::fillXML($xml, $this->templateInstance, $this->fillXML);
             }
         }
 
@@ -206,5 +222,14 @@ class View
         if (isset($_SERVER['SERVER_SOFTWARE']) and substr($_SERVER['SERVER_SOFTWARE'], 0, 5) == 'nginx') {
             header('X-Accel-Expires: ' . ($ttl ? $ttl : 'off'));
         }
+    }
+
+    public static function simpleTemplate($instance, $rootNodeName)
+    {
+        $xml = new \DOMDocument();
+        $xml->appendChild($xml->createElement($rootNodeName));
+        $view = new static;
+        $view->setTemplateInstance($instance);
+        return $view->process($xml);
     }
 }
