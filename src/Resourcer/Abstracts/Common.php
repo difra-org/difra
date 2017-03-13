@@ -387,8 +387,11 @@ abstract class Common
             return;
         }
         foreach ($this->resources[$instance]['dirs'] as $dir) {
-            $dirHandler = opendir($dir);
-            while ($dirEntry = readdir($dirHandler)) {
+            $dirList = scandir($dir, SCANDIR_SORT_ASCENDING);
+            if (empty($dirList)) {
+                continue;
+            }
+            foreach ($dirList as $dirEntry) {
                 if ($dirEntry{0} == '.') {
                     continue;
                 }
