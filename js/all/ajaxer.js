@@ -48,6 +48,7 @@ ajaxer.query = function (url, data) {
         debug.addReq('Ajaxer request: ' + url);
     }
     ajaxer.process(this.httpRequest(url, data));
+    return false;
 };
 
 /**
