@@ -441,24 +441,36 @@ ajaxer.statusUpdate = function (form) {
     }
 };
 
+ajaxer.overlayControlPadding = true;
+ajaxer.overlayRightPadding = null;
+
 /**
  * Display overlay
  * @param content
  * @param type
  */
 ajaxer.overlayShow = function (content, type) {
-    var overlayClass = 'overlay';
-    if (type) {
-        overlayClass += ' ' + type;
-    }
-    $('body').append('<div class="' + overlayClass + '" id="ajaxer-' + ajaxer.id + '">' +
+    var overlayClass = type ? 'overlay ' + type : 'overlay';
+    $('body').append('<div class="' + overlayClass + '" id="ajaxer-' + this.id + '">' +
         '<div class="overlay-container auto-center">' + '<div class="overlay-inner" style="display:none">' +
         '<div class="close-button action close" onclick="ajaxer.close(this)"></div>' + content + '</div>' + '</div>' +
         '</div>');
-    $('html').css('overflow', 'hidden');
-    $('#ajaxer-' + ajaxer.id).find('.overlay-inner').fadeIn('fast');
+    var $html = $('html');
+    if (this.overlayControlPadding) {
+        var dw = $(document).width();
+        $html.css('overflow', 'hidden');
+        if (dw != $(document).width()) {
+            this.overlayRightPadding = $html.css('padding-right');
+            $html.css('padding-right', (parseInt(this.overlayRightPadding) + $(document).width() - dw) + 'px');
+        } else {
+            this.overlayRightPadding = null;
+        }
+    } else {
+        $html.css('overflow', 'hidden');
+    }
+    $('#ajaxer-' + this.id).find('.overlay-inner').fadeIn('fast');
     $(window).resize();
-    ajaxer.id++;
+    this.id++;
 };
 
 /**
@@ -466,14 +478,14 @@ ajaxer.overlayShow = function (content, type) {
  * @param obj
  */
 ajaxer.overlayHide = function (obj) {
-
-    var el = $(obj).parents('.overlay');
-    if (!el.length) {
-        el = $('.overlay');
-    }
-    $('html').css('overflow', '');
-    el.fadeOut('fast', function () {
+    // overlay.enableScroll();
+    $(obj).closest('.overlay').fadeOut('fast', function () {
         $(this).remove();
+        var $html = $('html');
+        $html.css('overflow', '');
+        if (ajaxer.overlayRightPadding) {
+            $html.css('padding-right', ajaxer.overlayRightPadding);
+        }
     });
 };
 
