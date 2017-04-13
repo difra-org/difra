@@ -95,7 +95,7 @@ switcher.page = function (url, noPush, data) {
     switcher.referrer = switcher.url;
     switcher.url = url;
     if (typeof data == 'undefined') {
-        if ($('.switcher').length) {
+        if ($('.switcher:not(#debug)').length) {
             $.ajax(url, switcher.ajaxConfig);
         } else {
             $(document).triggerHandler('destruct');
@@ -113,8 +113,9 @@ switcher.page = function (url, noPush, data) {
 switcher.bind = function () {
     $(document).on('click dblclick touchend', 'a', function (event) {
 
-        // skip .ajaxer and .noAjaxer links
-        if ($(this).hasClass('ajaxer') || $(this).hasClass('noAjaxer')) {
+        // skip .ajaxer and .no-switcher links
+        // warning: .noAjaxer is deprecated
+        if ($(this).hasClass('ajaxer') || $(this).hasClass('noAjaxer') || $(this).hasClass('no-switcher')) {
             return;
         }
 
