@@ -121,7 +121,7 @@ switcher.bind = function () {
         var href = $(this).attr('href');
 
         // skip empty links, anchors and javascript
-        if (href == '' || href == '#') {
+        if (!href || href == '#') {
             event.preventDefault();
             return;
         }
