@@ -264,6 +264,39 @@ abstract class Common
             if (sizeof($chunks) > 1) {
                 $body = implode("\r\n..", $chunks);
             }
+            $lines = explode("\r\n", $body);
+            $maxLength = 598;
+            $chopped = [];
+            foreach ($lines as $line) {
+                if (strlen($line) <= $maxLength) {
+                    $chopped[] = $line;
+                    continue;
+                }
+                $newLine = '';
+                $words = preg_split('/([ ]+)/', $line, null, PREG_SPLIT_DELIM_CAPTURE);
+                foreach ($words as $word) {
+                    if (strlen($newLine) + strlen($word) + 1 > $maxLength) {
+                        if ($newLine) {
+                            $chopped[] = $newLine;
+                            $newLine = '';
+                        }
+                        $pos = 0;
+                        while ($pos < mb_strlen($word)) {
+                            $sub = mb_strcut($word, $pos, $maxLength);
+                            $chopped[] = $sub;
+                            $pos += mb_strlen($sub);
+                        }
+                    } elseif ($newLine) {
+                        $newLine .= ' ' . $word;
+                    } else {
+                        $newLine = $word;
+                    }
+                }
+                if ($newLine) {
+                    $chopped[] = $newLine;
+                }
+            }
+            $body = implode("\r\n", $chopped);
         }
         return $body;
     }
@@ -333,6 +366,10 @@ abstract class Common
                 $root->setAttribute($k, $v);
             }
         }
-        $this->body = View::render($xml, $template, true);
+        $view = new View;
+        $view->setTemplateInstance($template);
+        $view->setFillXML(false);
+        $view->setNormalize(true);
+        $this->body = $view->process($xml);
     }
 }
