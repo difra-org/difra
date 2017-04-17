@@ -112,6 +112,9 @@ switcher.page = function (url, noPush, data) {
 
 switcher.bind = function () {
     $(document).on('click dblclick touchend', 'a', function (event) {
+        if (event.isDefaultPrevented()) {
+            return;
+        }
 
         // skip .ajaxer and .no-switcher links
         // warning: .noAjaxer is deprecated
