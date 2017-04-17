@@ -4,12 +4,21 @@
 
 $(document).on('construct', function () {
 
-    // Google Analytics
+    // Google Analytics (ga.js, legacy)
 
     //noinspection JSUnresolvedVariable
     if (typeof _gaq == 'object' && typeof _gaq.push == 'function') {
         //noinspection JSUnresolvedVariable
         _gaq.push(['_trackPageview', switcher.url]);
+    }
+    
+    // Google Analytics (analytics.js)
+    
+    //noinspection JSUnresolvedVariable
+    if (typeof ga == 'function') {
+        //noinspection JSUnresolvedVariable
+        ga('set', 'page', switcher.url);
+        ga('send', 'pageview');
     }
 
     // Yandex Metrika
