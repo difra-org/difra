@@ -6,7 +6,7 @@
         "php"
     ],
     "dist": {
-        "url": "https://www.difra.org/download/difra-7.0.0-alpha4.zip",
+        "url": "https://www.difra.org/download/difra-7.0.0-alpha5.zip",
         "type": "zip"
     },
     "repositories": [
