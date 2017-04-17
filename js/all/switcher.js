@@ -85,7 +85,7 @@ switcher.page = function (url, noPush, data) {
     // cut protocol://host part if it matches current host
     var host = window.location.protocol + "//" + window.location.host + "/";
     if (host == url.substring(0, host.length)) {
-        switcher.page(url.substring(host.length - 1));
+        switcher.page(url.substring(host.length - 1), noPush, data);
         return;
     }
     if (typeof debug != 'undefined') {
