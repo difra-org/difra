@@ -478,8 +478,8 @@ ajaxer.overlayShow = function (content, type) {
  * @param obj
  */
 ajaxer.overlayHide = function (obj) {
-    // overlay.enableScroll();
-    $(obj).closest('.overlay').fadeOut('fast', function () {
+    var target = (typeof obj != 'undefined') ? $(obj).closest('.overlay') : $('.overlay');
+    target.fadeOut('fast', function () {
         $(this).remove();
         var $html = $('html');
         $html.css('overflow', '');
@@ -715,3 +715,4 @@ ajaxer.watcher = function () {
 };
 $(document).ready(ajaxer.watcher);
 $(document).on('construct', ajaxer.watcher);
+$(document).on('destruct', function() { ajaxer.close() });

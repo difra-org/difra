@@ -308,4 +308,13 @@ abstract class Common
         }
         return $result;
     }
+
+    /**
+     * Get database name
+     * @return string
+     */
+    public function getDatabase()
+    {
+        return $this->config['database'] ?? null;
+    }
 }

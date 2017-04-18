@@ -85,7 +85,7 @@ switcher.page = function (url, noPush, data) {
     // cut protocol://host part if it matches current host
     var host = window.location.protocol + "//" + window.location.host + "/";
     if (host == url.substring(0, host.length)) {
-        switcher.page(url.substring(host.length - 1));
+        switcher.page(url.substring(host.length - 1), noPush, data);
         return;
     }
     if (typeof debug != 'undefined') {
@@ -95,7 +95,7 @@ switcher.page = function (url, noPush, data) {
     switcher.referrer = switcher.url;
     switcher.url = url;
     if (typeof data == 'undefined') {
-        if ($('.switcher').length) {
+        if ($('.switcher:not(#debug)').length) {
             $.ajax(url, switcher.ajaxConfig);
         } else {
             $(document).triggerHandler('destruct');
@@ -112,16 +112,20 @@ switcher.page = function (url, noPush, data) {
 
 switcher.bind = function () {
     $(document).on('click dblclick touchend', 'a', function (event) {
+        if (event.isDefaultPrevented()) {
+            return;
+        }
 
-        // skip .ajaxer and .noAjaxer links
-        if ($(this).hasClass('ajaxer') || $(this).hasClass('noAjaxer')) {
+        // skip .ajaxer and .no-switcher links
+        // warning: .noAjaxer is deprecated
+        if ($(this).hasClass('ajaxer') || $(this).hasClass('noAjaxer') || $(this).hasClass('no-switcher')) {
             return;
         }
 
         var href = $(this).attr('href');
 
         // skip empty links, anchors and javascript
-        if (href == '' || href == '#') {
+        if (!href || href == '#') {
             event.preventDefault();
             return;
         }
