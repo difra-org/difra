@@ -121,11 +121,15 @@ switcher.bind = function () {
         if ($(this).hasClass('ajaxer') || $(this).hasClass('noAjaxer') || $(this).hasClass('no-switcher')) {
             return;
         }
+        
+        if (!this.hasAttribute('href')) {
+            return;
+        }
 
         var href = $(this).attr('href');
 
         // skip empty links, anchors and javascript
-        if (!href || href == '#') {
+        if (href == '' || href == '#') {
             event.preventDefault();
             return;
         }
