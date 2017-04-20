@@ -3,7 +3,7 @@
 	<xsl:template match="/">
 		<xsl:text disable-output-escaping='yes'>&lt;!DOCTYPE html&gt;&#x0A;</xsl:text>
 		<xsl:choose>
-			<xsl:when test="/root/@ajax=1">
+			<xsl:when test="/root/@ajax=1 or /root/@switcher=1">
 				<html>
 					<head>
 						<title>
@@ -20,7 +20,7 @@
 	</xsl:template>
 
 	<xsl:template name="html">
-		<html>
+		<html lang="{/root/@langShort}">
 			<xsl:attribute name="class">
 				<xsl:value-of select="/root/@uaClass"/>
 			</xsl:attribute>

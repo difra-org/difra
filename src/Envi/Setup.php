@@ -69,6 +69,14 @@ class Setup
         return self::$locale;
     }
 
+    /**
+     * Get locale language name
+     */
+    public static function getLocaleLang()
+    {
+        return substr(self::$locale, 0, 2);
+    }
+
     /** @var string Time zone name */
     private static $timeZone = null;
 
