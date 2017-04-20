@@ -111,7 +111,7 @@ switcher.page = function (url, noPush, data) {
 };
 
 switcher.bind = function () {
-    $(document).on('click dblclick touchend', 'a', function (event) {
+    $(document).on('click dblclick', 'a', function (event) {
         if (event.isDefaultPrevented()) {
             return;
         }
