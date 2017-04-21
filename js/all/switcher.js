@@ -136,6 +136,11 @@ switcher.bind = function () {
         if (href.substr(0, 11) == 'javascript:' || href.substr(0, 1) == '#') {
             return;
         }
+        
+        var host = window.location.protocol + '//' + window.location.host + '/';
+        if (host !== href.substring(0, host.length) && href.indexOf('://') !== -1) {
+            return;
+        }
 
         event.preventDefault();
         switcher.page(href);
