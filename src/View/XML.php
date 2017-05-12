@@ -56,6 +56,7 @@ class XML
         if ($fillXML & View::FILL_XML_OTHER) {
             // TODO: sync this with Envi::getState()
             $node->setAttribute('lang', Envi\Setup::getLocale());
+            $node->setAttribute('langShort', Envi\Setup::getLocaleLang());
             $node->setAttribute('site', Envi::getSubsite());
             $node->setAttribute('host', $host = Envi::getHost());
             $node->setAttribute('mainhost', $mainhost = Envi::getHost(true));
