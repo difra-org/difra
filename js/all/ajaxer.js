@@ -611,8 +611,14 @@ ajaxer.initIframe = function (form, event) {
 ajaxer.fetchProgress = function (uuid) {
 
     var res = ajaxer.httpRequest('/progress', null, {'X-Progress-ID': uuid});
-    res = $.parseJSON(res);
-    if (res.state == 'uploading') {
+    if (!res) {
+        return;
+    }
+    try {
+        res = $.parseJSON(res);
+        if (!res || res.state !== 'uploading') {
+            return;
+        }
         //noinspection JSJQueryEfficiency
         var progressbar = $('#upprog');
         if (!progressbar.length) {
@@ -633,6 +639,7 @@ ajaxer.fetchProgress = function (uuid) {
         }
         /** @namespace res.received */
         progressbar.find('.td1').css('width', Math.ceil(( progressbar.width() - 20 ) * res.received / res.size) + 'px');
+    } catch (err) {
     }
 };
 
