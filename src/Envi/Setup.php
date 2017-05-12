@@ -16,6 +16,11 @@ class Setup
      */
     public static function run()
     {
+        static $done = false;
+        if ($done) {
+            return;
+        }
+        $done = true;
         if (function_exists('mb_internal_encoding')) {
             mb_internal_encoding('UTF-8');
         }
