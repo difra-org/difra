@@ -11,7 +11,7 @@ abstract class XML extends Common
      * Assemble resources to single XML
      * @param      $instance
      * @param bool $withFilenames
-     * @return mixed
+     * @return string
      */
     protected function processData($instance, $withFilenames = false)
     {
@@ -19,7 +19,7 @@ abstract class XML extends Common
 
         $newXml = new \SimpleXMLElement("<{$this->type}></{$this->type}>");
         foreach ($files as $file) {
-            $filename = $withFilenames ? $file['raw'] : false;
+            $filename = $withFilenames ? $file['raw'] : null;
             $xml = simplexml_load_file($file['raw']);
             $this->mergeXML($newXml, $xml, $filename);
             foreach ($xml->attributes() as $key => $value) {
@@ -37,9 +37,9 @@ abstract class XML extends Common
      * Recursively merge two XML trees
      * @param \SimpleXMLElement $xml1
      * @param \SimpleXMLElement $xml2
-     * @param string $filename
+     * @param string|null $filename
      */
-    private function mergeXML(&$xml1, &$xml2, &$filename)
+    private function mergeXML(\SimpleXMLElement $xml1, \SimpleXMLElement $xml2, $filename = null)
     {
         /** @var \SimpleXMLElement $node */
         foreach ($xml2 as $name => $node) {
