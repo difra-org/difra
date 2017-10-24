@@ -2,6 +2,8 @@
 
 namespace Difra\Resourcer\Abstracts;
 
+use Difra\Exception;
+
 /**
  * Abstract adapter for XML resources
  */
@@ -11,7 +13,7 @@ abstract class XML extends Common
      * Assemble resources to single XML
      * @param      $instance
      * @param bool $withFilenames
-     * @return mixed
+     * @return string
      */
     protected function processData($instance, $withFilenames = false)
     {
@@ -19,8 +21,18 @@ abstract class XML extends Common
 
         $newXml = new \SimpleXMLElement("<{$this->type}></{$this->type}>");
         foreach ($files as $file) {
-            $filename = $withFilenames ? $file['raw'] : false;
+            $filename = $withFilenames ? $file['raw'] : null;
+            $old = libxml_use_internal_errors(true);
             $xml = simplexml_load_file($file['raw']);
+            if ($xml === false) {
+                $message = '';
+                foreach (libxml_get_errors() as $error) {
+                    $message .= $this->createErrorMessage($error) . PHP_EOL;
+                }
+                libxml_use_internal_errors($old);
+                throw new Exception($message);
+            }
+            libxml_use_internal_errors($old);
             $this->mergeXML($newXml, $xml, $filename);
             foreach ($xml->attributes() as $key => $value) {
                 $newXml->addAttribute($key, $value);
@@ -34,12 +46,32 @@ abstract class XML extends Common
     }
 
     /**
+     * Create error message from LibXMLError object
+     * @param \LibXMLError $error
+     * @return string
+     */
+    private function createErrorMessage(\LibXMLError $error)
+    {
+        $type = 'error (unknown type)';
+        if ($error->level === \LIBXML_ERR_WARNING) {
+            $type = 'warning';
+        }
+        if ($error->level === \LIBXML_ERR_ERROR) {
+            $type = 'error';
+        }
+        if ($error->level === \LIBXML_ERR_FATAL) {
+            $type = 'fatal error';
+        }
+        return sprintf('libxml %s %s: %s in file %s (%s)', $type, $error->code, trim($error->message), $error->file, $error->line);
+    }
+
+    /**
      * Recursively merge two XML trees
      * @param \SimpleXMLElement $xml1
      * @param \SimpleXMLElement $xml2
-     * @param string $filename
+     * @param string|null $filename
      */
-    private function mergeXML(&$xml1, &$xml2, &$filename)
+    private function mergeXML(\SimpleXMLElement $xml1, \SimpleXMLElement $xml2, $filename = null)
     {
         /** @var \SimpleXMLElement $node */
         foreach ($xml2 as $name => $node) {

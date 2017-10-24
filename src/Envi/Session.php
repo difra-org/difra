@@ -3,6 +3,7 @@
 namespace Difra\Envi;
 
 use Difra\Cache;
+use Difra\Config;
 use Difra\Envi;
 
 /**
@@ -16,7 +17,11 @@ class Session
      */
     public function __construct()
     {
-        Cache::getInstance()->setSessionsInCache();
+        $cfg = Config::getInstance()->get('sessions');
+        if (!isset($cfg['cache']) || $cfg['cache']) {
+            Cache::getInstance()->setSessionsInCache();
+        }
+
         self::load();
     }
 
