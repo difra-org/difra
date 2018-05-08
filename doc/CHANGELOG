@@ -21,6 +21,7 @@
  * View is not static anymore
  * Added View XML fill options (FILL_XML_NONE, FILL_XML_LOCALE, FILL_XML_MENU, etc.)
  * Sitemap builder is now Difra\Tools\Sitemap and it's event-driven
+ * Switched to use system-wide fastcgi_params instead of built in values
  - Removed Autoloader, using Composer autoloader
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class
