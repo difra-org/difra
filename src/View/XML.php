@@ -23,6 +23,7 @@ class XML
      * Fill output XML with some common data
      * @param \DOMDocument|null $xml
      * @param null $instance
+     * @param int $fillXML
      */
     public static function fillXML(&$xml = null, $instance = null, $fillXML = View::FILL_XML_ALL)
     {
