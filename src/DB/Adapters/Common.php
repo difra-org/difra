@@ -150,12 +150,18 @@ abstract class Common
      * Escape string(s)
      * @param string|array $data
      * @return string|array
+     * @throws Exception
      */
     public function escape($data)
     {
         $this->connect();
         if (!is_array($data)) {
-            return $this->pdo->quote((string)$data);
+            $esc = $this->pdo->quote((string)$data);
+            $escLength = strlen($esc);
+            if ($esc{0} == '\'' && $esc{$escLength -1} == '\'' && $escLength > 1) {
+                return substr($esc, 1, $escLength - 2);
+            }
+            return $esc;
         }
         foreach ($data as $k => $v) {
             $data[$k] = $this->escape($v);
