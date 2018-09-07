@@ -14,6 +14,7 @@
  + New Event system with custom events support
  + Added SyslogUDP logger target
  + New reworked Mailer with SMTP and multiple new features
+ + Added /root/@actionUri property
  * Event handlers are Callables now
  * Cleaned out old SVN versioning code
  * Ajaxer overlay z-index changed to 9999
@@ -25,6 +26,7 @@
  * Sitemap builder is now Difra\Tools\Sitemap and it's event-driven
  * Switched to use system-wide fastcgi_params instead of built in values
  * Added "compatibility<7" is deprecated message in ajaxer
+ * Modified paginator html
  - Removed Autoloader, using Composer autoloader
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class
