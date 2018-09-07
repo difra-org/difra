@@ -29,6 +29,8 @@ class Action
     /** @var string */
     private static $controllerUri = null;
     /** @var string */
+    private static $actionUri = null;
+    /** @var string */
     public static $method = null;
     /** @var string */
     public static $methodAuth = null;
@@ -65,7 +67,7 @@ class Action
             self::saveCache('404');
             throw new HttpError(404);
         }
-        self::$controllerUri = '/' . implode(
+        self::$controllerUri = self::$actionUri = '/' . implode(
                 '/',
                 sizeof($parts) ? array_slice($controllerUriParts, 0, -sizeof($parts)) : $controllerUriParts
             );
@@ -298,7 +300,7 @@ class Action
                 }
             }
             if ($foundMethod and $foundMethod != 'index') {
-                array_shift($parts);
+                self::$actionUri = self::$controllerUri . '/' . array_shift($parts);
                 break;
             }
         }
@@ -335,5 +337,10 @@ class Action
     public static function getControllerUri()
     {
         return self::$controllerUri;
+    }
+    
+    public static function getActionUri()
+    {
+        return self::$actionUri;
     }
 }

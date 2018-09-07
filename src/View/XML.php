@@ -66,6 +66,7 @@ class XML
             $node->setAttribute('instance', $instance ? $instance : View::$instance);
             $node->setAttribute('uri', Envi::getUri());
             $node->setAttribute('controllerUri', Action::getControllerUri());
+            $node->setAttribute('actionUri', Action::getActionUri());
             if ($host != $mainhost) {
                 $node->setAttribute('urlprefix', Envi::getURLPrefix(true));
             }
