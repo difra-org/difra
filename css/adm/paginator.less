@@ -8,13 +8,15 @@
 		float: left;
 		color: darken(@color-darkwhite, 10%);
 		background-color: @color-darkgrey;
+		text-decoration: none;
 
-		a {
-			color: @color-darkwhite;
+		&.disabled {
+			background-color: lighten(@color-darkgrey, 10%);
+			cursor: default;
 		}
 
-		&.pagerSelected {
-			background-color: lighten(@color-darkgrey, 10%);
+		&.pagerSkip {
+			background: none;
 		}
 	}
 

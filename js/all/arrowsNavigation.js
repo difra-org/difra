@@ -2,6 +2,8 @@
  * Script for switching pages with Ctrl/Alt+Left and Ctrl/Alt+Right.
  */
 
+// todo: review and make it live
+
 $(document).on('keydown', function (e) {
 
     if (e.ctrlKey || e.altKey) {
