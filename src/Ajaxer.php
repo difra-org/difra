@@ -22,6 +22,7 @@ class Ajaxer
      */
     public static function getResponse()
     {
+        self::setResponse('compatibility', \Difra\Envi\Version::getCompatibility());
         if (Debugger::isConsoleEnabled() !== Debugger::CONSOLE_DISABLED) {
             if (Debugger::hadError()) {
                 self::clean(true);
@@ -204,6 +205,7 @@ class Ajaxer
     /**
      * Redirect
      * @param string $url
+     * @param bool $reload
      */
     public static function redirect($url, $reload = false)
     {

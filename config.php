@@ -7,6 +7,7 @@ return [
             ]
         ],
         'adm' => [
+            'compatibility' => 6,
             'include' => [
                 'all' => true
             ]

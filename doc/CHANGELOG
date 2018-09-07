@@ -1,4 +1,6 @@
 7.0.0
+ + Bootstrap-compatible form errors (.is-valid, .is-invalid) and messages (.valid-feedback, .invalid-feedback, .common-feedback)
+ + Added compatibility parameter to config instances description
  + New Difra\Envi\Roots class for paths control instead of DIR_* variables
  + Composer support
  + New Plugin system: plugins can be installed using composer now
@@ -22,6 +24,7 @@
  * Added View XML fill options (FILL_XML_NONE, FILL_XML_LOCALE, FILL_XML_MENU, etc.)
  * Sitemap builder is now Difra\Tools\Sitemap and it's event-driven
  * Switched to use system-wide fastcgi_params instead of built in values
+ * Added "compatibility<7" is deprecated message in ajaxer
  - Removed Autoloader, using Composer autoloader
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class
