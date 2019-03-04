@@ -11,6 +11,11 @@ return [
             'include' => [
                 'all' => true
             ]
+        ],
+        'bootstrap' => [
+            'include' => [
+                'popper' => true
+            ]
         ]
     ]
 ];
