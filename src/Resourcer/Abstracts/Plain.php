@@ -18,19 +18,32 @@ abstract class Plain extends Common
     protected function processData($instance)
     {
         $result = '';
-        if (!empty($this->resources[$instance]['specials'])) {
-            foreach ($this->resources[$instance]['specials'] as $resource) {
-                if (!empty($resource['files'])) {
-                    foreach ($resource['files'] as $file) {
-                        $result .= $this->getFile($file);
+        if (!$this->instancesOrdered) {
+            if (!empty($this->resources[$instance]['specials'])) {
+                foreach ($this->resources[$instance]['specials'] as $resource) {
+                    if (!empty($resource['files'])) {
+                        foreach ($resource['files'] as $file) {
+                            $result .= $this->getFile($file);
+                        }
                     }
                 }
             }
         }
         if (!empty($this->resources[$instance]['files'])) {
-            $this->resources[$instance]['files'] = array_reverse($this->resources[$instance]['files']);
+//            $this->resources[$instance]['files'] = array_reverse($this->resources[$instance]['files']);
             foreach ($this->resources[$instance]['files'] as $file) {
                 $result .= $this->getFile($file);
+            }
+        }
+        if ($this->instancesOrdered) {
+            if (!empty($this->resources[$instance]['specials'])) {
+                foreach ($this->resources[$instance]['specials'] as $resource) {
+                    if (!empty($resource['files'])) {
+                        foreach ($resource['files'] as $file) {
+                            $result .= $this->getFile($file);
+                        }
+                    }
+                }
             }
         }
         return $result;

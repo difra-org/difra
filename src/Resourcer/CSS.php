@@ -13,6 +13,7 @@ class CSS extends Abstracts\Plain
     protected $type = 'css';
     protected $printable = true;
     protected $contentType = 'text/css';
+    protected $instancesOrdered = true;
 
     public function processText($text)
     {
