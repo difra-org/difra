@@ -65,7 +65,11 @@ class Action
         $controllerUriParts = $parts;
         if (!self::$controllerFile = self::findController($parts)) {
             self::saveCache('404');
-            throw new HttpError(404);
+            if (!Debugger::isEnabled()) {
+                throw new HttpError(404);
+            } else {
+                throw new HttpError('Failed to find controller', 404);
+            }
         }
         self::$controllerUri = self::$actionUri = '/' . implode(
                 '/',
@@ -338,7 +342,7 @@ class Action
     {
         return self::$controllerUri;
     }
-    
+
     public static function getActionUri()
     {
         return self::$actionUri;
