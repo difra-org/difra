@@ -44,6 +44,14 @@ abstract class Common
         return isset($_instances[$name]) ? $_instances[$name] : $_instances[$name] = new $name();
     }
 
+    protected function __construct()
+    {
+    }
+
+    protected function __clone()
+    {
+    }
+
     /**
      * Validate instance name
      * @param $instance

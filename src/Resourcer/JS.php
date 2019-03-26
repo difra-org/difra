@@ -12,4 +12,11 @@ class JS extends Abstracts\Plain
     protected $printable = true;
     protected $contentType = 'application/x-javascript';
     protected $instancesOrdered = true;
+
+    protected function __construct()
+    {
+        if (\Difra\Debugger::isEnabled()) {
+            $this->printSequenceDebug = true;
+        }
+    }
 }
