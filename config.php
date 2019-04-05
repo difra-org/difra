@@ -40,7 +40,8 @@ return [
         ],
         'switcher' => [
             'include' => [
-                'jquery' => true
+                'jquery' => true,
+                'websymbols' => true
             ]
         ]
     ]
