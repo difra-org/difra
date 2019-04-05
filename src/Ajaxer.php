@@ -182,7 +182,7 @@ class Ajaxer
      * @param string $message Message to display in .status element
      * @param string $class Class name to add to element
      */
-    public static function status($name, $message, $class)
+    public static function status($name, $message, $class = 'is-invalid')
     {
         self::addAction(
             [
