@@ -6,13 +6,15 @@ return [
             'include' => [
                 'jquery' => true,
                 'all' => true,
-                'bootstrap' => true
+                'bootstrap' => true,
+                'switcher' => true
             ]
         ],
         'adm' => [
             'compatibility' => 6,
             'include' => [
                 'jquery' => true,
+                'switcher' => true,
                 'all' => true
             ]
         ],
@@ -32,6 +34,11 @@ return [
             ]
         ],
         'console' => [
+            'include' => [
+                'jquery' => true
+            ]
+        ],
+        'switcher' => [
             'include' => [
                 'jquery' => true
             ]
