@@ -22,6 +22,7 @@ abstract class Common
     protected $printable = false;
     protected $contentType = null;
     protected $instancesOrdered = false;
+    protected $reverseIncludes = true;
 
     /**
      * Resource processor
@@ -353,7 +354,9 @@ abstract class Common
                 }
             }
         }
-        arsort($instances);
+        if ($this->reverseIncludes) {
+            arsort($instances);
+        }
         return array_keys($instances);
     }
 
