@@ -11,10 +11,11 @@ return [
             ]
         ],
         'adm' => [
-            'compatibility' => 6,
+//            'compatibility' => 6,
             'include' => [
                 'jquery' => true,
-                'switcher' => true,
+//                'switcher' => true,
+                'bootstrap' => true,
                 'all' => true
             ]
         ],
@@ -40,8 +41,8 @@ return [
         ],
         'switcher' => [
             'include' => [
-                'jquery' => true,
-                'websymbols' => true
+                'jquery' => true
+//                'websymbols' => true
             ]
         ]
     ]
