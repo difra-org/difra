@@ -2,19 +2,19 @@
 <xsl:stylesheet version="1.0" xmlns:xsl="http://www.w3.org/1999/XSL/Transform">
     <xsl:template name="html-body">
         <body>
-            <div id="left">
-                <xsl:apply-templates select="root/menu[@instance='adm']">
-                    <xsl:with-param name="auto" select="0"/>
-                </xsl:apply-templates>
-                <div id="signature">
-                    <a href="http://www.difra.org/">
-                        <span id="signature_difra">
-                            <xsl:value-of select="/root/@frameworkLong"/>
-                        </span>
-                    </a>
-                </div>
+            <xsl:apply-templates select="root/menu[@instance='adm']"/>
+            <div class="container-fluid">
+                <!--
+                                        <div id="signature">
+                                            <a href="http://www.difra.org/">
+                                                <span id="signature_difra">
+                                                    <xsl:value-of select="/root/@frameworkLong"/>
+                                                </span>
+                                            </a>
+                                        </div>
+                -->
+                <xsl:call-template name="content-wrapper"/>
             </div>
-            <xsl:call-template name="content-wrapper"/>
         </body>
     </xsl:template>
 
