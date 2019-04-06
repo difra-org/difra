@@ -1,6 +1,7 @@
 7.0.0
- + Bootstrap-compatible form errors (.is-valid, .is-invalid) and messages (.valid-feedback, .invalid-feedback, .common-feedback)
- + Added compatibility parameter to config instances description
+ + Bootstrap support
+ + Bootstrap adm
+ + Added compatibility parameter to config instances description (to be removed soon)
  + New Difra\Envi\Roots class for paths control instead of DIR_* variables
  + Composer support
  + New Plugin system: plugins can be installed using composer now
@@ -27,8 +28,9 @@
  * Switched to use system-wide fastcgi_params instead of built in values
  * Added "compatibility<7" is deprecated message in ajaxer
  * Modified paginator html
- - Removed Autoloader, using Composer autoloader
+ - Removed old Autoloader
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class
  - Removed Difra\Events class
  - Removed lib/init.php run
+
