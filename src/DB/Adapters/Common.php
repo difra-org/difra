@@ -139,8 +139,7 @@ abstract class Common
         } catch (\Exception $ex) {
             Exception::sendNotification($ex);
             throw new Exception(
-                "Database connection failed: {$this->config['name']}"
-                . (Debugger::isEnabled() ? '(' . $ex->getMessage() . ')' : '')
+                'Database connection failed' . (Debugger::isEnabled() ? ' (' . $ex->getMessage() . ')' : '')
             );
         }
         $this->connected = true;
@@ -149,17 +148,20 @@ abstract class Common
     /**
      * Escape string(s)
      * @param string|array $data
+     * @param bool $noQuotes
      * @return string|array
      * @throws Exception
      */
-    public function escape($data)
+    public function escape($data, $noQuotes = false)
     {
         $this->connect();
         if (!is_array($data)) {
             $esc = $this->pdo->quote((string)$data);
-            $escLength = strlen($esc);
-            if ($esc{0} == '\'' && $esc{$escLength -1} == '\'' && $escLength > 1) {
-                return substr($esc, 1, $escLength - 2);
+            if ($noQuotes) {
+                $escLength = strlen($esc);
+                if ($esc{0} == '\'' && $esc{$escLength - 1} == '\'' && $escLength > 1) {
+                    return substr($esc, 1, $escLength - 2);
+                }
             }
             return $esc;
         }
