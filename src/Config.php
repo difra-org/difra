@@ -121,7 +121,7 @@ class Config
     }
 
     /**
-     * Merge two configuration array
+     * Merge two configuration arrays
      * @param array $a1
      * @param array $a2
      * @return mixed
@@ -129,7 +129,15 @@ class Config
     private function merge($a1, $a2)
     {
         foreach ($a2 as $k => $v) {
-            $a1[$k] = $v;
+            switch ($k) {
+                case 'instances':
+                    // merge value
+                    $a1[$k] = array_merge($a1[$k] ?? [], $a2[$k]);
+                    break;
+                default:
+                    // replace value
+                    $a1[$k] = $v;
+            }
         }
         return $a1;
     }

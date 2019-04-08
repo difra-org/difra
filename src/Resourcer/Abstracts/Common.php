@@ -21,6 +21,8 @@ abstract class Common
     protected $type = null;
     protected $printable = false;
     protected $contentType = null;
+    protected $instancesOrdered = false;
+    protected $reverseIncludes = true;
 
     /**
      * Resource processor
@@ -41,6 +43,14 @@ abstract class Common
         static $_instances = [];
         $name = get_called_class();
         return isset($_instances[$name]) ? $_instances[$name] : $_instances[$name] = new $name();
+    }
+
+    protected function __construct()
+    {
+    }
+
+    protected function __clone()
+    {
     }
 
     /**
@@ -282,11 +292,22 @@ abstract class Common
         $paths = Roots::get(Roots::FIRST_APP);
         $instances = $this->getIncludes($parentInstance);
         $directories = [];
-        foreach ($paths as $dir) {
+        if ($this->instancesOrdered) {
             foreach ($instances as $instance) {
-                if (is_dir($d = "{$dir}/{$this->type}/{$instance}")) {
-                    $found = true;
-                    $directories[] = $d;
+                foreach ($paths as $dir) {
+                    if (is_dir($d = "{$dir}/{$this->type}/{$instance}")) {
+                        $found = true;
+                        $directories[] = $d;
+                    }
+                }
+            }
+        } else {
+            foreach ($paths as $dir) {
+                foreach ($instances as $instance) {
+                    if (is_dir($d = "{$dir}/{$this->type}/{$instance}")) {
+                        $found = true;
+                        $directories[] = $d;
+                    }
                 }
             }
         }
@@ -310,6 +331,7 @@ abstract class Common
         }
         $instances[$instance] = 0;
         $needLoad = true;
+        $priority = 0;
         while ($needLoad) {
             $needLoad = false;
             $sourceInstances = $instances;
@@ -317,19 +339,23 @@ abstract class Common
                 if ($loaded) {
                     continue;
                 }
+                ++$priority;
                 if (empty($dependencies[$instance]) or empty($dependencies[$instance]['include'])) {
-                    $instances[$instance] = 1;
+                    $instances[$instance] = $priority;
                     continue;
                 }
+                $instances[$instance] = $priority;
                 foreach ($dependencies[$instance]['include'] as $dependency => $enabled) {
-                    if (isset($instances[$dependency]) or !$enabled) {
-                        continue;
-                    }
+//                    if (isset($instances[$dependency]) or !$enabled) {
+//                        continue;
+//                    }
                     $instances[$dependency] = 0;
                     $needLoad = true;
                 }
-                $instances[$instance] = 1;
             }
+        }
+        if ($this->reverseIncludes) {
+            arsort($instances);
         }
         return array_keys($instances);
     }

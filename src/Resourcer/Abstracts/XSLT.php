@@ -8,6 +8,8 @@ namespace Difra\Resourcer\Abstracts;
  */
 abstract class XSLT extends Common
 {
+    protected $reverseIncludes = false;
+    
     /**
      * @inheritdoc
      */

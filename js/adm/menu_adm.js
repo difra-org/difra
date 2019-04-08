@@ -14,6 +14,6 @@ $(document).on('click dblclick', '#menu_adm > ul > li', function () {
     }
 });
 
-$(document).on('click dblclick', '#menu_adm > ul > li > ul', function () {
-    return false;
-});
+// $(document).on('click dblclick', '#menu_adm > ul > li > ul', function () {
+    // return false;
+// });

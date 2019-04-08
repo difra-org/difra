@@ -18,7 +18,9 @@ class Email implements Common
             and
             preg_match('/^[a-zA-Z0-9_-]([a-zA-Z0-9._-]*)+@[a-zA-Z0-9._-]+\.([a-zA-Z]{2,10})$/', $string)
             and
-            (filter_var($string, FILTER_SANITIZE_EMAIL) !== false);
+            (filter_var($string, FILTER_SANITIZE_EMAIL) !== false)
+            &&
+            strlen($string) < 255;
     }
 
     /**
