@@ -247,6 +247,20 @@ class Ajaxer
     }
 
     /**
+     * Show modal window
+     * @param string $html
+     */
+    public static function modal($html)
+    {
+        self::addAction(
+            [
+                'action' => 'modal',
+                'html' => $html
+            ]
+        );
+    }
+
+    /**
      * Close overlay
      */
     public static function close()

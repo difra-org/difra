@@ -108,6 +108,9 @@ ajaxer.process = function (data, form) {
                 case 'display':		// display some HTML in overlay
                     this.display(action.html, action.type);
                     break;
+                case 'modal':       // display modal window
+                    this.modal(action.html);
+                    break;
                 case 'reload':		// refresh page
                     this.reload();
                     break;
@@ -541,27 +544,60 @@ ajaxer.overlayRightPadding = null;
  * @param type
  */
 ajaxer.overlayShow = function (content, type) {
-    var overlayClass = type ? 'overlay ' + type : 'overlay';
-    $('body').append('<div class="' + overlayClass + '" id="ajaxer-' + this.id + '">' +
-        '<div class="overlay-container auto-center">' + '<div class="overlay-inner" style="display:none">' +
-        '<div class="close-button action close" onclick="ajaxer.close(this)"></div>' + content + '</div>' + '</div>' +
-        '</div>');
-    var $html = $('html');
-    if (this.overlayControlPadding) {
-        var dw = $(document).width();
-        $html.css('overflow', 'hidden');
-        if (dw != $(document).width()) {
-            this.overlayRightPadding = $html.css('padding-right');
-            $html.css('padding-right', (parseInt(this.overlayRightPadding) + $(document).width() - dw) + 'px');
+        var overlayClass = type ? 'overlay ' + type : 'overlay';
+        $('body').append('<div class="' + overlayClass + '" id="ajaxer-' + this.id + '">' +
+            '<div class="overlay-container auto-center">' + '<div class="overlay-inner" style="display:none">' +
+            '<div class="close-button action close" onclick="ajaxer.close(this)"></div>' + content + '</div>' + '</div>' +
+            '</div>');
+        var $html = $('html');
+        if (this.overlayControlPadding) {
+            var dw = $(document).width();
+            $html.css('overflow', 'hidden');
+            if (dw != $(document).width()) {
+                this.overlayRightPadding = $html.css('padding-right');
+                $html.css('padding-right', (parseInt(this.overlayRightPadding) + $(document).width() - dw) + 'px');
+            } else {
+                this.overlayRightPadding = null;
+            }
         } else {
-            this.overlayRightPadding = null;
+            $html.css('overflow', 'hidden');
         }
+        $('#ajaxer-' + this.id).find('.overlay-inner').fadeIn('fast');
+        $(window).resize();
+        this.id++;
+        return;
+};
+
+ajaxer.modal = function (content) {
+    let modal = $('#ajaxer-modal .modal-content');
+    if (!modal.length) {
+        $('body').append(
+            '<div class="modal fade" id="ajaxer-modal" tabindex="-1" role="dialog" aria-hidden="true">' +
+            '  <div class="modal-dialog modal-dialog-centered" role="document">' +
+            '    <div class="modal-content">' +
+            content +
+            // '      <div class="modal-header">' +
+            // '        <h5 class="modal-title">' + type + '</h5>' +
+            // '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
+            // '          <span aria-hidden="true">&times;</span>' +
+            // '        </button>' +
+            // '      </div>' +
+            // '      <div class="modal-body">' +
+            // content +
+            // '      </div>\n' +
+            // '      <div class="modal-footer">' +
+            // '        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
+            // footer +
+            // '      </div>' +
+            '    </div>' +
+            '  </div>' +
+            '</div>'
+        );
     } else {
-        $html.css('overflow', 'hidden');
+        modal.html(content);
     }
-    $('#ajaxer-' + this.id).find('.overlay-inner').fadeIn('fast');
-    $(window).resize();
-    this.id++;
+    $('#ajaxer-modal').modal('show');
+
 };
 
 /**
