@@ -23,7 +23,7 @@
 				<xsl:when test="/root/content/@keywords and not(/root/content/@keywords='')">
 					<meta name="keywords" content="{/root/content/@keywords}"/>
 				</xsl:when>
-				<xsl:when test="$locale/default/keywords">
+				<xsl:when test="$locale/default/keywords and not ($locale/default/keywords='')">
 					<meta name="keywords" content="{$locale/default/keywords}"/>
 				</xsl:when>
 			</xsl:choose>
@@ -32,10 +32,17 @@
 				<xsl:when test="/root/content/@description and not(/root/content/@description='')">
 					<meta name="description" content="{/root/content/@description}"/>
 				</xsl:when>
-				<xsl:when test="$locale/default/description">
+				<xsl:when test="$locale/default/description and not ($locale/default/description='')">
 					<meta name="description" content="{$locale/default/description}"/>
 				</xsl:when>
 			</xsl:choose>
+
+			<!-- jquery -->
+			<xsl:call-template name="jquery-headers"/>
+			<!-- popper -->
+			<xsl:call-template name="popper-headers"/>
+			<!-- bootstrap -->
+			<xsl:call-template name="bootstrap-headers"/>
 
 			<link type="text/css" href="{/root/@urlprefix}/css/{$instance}.css?{/root/@build}"
 			      rel="stylesheet"/>
@@ -46,7 +53,6 @@
 				      rel="stylesheet"/>
 				<script type="text/javascript" src="{/root/@urlprefix}/js/console.js?{/root/@build}"/>
 			</xsl:if>
-
 
 			<script type="text/javascript">
 				<!--suppress CheckValidXmlInScriptTagBody -->

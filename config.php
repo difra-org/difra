@@ -5,8 +5,8 @@ return [
         'main' => [
             'include' => [
                 'jquery' => true,
-                'all' => true,
                 'bootstrap' => true,
+                'all' => true,
                 'switcher' => true
             ]
         ],
@@ -16,7 +16,8 @@ return [
                 'jquery' => true,
 //                'switcher' => true,
                 'bootstrap' => true,
-                'all' => true
+                'all' => true,
+                'fontawesome' => true
             ]
         ],
         'all' => [
