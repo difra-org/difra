@@ -340,13 +340,14 @@ ajaxer.load = function (target, html, replace) {
     if (replace) {
         $(target).replaceWith(html);
     } else {
-        var cut = $(html).filter(target);
+        const cut = $(html).filter(target);
         if (cut.length) {
             $(target).replaceWith(cut);
         } else {
             $(target).html(html);
         }
     }
+    $(document).triggerHandler('ajaxerLoad');
     $(window).resize();
 };
 
