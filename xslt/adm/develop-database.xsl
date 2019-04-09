@@ -13,12 +13,12 @@
         </h2>
         <xsl:choose>
             <xsl:when test="@error">
-                <div class="error">
+                <div class="alert alert-danger">
                     <xsl:value-of select="@error"/>
                 </div>
             </xsl:when>
             <xsl:when test="count(table[@diff=1])=0 and count(table[@nodef=1])=0 and count(table[@nogoal=1])=0">
-                <div class="message">
+                <div class="alert alert-success">
                     <xsl:value-of select="$locale/adm/stats/database/status-ok"/>
                 </div>
             </xsl:when>
@@ -31,25 +31,25 @@
     <xsl:template match="table" mode="diff">
         <xsl:choose>
             <xsl:when test="@diff=1">
-                <table>
-                    <colgroup>
-                        <col style="width:250px"/>
-                        <col/>
-                    </colgroup>
-                    <tbody>
+                <table class="table table-striped">
+                    <thead style="thead-dark">
                         <tr>
-                            <td colspan="2">
+                            <th colspan="2">
                                 <xsl:text>Table </xsl:text>
                                 <strong>`<xsl:value-of select="@name"/>`
                                 </strong>
                                 <xsl:text> diff:</xsl:text>
 
-                            </td>
+                            </th>
                         </tr>
+                    </thead>
+                    <thead style="thead-light">
                         <tr>
-                            <td style="width:50%">Current</td>
-                            <td>Described</td>
+                            <th style="width:50%">Current</th>
+                            <th>Described</th>
                         </tr>
+                    </thead>
+                    <tbody>
                         <xsl:for-each select="diff">
                             <xsl:choose>
                                 <xsl:when test="@sign='='">
@@ -86,21 +86,21 @@
                 </table>
             </xsl:when>
             <xsl:when test="@nogoal=1">
-                <div class="message error">
+                <div class="alert alert-danger">
                     <xsl:text>Table `</xsl:text>
                     <xsl:value-of select="@name"/>
                     <xsl:text>` is not described.</xsl:text>
                 </div>
             </xsl:when>
             <xsl:when test="@nodef=1">
-                <div class="message error">
+                <div class="alert alert-danger">
                     <xsl:text>Table `</xsl:text>
                     <xsl:value-of select="@name"/>
                     <xsl:text>` does not exist.</xsl:text>
                 </div>
             </xsl:when>
             <xsl:otherwise>
-                <div class="message">
+                <div class="alert alert-success">
                     <xsl:text>Table `</xsl:text>
                     <xsl:value-of select="@name"/>
                     <xsl:text>` is ok.</xsl:text>
