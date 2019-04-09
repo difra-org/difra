@@ -14,8 +14,7 @@
  * destruct        fires before page change
  * switch        fires after destruct when script understands that page switch will be successful
  */
-
-var switcher = {};
+let switcher = {};
 
 switcher.noPush = false;
 switcher.url = false;
@@ -25,13 +24,14 @@ switcher.ajaxConfig = {
     async: true, cache: false, headers: {'X-Requested-With': 'SwitchPage'}, type: 'GET', beforeSend: function () {
         loading.show();
     }, success: function (data, status, xhr) {
+        let newdata;
         try {
-            var newdata = $(data);
+            newdata = $(data);
         } catch (ignore) {
             switcher.fallback();
             return;
         }
-        var a = newdata.filter('.switcher').add(newdata.find('.switcher'));
+        const a = newdata.filter('.switcher').add(newdata.find('.switcher'));
         if (!a.length) {
             switcher.fallback();
             return;
@@ -50,7 +50,7 @@ switcher.ajaxConfig = {
         });
         $(window).scrollTop(0);
 
-        var title = newdata.filter('title').text();
+        let title = newdata.filter('title').text();
         if (title.length) {
             document.title = title;
         } else {
@@ -83,18 +83,18 @@ switcher.fallback = function () {
  */
 switcher.page = function (url, noPush, data) {
     // cut protocol://host part if it matches current host
-    var host = window.location.protocol + "//" + window.location.host + "/";
-    if (host == url.substring(0, host.length)) {
+    const host = window.location.protocol + "//" + window.location.host + "/";
+    if (host === url.substring(0, host.length)) {
         switcher.page(url.substring(host.length - 1), noPush, data);
         return;
     }
-    if (typeof debug != 'undefined') {
+    if (typeof debug !== 'undefined') {
         debug.addReq('Switching page: ' + url);
     }
     switcher.noPush = !!noPush;
     switcher.referrer = switcher.url;
     switcher.url = url;
-    if (typeof data == 'undefined') {
+    if (typeof data === 'undefined') {
         if ($('.switcher:not(#debug)').length) {
             $.ajax(url, switcher.ajaxConfig);
         } else {
@@ -103,7 +103,7 @@ switcher.page = function (url, noPush, data) {
             window.location = switcher.url;
         }
     } else {
-        var conf = switcher.ajaxConfig;
+        let conf = switcher.ajaxConfig;
         conf.type = 'POST';
         conf.data = data;
         $.ajax(url, conf);
@@ -126,18 +126,18 @@ switcher.bind = function () {
             return;
         }
 
-        var href = $(this).attr('href');
+        const href = $(this).attr('href');
 
         // skip empty links, anchors and javascript
-        if (href == '' || href == '#') {
+        if (href === '' || href === '#') {
             event.preventDefault();
             return;
         }
-        if (href.substr(0, 11) == 'javascript:' || href.substr(0, 1) == '#') {
+        if (href.substr(0, 11) === 'javascript:' || href.substr(0, 1) === '#') {
             return;
         }
-        
-        var host = window.location.protocol + '//' + window.location.host + '/';
+
+        const host = window.location.protocol + '//' + window.location.host + '/';
         if (host !== href.substring(0, host.length) && href.indexOf('://') !== -1) {
             return;
         }
@@ -152,7 +152,7 @@ switcher.bind = function () {
  * Support "Back" and "Forward" browser buttons
  */
 switcher.onpopstate = function () {
-    if (switcher.url && switcher.url != decodeURI(document.location.pathname)) {
+    if (switcher.url && switcher.url !== decodeURI(document.location.pathname)) {
         switcher.page(document.location.href, true);
     }
 };
