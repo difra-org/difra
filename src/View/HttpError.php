@@ -183,7 +183,13 @@ class HttpError extends \Exception
             $root->setAttribute('build', Version::getBuild());
             $configNode = $root->appendChild($xml->createElement('config'));
             Envi::getStateXML($configNode);
-            View::render($xml, 'error_' . $err);
+//            View::render($xml, 'error_' . $err);
+            $view = new View();
+            $view->setTemplateInstance('error_' . $err);
+            $view->setEcho(true);
+            $view->setFillXML(true);
+            $view->setNormalize(true);
+            $view->process($xml);
         } catch (\Difra\Exception $ex) {
             echo(<<<ErrorPage
 <html>
