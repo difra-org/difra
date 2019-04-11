@@ -1,14 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xsl:stylesheet xmlns:xsl="http://www.w3.org/1999/XSL/Transform" version="1.0">
     <xsl:template match="paginator">
-        <div class="row">
-            <xsl:call-template name="paginator">
-                <xsl:with-param name="current" select="@page"/>
-                <xsl:with-param name="pages" select="@pages"/>
-                <xsl:with-param name="link" select="@link"/>
-                <xsl:with-param name="get" select="@get"/>
-            </xsl:call-template>
-        </div>
+        <xsl:call-template name="paginator">
+            <xsl:with-param name="current" select="@page"/>
+            <xsl:with-param name="pages" select="@pages"/>
+            <xsl:with-param name="link" select="@link"/>
+            <xsl:with-param name="get" select="@get"/>
+        </xsl:call-template>
     </xsl:template>
 
     <xsl:template name="paginator">
@@ -141,14 +139,14 @@
                         </xsl:choose>
                     </xsl:variable>
                     <!--<xsl:if test="$current &lt; $pages">-->
-                        <xsl:call-template name="paginatorLink">
-                            <xsl:with-param name="get" select="$get"/>
-                            <xsl:with-param name="link" select="$link"/>
-                            <xsl:with-param name="page" select="$current + 1"/>
-                            <xsl:with-param name="text">→</xsl:with-param>
-                            <xsl:with-param name="addClasses">pagerNext</xsl:with-param>
-                            <xsl:with-param name="disabled" select="$disabled"/>
-                        </xsl:call-template>
+                    <xsl:call-template name="paginatorLink">
+                        <xsl:with-param name="get" select="$get"/>
+                        <xsl:with-param name="link" select="$link"/>
+                        <xsl:with-param name="page" select="$current + 1"/>
+                        <xsl:with-param name="text">→</xsl:with-param>
+                        <xsl:with-param name="addClasses">pagerNext</xsl:with-param>
+                        <xsl:with-param name="disabled" select="$disabled"/>
+                    </xsl:call-template>
                     <!--</xsl:if>-->
                 </xsl:otherwise>
             </xsl:choose>
