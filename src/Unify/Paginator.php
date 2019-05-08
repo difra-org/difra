@@ -42,6 +42,12 @@ class Paginator
         return [($this->page - 1) * $this->perpage, $this->perpage];
     }
 
+    public function getSQL()
+    {
+        $limit = $this->getPaginatorLimit();
+        return " LIMIT {$limit[0]},{$limit[1]} ";
+    }
+
     /**
      * Set total elements number
      * @param int $count
