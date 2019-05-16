@@ -5,6 +5,8 @@
  * form-submit                fires before sending form data
  */
 
+// todo: rework loading overlay and upload progress bar
+
 const ajaxer = {};
 ajaxer.id = 1;
 
@@ -673,7 +675,7 @@ $(document).on('submit', 'form.ajaxer', function (event) {
         ajaxer.initIframe(form, event)
     });
     $('body').append(frame);
-    loading.show();
+    // loading.show();
 });
 
 /**
@@ -713,11 +715,11 @@ ajaxer.initIframe = function (form, event) {
         form.find('input[name=_method]').remove();
         $('iframe#ajaxerFrame').remove();
         //noinspection JSJQueryEfficiency
-        var upprog = $('#upprog');
-        if (upprog.length) {
-            loading.find('td1').css('width', Math.ceil($('#upprog').width() - 20) + 'px');
-        }
-        loading.hide();
+        // var upprog = $('#upprog');
+        // if (upprog.length) {
+        //     loading.find('td1').css('width', Math.ceil($('#upprog').width() - 20) + 'px');
+        // }
+        // loading.hide();
         ajaxer.process(val, form);
     });
     // submit form
