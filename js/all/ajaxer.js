@@ -111,7 +111,7 @@ ajaxer.process = function (data, form) {
                     this.display(action.html, action.type);
                     break;
                 case 'modal':       // display modal window
-                    this.modal(action.html);
+                    this.modal(action.html, action.size);
                     break;
                 case 'reload':		// refresh page
                     this.reload();
@@ -571,36 +571,24 @@ ajaxer.overlayShow = function (content, type) {
         return;
 };
 
-ajaxer.modal = function (content) {
-    let modal = $('#ajaxer-modal .modal-content');
+ajaxer.modal = function (content, size) {
+    let modal = $('#ajaxer-modal');
+    let sizeClass = '';
+    if (size) {
+        sizeClass = ' modal-' + size;
+    }
+    content = '<div class="modal-dialog modal-dialog-centered' + sizeClass + '" role="document">' +
+        '<div class="modal-content">' +
+        content +
+        '</div></div>';
     if (!modal.length) {
         $('body').append(
-            '<div class="modal fade" id="ajaxer-modal" tabindex="-1" role="dialog" aria-hidden="true">' +
-            '  <div class="modal-dialog modal-dialog-centered" role="document">' +
-            '    <div class="modal-content">' +
-            content +
-            // '      <div class="modal-header">' +
-            // '        <h5 class="modal-title">' + type + '</h5>' +
-            // '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
-            // '          <span aria-hidden="true">&times;</span>' +
-            // '        </button>' +
-            // '      </div>' +
-            // '      <div class="modal-body">' +
-            // content +
-            // '      </div>\n' +
-            // '      <div class="modal-footer">' +
-            // '        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
-            // footer +
-            // '      </div>' +
-            '    </div>' +
-            '  </div>' +
-            '</div>'
+            '<div class="modal fade" id="ajaxer-modal" tabindex="-1" role="dialog" aria-hidden="true">' + content + '</div>'
         );
     } else {
         modal.html(content);
     }
     $('#ajaxer-modal').modal('show');
-
 };
 
 /**
