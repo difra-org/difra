@@ -300,4 +300,12 @@ abstract class Controller
     {
         return !empty(self::$parameters);
     }
+
+    /**
+     * Get controller URI shortcut
+     */
+    protected function getUri()
+    {
+        return Action::getControllerUri();
+    }
 }
