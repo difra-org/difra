@@ -177,7 +177,8 @@ class View
         $dontEcho = false,
         $dontFillXML = false,
         $normalize = true
-    ) {
+    )
+    {
         $view = new self;
         $view->setTemplateInstance($specificInstance);
         $view->setEcho(!$dontEcho);
@@ -231,5 +232,15 @@ class View
         $view = new static;
         $view->setTemplateInstance($instance);
         return $view->process($xml);
+    }
+
+    public static function simpleRender($node, $template)
+    {
+        $view = new static();
+        $view->setFillXML(false);
+        $view->setEcho(false);
+        $view->setTemplateInstance('modals');
+        $view->setNormalize(false);
+        return $view->process($node);
     }
 }
