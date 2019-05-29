@@ -9,7 +9,7 @@ class Strings implements Common
      */
     public static function validate($string)
     {
-        return is_string($value);
+        return is_string($string);
     }
 
     /**
@@ -17,6 +17,6 @@ class Strings implements Common
      */
     public static function sanitize($string)
     {
-        return (string)$value;
+        return (string)$string;
     }
 }
