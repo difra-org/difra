@@ -43,32 +43,35 @@ class View
     /**
      * Set template instance
      * @param string $templateInstance
+     * @return View
      */
     public function setTemplateInstance(string $templateInstance)
     {
-        if ($this->templateInstance === $templateInstance) {
-            return;
+        if ($this->templateInstance !== $templateInstance) {
+            $this->templateInstance = $templateInstance;
+            $this->xslProcessor = null;
         }
-        $this->templateInstance = $templateInstance;
-        $this->xslProcessor = null;
+        return $this;
     }
 
     /**
      * Set echo flag
      * @param bool $echo
+     * @return View
      */
     public function setEcho(bool $echo)
     {
-        if ($this->echo === $echo) {
-            return;
+        if ($this->echo !== $echo) {
+            $this->echo = $echo;
+            $this->xslProcessor = null;
         }
-        $this->echo = $echo;
-        $this->xslProcessor = null;
+        return $this;
     }
 
     /**
      * Set fill XML flag
      * @param int $fillXML
+     * @return View
      */
     public function setFillXML($fillXML)
     {
@@ -79,24 +82,25 @@ class View
             $fillXML = self::FILL_XML_NONE;
         }
 
-        if ($this->fillXML === $fillXML) {
-            return;
+        if ($this->fillXML !== $fillXML) {
+            $this->fillXML = $fillXML;
+            $this->xslProcessor = null;
         }
-        $this->fillXML = $fillXML;
-        $this->xslProcessor = null;
+        return $this;
     }
 
     /**
      * Set normalize flag
      * @param bool $normalize
+     * @return View
      */
     public function setNormalize(bool $normalize)
     {
-        if ($this->normalize === $normalize) {
-            return;
+        if ($this->normalize !== $normalize) {
+            $this->normalize = $normalize;
+            $this->xslProcessor = null;
         }
-        $this->normalize = $normalize;
-        $this->xslProcessor = null;
+        return $this;
     }
 
     /**
@@ -177,7 +181,8 @@ class View
         $dontEcho = false,
         $dontFillXML = false,
         $normalize = true
-    ) {
+    )
+    {
         $view = new self;
         $view->setTemplateInstance($specificInstance);
         $view->setEcho(!$dontEcho);
@@ -224,6 +229,12 @@ class View
         }
     }
 
+    /**
+     * @param $instance
+     * @param $rootNodeName
+     * @return bool|string
+     * @deprecated
+     */
     public static function simpleTemplate($instance, $rootNodeName)
     {
         $xml = new \DOMDocument();
