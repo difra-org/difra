@@ -76,16 +76,25 @@ class Paginator
     }
 
     /**
-     * Set current page
-     * @param $page
+     * Set current page number
+     * @param int $page
      * @throws Exception
      */
-    public function setPage($page)
+    public function setPage(int $page)
     {
-        if (!ctype_digit((string)"$page") or $page < 1) {
+        if ($page < 1) {
             throw new Exception("Expected page number as parameter");
         }
-        $this->page = (int)$page;
+        $this->page = $page;
+    }
+
+    /**
+     * Get current page number
+     * @return int
+     */
+    public function getPage(): int
+    {
+        return $this->page;
     }
 
     /**
