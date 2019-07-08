@@ -57,23 +57,22 @@ abstract class Common
         $this->value = self::canonicalize($value);
         switch (static::type) {
             case 'string':
-                $this->value = (string)$value;
+                $this->value = Filter\Strings::sanitize($value);
                 break;
             case 'int':
-                $this->value = filter_var($value, FILTER_SANITIZE_NUMBER_INT);
+                $this->value = Filter\Ints::sanitize($value);
                 break;
             case 'float':
-                $value = str_replace(',', '.', $value);
-                $this->value = filter_var($value, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
+                $this->value = Filter\Floats::sanitize($value);
                 break;
             case 'url':
-                $this->value = filter_var($value, FILTER_SANITIZE_URL);
+                $this->value = Filter\URL::sanitize($value);
                 break;
             case 'email':
                 $this->value = Filter\Email::sanitize($value);
                 break;
             case 'ip':
-                $this->value = filter_var($value, FILTER_VALIDATE_IP) ? $value : null;
+                $this->value = Filter\IP::sanitize($value);
                 break;
             case 'datetime':
                 $this->value = Filter\Datetime::sanitize($value);
@@ -138,19 +137,17 @@ abstract class Common
         $value = self::canonicalize($value);
         switch (static::type) {
             case 'string':
-                return is_string($value);
+                return Filter\Strings::validate($value);
             case 'int':
-                return filter_var($value, FILTER_VALIDATE_INT) or $value === '0';
+                return Filter\Ints::validate($value);
             case 'float':
-                $value = str_replace(',', '.', $value);
-                return (false !== filter_var($value, FILTER_VALIDATE_FLOAT)) ? true : false;
+                return Filter\Floats::validate($value);
             case 'url':
-                // TODO: заменить этот фильтр на ESAPI
-                return filter_var($value, FILTER_VALIDATE_URL);
+                return Filter\URL::validate($value);
             case 'email':
                 return Filter\Email::validate($value);
             case 'ip':
-                return filter_var($value, FILTER_VALIDATE_IP);
+                return Filter\IP::validate($value);
             case 'datetime':
                 return Filter\Datetime::validate($value);
             case self::TYPE_DATE:

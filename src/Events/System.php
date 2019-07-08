@@ -2,8 +2,10 @@
 
 namespace Difra\Events;
 
+use Difra\Debugger;
 use Difra\Envi;
 use Difra\Exception;
+use Difra\View\HttpError;
 
 /**
  * Class System
@@ -49,12 +51,22 @@ class System extends Event
      */
     public static function run()
     {
-        self::init();
-        foreach (self::$systemEvents as $eventType => $eventRun) {
-            if ($eventType === Event::RUN_WEB && Envi::getMode() != Envi::MODE_WEB) {
-                continue;
+        try {
+            self::init();
+            foreach (self::$systemEvents as $eventType => $eventRun) {
+                if ($eventType === Event::RUN_WEB && Envi::getMode() != Envi::MODE_WEB) {
+                    continue;
+                }
+                self::getInstance($eventType)->start();
             }
-            self::getInstance($eventType)->start();
+        } catch (HttpError $e) {
+            throw $e;
+        } catch (\Exception $e) {
+            if (Debugger::isEnabled()) {
+                throw $e;
+            }
+            \Difra\Exception::sendNotification($e);
+            throw new HttpError(500);
         }
     }
 

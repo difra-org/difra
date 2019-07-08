@@ -5,6 +5,8 @@
  * form-submit                fires before sending form data
  */
 
+// todo: rework loading overlay and upload progress bar
+
 const ajaxer = {};
 ajaxer.id = 1;
 
@@ -109,7 +111,7 @@ ajaxer.process = function (data, form) {
                     this.display(action.html, action.type);
                     break;
                 case 'modal':       // display modal window
-                    this.modal(action.html);
+                    this.modal(action.html, action.size);
                     break;
                 case 'reload':		// refresh page
                     this.reload();
@@ -569,36 +571,24 @@ ajaxer.overlayShow = function (content, type) {
         return;
 };
 
-ajaxer.modal = function (content) {
-    let modal = $('#ajaxer-modal .modal-content');
+ajaxer.modal = function (content, size) {
+    let modal = $('#ajaxer-modal');
+    let sizeClass = '';
+    if (size) {
+        sizeClass = ' modal-' + size;
+    }
+    content = '<div class="modal-dialog modal-dialog-centered' + sizeClass + '" role="document">' +
+        '<div class="modal-content">' +
+        content +
+        '</div></div>';
     if (!modal.length) {
         $('body').append(
-            '<div class="modal fade" id="ajaxer-modal" tabindex="-1" role="dialog" aria-hidden="true">' +
-            '  <div class="modal-dialog modal-dialog-centered" role="document">' +
-            '    <div class="modal-content">' +
-            content +
-            // '      <div class="modal-header">' +
-            // '        <h5 class="modal-title">' + type + '</h5>' +
-            // '        <button type="button" class="close" data-dismiss="modal" aria-label="Close">' +
-            // '          <span aria-hidden="true">&times;</span>' +
-            // '        </button>' +
-            // '      </div>' +
-            // '      <div class="modal-body">' +
-            // content +
-            // '      </div>\n' +
-            // '      <div class="modal-footer">' +
-            // '        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>' +
-            // footer +
-            // '      </div>' +
-            '    </div>' +
-            '  </div>' +
-            '</div>'
+            '<div class="modal fade" id="ajaxer-modal" tabindex="-1" role="dialog" aria-hidden="true">' + content + '</div>'
         );
     } else {
         modal.html(content);
     }
     $('#ajaxer-modal').modal('show');
-
 };
 
 /**
@@ -673,7 +663,7 @@ $(document).on('submit', 'form.ajaxer', function (event) {
         ajaxer.initIframe(form, event)
     });
     $('body').append(frame);
-    loading.show();
+    // loading.show();
 });
 
 /**
@@ -713,11 +703,11 @@ ajaxer.initIframe = function (form, event) {
         form.find('input[name=_method]').remove();
         $('iframe#ajaxerFrame').remove();
         //noinspection JSJQueryEfficiency
-        var upprog = $('#upprog');
-        if (upprog.length) {
-            loading.find('td1').css('width', Math.ceil($('#upprog').width() - 20) + 'px');
-        }
-        loading.hide();
+        // var upprog = $('#upprog');
+        // if (upprog.length) {
+        //     loading.find('td1').css('width', Math.ceil($('#upprog').width() - 20) + 'px');
+        // }
+        // loading.hide();
         ajaxer.process(val, form);
     });
     // submit form

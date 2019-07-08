@@ -16,6 +16,7 @@
  + Added SyslogUDP logger target
  + New reworked Mailer with SMTP and multiple new features
  + Added /root/@actionUri property
+ + Added Controller->getUri() shortcut
  * Event handlers are Callables now
  * Cleaned out old SVN versioning code
  * Ajaxer overlay z-index changed to 9999

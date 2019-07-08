@@ -45,6 +45,11 @@ return [
                 'jquery' => true
 //                'websymbols' => true
             ]
+        ],
+        'bootstrap-select' => [
+            'include' => [
+                'bootstrap' => true
+            ]
         ]
     ]
 ];
