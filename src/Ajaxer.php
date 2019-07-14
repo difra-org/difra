@@ -246,13 +246,15 @@ class Ajaxer
         );
     }
 
-    const MODAL_SIZE_SM = 'sm';
-    const MODAL_SIZE_LARGE = 'lg';
-    const MODAL_SIZE_DEFAULT = '';
+    const MODAL_SIZE_SM = 'sm';     // 300px
+    const MODAL_SIZE_DEFAULT = '';  // 500px
+    const MODAL_SIZE_LARGE = 'lg';  // 800px
+    const MODAL_SIZE_XL = 'xl';     // 1140px
 
     /**
      * Show modal window
-     * @param string $html
+     * @param string $html  Modal content
+     * @param string $size  Modal size
      */
     public static function modal($html, $size = self::MODAL_SIZE_DEFAULT)
     {
