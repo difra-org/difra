@@ -320,6 +320,7 @@ ajaxer.display = function (html, type) {
 ajaxer.close = function (obj) {
 
     ajaxer.overlayHide(obj);
+    $('#ajaxer-modal').modal('hide');
 };
 
 /**
@@ -779,15 +780,16 @@ $(document).on('click dblclick touchend', 'a.ajaxer', function (e) {
     e.preventDefault();
 });
 
-/**
- * Let Enter key submit .ajaxer forms. It's common behavior for web applications.
- */
-$(document).on('keypress', '.ajaxer input', function (e) {
-    if (e.which == 13) {
-        $(this).parents('form').submit();
-        e.preventDefault();
-    }
-});
+// /**
+//  * Let Enter key submit .ajaxer forms. It's common behavior for web applications.
+//  */
+// $(document).on('keypress', '.ajaxer input', function (e) {
+//     if (e.which == 13) {
+//         console.log('ajaxer/keypress');
+//         $(this).parents('form').submit();
+//         e.preventDefault();
+//     }
+// });
 
 /**
  * Let element with .submit class submit form.
