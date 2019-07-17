@@ -1,11 +1,8 @@
-<?php
+<?php /** @noinspection PhpUndefinedClassInspection */
 
-/** @noinspection PhpUndefinedClassInspection */
-/**
- * Class IndexController
- * Default index controller.
- */
-class IndexController extends \Difra\Controller
+namespace Controller;
+
+class Index extends \Difra\Controller
 {
     public function indexAction()
     {

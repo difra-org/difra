@@ -49,6 +49,7 @@ class Action
     /**
      * Find controller and action for current URI
      * @throws Exception
+     * @throws HttpError
      */
     public static function find()
     {
@@ -279,7 +280,7 @@ class Action
         foreach (self::$controllerClass as $k => $v) {
             self::$controllerClass[$k] = ucFirst($v);
         };
-        self::$controllerClass = implode(self::$controllerClass) . 'Controller';
+        self::$controllerClass = '\\Controller\\' . implode('\\', self::$controllerClass);
         return $controllerFile;
     }
 

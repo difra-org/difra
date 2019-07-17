@@ -1,10 +1,8 @@
 <?php
 
-/**
- * Class AdmStatusIndexController
- * Displays some stats.
- */
-class AdmStatusIndexController extends Difra\Controller\Adm
+namespace Controller\Adm\Status;
+
+class Index extends \Difra\Controller\Adm
 {
     public function indexAction()
     {

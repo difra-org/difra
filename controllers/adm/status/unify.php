@@ -1,19 +1,9 @@
 <?php
 
-/**
- * Class AdmStatusUnifyController
- * Controller for Unify object tables actions.
- */
-class AdmStatusUnifyController extends Difra\Controller
-{
-    /**
-     * Dispatcher
-     */
-    public function dispatch()
-    {
-        \Difra\View::$instance = 'adm';
-    }
+namespace Controller\Adm\Status;
 
+class Unify extends \Difra\Controller\Adm
+{
     /**
      * Create table for Unify object
      *
