@@ -1,10 +1,8 @@
 <?php
 
-/**
- * Class IframeController
- * Displays empty page for iframes' src attribute.
- */
-class IframeController extends Difra\Controller
+namespace Controller;
+
+class Iframe extends \Difra\Controller
 {
     public function indexAction()
     {

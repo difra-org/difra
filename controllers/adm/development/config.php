@@ -1,16 +1,18 @@
 <?php
 
-/**
- * Class AdmDevelopmentConfigController
- */
-class AdmDevelopmentConfigController extends \Difra\Controller
+namespace Controller\Adm\Development;
+
+class Config extends \Difra\Controller\Adm
 {
+    /**
+     * Dispatcher
+     * @throws \Difra\View\HttpError
+     */
     public function dispatch()
     {
         if (!\Difra\Debugger::isEnabled()) {
             throw new \Difra\View\HttpError(404);
         }
-        \Difra\View::$instance = 'adm';
     }
 
     public function indexAction()

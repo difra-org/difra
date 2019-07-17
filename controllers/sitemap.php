@@ -1,11 +1,8 @@
 <?php
 
-/**
- * Class SitemapController
- * Displays site maps.
- * Plugins should export data to appear in site maps.
- */
-class SitemapController extends \Difra\Controller
+namespace Controller;
+
+class Sitemap extends \Difra\Controller
 {
     /** Cache lifetime */
     const CACHE_TTL = 900; // 15 minutes
@@ -17,8 +14,7 @@ class SitemapController extends \Difra\Controller
      * /sitemap-2.xml
      * etc.
      *
-     * @param Difra\Param\AnyInt $page
-     * @throws Difra\View\HttpError
+     * @throws \Difra\View\HttpError
      */
     public function indexAction(\Difra\Param\AnyInt $page = null)
     {
@@ -45,6 +41,7 @@ class SitemapController extends \Difra\Controller
      *
      * @param \Difra\Param\AnyInt $page
      * @throws \Difra\View\HttpError
+     * @throws \Difra\Exception
      */
     public function htmlAction(\Difra\Param\AnyInt $page = null)
     {

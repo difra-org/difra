@@ -1,13 +1,18 @@
 <?php
 
-/**
- * Class AdmDevelopmentLocalesController
- */
-class AdmDevelopmentLocalesController extends \Difra\Controller
+namespace Controller\Adm\Development;
+
+class Locales extends \Difra\Controller
 {
+    /**
+     * Dispatcher
+     * @throws \Difra\View\HttpError
+     */
     public function dispatch()
     {
-        \Difra\View::$instance = 'adm';
+        if (!\Difra\Debugger::isEnabled()) {
+            throw new \Difra\View\HttpError(404);
+        }
     }
 
     public function indexAction()
