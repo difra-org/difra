@@ -1,4 +1,5 @@
 7.0.0
+ * New controller naming scheme: instead of PathActionController use \Controller\Path\Action.
  + Bootstrap support
  + Bootstrap adm
  + Added compatibility parameter to config instances description (to be removed soon)
