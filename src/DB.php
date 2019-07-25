@@ -92,4 +92,22 @@ class DB
 
         return $cfg;
     }
+
+    /**
+     * Create set string from array keys
+     * Example:
+     * ['key1' => 'value1', 'key2' => 'value2'] converts to "`key1`=:key1,`key2`=:key2"
+     * Warning: keys are not escaped!
+     *
+     * @param $array
+     * @return string
+     */
+    public static function getSetKeys($array) : string
+    {
+        $set = [];
+        foreach ($array as $k=>$v) {
+            $set[] = "`$k`=:$k";
+        }
+        return implode(',', $set);
+    }
 }
