@@ -321,6 +321,7 @@ ajaxer.close = function (obj) {
 
     ajaxer.overlayHide(obj);
     $('#ajaxer-modal').modal('hide');
+    $(document).triggerHandler('modal-hide');
 };
 
 /**
@@ -590,6 +591,7 @@ ajaxer.modal = function (content, size) {
         modal.html(content);
     }
     $('#ajaxer-modal').modal('show');
+    $(document).triggerHandler('modal-show');
 };
 
 /**
