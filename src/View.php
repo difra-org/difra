@@ -244,12 +244,12 @@ class View
         return $view->process($xml);
     }
 
-    public static function simpleRender($node, $template)
+    public static function simpleRender($node, $template = 'modals')
     {
         $view = new static();
         $view->setFillXML(false);
         $view->setEcho(false);
-        $view->setTemplateInstance('modals');
+        $view->setTemplateInstance($template);
         $view->setNormalize(false);
         return $view->process($node);
     }
