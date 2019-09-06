@@ -54,7 +54,7 @@ class System extends Event
         try {
             self::init();
             foreach (self::$systemEvents as $eventType => $eventRun) {
-                if ($eventType === Event::RUN_WEB && Envi::getMode() != Envi::MODE_WEB) {
+                if ($eventRun === Event::RUN_WEB && Envi::getMode() !== Envi::MODE_WEB) {
                     continue;
                 }
                 self::getInstance($eventType)->start();
