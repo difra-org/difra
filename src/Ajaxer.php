@@ -142,6 +142,7 @@ class Ajaxer
                 ]
             ]
         );
+        self::$problem = true;
     }
 
     /**
