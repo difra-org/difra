@@ -108,6 +108,7 @@ class Event
     /**
      * Trigger custom event
      * @throws Exception
+     * @throws \Difra\View\HttpError
      */
     public function trigger()
     {
@@ -116,6 +117,8 @@ class Event
 
     /**
      * Call handlers
+     * @throws \Difra\View\HttpError
+     * @throws Exception
      */
     protected function start()
     {
