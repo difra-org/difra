@@ -231,7 +231,7 @@ abstract class Controller
                     if (!is_null($value) and $value !== '') {
                         if (!call_user_func(["$class", "verify"], $value)) {
                             Ajaxer::invalid($name);
-                            continue;
+                            continue 2;
                         }
                         $callParameters[$name] = new $class($value);
                     } elseif (call_user_func(["$class", 'isAuto'])) {

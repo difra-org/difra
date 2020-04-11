@@ -153,7 +153,7 @@ class LoggerPatternParser {
 					// In literal state, the last char is always a literal.
 					if($this->i == $this->patternLength) {
 						$this->currentLiteral .= $c;
-						continue;
+						continue 2;
 					}
 					if($c == self::LOG4PHP_LOGGER_PATTERN_PARSER_ESCAPE_CHAR) {
 						// LoggerLog::debug("LoggerPatternParser::parse() char is an escape char");
