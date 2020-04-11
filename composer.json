@@ -12,7 +12,7 @@
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://git.a-jam.net/scm/difra/difra.git"
+            "url": "git@github.com:difra-org/cms.git"
         }
     ],
     "homepage": "https://www.difra.org",
