@@ -2,13 +2,9 @@
 
 namespace Difra\Resourcer;
 
-/**
- * Class CSS
- * @package Difra\Resourcer
- */
-class CSS extends Abstracts\Plain
+class SASS extends Abstracts\Plain
 {
-    protected $type = 'css';
+    protected $type = 'scss';
     protected $printable = true;
     protected $contentType = 'text/css';
     protected $instancesOrdered = true;
@@ -19,8 +15,9 @@ class CSS extends Abstracts\Plain
             $this->printSequenceDebug = true;
         }
     }
-//    public function processText($text)
-//    {
-//        return \Difra\Libs\Less::compile($text);
-//    }
+
+    protected function getFile($file)
+    {
+        return file_get_contents($file);
+    }
 }
