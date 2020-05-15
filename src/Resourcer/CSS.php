@@ -19,8 +19,9 @@ class CSS extends Abstracts\Plain
             $this->printSequenceDebug = true;
         }
     }
-//    public function processText($text)
-//    {
-//        return \Difra\Libs\Less::compile($text);
-//    }
+
+    public function processText($text)
+    {
+        return \Difra\Libs\Less::compile($text);
+    }
 }
