@@ -62,7 +62,7 @@ abstract class Plain extends Common
      * @param $file
      * @return mixed|string
      */
-    private function getFile($file)
+    protected function getFile($file)
     {
         $debuggerEnabled = Debugger::isEnabled();
         if (!$debuggerEnabled) {

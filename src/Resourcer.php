@@ -2,6 +2,9 @@
 
 namespace Difra;
 
+use Difra\Resourcer\CSS;
+use Difra\Resourcer\SCSS;
+
 /**
  * Class Resourcer
  * @package Difra
@@ -19,7 +22,7 @@ class Resourcer
     {
         switch ($type) {
             case 'css':
-                return Resourcer\CSS::getInstance();
+                return Resourcer\Styles::getInstance();
             case 'js':
                 return Resourcer\JS::getInstance();
             case 'xslt':

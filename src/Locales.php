@@ -44,6 +44,7 @@ class Locales
      * Get text string from current locale (short form)
      * @param $xpath
      * @return bool|string
+     * @throws Exception
      */
     public static function get($xpath)
     {
@@ -55,9 +56,10 @@ class Locales
      * Get locale string by XPath
      * NOT DEPRECATED. Marked as deprecated to get rid of old \Difra\Locales::getInstance()->getXPath( ... ) calls
      * in favor of \Difra\Locales::get( ... ) calls.
-     * @deprecated
      * @param string $xpath
      * @return string|bool
+     * @throws Exception
+     * @deprecated
      */
     public function getXPath($xpath)
     {
@@ -75,6 +77,7 @@ class Locales
 
     /**
      * Load locale resource
+     * @throws Exception
      */
     private function load()
     {
@@ -107,6 +110,7 @@ class Locales
      * Returns locale as XML document
      * @param \DOMElement $node
      * @return void
+     * @throws Exception
      */
     public function getLocaleXML($node)
     {
@@ -256,5 +260,22 @@ class Locales
             $link = '-';
         }
         return mb_strtolower($link);
+    }
+
+    /**
+     * Format currency
+     * @param float $value Money value
+     * @param string $currency 3-letter ISO 4217 currency code
+     * @return string
+     */
+    public static function formatCurrency(float $value, string $currency)
+    {
+        $locales = self::getInstance();
+        /** @var \NumberFormatter[] $nFormats */
+        static $nFormats = [];
+        if (!isset($nFormats[$locales->locale])) {
+            $nFormats[$locales->locale] = new \NumberFormatter('ru_RU', \NumberFormatter::CURRENCY);
+        }
+        return $nFormats[$locales->locale]->formatCurrency($value, $currency);
     }
 }

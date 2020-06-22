@@ -1,16 +1,19 @@
 Difra framework
 
-First developed by Eduard Kutuev in 2007.
+First developed in 2007.
 Released under Simplified BSD License in 2015.
 
 Links:
 Website: https://www.difra.org/
-Git: https://git.a-jam.net/projects/DIFRA
-Github mirror: https://github.com/difra-org
-Documentation: https://doc.a-jam.net/display/DIF
+Source code and releases: https://github.com/difra-org
+
+Plugins:
+Capcha: captcha (https://github.com/difra-org/capcha)
+CMS: simple content management (https://github.com/difra-org/cms)
+Editor: CKEditor (https://github.com/difra-org/editor)
+Users: users (https://github.com/difra-org/users)
 
 Contributors:
 Eduard Kutuev
 Julia Desyatkova
 Dmitry Sysoev
-

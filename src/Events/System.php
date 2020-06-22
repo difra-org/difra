@@ -48,6 +48,7 @@ class System extends Event
 
     /**
      * Run system events
+     * @throws \Difra\View\HttpError
      */
     public static function run()
     {

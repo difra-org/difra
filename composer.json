@@ -5,14 +5,10 @@
         "framework",
         "php"
     ],
-    "dist": {
-        "url": "https://github.com/difra-org/difra/archive/7.0.0-alpha6.zip",
-        "type": "zip"
-    },
     "repositories": [
         {
             "type": "vcs",
-            "url": "https://git.a-jam.net/scm/difra/difra.git"
+            "url": "git@github.com:difra-org/cms.git"
         }
     ],
     "homepage": "https://www.difra.org",
@@ -31,7 +27,8 @@
         "ext-SimpleXML": "*",
         "ext-xsl": "*",
         "ext-zlib": "*",
-        "oyejorge/less.php": "~1.7.0"
+        "oyejorge/less.php": "~1.7.0",
+        "scssphp/scssphp": "1.1"
     },
     "autoload": {
         "classmap": ["src/main.php"],

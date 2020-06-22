@@ -418,7 +418,7 @@ abstract class Common
                 continue;
             }
             foreach ($dirList as $dirEntry) {
-                if ($dirEntry{0} == '.') {
+                if ($dirEntry{0} === '.' || $dirEntry === '_') {
                     continue;
                 }
                 $entry = "$dir/$dirEntry";
