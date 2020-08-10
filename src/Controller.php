@@ -308,4 +308,9 @@ abstract class Controller
     {
         return Action::getControllerUri();
     }
+
+    protected function setTitle($title)
+    {
+        $this->root->setAttribute('pageTitle', $title);
+    }
 }
