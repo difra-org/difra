@@ -141,8 +141,11 @@ class Sitemap
 //                    $v = array_map('urlencode', $v);
                     $v[0] = $p;
                     $v = implode('/', $v);
-                    if ($k == 'loc' and $v{0} == '/') {
-                        $v = $urlPrefix . $v;
+                    if ($k == 'loc') {
+                        $v = str_replace('&', '&amp;', $v);
+                        if($v{0} == '/') {
+                            $v = $urlPrefix . $v;
+                        }
                     }
                     $urlNode->appendChild($indexXML->createElement($k, $v));
                 }
