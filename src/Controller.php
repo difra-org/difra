@@ -309,8 +309,57 @@ abstract class Controller
         return Action::getControllerUri();
     }
 
-    protected function setTitle($title)
+    /**
+     * Set page title
+     * @param string $title
+     */
+    protected function setTitle(string $title)
     {
         $this->root->setAttribute('pageTitle', $title);
+    }
+
+    /**
+     * Get page title
+     * @return string
+     */
+    protected function getTitle(): string
+    {
+        return $this->root->getAttribute('pageTitle');
+    }
+
+    /**
+     * Set HTML description
+     * @param string $description
+     */
+    protected function setDescription(string $description)
+    {
+        $this->root->setAttribute('description', $description);
+    }
+
+    /**
+     * Get HTML description
+     * @return string
+     */
+    protected function getDescription(): string
+    {
+        return $this->root->getAttribute('description');
+    }
+
+    /**
+     * Set HTML keywords
+     * @param string $keywords
+     */
+    protected function setKeywords(string $keywords)
+    {
+        $this->root->setAttribute('keywords', $keywords);
+    }
+
+    /**
+     * Get HTML keywords
+     * @return string
+     */
+    protected function getKeywords(): string
+    {
+        return $this->root->getAttribute('keywords');
     }
 }
