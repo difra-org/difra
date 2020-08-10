@@ -138,7 +138,7 @@ class Sitemap
                 foreach ($url as $k => $v) {
                     $v = explode('/', $v);
                     $p = $v[0];
-                    $v = array_map('urlencode', $v);
+//                    $v = array_map('urlencode', $v);
                     $v[0] = $p;
                     $v = implode('/', $v);
                     if ($k == 'loc' and $v{0} == '/') {
