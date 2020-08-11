@@ -16,7 +16,7 @@ class Sitemap
     /** xml namespace */
     const NS = 'http://www.sitemaps.org/schemas/sitemap/0.9';
     /** links per page */
-    const PERPAGE = 500;
+    const PERPAGE = 25000;
 
     const EVENT_NAME = 'sitemap';
 
