@@ -210,9 +210,12 @@ class View
      * HTTP redirect
      * @param $url
      */
-    public static function redirect($url)
+    public static function redirect($url, $permanent = false)
     {
         self::$rendered = true;
+        if ($permanent) {
+//            header('HTTP ');
+        }
         header('Location: ' . $url);
         die();
     }
@@ -223,7 +226,7 @@ class View
      */
     public static function addExpires($ttl)
     {
-        header('Expires: ' . gmdate('D, d M Y H:i:s', $ttl ? (time() + $ttl) : 0));
+        header('Expires: ' . gmdate('D, d M Y H:i:s', $ttl ? (time() + $ttl) : 0) . ' GMT');
         if (isset($_SERVER['SERVER_SOFTWARE']) and substr($_SERVER['SERVER_SOFTWARE'], 0, 5) == 'nginx') {
             header('X-Accel-Expires: ' . ($ttl ? $ttl : 'off'));
         }
