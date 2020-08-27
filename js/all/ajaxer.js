@@ -168,7 +168,7 @@ ajaxer.triggerHandler = function (action) {
  */
 ajaxer.clean = function (form) {
 
-    $(form).find('.problem').removeClass('problem');
+    $(form).find('.is-invalid').removeClass('is-invalid');
     ajaxer.topScroll = -1;
 };
 
@@ -241,7 +241,6 @@ ajaxer.scroll = function (element) {
  */
 ajaxer.require = function (form, name) {
 
-    const problemClass = ajaxer.compatibility < 7 ? 'problem' : 'is-invalid';
     const el = ajaxer.smartFind(form, name);
     if (!el.length || el.attr('type') === 'hidden') {
         ajaxer.error({}, 'Field "' + name + '" is required.');
@@ -249,10 +248,10 @@ ajaxer.require = function (form, name) {
     }
     const cke = $(form).find('#cke_' + name);
     if (cke.length) {
-        cke.addClass(problemClass);
+        cke.addClass('is-invalid');
         ajaxer.scroll(cke);
     } else {
-        el.addClass(problemClass);
+        el.addClass('is-invalid');
         ajaxer.scroll(el);
     }
 };
@@ -265,7 +264,6 @@ ajaxer.require = function (form, name) {
  */
 ajaxer.invalid = function (form, name, message) {
 
-    const problemClass = ajaxer.compatibility < 7 ? 'problem' : 'is-invalid';
     const el = ajaxer.smartFind(form, name);
     if (!el.length || el.attr('type') === 'hidden') {
         ajaxer.error({}, 'Invalid value for field "' + name + '".');
@@ -273,10 +271,10 @@ ajaxer.invalid = function (form, name, message) {
     }
     const cke = $(form).find('#cke_' + name);
     if (cke.length) {
-        cke.addClass(problemClass);
+        cke.addClass('is-invalid');
         ajaxer.scroll(cke);
     } else {
-        el.addClass(problemClass);
+        el.addClass('is-invalid');
         ajaxer.scroll(el);
     }
 };
@@ -288,7 +286,7 @@ ajaxer.invalid = function (form, name, message) {
  */
 ajaxer.redirect = function (url, reload) {
 
-    if (reload || typeof(switcher) === 'undefined') {
+    if (reload || typeof (switcher) === 'undefined') {
         document.location = url;
     } else {
         switcher.page(url);
@@ -410,124 +408,86 @@ ajaxer.status = function (form, name, message, classname) {
  */
 ajaxer.statusUpdate = function (form) {
 
-    if (ajaxer.compatibility < 7) {
-        $(form).find('.status').each(function (i, obj1) {
-            const obj = $(obj1);
+    $(form).find('.form-row,.form-group').each(function (i, obj1) {
+        const group = $(obj1);
+        const formElement = group.find('input,textarea');
+        if (typeof formElement === 'undefined') {
+            return;
+        }
+        const name = formElement.attr('name');
+        if (!name) {
+            return;
+        }
+        if (!(name in ajaxer.statuses)) {
+            return;
+        }
 
-            let container = obj.closest('.container');
-            if (typeof container === 'undefined') {
-                container = obj.parent();
-            }
-            if (typeof container === 'undefined') {
-                return;
-            }
-            const formElement = container.find('input, textarea');
-            if (typeof formElement === 'undefined') {
-                return;
-            }
-            const name = formElement.attr('name');
-            if (!name) {
-                return;
-            }
-            // remember original text
-            if (typeof obj.attr('original-text') === "undefined") {
-                obj.attr('original-text', obj.html());
-            }
-            if (name in ajaxer.statuses) {
-                // it looks like status text or status style has updated
-                if (container.attr('status-class')) {
-                    container.removeClass(container.attr('status-class'));
-                }
-                container.attr('status-class', ajaxer.statuses[name].classname);
-                container.addClass(ajaxer.statuses[name].classname);
-                obj.html(ajaxer.statuses[name].message);
-                ajaxer.statuses[name].used = 1;
-            } else if (container.attr('status-class')) {
-                // element has no special status anymore, restore it
-                container.removeClass(container.attr('status-class'));
-                container.removeAttr('status-class');
-                obj.html(obj.attr('original-text'));
-            }
-        });
-    } else {
-        $(form).find('.form-row,.form-group').each(function (i, obj1) {
-            const group = $(obj1);
-            const formElement = group.find('input,textarea');
-            if (typeof formElement === 'undefined') {
-                return;
-            }
-            const name = formElement.attr('name');
-            if (!name) {
-                return;
-            }
-            if (!(name in ajaxer.statuses)) {
-                return;
-            }
+        const status = ajaxer.statuses[name];
+        const className = status.classname;
 
-            const status = ajaxer.statuses[name];
-            const className = status.classname;
-
-            let isValid = false;
-            if (className === 'problem') {
+        let isValid = false;
+        switch (className) {
+            case 'problem':
                 isValid = false;
-            } else if (className === 'ok') {
+                break;
+            case 'ok':
                 isValid = true;
-            } else {
+                break;
+            default:
                 if (typeof debug !== 'undefined') {
                     console.warn('Invalid status classname ' + className + ' (' + status.message + ')');
                 }
-            }
+        }
 
-            // get feedback fields
-            const validFeedback = group.find('.valid-feedback');
-            const invalidFeedback = group.find('.invalid-feedback');
-            const commonFeedback = group.find('.common-feedback,.form-text');
+        // get feedback fields
+        const validFeedback = group.find('.valid-feedback');
+        const invalidFeedback = group.find('.invalid-feedback');
+        const commonFeedback = group.find('.common-feedback,.form-text');
 
-            // remember original values
-            if (validFeedback && typeof validFeedback.attr('original-feedback') === 'undefined') {
-                validFeedback.attr('original-feedback', validFeedback.html());
-            }
-            if (invalidFeedback && typeof invalidFeedback.attr('original-feedback') === 'undefined') {
-                invalidFeedback.attr('original-feedback', invalidFeedback.html());
-            }
-            if (commonFeedback && typeof commonFeedback.attr('original-feedback') === 'undefined') {
-                commonFeedback.attr('original-feedback', commonFeedback.html());
-            }
+        // remember original values
+        if (validFeedback && typeof validFeedback.attr('original-feedback') === 'undefined') {
+            validFeedback.attr('original-feedback', validFeedback.html());
+        }
+        if (invalidFeedback && typeof invalidFeedback.attr('original-feedback') === 'undefined') {
+            invalidFeedback.attr('original-feedback', invalidFeedback.html());
+        }
+        if (commonFeedback && typeof commonFeedback.attr('original-feedback') === 'undefined') {
+            commonFeedback.attr('original-feedback', commonFeedback.html());
+        }
 
-            // set/restore feedback
-            let goalFeedback = isValid ? validFeedback : invalidFeedback;
-            let clearFeedback = isValid ? invalidFeedback : validFeedback;
-            const feedbackText = status.message;
-            if (clearFeedback) {
-                clearFeedback.html(validFeedback.attr('original-feedback'));
-            }
-            if (goalFeedback) {
-                goalFeedback.html(feedbackText);
-            }
-            if (commonFeedback) {
-                if (!goalFeedback) {
-                    commonFeedback.html(feedbackText);
-                } else {
-                    commonFeedback.html(commonFeedback.attr('original-feedback'));
-                }
-            }
-            if (!goalFeedback && !commonFeedback) {
-                if (typeof debug !== 'undefined') {
-                    console.warn('Nowhere to write feedback text for ' + name);
-                }
-            }
-
-            // adjust classes
-            if (!isValid) {
-                formElement.removeClass('is-valid').addClass('is-invalid');
+        // set/restore feedback
+        let goalFeedback = isValid ? validFeedback : invalidFeedback;
+        let clearFeedback = isValid ? invalidFeedback : validFeedback;
+        const feedbackText = status.message;
+        if (clearFeedback) {
+            clearFeedback.html(validFeedback.attr('original-feedback'));
+        }
+        if (goalFeedback) {
+            goalFeedback.html(feedbackText);
+        }
+        if (commonFeedback) {
+            if (!goalFeedback) {
+                commonFeedback.html(feedbackText);
             } else {
-                formElement.removeClass('is-invalid').addClass('is-valid');
+                commonFeedback.html(commonFeedback.attr('original-feedback'));
             }
+        }
+        if (!goalFeedback && !commonFeedback) {
+            if (typeof debug !== 'undefined') {
+                console.warn('Nowhere to write feedback text for ' + name);
+            }
+        }
 
-            status.used = 1;
-        });
-        // $(form).addClass('was-validated');
-    }
+        // adjust classes
+        if (!isValid) {
+            formElement.removeClass('is-valid').addClass('is-invalid');
+        } else {
+            formElement.removeClass('is-invalid').addClass('is-valid');
+        }
+
+        status.used = 1;
+    });
+    // $(form).addClass('was-validated');
 
     // warning for elements ajaxer could not find
     for (const i in ajaxer.statuses) {
@@ -549,28 +509,28 @@ ajaxer.overlayRightPadding = null;
  * @param type
  */
 ajaxer.overlayShow = function (content, type) {
-        var overlayClass = type ? 'overlay ' + type : 'overlay';
-        $('body').append('<div class="' + overlayClass + '" id="ajaxer-' + this.id + '">' +
-            '<div class="overlay-container auto-center">' + '<div class="overlay-inner" style="display:none">' +
-            '<div class="close-button action close" onclick="ajaxer.close(this)"></div>' + content + '</div>' + '</div>' +
-            '</div>');
-        var $html = $('html');
-        if (this.overlayControlPadding) {
-            var dw = $(document).width();
-            $html.css('overflow', 'hidden');
-            if (dw != $(document).width()) {
-                this.overlayRightPadding = $html.css('padding-right');
-                $html.css('padding-right', (parseInt(this.overlayRightPadding) + $(document).width() - dw) + 'px');
-            } else {
-                this.overlayRightPadding = null;
-            }
+    var overlayClass = type ? 'overlay ' + type : 'overlay';
+    $('body').append('<div class="' + overlayClass + '" id="ajaxer-' + this.id + '">' +
+        '<div class="overlay-container auto-center">' + '<div class="overlay-inner" style="display:none">' +
+        '<div class="close-button action close" onclick="ajaxer.close(this)"></div>' + content + '</div>' + '</div>' +
+        '</div>');
+    var $html = $('html');
+    if (this.overlayControlPadding) {
+        var dw = $(document).width();
+        $html.css('overflow', 'hidden');
+        if (dw != $(document).width()) {
+            this.overlayRightPadding = $html.css('padding-right');
+            $html.css('padding-right', (parseInt(this.overlayRightPadding) + $(document).width() - dw) + 'px');
         } else {
-            $html.css('overflow', 'hidden');
+            this.overlayRightPadding = null;
         }
-        $('#ajaxer-' + this.id).find('.overlay-inner').fadeIn('fast');
-        $(window).resize();
-        this.id++;
-        return;
+    } else {
+        $html.css('overflow', 'hidden');
+    }
+    $('#ajaxer-' + this.id).find('.overlay-inner').fadeIn('fast');
+    $(window).resize();
+    this.id++;
+    return;
 };
 
 ajaxer.modal = function (content, size) {
