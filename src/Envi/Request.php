@@ -121,9 +121,9 @@ class Request
      */
     private static function putParam(&$arr, $keys, $v)
     {
-        if (!is_array($arr)) {
-            throw new Exception('Ajax->putParam expects array');
-        }
+//        if (!is_array($arr)) {
+//            throw new Exception('Ajax->putParam expects array');
+//        }
         if (empty($keys)) {
             $arr = $v;
             return;
