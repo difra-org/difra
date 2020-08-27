@@ -43,14 +43,14 @@
 			<xsl:call-template name="popper-headers"/>
 			<!-- bootstrap -->
 			<xsl:call-template name="bootstrap-headers"/>
+			<!-- fontawesome -->
+			<xsl:call-template name="fontawesome-headers"/>
 
-			<link type="text/css" href="{/root/@urlprefix}/css/{$instance}.css?{/root/@build}"
-			      rel="stylesheet"/>
+			<link type="text/css" href="{/root/@urlprefix}/css/{$instance}.css?{/root/@build}" rel="stylesheet"/>
 			<script type="text/javascript" src="{/root/@urlprefix}/js/{$instance}.js?{/root/@build}"/>
 
 			<xsl:if test="/root/@debugConsole>0">
-				<link type="text/css" href="{/root/@urlprefix}/css/console.css?{/root/@build}"
-				      rel="stylesheet"/>
+				<link type="text/css" href="{/root/@urlprefix}/css/console.css?{/root/@build}" rel="stylesheet"/>
 				<script type="text/javascript" src="{/root/@urlprefix}/js/console.js?{/root/@build}"/>
 			</xsl:if>
 
