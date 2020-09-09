@@ -37,6 +37,13 @@
 				</xsl:when>
 			</xsl:choose>
 
+			<script type="text/javascript">
+				<!--suppress CheckValidXmlInScriptTagBody -->
+				<xsl:text>let config={};</xsl:text>
+				<!--suppress CheckValidXmlInScriptTagBody -->
+				<xsl:value-of select="/root/@jsConfig"/>
+			</script>
+
 			<!-- jquery -->
 			<xsl:call-template name="jquery-headers"/>
 			<!-- popper -->
@@ -53,13 +60,6 @@
 				<link type="text/css" href="{/root/@urlprefix}/css/console.css?{/root/@build}" rel="stylesheet"/>
 				<script type="text/javascript" src="{/root/@urlprefix}/js/console.js?{/root/@build}"/>
 			</xsl:if>
-
-			<script type="text/javascript">
-				<!--suppress CheckValidXmlInScriptTagBody -->
-				<xsl:text>var config={};</xsl:text>
-				<!--suppress CheckValidXmlInScriptTagBody -->
-				<xsl:value-of select="/root/@jsConfig"/>
-			</script>
 
 			<xsl:call-template name="html-head-additional"/>
 		</head>
