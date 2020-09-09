@@ -19,18 +19,22 @@ class Version
      * Get site or framework version
      * @return string
      */
-    public static function getBuild()
+    public static function getBuild(bool $short = false)
     {
-        static $revision = null;
-        if (!is_null($revision)) {
-            return $revision;
-        }
+//        static $revision = null;
+//        if (!is_null($revision)) {
+//            return $revision;
+//        }
         if ($revision = Config::getInstance()->get('version')) {
         } else {
             $revision = self::VERSION;
         }
-        if (!Envi::isProduction()) {
-            $revision .= '/' . time();
+        if (!$short && !Envi::isProduction()) {
+            static $time = null;
+            if (!$time) {
+                $time = time();
+            }
+            $revision .= '/' . $time;
         }
         return $revision;
     }
