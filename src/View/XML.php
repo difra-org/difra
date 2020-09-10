@@ -90,6 +90,7 @@ class XML
             );
             // build and version number
             $node->setAttribute('build', Version::getBuild());
+            $node->setAttribute('buildShort', Version::getBuild(true));
             $node->setAttribute('framework', Version::getFrameworkVersion());
             $node->setAttribute('frameworkLong', Version::getFrameworkVersion()); // todo: remove
             // date
