@@ -100,7 +100,8 @@ class Envi
             'hostname' => self::getHost(),
             'mainhost' => self::getHost(true),
             'fullhost' => self::getURLPrefix(),
-            'build' => Envi\Version::getBuild()
+	    'build' => Envi\Version::getBuild(),
+	    'buildShort' => Envi\Version::getBuild(true)
         ];
     }
 
