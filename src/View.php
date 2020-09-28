@@ -214,7 +214,7 @@ class View
     {
         self::$rendered = true;
         if ($permanent) {
-            header('HTTP/1.0 301');
+            http_response_code(301);
         }
         header('Location: ' . $url);
         die();
