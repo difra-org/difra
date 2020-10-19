@@ -18,7 +18,7 @@ class DB
     /**
      * @param string $instance
      * @return MySQL|Sqlite
-     * @throws \Difra\Exception
+     * @throws \Difra\DB\Exception
      */
     public static function getInstance($instance = 'default')
     {
@@ -37,7 +37,7 @@ class DB
             case 'sqlite':
                 return self::$adapters[$instance] = new Sqlite($cfg[$instance]);
             default:
-                throw new \Difra\Exception("PDO adapter not found for '{$cfg[$instance]['type']}'");
+                throw new \Difra\DB\Exception("PDO adapter not found for '{$cfg[$instance]['type']}'");
         }
     }
 

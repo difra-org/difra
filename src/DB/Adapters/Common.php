@@ -27,11 +27,11 @@ abstract class Common
     /**
      * Detect if this adapter is usable
      * @return bool
-     * @throws \Difra\Exception
+     * @throws \Difra\DB\Exception
      */
     public static function isAvailable()
     {
-        throw new \Difra\Exception(get_called_class() . '::isAvailable() is not defined');
+        throw new \Difra\DB\Exception(get_called_class() . '::isAvailable() is not defined');
     }
 
     /**
@@ -43,12 +43,12 @@ abstract class Common
     /**
      * Constructor
      * @param array $conf
-     * @throws \Difra\Exception
+     * @throws \Difra\DB\Exception
      */
     public function __construct($conf)
     {
         if (!static::isAvailable()) {
-            throw new \Difra\Exception("PDO adapter is not usable: {$conf['type']}");
+            throw new \Difra\DB\Exception("PDO adapter is not usable: {$conf['type']}");
         }
         $this->config = $conf;
     }
