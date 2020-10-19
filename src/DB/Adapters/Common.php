@@ -3,7 +3,6 @@
 namespace Difra\DB\Adapters;
 
 use Difra\Debugger;
-use Difra\Exception;
 
 /**
  * Abstract Db adapter
@@ -28,11 +27,11 @@ abstract class Common
     /**
      * Detect if this adapter is usable
      * @return bool
-     * @throws Exception
+     * @throws \Difra\Exception
      */
     public static function isAvailable()
     {
-        throw new Exception(get_called_class() . '::isAvailable() is not defined');
+        throw new \Difra\Exception(get_called_class() . '::isAvailable() is not defined');
     }
 
     /**
@@ -44,12 +43,12 @@ abstract class Common
     /**
      * Constructor
      * @param array $conf
-     * @throws Exception
+     * @throws \Difra\Exception
      */
     public function __construct($conf)
     {
         if (!static::isAvailable()) {
-            throw new Exception("PDO adapter is not usable: {$conf['type']}");
+            throw new \Difra\Exception("PDO adapter is not usable: {$conf['type']}");
         }
         $this->config = $conf;
     }
@@ -83,7 +82,7 @@ abstract class Common
      * Query database
      * @param string|array $query
      * @param array $parameters
-     * @throws Exception
+     * @throws \Difra\DB\Exception
      */
     public function query($query, $parameters = [])
     {
@@ -99,7 +98,7 @@ abstract class Common
      * Query database
      * @param string|array $query
      * @param array $parametersSet
-     * @throws Exception
+     * @throws \Difra\DB\Exception
      */
     public function multiQuery($query, $parametersSet = [])
     {
@@ -115,7 +114,7 @@ abstract class Common
 
     /**
      * Connect to database
-     * @throws Exception
+     * @throws \Difra\DB\Exception
      * @return void
      */
     protected function connect()
@@ -137,8 +136,8 @@ abstract class Common
                 ]
             );
         } catch (\Exception $ex) {
-            Exception::sendNotification($ex);
-            throw new Exception(
+            \Difra\DB\Exception::sendNotification($ex);
+            throw new \Difra\DB\Exception(
                 'Database connection failed' . (Debugger::isEnabled() ? ' (' . $ex->getMessage() . ')' : '')
             );
         }
@@ -150,7 +149,7 @@ abstract class Common
      * @param string|array $data
      * @param bool $noQuotes
      * @return string|array
-     * @throws Exception
+     * @throws \Difra\DB\Exception
      */
     public function escape($data, $noQuotes = false)
     {
@@ -190,7 +189,7 @@ abstract class Common
      * @param string $query
      * @param array $parameters
      * @return array
-     * @throws Exception
+     * @throws \Difra\DB\Exception
      */
     public function fetch($query, $parameters = [])
     {

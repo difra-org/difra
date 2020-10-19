@@ -37,7 +37,7 @@ class DB
             case 'sqlite':
                 return self::$adapters[$instance] = new Sqlite($cfg[$instance]);
             default:
-                throw new Exception("PDO adapter not found for '{$cfg[$instance]['type']}'");
+                throw new \Difra\Exception("PDO adapter not found for '{$cfg[$instance]['type']}'");
         }
     }
 
@@ -52,45 +52,7 @@ class DB
             return $cfg;
         }
 
-        $cfg = Config::getInstance()->get('db');
-
-//        // generate default config + backwards compatibility
-//        if (empty($cfg) or empty($cfg['default'])) {
-//            $cfg['default'] = [];
-//        }
-//        $keys = ['type', 'hostname', 'database', 'username', 'password'];
-//        foreach ($keys as $key) {
-//            if (!isset($cfg['default'][$key])) {
-//                if (isset($cfg[$key])) {
-//                    $cfg['default'][$key] = $cfg[$key];
-//                    unset($cfg[$key]);
-//                } else {
-//                    switch ($key) {
-//                        case 'type':
-//                            $cfg['default']['type'] = 'mysql';
-//                            break;
-//                        case 'database':
-//                        case 'username':
-//                            $cfg['default'][$key] = Envi::getSubsite();
-//                            break;
-//                        default:
-//                            $cfg['default'][$key] = '';
-//                    }
-//                }
-//            }
-//        }
-//
-//        // add missing keys from default config
-//        foreach ($cfg as $name => &$conf) {
-//            foreach ($keys as $key) {
-//                $conf['name'] = $name;
-//                if (!isset($conf[$key])) {
-//                    $conf[$key] = $cfg['default'][$key];
-//                }
-//            }
-//        }
-
-        return $cfg;
+        return $cfg = Config::getInstance()->get('db');
     }
 
     /**
