@@ -31,6 +31,7 @@
  * Switched to use system-wide fastcgi_params instead of built in values
  * Added "compatibility<7" is deprecated message in ajaxer
  * Modified paginator html
+ * Difra\DB methods now throw Difra\DB\Exception instead of Difra\Exception
  - Removed old Autoloader
  - Removed adm/development/plugins page
  - Removed Difra\Plugger class
