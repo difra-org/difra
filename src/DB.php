@@ -45,7 +45,7 @@ class DB
      * Get configuration
      * @return mixed
      */
-    private static function &getConfig()
+    private static function getConfig()
     {
         static $cfg = null;
         if (!is_null($cfg)) {
