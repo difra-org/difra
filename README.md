@@ -4,8 +4,9 @@ First developed in 2007.
 Released under Simplified BSD License in 2015.
 
 ## Links
-- Website: https://www.difra.org/
-- Source code and releases: https://github.com/difra-org
+- [Website](https://www.difra.org/)
+- [Source code and releases](https://github.com/difra-org)
+- [Issues](https://github.com/difra-org/difra/issues)
 
 ## Plugins
 - [Capcha: captcha](https://github.com/difra-org/capcha)
