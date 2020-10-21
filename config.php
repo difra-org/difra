@@ -4,7 +4,7 @@ return [
     'instances' => [
         'main' => [
             'include' => [
-                'jquery' => true,
+                'jquery3' => true,
                 'bootstrap' => true,
                 'all' => true,
                 'switcher' => true
@@ -13,7 +13,7 @@ return [
         'adm' => [
 //            'compatibility' => 6,
             'include' => [
-                'jquery' => true,
+                'jquery3' => true,
 //                'switcher' => true,
                 'bootstrap' => true,
                 'all' => true,
@@ -22,12 +22,13 @@ return [
         ],
         'all' => [
             'include' => [
-                'jquery' => true
+                'jquery3' => true
             ]
         ],
         'bootstrap' => [
             'include' => [
-                'popper' => true
+		'popper' => true,
+		'jquery' => true
             ]
         ],
         'popper' => [
