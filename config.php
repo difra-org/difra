@@ -17,7 +17,7 @@ return [
 //                'switcher' => true,
                 'bootstrap' => true,
                 'all' => true,
-                'fontawesome' => true
+                'fontawesome5' => true
             ]
         ],
         'all' => [

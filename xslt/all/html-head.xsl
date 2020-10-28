@@ -51,7 +51,7 @@
 			<!-- bootstrap -->
 			<xsl:call-template name="bootstrap-headers"/>
 			<!-- fontawesome -->
-			<xsl:call-template name="fontawesome-headers"/>
+			<xsl:call-template name="fontawesome5-headers"/>
 
 			<link type="text/css" href="{/root/@urlprefix}/css/{$instance}.css?{/root/@build}" rel="stylesheet"/>
 			<script type="text/javascript" src="{/root/@urlprefix}/js/{$instance}.js?{/root/@build}"/>
