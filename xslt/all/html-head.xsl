@@ -45,11 +45,11 @@
 			</script>
 
 			<!-- jquery -->
-			<xsl:call-template name="jquery-headers"/>
+			<xsl:call-template name="jquery3"/>
 			<!-- popper -->
 			<xsl:call-template name="popper-headers"/>
 			<!-- bootstrap -->
-			<xsl:call-template name="bootstrap-headers"/>
+			<xsl:call-template name="bootstrap4"/>
 			<!-- fontawesome -->
 			<xsl:call-template name="fontawesome5-headers"/>
 
