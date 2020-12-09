@@ -43,10 +43,27 @@ class Normalizer
 			</xsl:choose>
 		</xsl:if>
 	</xsl:template>
+	
+	<xsl:template name="copyAttributes">
+		<xsl:for-each select="./@*">
+			<xsl:text> </xsl:text>
+			<xsl:value-of select="name()"/>
+			<xsl:text>="</xsl:text>
+			<xsl:call-template name="escapeQuote"/>
+			<xsl:text>"</xsl:text>
+		</xsl:for-each>
+	</xsl:template>
 
 	<xsl:template match="*[name()='area']|*[name()='base']|*[name()='br']|*[name()='col']|*[name()='command']|
 	*[name()='embed']|*[name()='hr']|*[name()='img']|*[name()='input']|*[name()='keygen']|*[name()='link']|
 	*[name()='meta']|*[name()='param']|*[name()='source']|*[name()='track']|*[name()='wbr']">
+		<xsl:text disable-output-escaping="yes">&lt;</xsl:text>
+		<xsl:value-of select="name()"/>
+		<xsl:call-template name="copyAttributes"/>
+		<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
+	</xsl:template>
+
+	<xsl:template match="*">
 		<xsl:text disable-output-escaping="yes">&lt;</xsl:text>
 		<xsl:value-of select="name()"/>
 		<xsl:for-each select="./@*">
@@ -57,14 +74,14 @@ class Normalizer
 			<xsl:text>"</xsl:text>
 		</xsl:for-each>
 		<xsl:text disable-output-escaping="yes">&gt;</xsl:text>
-	</xsl:template>
 
-	<xsl:template match="*">
-		<xsl:copy>
-			<xsl:apply-templates select="./*|@*|text()"/>
-		</xsl:copy>
+    		<xsl:apply-templates select="./node()|text()"/>
+		
+		<xsl:text disable-output-escaping="yes">&lt;/</xsl:text>
+		<xsl:value-of select="name()"/>
+		<xsl:text disable-output-escaping="yes">&gt;</xsl:text>		
 	</xsl:template>
-
+	
 	<xsl:template match="@*">
 		<xsl:copy-of select="."/>
 	</xsl:template>

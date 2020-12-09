@@ -44,6 +44,8 @@ abstract class Controller
     public $header = null;
     /** @var \DOMElement */
     public $footer = null;
+    /** @var \Difra\View\HTML\Element\HTML */
+    public $html = null;
 
     /**
      * Constructor

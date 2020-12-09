@@ -2,6 +2,7 @@
 
 namespace Difra;
 
+use Difra\View\HTML\Element\HTML;
 use Difra\View\HttpError;
 
 /**
@@ -25,6 +26,9 @@ class View
     private $normalize = true;
     /** @var \XSLTProcessor */
     private $xslProcessor = null;
+    /** @var HTML */
+    private $html = null;
+
     const FILL_XML_NONE = 0;
     const FILL_XML_LOCALE = 1;
     const FILL_XML_MENU = 1 << 1;
@@ -131,10 +135,14 @@ class View
             $this->xslProcessor = new \XSLTProcessor();
             $this->xslProcessor->importStylesheet($xslDom);
             Debugger::addLine('XSLTProcessor initialized in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
+        }
 
-            if (!HttpError::$error and !Debugger::$shutdown) {
-                View\XML::fillXML($xml, $this->templateInstance, $this->fillXML);
-            }
+        if ($this->html !== null) {
+            $this->html->getXML($xml->documentElement);
+        }
+
+        if (!HttpError::$error and !Debugger::$shutdown) {
+            View\XML::fillXML($xml, $this->templateInstance, $this->fillXML);
         }
 
         // transform template
@@ -181,8 +189,7 @@ class View
         $dontEcho = false,
         $dontFillXML = false,
         $normalize = true
-    )
-    {
+    ) {
         $view = new self;
         $view->setTemplateInstance($specificInstance);
         $view->setEcho(!$dontEcho);
@@ -255,5 +262,10 @@ class View
         $view->setTemplateInstance($template);
         $view->setNormalize(false);
         return $view->process($node);
+    }
+
+    public function setHTML(?HTML $html): void
+    {
+        $this->html =& $html;
     }
 }

@@ -1,5 +1,6 @@
 7.0.0
  * New controller naming scheme: instead of PathActionController use \Controller\Path\Action.
+ + Added View\HTML elements for code injections such as adding javascripts and stylesheets
  + Bootstrap support
  + SCSS support (work is in the progress)
  + Bootstrap adm

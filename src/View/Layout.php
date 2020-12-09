@@ -19,6 +19,9 @@ class Layout
     /** @var \DOMElement[] */
     private $elements = [];
 
+    /** @var \Difra\View\HTML\Element\HTML */
+    private $html = null;
+
     /**
      * Singleton
      * @return Layout
@@ -38,6 +41,8 @@ class Layout
         // create output XML
         $this->xml = new \DOMDocument;
         $this->realRoot = $this->xml->appendChild($this->xml->createElement('root'));
+
+        $this->html = new \Difra\View\HTML\Element\HTML();
 
         // generate page layout
         $layout = Config::getInstance()->get('layout') ?: ['content', 'header', 'footer'];
@@ -65,6 +70,7 @@ class Layout
         $controller->xml =& $this->xml;
         $controller->realRoot =& $this->realRoot;
         $controller->root =& $this->elements['content'];
+        $controller->html =& $this->html;
         foreach (['header', 'footer'] as $element) {
             if (isset($this->elements['header'])) {
                 $controller->{$element} =& $this->elements[$element];

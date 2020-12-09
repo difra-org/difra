@@ -69,6 +69,7 @@ class Output
                 $view->setEcho(true);
                 $view->setFillXML(View::FILL_XML_PAGE);
                 $view->setNormalize(true);
+                $view->setHTML($controller->html);
                 $view->process($controller->xml);
             } catch (HttpError $ex) {
                 if (!Debugger::isConsoleEnabled()) {
