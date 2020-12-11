@@ -1,41 +1,17 @@
 7.0.0
- * New controller naming scheme: instead of PathActionController use \Controller\Path\Action.
- + Added View\HTML elements for code injections such as adding javascripts and stylesheets
- + Bootstrap support
- + SCSS support (work is in the progress)
- + Bootstrap adm
- + Added compatibility parameter to config instances description (to be removed soon)
- + New Difra\Envi\Roots class for paths control instead of DIR_* variables
- + Composer support
- + New Plugin system: plugins can be installed using composer now
- + New entry point: just include vendor/autoloader.php and call \Difra::main()
- + Added additional resource/application roots support
- + Resourcer: dependencies support
- + Support for additional XSL namespaces in XSL resources
- + Added Ajaxer::post action to submit POST data
- + Added reload parameter to Ajaxer::redirect()
- + Added automatic JSON render support if View::$output is array and View::$outputType == View::CONTENT_APPLICATION_JSON
+ + New Plugin system: install plugins with composer
  + New Event system with custom events support
+ + Added View\HTML elements for direct html injections
+ + SCSS support (work is in the progress)
  + Added SyslogUDP logger target
- + New reworked Mailer with SMTP and multiple new features
- + Added /root/@actionUri property
- + Added Controller->getUri() shortcut
- * Event handlers are Callables now
- * Cleaned out old SVN versioning code
- * Ajaxer overlay z-index changed to 9999
- * Empty ajaxer reply doesn't trigger error anymore
- * Ajaxer::status html structure changed
- * Ajaxer::display type (CSS class) parameter added
+ + New Mailer with SMTP and multiple new features
+ + Resourcer: dependencies support
+ * New controller naming scheme: \Controller\Path\Action instead of PathActionController
+ * Some Difra features moved to plugins
+ * New entry point: just include vendor/autoloader.php and call \Difra::main()
  * View is not static anymore
- * Added View XML fill options (FILL_XML_NONE, FILL_XML_LOCALE, FILL_XML_MENU, etc.)
  * Sitemap builder is now Difra\Tools\Sitemap and it's event-driven
- * Switched to use system-wide fastcgi_params instead of built in values
- * Added "compatibility<7" is deprecated message in ajaxer
  * Modified paginator html
  * Difra\DB methods now throw Difra\DB\Exception instead of Difra\Exception
- - Removed old Autoloader
- - Removed adm/development/plugins page
- - Removed Difra\Plugger class
- - Removed Difra\Events class
- - Removed lib/init.php run
+ * New Difra\Envi\Roots class for paths control instead of DIR_* variables
 
