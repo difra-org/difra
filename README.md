@@ -6,6 +6,7 @@ Released under Simplified BSD License in 2015.
 ## Links
 - [Website](https://www.difra.org/)
 - [Source code and releases](https://github.com/difra-org)
+- [Documentation (work in the progress)](https://github.com/difra-org/difra/tree/master/doc)
 - [Issues](https://github.com/difra-org/difra/issues)
 
 ## Plugins
