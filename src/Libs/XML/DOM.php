@@ -72,7 +72,7 @@ class DOM
         if (is_array($array) and !empty($array)) {
             foreach ($array as $k => $v) {
                 if (is_numeric($k) and !is_array($v) and !is_object($v) and ctype_alnum($v)) {
-                    $node->appendChild($node->ownerDocument->createElement(ctype_alpha($v{0}) ? $v : "_$v"));
+                    $node->appendChild($node->ownerDocument->createElement(ctype_alpha($v[0]) ? $v : "_$v"));
                 } elseif (is_array($v)) {
                     if (is_numeric($k)) {
                         $k = "_$k";
@@ -92,7 +92,7 @@ class DOM
                             $v = '0';
                         }
                     }
-                    $node->setAttribute(ctype_alpha($k{0}) ? $k : "_$k", $v);
+                    $node->setAttribute(ctype_alpha($k[0]) ? $k : "_$k", $v ?? '');
                 }
             }
         }

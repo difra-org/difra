@@ -97,7 +97,8 @@ class XML
             /** @var $dateNode \DOMElement */
             $dateNode = $node->appendChild($xml->createElement('date'));
             $dateKeys = ['d', 'e', 'A', 'a', 'm', 'B', 'b', 'Y', 'y', 'c', 'x', 'H', 'M', 'S'];
-            $dateValues = explode('|', strftime('%' . implode('|%', $dateKeys)));
+            //$dateValues = explode('|', strftime('%' . implode('|%', $dateKeys)));
+	    $dateValues = explode('|', date('d|j|l|D|m|F|M|Y|y|D M d H:i:s Y|m/d/y|H|i|s'));
             $dateCombined = array_combine($dateKeys, $dateValues);
             $dateNode->setAttribute('ts', time());
             foreach ($dateCombined as $k => $v) {

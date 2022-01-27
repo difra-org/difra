@@ -104,7 +104,7 @@ class Request
             return;
         }
         for ($i = 1; $i < sizeof($keys); $i++) {
-            if ($keys[$i]{strlen($keys[$i]) - 1} == ']') {
+            if ($keys[$i][strlen($keys[$i]) - 1] == ']') {
                 $keys[$i] = substr($keys[$i], 0, -1);
             }
         }

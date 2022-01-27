@@ -143,7 +143,7 @@ class Sitemap
                     $v = implode('/', $v);
                     if ($k == 'loc') {
                         $v = str_replace('&', '&amp;', $v);
-                        if($v{0} == '/') {
+                        if($v[0] == '/') {
                             $v = $urlPrefix . $v;
                         }
                     }

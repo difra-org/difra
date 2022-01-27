@@ -158,7 +158,7 @@ abstract class Common
             $esc = $this->pdo->quote((string)$data);
             if ($noQuotes) {
                 $escLength = strlen($esc);
-                if ($esc{0} == '\'' && $esc{$escLength - 1} == '\'' && $escLength > 1) {
+                if ($esc[0] == '\'' && $esc[$escLength - 1] == '\'' && $escLength > 1) {
                     return substr($esc, 1, $escLength - 2);
                 }
             }

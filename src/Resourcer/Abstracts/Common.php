@@ -375,7 +375,7 @@ abstract class Common
             }
             $dir = opendir($path);
             while (false !== ($subdir = readdir($dir))) {
-                if ($subdir{0} != '.' and is_dir($path . '/' . $subdir)) {
+                if ($subdir[0] != '.' and is_dir($path . '/' . $subdir)) {
                     $instances[$subdir] = 1;
                 }
             }
@@ -418,7 +418,7 @@ abstract class Common
                 continue;
             }
             foreach ($dirList as $dirEntry) {
-                if ($dirEntry{0} === '.' || $dirEntry === '_') {
+                if ($dirEntry[0] === '.' || $dirEntry === '_') {
                     continue;
                 }
                 $entry = "$dir/$dirEntry";
@@ -440,7 +440,7 @@ abstract class Common
                     }
                     $specHandler = opendir($entry);
                     while ($specSub = readdir($specHandler)) {
-                        if ($specSub{0} == '.') {
+                        if ($specSub[0] == '.') {
                             continue;
                         }
                         if (is_file("$entry/$specSub")) {
