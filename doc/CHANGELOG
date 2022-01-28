@@ -1,3 +1,7 @@
+8.0.0
+ * Bumped PHP version requirement to 8.x
+ * Removed ESAPI library
+
 7.0.0
  + New Plugin system: install plugins with composer
  + New Event system with custom events support
