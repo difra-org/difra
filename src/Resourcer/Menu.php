@@ -22,9 +22,7 @@ class Menu extends Abstracts\XML
     protected function postprocess($xml, $instance)
     {
         $xml->addAttribute('instance', $instance);
-        /** @noinspection PhpUndefinedFieldInspection */
         if ($xml->attributes()->prefix) {
-            /** @noinspection PhpUndefinedFieldInspection */
             $prefix = $xml->attributes()->prefix;
         } else {
             $prefix = '/' . $instance;
@@ -43,7 +41,6 @@ class Menu extends Abstracts\XML
     {
         /** @var \SimpleXMLElement $subNode */
         foreach ($node as $subname => $subNode) {
-            /** @noinspection PhpUndefinedFieldInspection */
             if ($subNode->attributes()->sup and $subNode->attributes()->sup == '1') {
                 if (!Debugger::isEnabled()) {
                     $subNode->addAttribute('hidden', 1);
@@ -52,7 +49,6 @@ class Menu extends Abstracts\XML
             $newHref = "$href/$subname";
             $newPrefix = "{$prefix}_{$subname}";
             $subNode->addAttribute('id', $newPrefix);
-            /** @noinspection PhpUndefinedFieldInspection */
             if (!isset($subNode->attributes()->href)) {
                 $subNode->addAttribute('href', $newHref);
             };

@@ -160,7 +160,7 @@ class Locales
         // returns $date[year,month,day] depending on current locale and dateFormats.
         $date = [0, 0, 0];
         $localeInd = ['y' => 0, 'm' => 1, 'd' => 2];
-        $df = $this->dateFormats[$locale ? $locale : $this->locale];
+        $df = $this->dateFormats[$locale ?: $this->locale];
         $df = str_replace(['-', '.'], '/', $df);
         $localePt = explode('/', $df);
         foreach ($localePt as $ind => $key) {
@@ -192,13 +192,12 @@ class Locales
     /**
      * Get MySQL syntax for getting localized dates
      * @param bool $locale
-     * @return mixed
+     * @return string
      */
-    public function getMysqlFormat($locale = false)
+    public function getMysqlFormat(bool $locale = false): string
     {
-        $localePt = $this->dateFormats[$locale ? $locale : $this->locale];
-        $localePt = str_replace(['d', 'm', 'y'], ['%d', '%m', '%Y'], $localePt);
-        return $localePt;
+        $localePt = $this->dateFormats[$locale ?: $this->locale];
+        return str_replace(['d', 'm', 'y'], ['%d', '%m', '%Y'], $localePt);
     }
 
     /**

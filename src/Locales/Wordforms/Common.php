@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Locales\Wordforms;
 
 use Difra\Locales\Wordforms;
@@ -11,20 +13,17 @@ use Difra\Locales\Wordforms;
 class Common
 {
     /** @var array Languages list for language */
-    private static /** @noinspection PhpUnusedPrivateFieldInspection */
-        $genders = [
+    private static $genders = [
         Wordforms::GENDER_NEUTER
     ];
 
     /** @var array Cases list for language */
-    private static /** @noinspection PhpUnusedPrivateFieldInspection */
-        $cases = [
+    private static $cases = [
         Wordforms::CASE_NOMINATIVE
     ];
 
     /** @var array Numbers list for language */
-    private static /** @noinspection PhpUnusedPrivateFieldInspection */
-        $numbers = [
+    private static $numbers = [
         Wordforms::NUMBER_SINGLE,
         Wordforms::NUMBER_MULTIPLE
     ];
@@ -45,12 +44,12 @@ class Common
 
     /**
      * Singleton
-     * @return Common
+     * @return static
      */
-    public static function getInstance()
+    public static function getInstance(): static
     {
         static $instance = null;
-        return $instance ?: $instance = new static;
+        return $instance ?: $instance = new static();
     }
 
     /**
@@ -59,11 +58,7 @@ class Common
      * @param int $form
      * @return string
      */
-    public function getForm(
-        $word,
-        /** @noinspection PhpUnusedParameterInspection */
-        $form = 0
-    ) {
+    public function getForm(string $word, int $form = 0): string {
         return $word;
     }
 
@@ -74,13 +69,8 @@ class Common
      * @param int $quantity
      * @return string
      */
-    public function getQuantityForm(
-        $word,
-        /** @noinspection PhpUnusedParameterInspection */
-        $form,
-        /** @noinspection PhpUnusedParameterInspection */
-        $quantity
-    ) {
+    public function getQuantityForm(string $word, int $form, int $quantity): string
+    {
         return $word;
     }
 }

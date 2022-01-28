@@ -6,7 +6,7 @@ use Difra\View\HTML\Element;
 
 class HTML extends \Difra\View\HTML\Element
 {
-    protected static $unique = true;
+    protected static bool $unique = true;
 
     /** @var Element */
     protected $head = null;

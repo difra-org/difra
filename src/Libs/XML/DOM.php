@@ -16,10 +16,10 @@ class DOM
      * @static
      * @return DOM
      */
-    public static function getInstance()
+    public static function getInstance(): DOM
     {
-        static $_instance = null;
-        return $_instance ? $_instance : $_instance = new self;
+        static $instance = null;
+        return $instance ?? $instance = new self();
     }
 
     /**

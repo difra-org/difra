@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Libs;
 
 use Difra\Exception;
@@ -28,10 +30,10 @@ final class Images
     /**
      * Get image object from image data
      * @param string|AjaxFile $data
-     * @throws Exception
      * @return \Imagick|null
+     *@throws Exception
      */
-    public static function data2image($data)
+    public static function data2image(AjaxFile|string $data): ?\Imagick
     {
         if ($data instanceof AjaxFile) {
             $data = $data->val();
@@ -39,10 +41,10 @@ final class Images
             return clone $data;
         }
         try {
-            $img = new \Imagick;
+            $img = new \Imagick();
             $img->readImageBlob($data);
             return $img;
-        } catch (\ImagickException $ex) {
+        } catch (\ImagickException) {
             throw new Exception('Invalid image file format');
         }
     }
@@ -51,18 +53,19 @@ final class Images
      * Get image data from image object
      * @param \Imagick $img
      * @param string $type
-     * @return string mixed
+     * @return string
+     * @throws \ImagickException
      */
-    private static function image2data($img, $type = 'png')
+    private static function image2data(\Imagick $img, string $type = 'png'): string
     {
         $img->setImageFormat($type);
         if ($img->getImageWidth() * $img->getImageHeight() > 40000) {
             switch ($type) {
                 case 'png':
-                    $img->setInterlaceScheme(\imagick::INTERLACE_PNG);
+                    $img->setInterlaceScheme(\Imagick::INTERLACE_PNG);
                     break;
                 case 'jpeg':
-                    $img->setInterlaceScheme(\imagick::INTERLACE_JPEG);
+                    $img->setInterlaceScheme(\Imagick::INTERLACE_JPEG);
                     break;
             }
         }
@@ -73,12 +76,14 @@ final class Images
      * Convert image string between image formats
      * @param string $data
      * @param string $type
-     * @return bool|string
+     * @return string|null
+     * @throws \Difra\Exception
+     * @throws \ImagickException
      */
-    public static function convert($data, $type = 'png')
+    public static function convert(string $data, string $type = 'png'): ?string
     {
         $img = self::data2image($data);
-        return $img ? self::image2data($img, $type) : false;
+        return $img ? self::image2data($img, $type) : null;
     }
 
     /**
@@ -88,19 +93,21 @@ final class Images
      * @param int $maxHeight maximum width of thumbnail
      * @param string $type resulting image type
      * @return string
+     * @throws \Difra\Exception
+     * @throws \ImagickException
      */
-    public static function createThumbnail($data, $maxWidth, $maxHeight, $type = 'png')
+    public static function createThumbnail(AjaxFile|string $data, int $maxWidth, int $maxHeight, string $type = 'png'): string
     {
         $img = self::data2image($data);
-        $w = $img->getimagewidth();
-        $h = $img->getimageheight();
-        if ($maxWidth < $w or $maxHeight < $h) {
-            if ($w / $maxWidth > $h / $maxHeight) {
+        $width = $img->getImageWidth();
+        $height = $img->getImageHeight();
+        if ($maxWidth < $width or $maxHeight < $height) {
+            if ($width / $maxWidth > $height / $maxHeight) {
                 $nw = $maxWidth;
-                $nh = round($h * $nw / $w);
+                $nh = round($height * $nw / $width);
             } else {
                 $nh = $maxHeight;
-                $nw = round($w * $nh / $h);
+                $nw = round($width * $nh / $height);
             }
             $img->resizeImage($nw, $nh, \Imagick::FILTER_LANCZOS, 0.9, false);
         }
@@ -114,8 +121,10 @@ final class Images
      * @param int $maxHeight maximum height of thumbnail
      * @param string $type resulting image type
      * @return string
+     * @throws \Difra\Exception
+     * @throws \ImagickException
      */
-    public static function scaleAndCrop($data, $maxWidth, $maxHeight, $type = 'png')
+    public static function scaleAndCrop(string $data, int $maxWidth, int $maxHeight, string $type = 'png'): string
     {
         $img = self::data2image($data);
         $img->cropThumbnailImage($maxWidth, $maxHeight);
@@ -125,21 +134,25 @@ final class Images
     /**
      * Add watermark (text or image)
      * @param string $image
-     * @param string $text
-     * @param string $watermarkImage
+     * @param string|null $text
+     * @param string|null $watermarkImage
      * @param string $type
      * @param int $padding
      * @param float|int $opacity
      * @return string
+     * @throws \Difra\Exception
+     * @throws \ImagickException
+     * @throws \ImagickDrawException
+     * @throws \ImagickPixelException
      */
     public static function setWatermark(
-        $image,
-        $text = null,
-        $watermarkImage = null,
-        $type = 'png',
-        $padding = 0,
-        $opacity = 0.5
-    ) {
+        string $image,
+        string $text = null,
+        string $watermarkImage = null,
+        string $type = 'png',
+        int $padding = 0,
+        float|int $opacity = 0.5
+    ): string {
         if (is_null($text) && is_null($watermarkImage) || ($text != '' && $watermarkImage != '')) {
             return $image;
         }
@@ -157,9 +170,9 @@ final class Images
             // todo: need new solution
 //            $draw->setFont(DIR_FW . 'lib/libs/capcha/DejaVuSans.ttf');
             $draw->setFontSize(10);
-            $draw->setGravity(\imagick::GRAVITY_CENTER);
+            $draw->setGravity(\Imagick::GRAVITY_CENTER);
 
-            $textDArray = $watermarkImage->queryfontmetrics($draw, $text);
+            $textDArray = $watermarkImage->queryFontMetrics($draw, $text);
             $watermarkImage->newImage(
                 $textDArray['textWidth'] + 7,
                 $textDArray['textHeight'] + 1,
@@ -169,20 +182,17 @@ final class Images
         }
 
         // create watermark
-
         $image_width = $originalImage->getImageWidth();
         $image_height = $originalImage->getImageHeight();
         $watermark_width = $watermarkImage->getImageWidth();
         $watermark_height = $watermarkImage->getImageHeight();
 
         // verify if watermark fits image
-
         if ($image_width < $watermark_width + $padding || $image_height < $watermark_height + $padding) {
             return self::image2data($originalImage, $type);
         }
 
         // define watermark position
-
         $positions = [];
         $positions[] = [0 + $padding, 0 + $padding];
         $positions[] = [$image_width - $watermark_width - $padding, 0 + $padding];
@@ -214,7 +224,7 @@ final class Images
         if (!is_null($text) && $text !== '') {
             $draw->setFillColor(new \ImagickPixel($textColor));
             $draw->setFillOpacity($opacity);
-            $watermarkImage->annotateimage($draw, 0, 0, 0, $text);
+            $watermarkImage->annotateImage($draw, 0, 0, 0, $text);
         } else {
             $watermarkImage->evaluateImage(\Imagick::EVALUATE_MULTIPLY, $opacity, \Imagick::CHANNEL_ALPHA);
             //$watermarkImage->setImageOpacity( $opacity );

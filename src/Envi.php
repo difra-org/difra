@@ -1,8 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 use Difra\Envi\Roots;
+use JetBrains\PhpStorm\ArrayShape;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Envi
@@ -11,30 +15,30 @@ use Difra\Envi\Roots;
 class Envi
 {
     /** @var string Environment mode (web, cli, include) */
-    protected static $mode = self::MODE_CLI;
+    protected static string $mode = self::MODE_CLI;
     /** @var string|null Custom URI (useful for unit testing) */
-    private static $customUri = null;
+    private static ?string $customUri = null;
     /** @var string|null Current URI */
-    private static $requestedUri = null;
+    private static ?string $requestedUri = null;
     /** @var string|null Current URI without urldecode() */
-    private static $requestedUriRaw = null;
+    private static ?string $requestedUriRaw = null;
 
-    const MODE_WEB = 'web';
-    const MODE_CLI = 'cli';
+    public const MODE_WEB = 'web';
+    public const MODE_CLI = 'cli';
 
     /**
      * Get environment mode
      */
-    public static function getMode()
+    public static function getMode(): string
     {
         return self::$mode;
     }
 
     /**
      * Set environment mode
-     * @param $mode
+     * @param string $mode
      */
-    public static function setMode($mode)
+    public static function setMode(string $mode)
     {
         self::$mode = $mode;
     }
@@ -42,9 +46,9 @@ class Envi
     /**
      * Get current URI
      * @param bool $raw Don't urldecode() URI
-     * @return string
+     * @return string|null
      */
-    public static function getUri($raw = false)
+    public static function getUri(bool $raw = false): ?string
     {
         if (is_null(self::$requestedUri)) {
             if (!is_null(self::$customUri)) {
@@ -56,7 +60,7 @@ class Envi
             } else {
                 return null;
             }
-            if (false !== strpos(self::$requestedUri, '?')) {
+            if (str_contains(self::$requestedUri, '?')) {
                 self::$requestedUri = substr(self::$requestedUri, 0, strpos(self::$requestedUri, '?'));
             }
             self::$requestedUriRaw = '/' . trim(self::$requestedUri, '/');
@@ -70,7 +74,7 @@ class Envi
      * Set current URI
      * @param string $uri
      */
-    public static function setUri($uri)
+    public static function setUri(string $uri)
     {
         self::$customUri = $uri;
         self::$requestedUri = null;
@@ -79,20 +83,29 @@ class Envi
 
     /**
      * Get some configuration variables as XML node attributes
-     * @param \DOMElement|\DOMNode $node
+     * @param \DOMElement $node
      */
-    public static function getStateXML($node)
+    public static function getStateXML(\DOMElement $node)
     {
         $config = self::getState();
-        foreach ($config as $k => $v) {
-            $node->setAttribute($k, $v);
+        foreach ($config as $key => $value) {
+            $node->setAttribute($key, $value);
         }
     }
 
     /**
      * Get some configuration variables as array
      */
-    public static function getState()
+    #[ArrayShape([
+        'locale' => 'bool|string',
+        'host' => 'bool|string',
+        'hostname' => 'string',
+        'mainhost' => 'string',
+        'fullhost' => 'string',
+        'build' => 'string',
+        'buildShort' => 'string'
+    ])]
+    public static function getState(): array
     {
         return [
             'locale' => Envi\Setup::getLocale(),
@@ -113,7 +126,7 @@ class Envi
      * 3. "default" subsite name.
      * @return string|bool
      */
-    public static function getSubsite()
+    public static function getSubsite(): bool|string
     {
         static $site = null;
         if (!is_null($site)) {
@@ -150,7 +163,7 @@ class Envi
      * @param bool $main Get "main" host name (for subdomains)
      * @return string
      */
-    public static function getHost($main = false)
+    public static function getHost(bool $main = false): string
     {
         if ($main and !empty($_SERVER['VHOST_MAIN'])) {
             return $_SERVER['VHOST_MAIN'];
@@ -165,7 +178,7 @@ class Envi
      * Get request protocol (http, https)
      * @return string
      */
-    public static function getProtocol()
+    public static function getProtocol(): string
     {
         return (
             (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
@@ -180,7 +193,8 @@ class Envi
      * @param bool $main
      * @return string
      */
-    public static function getURLPrefix($main = false)
+    #[Pure]
+    public static function getURLPrefix(bool $main = false): string
     {
         return self::getProtocol() . '://' . self::getHost($main);
     }
@@ -190,8 +204,8 @@ class Envi
      * Development mode is enabled by VHOST_DEVMODE='on' server variable.
      * @return bool
      */
-    public static function isProduction()
+    public static function isProduction(): bool
     {
-        return !isset($_SERVER['VHOST_DEVMODE']) or strtolower($_SERVER['VHOST_DEVMODE']) != 'on';
+        return !isset($_SERVER['VHOST_DEVMODE']) || strtolower($_SERVER['VHOST_DEVMODE']) != 'on';
     }
 }

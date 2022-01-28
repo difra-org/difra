@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Security\Filter;
 
 /**
@@ -9,27 +11,27 @@ namespace Difra\Security\Filter;
 class Date implements Common
 {
     /** @var \Datetime[] */
-    private static $cache = [];
+    private static array $cache = [];
 
     /**
      * Validate input string
      * @param string $string
      * @return bool
      */
-    public static function validate($string)
+    public static function validate(string $string): bool
     {
         if (!isset(self::$cache[$string])) {
             self::$cache[$string] = self::parse($string) ?: false;
         }
-        return self::$cache[$string] ? true : false;
+        return (bool)self::$cache[$string];
     }
 
     /**
      * Sanitize input string
      * @param string $string
-     * @return string
+     * @return string|null
      */
-    public static function sanitize($string)
+    public static function sanitize(string $string): ?string
     {
         if (!self::validate($string)) {
             return null;
@@ -42,14 +44,11 @@ class Date implements Common
      * @param $string
      * @return \Datetime|null
      */
-    private static function parse($string)
+    private static function parse($string): ?\DateTime
     {
         try {
-            $dt = new \Datetime($string);
-            if ($dt) {
-                return $dt;
-            }
-        } catch (\Exception $e) {
+            return new \Datetime($string);
+        } catch (\Exception) {
         }
         return null;
     }

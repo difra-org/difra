@@ -15,7 +15,7 @@ class NamedPaginator extends Common
     const named = true;
     const auto = true;
 
-    /** @noinspection PhpMissingParentConstructorInspection
+    /**
      * Constructor
      * @param string $value
      */

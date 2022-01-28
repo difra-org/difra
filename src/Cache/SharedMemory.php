@@ -16,7 +16,7 @@ class SharedMemory extends Common
     const SHM_BLOCK_INDEX_SIZE = 40960;
     const SHM_BLOCK_SEGMENT_SIZE = 655360;
     const SHM_BLOCK_PERMS = 0666;
-    public $adapter = Cache::INST_SHAREDMEM;
+    public ?string $adapter = Cache::INST_SHAREDMEM;
 
     /**
      * Detect if backend is available
@@ -34,7 +34,7 @@ class SharedMemory extends Common
      * @param boolean $doNotTestCacheValidity
      * @return string
      */
-    public function realGet($id, $doNotTestCacheValidity = false)
+    public function realGet(string $id, $doNotTestCacheValidity = false)
     {
         $shm_id = shm_attach(self::SHM_BLOCK_ID);
         if ($shm_id) {
@@ -69,7 +69,7 @@ class SharedMemory extends Common
      * @param string $id
      * @return boolean
      */
-    public function test($id)
+    public function test(string $id)
     {
         $data = $this->get($id);
         return !empty($data);
@@ -168,7 +168,7 @@ class SharedMemory extends Common
      * @param string $id
      * @return boolean
      */
-    public function realRemove($id)
+    public function realRemove(string $id)
     {
         //return @shm_remove_var( $this->_shm_id, $id );
         $struc_id = shm_attach(self::SHM_BLOCK_ID, self::SHM_BLOCK_INDEX_SIZE, self::SHM_BLOCK_PERMS);

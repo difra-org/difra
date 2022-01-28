@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Libs;
 
 use Difra\DB;
@@ -17,8 +19,10 @@ class Vault
      * Add file to vault
      * @param string $data
      * @return int
+     * @throws \Difra\DB\Exception
+     * @throws \Difra\Exception
      */
-    public static function add($data)
+    public static function add(string $data): int
     {
         $db = self::getDB();
         $db->query('DELETE FROM `vault` WHERE `created`<DATE_SUB(now(),INTERVAL 3 HOUR)');
@@ -37,8 +41,9 @@ class Vault
      * Get file from vault
      * @param $id
      * @return string|null
+     * @throws \Difra\Exception
      */
-    public static function get($id)
+    public static function get($id): ?string
     {
         Session::start();
         if (!isset($_SESSION['vault']) or !isset($_SESSION['vault'][$id])) {
@@ -50,6 +55,7 @@ class Vault
     /**
      * Delete file from vault
      * @param $id
+     * @throws \Difra\DB\Exception|\Difra\Exception
      */
     public static function delete($id)
     {
@@ -72,6 +78,7 @@ class Vault
      * @param $html
      * @param $path
      * @param $urlPrefix
+     * @throws \Difra\DB\Exception|\Difra\Exception
      */
     public static function saveImages(&$html, $path, $urlPrefix)
     {
@@ -101,21 +108,21 @@ class Vault
         if (!empty($newImages[1])) {
             @mkdir($path, 0777, true);
             $urlPrefix = trim($urlPrefix, '/');
-            foreach ($newImages[1] as $v) {
-                $img = Vault::get($v);
-                file_put_contents("{$path}/{$v}.png", $img);
-                $html = str_replace("src=\"/up/tmp/$v\"", "src=\"/{$urlPrefix}/{$v}.png\"", $html);
-                Vault::delete($v);
-                $usedImages[] = $v;
+            foreach ($newImages[1] as $newImage) {
+                $img = Vault::get($newImage);
+                file_put_contents("$path/$newImage.png", $img);
+                $html = str_replace("src=\"/up/tmp/$newImage\"", "src=\"/$urlPrefix/$newImage.png\"", $html);
+                Vault::delete($newImage);
+                $usedImages[] = $newImage;
             }
         }
         if (is_dir($path)) {
             $dir = opendir($path);
             while (false !== ($file = readdir($dir))) {
-                if ($file{0} == '.') {
+                if ($file[0] === '.') {
                     continue;
                 }
-                if (substr($file, -4) != '.png' or !in_array(substr($file, 0, strlen($file) - 4), $usedImages)) {
+                if (!str_ends_with($file, '.png') or !in_array(substr($file, 0, strlen($file) - 4), $usedImages)) {
                     @unlink("$path/$file");
                 }
             }
@@ -126,7 +133,7 @@ class Vault
      * @return DB\Adapters\Common
      * @throws \Difra\Exception
      */
-    public static function getDB()
+    public static function getDB(): DB\Adapters\Common
     {
         return DB::getInstance('vault');
     }

@@ -63,7 +63,7 @@ class XML
             $node->setAttribute('mainhost', $mainhost = Envi::getHost(true));
             $node->setAttribute('protocol', Envi::getProtocol());
             $node->setAttribute('fullhost', Envi::getURLPrefix());
-            $node->setAttribute('instance', $instance ? $instance : View::$instance);
+            $node->setAttribute('instance', $instance ?: View::$instance);
             $node->setAttribute('uri', Envi::getUri());
             $node->setAttribute('controllerUri', Action::getControllerUri());
             $node->setAttribute('actionUri', Action::getActionUri());

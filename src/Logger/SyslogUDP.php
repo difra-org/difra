@@ -10,13 +10,13 @@ use Difra\Envi;
  */
 class SyslogUDP extends Common
 {
-    const DEFAULT_HOST = '127.0.0.1';
-    const DEFAULT_PORT = '514';
+    protected const DEFAULT_HOST = '127.0.0.1';
+    protected const DEFAULT_PORT = '514';
 
     /**
      * @inheritdoc
      */
-    protected function realWrite($message, $level)
+    protected function realWrite(string $message, int $level): void
     {
         $socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
         $date = date('c');

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Param\Filters;
 
 use Difra\Envi;
@@ -13,7 +15,7 @@ use Difra\Libs\XML\DOM;
 class HTML
 {
     /** @var array Allowed tag=>parameter=>filterMethod */
-    private $allowedTags = [
+    private array $allowedTags = [
         'a' => ['href' => 'cleanLink'],
         'img' => ['src' => 'cleanLink'],
         'br' => [],
@@ -36,12 +38,12 @@ class HTML
         'hr' => []
     ];
     /** @var array Parameters allowed for all tags, parameter=>filterMethod */
-    private $allowedAttrsForAll = [
+    private array $allowedAttrsForAll = [
         'style' => 'cleanStyles',
         'class' => 'cleanClasses'
     ];
     /** @var array Allowed styles list. Array lists values, true allows any value. */
-    private $allowedStyles = [
+    private array $allowedStyles = [
         'font-weight' => [
             'bold',
             'bolder',
@@ -67,10 +69,10 @@ class HTML
      * Singleton
      * @return self
      */
-    public static function getInstance()
+    public static function getInstance(): HTML
     {
-        static $_instance = null;
-        return $_instance ? $_instance : $_instance = new self;
+        static $instance = null;
+        return $instance ?? $instance = new self();
     }
 
     /**
@@ -78,9 +80,9 @@ class HTML
      * @param string $source Source HTML
      * @param bool $clean Perform cleaning
      * @param bool $withHeaders Return full HTML page (true) or contents only (false)
-     * @return string
+     * @return string|null
      */
-    public function process($source, $clean = true, $withHeaders = false)
+    public function process(string $source, bool $clean = true, bool $withHeaders = false): ?string
     {
         if (!trim($source)) {
             return '';
@@ -109,7 +111,7 @@ class HTML
                     }
                 }
             } else {
-                return false;
+                return null;
             }
         }
 
@@ -126,17 +128,17 @@ class HTML
                 }
             }
             $output = $newDom->saveHTML();
-            // TODO: convert xhtml to html5
+            // TODO: convert xhtml to html5?
         }
         return mb_convert_encoding($output, 'UTF-8', 'HTML-ENTITIES');
     }
 
     /**
      * Clean everything but allowed elements
-     * @param \DOMElement|\DOMNode $node
+     * @param \DOMElement $node
      * @return \DOMElement[]
      */
-    private function clean(&$node)
+    private function clean(\DOMElement &$node): array
     {
         $replaceNodes = [];
         switch ($node->nodeType) {
@@ -146,8 +148,7 @@ class HTML
                 }
                 $this->cleanAttributes(
                     $node,
-                    isset($this->allowedTags[$node->nodeName]) ? $this->allowedTags[$node->nodeName]
-                        : []
+                    $this->allowedTags[$node->nodeName] ?? []
                 );
                 break;
             case XML_TEXT_NODE:
@@ -168,13 +169,13 @@ class HTML
     }
 
     /**
-     * Clean all atttributes but allowed
-     * @param \DOMElement|\DOMNode $node
+     * Clean all attributes but allowed
+     * @param \DOMElement $node
      * @param array $attributes
      */
-    private function cleanAttributes(&$node, $attributes = [])
+    private function cleanAttributes(\DOMElement $node, array $attributes = [])
     {
-        if (($node instanceof \DOMElement or $node instanceof \DOMNode) and $node->attributes->length) {
+        if ($node->attributes->length) {
             $delAttr = [];
             foreach ($node->attributes as $attr) {
                 if (isset($attributes[$attr->name])) {
@@ -197,7 +198,7 @@ class HTML
      * If some disallowed element is not empty, replace it with span
      * @param \DOMElement $node
      */
-    private function replace(&$node)
+    private function replace(\DOMElement $node)
     {
         if (!$node->hasChildNodes()) {
             $node->parentNode->removeChild($node);
@@ -212,7 +213,7 @@ class HTML
      * @param string $link
      * @return string
      */
-    private function cleanLink($link)
+    private function cleanLink(string $link): string
     {
         // TODO
         trigger_error('New HTML::cleanLink() needs to be written, please do not rely on it.', E_USER_WARNING);
@@ -231,13 +232,12 @@ class HTML
         return $str;
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Styles filter
      * @param string $attr
      * @return string
      */
-    private function cleanStyles($attr)
+    private function cleanStyles(string $attr): string
     {
         $returnStyle = [];
         $stylesSet = explode(';', $attr);
@@ -250,9 +250,9 @@ class HTML
             $styleElements[0] = trim($styleElements[0]);
             $styleElements[1] = trim($styleElements[1]);
 
-            // проверяем элемент
+            // verify element
             if (array_key_exists($styleElements[0], $this->allowedStyles)) {
-                // проверяем значение
+                // verify value
                 if ($this->allowedStyles[$styleElements[0]] === true) {
                     $returnStyle[] =
                         $styleElements[0] . ': ' . self::encodeForCSS($styleElements[1]);
@@ -266,13 +266,12 @@ class HTML
         return implode(';', $returnStyle);
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Classes filter
      * @param string $classes
      * @return string
      */
-    private function cleanClasses($classes)
+    private function cleanClasses(string $classes): string
     {
         $newClasses = [];
         $cls = explode(' ', $classes);
@@ -285,19 +284,18 @@ class HTML
         return implode(' ', $newClasses);
     }
 
-    /** @noinspection PhpUnusedPrivateMethodInspection */
     /**
      * Positive integers filter
      * @param $input
-     * @return int|string
+     * @return string|null
      */
-    private function cleanUnsignedInt($input)
+    private function cleanUnsignedInt($input): ?string
     {
         $input = intval($input);
         if (filter_var($input, FILTER_VALIDATE_INT, ['options' => ['min_range' => 1]])) {
-            return $input;
+            return (string)$input;
         } else {
-            return '';
+            return null;
         }
     }
 }

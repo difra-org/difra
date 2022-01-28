@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer\Abstracts;
 
 use Difra\Debugger;
@@ -10,16 +12,16 @@ use Difra\Minify;
  */
 abstract class Plain extends Common
 {
-    protected $printSequenceDebug = false;
+    protected bool $showSequence = false;
 
     /**
      * Combine resources to single string
-     * @param $instance
+     * @param string $instance
      * @return string
      */
-    protected function processData($instance)
+    protected function processData(string $instance): string
     {
-        if ($this->printSequenceDebug) {
+        if ($this->showSequence) {
             echo("/*\n\nIncluded files order:\n\n");
         }
         $result = '';
@@ -51,7 +53,7 @@ abstract class Plain extends Common
                 }
             }
         }
-        if ($this->printSequenceDebug) {
+        if ($this->showSequence) {
             echo("\n*/\n\n");
         }
         return $result;
@@ -60,9 +62,9 @@ abstract class Plain extends Common
     /**
      * Choose most suitable file
      * @param $file
-     * @return mixed|string
+     * @return string
      */
-    protected function getFile($file)
+    protected function getFile($file): string
     {
         $debuggerEnabled = Debugger::isEnabled();
         if (!$debuggerEnabled) {
@@ -74,7 +76,6 @@ abstract class Plain extends Common
                 return '';
             }
         }
-        $selectedVersion = null;
         if (!empty($file['raw'])) {
             $selectedVersion = 'raw';
         } elseif (!empty($file['min'])) {
@@ -83,10 +84,10 @@ abstract class Plain extends Common
             echo("Resource file search problem\n");
             return '';
         }
-        if (!$this->printSequenceDebug) {
+        if (!$this->showSequence) {
             return file_get_contents($file[$selectedVersion]);
         }
         echo($file[$selectedVersion] . "\n");
-        return "\n\n/* File: {$file[$selectedVersion]} */\n\n" . file_get_contents($file[$selectedVersion]);
+        return "\n\n/* File: $file[$selectedVersion] */\n\n" . file_get_contents($file[$selectedVersion]);
     }
 }

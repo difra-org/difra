@@ -1,9 +1,8 @@
 <?php
 
-namespace Difra;
+declare(strict_types=1);
 
-use Difra\Resourcer\CSS;
-use Difra\Resourcer\SCSS;
+namespace Difra;
 
 /**
  * Class Resourcer
@@ -15,10 +14,10 @@ class Resourcer
      * Resourcers factory
      * @param string $type
      * @param bool $quiet
-     * @return Resourcer\Abstracts\Common
-     * @throws Exception
+     * @return \Difra\Resourcer\JS|\Difra\Resourcer\XSLT|\Difra\Resourcer\Menu|\Difra\Resourcer\Locale|\Difra\Resourcer\Styles|null
+     * @throws \Difra\Exception
      */
-    public static function getInstance($type, $quiet = false)
+    public static function getInstance(string $type, bool $quiet = false): Resourcer\JS|Resourcer\XSLT|Resourcer\Menu|Resourcer\Locale|Resourcer\Styles|null
     {
         switch ($type) {
             case 'css':

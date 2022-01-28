@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer\Abstracts;
 
 /**
@@ -9,15 +11,15 @@ abstract class XML extends Common
 {
     /**
      * Assemble resources to single XML
-     * @param      $instance
+     * @param string $instance
      * @param bool $withFilenames
-     * @return mixed
+     * @return string|bool
      */
-    protected function processData($instance, $withFilenames = false)
+    protected function processData(string $instance, bool $withFilenames = false): string|bool
     {
         $files = $this->getFiles($instance);
 
-        $newXml = new \SimpleXMLElement("<{$this->type}></{$this->type}>");
+        $newXml = new \SimpleXMLElement("<$this->type></$this->type>");
         foreach ($files as $file) {
             $filename = $withFilenames ? $file['raw'] : false;
             $xml = simplexml_load_file($file['raw']);
@@ -27,7 +29,6 @@ abstract class XML extends Common
             }
         }
         if (method_exists($this, 'postprocess')) {
-            /** @noinspection PhpUndefinedMethodInspection */
             $this->postprocess($newXml, $instance);
         }
         return $newXml->asXML();
@@ -38,8 +39,9 @@ abstract class XML extends Common
      * @param \SimpleXMLElement $xml1
      * @param \SimpleXMLElement $xml2
      * @param string $filename
+     * @noinspection PhpVariableVariableInspection
      */
-    private function mergeXML(&$xml1, &$xml2, &$filename)
+    private function mergeXML(\SimpleXMLElement $xml1, \SimpleXMLElement $xml2, string &$filename)
     {
         /** @var \SimpleXMLElement $node */
         foreach ($xml2 as $name => $node) {
@@ -52,7 +54,6 @@ abstract class XML extends Common
                         $xml1->$name->attributes()->$key = $value;
                     }
                 }
-                /** @noinspection PhpParamsInspection */
                 $this->mergeXML($xml1->$name, $node, $filename);
             } else {
                 $new = $xml1->addChild($name, trim($node) ? $node : '');

@@ -9,10 +9,13 @@ use Difra\View;
 
 class Styles
 {
-    public static function getInstance()
+    /**
+     * @return \Difra\Resourcer\Styles
+     */
+    public static function getInstance(): Styles
     {
         static $instance = null;
-        return $instance ? $instance : $instance = new self;
+        return $instance ?? $instance = new self();
     }
 
     public function view($instance)

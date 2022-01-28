@@ -35,7 +35,7 @@ class TestObj extends \Difra\Unify {
 		)
 	);
 	static protected $primary = 'id';
-	static protected $defaultSearch = array(
+	static protected ?array $defaultSearch = array(
 		'visible' => 1
 	);
 }

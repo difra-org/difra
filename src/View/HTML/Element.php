@@ -1,29 +1,35 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\View\HTML;
 
+/**
+ * HTML Element
+ */
 abstract class Element
 {
     /** @var bool */
-    protected static $unique = false;
+    protected static bool $unique = false;
 
     /** @var string|null */
-    protected $id = null;
-    /** @var Element */
-    protected $parent = null;
+    protected ?string $id = null;
+    /** @var static|null */
+    protected ?Element $parent = null;
     /** @var bool[] */
-    protected $classes = [];
+    protected array $classes = [];
     /** @var string[] */
-    protected $attributes = [];
+    protected array $attributes = [];
     /** @var Element[] */
-    protected $children = [];
+    protected array $children = [];
 
     /**
      * Set attribute value
      * @param string $name
      * @param string $value
+     * @return static
      */
-    public function setAttribute(string $name, string $value): self
+    public function setAttribute(string $name, string $value): static
     {
         $this->attributes[$name] = $value;
         return $this;
@@ -42,8 +48,9 @@ abstract class Element
     /**
      * Remove attribute
      * @param string $name
+     * @return static
      */
-    public function removeAttribute(string $name): self
+    public function removeAttribute(string $name): static
     {
         $this->attributes[$name] = null;
         return $this;
@@ -52,8 +59,9 @@ abstract class Element
     /**
      * Add child element
      * @param Element $child
+     * @return static
      */
-    public function addChild(Element $child): self
+    public function addChild(Element $child): static
     {
         $child->setParent($this);
         $this->children[] = $child;
@@ -72,8 +80,9 @@ abstract class Element
     /**
      * Set parent element
      * @param Element $parent
+     * @return static
      */
-    protected function setParent(Element $parent): self
+    protected function setParent(Element $parent): static
     {
         $this->parent = $parent;
         return $this;
@@ -82,8 +91,9 @@ abstract class Element
     /**
      * Add class
      * @param string $class
+     * @return static
      */
-    public function addClass(string $class): self
+    public function addClass(string $class): static
     {
         $this->classes[$class] = true;
         return $this;
@@ -92,8 +102,9 @@ abstract class Element
     /**
      * Remove class
      * @param string $class
+     * @return static
      */
-    public function removeClass(string $class): self
+    public function removeClass(string $class): static
     {
         $this->classes[$class] = false;
         return $this;
@@ -102,10 +113,11 @@ abstract class Element
     /**
      * Toggle class
      * @param string $class
+     * @return static
      */
-    public function toggleClass(string $class): self
+    public function toggleClass(string $class): static
     {
-        $this->classes[$class] = $this->hasClass($class) ? false : true;
+        $this->classes[$class] = !$this->hasClass($class);
         return $this;
     }
 
@@ -122,8 +134,9 @@ abstract class Element
     /**
      * Set ID
      * @param string|null $id
+     * @return static
      */
-    public function setId(?string $id): self
+    public function setId(?string $id): static
     {
         $this->id = $id;
         return $this;
@@ -139,9 +152,10 @@ abstract class Element
     }
 
     /**
-     * @param \DOMNode|\DOMElement $node
+     * @param \DOMElement $node
+     * @return \DOMElement
      */
-    public function getXML($node)
+    public function getXML(\DOMElement $node): \DOMElement
     {
         $currentName = explode('\\', static::class);
         $currentNode = $node->appendChild(

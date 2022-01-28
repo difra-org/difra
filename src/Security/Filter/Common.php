@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Security\Filter;
 
 /**
@@ -13,12 +15,12 @@ interface Common
      * @param string $string
      * @return bool
      */
-    public static function validate($string);
+    public static function validate(string $string): bool;
 
     /**
      * Sanitize input string
      * @param string $string
-     * @return string
+     * @return mixed
      */
-    public static function sanitize($string);
+    public static function sanitize(string $string): mixed;
 }

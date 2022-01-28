@@ -9,15 +9,15 @@ namespace Difra\Libs\Debug;
 class ErrorConstants
 {
     /** @var array PHP errors matching */
-    private $errors = [
+    private const ERRORS = [
         E_ERROR => 'E_ERROR',
         E_WARNING => 'E_WARNING',
         E_PARSE => 'E_PARSE',
         E_NOTICE => 'E_NOTICE',
         E_CORE_ERROR => 'E_CORE_ERROR',
         E_CORE_WARNING => 'E_CORE_WARNING',
-        E_CORE_ERROR => 'E_COMPILE_ERROR',
-        E_CORE_WARNING => 'E_COMPILE_WARNING',
+        E_COMPILE_ERROR => 'E_COMPILE_ERROR',
+        E_COMPILE_WARNING => 'E_COMPILE_WARNING',
         E_USER_ERROR => 'E_USER_ERROR',
         E_USER_WARNING => 'E_USER_WARNING',
         E_USER_NOTICE => 'E_USER_NOTICE',
@@ -32,21 +32,11 @@ class ErrorConstants
      * @static
      * @return ErrorConstants
      */
-    public static function getInstance()
+    public static function getInstance(): ErrorConstants
     {
 
-        static $_self = null;
-        return $_self ? $_self : $_self = new self;
-    }
-
-    /**
-     * Get errorCode->errorString array
-     * @return array
-     */
-    public function getArray()
-    {
-
-        return $this->errors;
+        static $instance = null;
+        return $instance ?? $instance = new self();
     }
 
     /**
@@ -54,10 +44,10 @@ class ErrorConstants
      * @param $code
      * @return string|null
      */
-    public function getError($code)
+    public function getError($code): ?string
     {
 
-        return isset($this->errors[$code]) ? $this->errors[$code] : null;
+        return static::ERRORS[$code] ?? null;
     }
 
     /**
@@ -65,14 +55,14 @@ class ErrorConstants
      * @param $code
      * @return null|string
      */
-    public function getVerbalError($code)
+    public function getVerbalError($code): ?string
     {
 
         $error = $this->getError($code);
         if (is_null($error)) {
             return null;
         }
-        if (substr($error, 0, 2) == 'E_') {
+        if (str_starts_with($error, 'E_')) {
             $error = substr($error, 2);
         }
         return ucwords(strtolower(str_replace('_', ' ', $error)));

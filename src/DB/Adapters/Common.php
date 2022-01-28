@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\DB\Adapters;
 
 use Difra\Debugger;
@@ -11,25 +13,25 @@ use Difra\Debugger;
  */
 abstract class Common
 {
-    /** @var \PDO */
-    public $pdo = null;
+    /** @var \PDO|null */
+    public ?\PDO $pdo = null;
     /** @var int */
-    public $queries = 0;
+    public int $queries = 0;
     /** @var array|null */
-    protected $config = null;
+    protected ?array $config = null;
     /** @var bool */
-    protected $connected = null;
+    protected ?bool $connected = null;
     /** @var string|null */
-    protected $error = null;
+    protected ?string $error = null;
     /** @var bool */
-    protected $transaction = false;
+    protected bool $transaction = false;
 
     /**
      * Detect if this adapter is usable
      * @return bool
      * @throws \Difra\DB\Exception
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         throw new \Difra\DB\Exception(get_called_class() . '::isAvailable() is not defined');
     }
@@ -38,14 +40,14 @@ abstract class Common
      * Returns PDO connection string ($dsn parameter for constructor)
      * @return string
      */
-    abstract protected function getConnectionString();
+    abstract protected function getConnectionString(): string;
 
     /**
      * Constructor
      * @param array $conf
      * @throws \Difra\DB\Exception
      */
-    public function __construct($conf)
+    public function __construct(array $conf)
     {
         if (!static::isAvailable()) {
             throw new \Difra\DB\Exception("PDO adapter is not usable: {$conf['type']}");
@@ -65,26 +67,22 @@ abstract class Common
 
     /**
      * @param $query
-     * @return \PDOStatement|false
+     * @return ?\PDOStatement
+     * @throws \Difra\DB\Exception
      */
-    public function prepare($query)
+    public function prepare($query): ?\PDOStatement
     {
         $this->connect();
-//        static $cache = [];
-//        if (!isset($cache[$query])) {
-//            return $cache[$query] = $this->pdo->prepare($query);
-//        }
-//        return $cache[$query];
-        return $this->pdo->prepare($query);
+        return $this->pdo->prepare($query) ?: null;
     }
 
     /**
      * Query database
-     * @param string|array $query
+     * @param string $query
      * @param array $parameters
      * @throws \Difra\DB\Exception
      */
-    public function query($query, $parameters = [])
+    public function query(string $query, array $parameters = [])
     {
         Debugger::prepareDBLine();
         $sth = $this->prepare($query);
@@ -96,11 +94,11 @@ abstract class Common
 
     /**
      * Query database
-     * @param string|array $query
+     * @param string $query
      * @param array $parametersSet
      * @throws \Difra\DB\Exception
      */
-    public function multiQuery($query, $parametersSet = [])
+    public function multiQuery(string $query, array $parametersSet = [])
     {
         Debugger::prepareDBLine();
         $sth = $this->prepare($query);
@@ -109,7 +107,7 @@ abstract class Common
             $sth->execute($parameters);
             $this->lastAffectedRows += $sth->rowCount();
         }
-        Debugger::addDBLine('DB', 'multiQuery (todo)'); // todo
+        Debugger::addDBLine('DB', 'multiQuery ' . $query); // todo
     }
 
     /**
@@ -146,12 +144,12 @@ abstract class Common
 
     /**
      * Escape string(s)
-     * @param string|array $data
+     * @param array|string $data
      * @param bool $noQuotes
      * @return string|array
      * @throws \Difra\DB\Exception
      */
-    public function escape($data, $noQuotes = false)
+    public function escape(array|string $data, bool $noQuotes = false): array|string
     {
         $this->connect();
         if (!is_array($data)) {
@@ -164,8 +162,8 @@ abstract class Common
             }
             return $esc;
         }
-        foreach ($data as $k => $v) {
-            $data[$k] = $this->escape($v);
+        foreach ($data as $key => $value) {
+            $data[$key] = $this->escape($value);
         }
         return $data;
     }
@@ -174,14 +172,14 @@ abstract class Common
      * Test connection to database server
      * @return bool
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         try {
             $this->connect();
-        } catch (Exception $ex) {
+        } catch (\Exception) {
             return false;
         }
-        return $this->connected ? true : false;
+        return (bool)$this->connected;
     }
 
     /**
@@ -191,7 +189,7 @@ abstract class Common
      * @return array
      * @throws \Difra\DB\Exception
      */
-    public function fetch($query, $parameters = [])
+    public function fetch(string $query, array $parameters = []): array
     {
         Debugger::prepareDBLine();
         $sth = $this->prepare($query);
@@ -206,33 +204,35 @@ abstract class Common
      * Fetch single row
      * @param string $query
      * @param array $parameters
-     * @return array|bool
+     * @return array|null
+     * @throws \Difra\DB\Exception
      */
-    public function fetchRow($query, $parameters = [])
+    public function fetchRow(string $query, array $parameters = []): ?array
     {
         Debugger::prepareDBLine();
         $sth = $this->prepare($query);
         $sth->execute($parameters);
         $result = $sth->fetch();
         Debugger::addDBLine('DB', $query);
-        return $result;
+        return $result ?: null;
     }
 
     /**
      * Fetch single column
      * @param string $query
      * @param array $parameters
-     * @param int $column_number
-     * @return array|bool
+     * @param int $columnNumber
+     * @return array
+     * @throws \Difra\DB\Exception
      */
-    public function fetchColumn($query, $parameters = [], $column_number = 0)
+    public function fetchColumn(string $query, array $parameters = [], int $columnNumber = 0): array
     {
         Debugger::prepareDBLine();
         $sth = $this->prepare($query);
         $sth->execute($parameters);
 
         $data = [];
-        while (($row = $sth->fetchColumn($column_number)) !== false) {
+        while (($row = $sth->fetchColumn($columnNumber)) !== false) {
             $data[] = $row;
         }
         Debugger::addDBLine('DB', $query);
@@ -243,9 +243,10 @@ abstract class Common
      * Fetch single cell
      * @param string $query
      * @param array $parameters
-     * @return mixed|null
+     * @return mixed
+     * @throws \Difra\DB\Exception
      */
-    public function fetchOne($query, $parameters = [])
+    public function fetchOne(string $query, array $parameters = []): mixed
     {
         $data = $this->fetchRow($query, $parameters);
         return !empty($data) ? reset($data) : null;
@@ -255,19 +256,19 @@ abstract class Common
      * Get last inserted row id
      * @return int
      */
-    public function getLastId()
+    public function getLastId(): int
     {
-        return $this->pdo->lastInsertId();
+        return intval($this->pdo->lastInsertId());
     }
 
-    /** @var int Last affected rows number */
-    private $lastAffectedRows = null;
+    /** @var ?int Last affected rows number */
+    private ?int $lastAffectedRows = null;
 
     /**
      * Get number of affected rows
-     * @return int
+     * @return int|null
      */
-    public function getAffectedRows()
+    public function getAffectedRows(): ?int
     {
         return $this->lastAffectedRows;
     }
@@ -275,8 +276,9 @@ abstract class Common
     /**
      * Start transaction
      * @return bool
+     * @throws \Difra\DB\Exception
      */
-    public function beginTransaction()
+    public function beginTransaction(): bool
     {
         $this->connect();
         if (Debugger::isEnabled()) {
@@ -292,7 +294,7 @@ abstract class Common
      * Roll back transaction
      * @return bool
      */
-    public function rollBack()
+    public function rollBack(): bool
     {
         $this->transaction = false;
         $result = $this->pdo->rollBack();
@@ -306,21 +308,21 @@ abstract class Common
      * Commit transaction
      * @return bool
      */
-    public function commit()
+    public function commit(): bool
     {
         $this->transaction = false;
         $result = $this->pdo->commit();
         if (Debugger::isEnabled()) {
-            Debugger::addDBLine('DB', 'Transaction commited in ' . (number_format((microtime(true) - $this->transaction) * 1000, 1)) . ' ms');
+            Debugger::addDBLine('DB', 'Transaction committed in ' . (number_format((microtime(true) - $this->transaction) * 1000, 1)) . ' ms');
         }
         return $result;
     }
 
     /**
      * Get database name
-     * @return string
+     * @return string|null
      */
-    public function getDatabase()
+    public function getDatabase(): ?string
     {
         return $this->config['database'] ?? null;
     }

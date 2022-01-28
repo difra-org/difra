@@ -11,7 +11,7 @@ use Difra\Cache;
 class APCu extends Common
 {
     /** @var string Adapter name */
-    public $adapter = Cache::INST_APCU;
+    public ?string $adapter = Cache::INST_APCU;
 
     /**
      * Is APCu available?
@@ -38,11 +38,11 @@ class APCu extends Common
 
     /**
      * Check if cache record exists
-     * @deprecated
      * @param string $id
      * @return bool
+     *@deprecated
      */
-    public function test($id)
+    public function test(string $id)
     {
         return apcu_exists($id);
     }
@@ -62,7 +62,7 @@ class APCu extends Common
      * @param bool $doNotTestCacheValidity
      * @return mixed|null
      */
-    public function realGet($id, $doNotTestCacheValidity = false)
+    public function realGet(string $id, $doNotTestCacheValidity = false)
     {
         $success = false;
         $value = apcu_fetch($id, $success);
@@ -84,7 +84,7 @@ class APCu extends Common
      * Delete cache method
      * @param string $id
      */
-    public function realRemove($id)
+    public function realRemove(string $id)
     {
         apcu_delete($id);
     }

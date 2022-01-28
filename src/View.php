@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 use Difra\View\HTML\Element\HTML;
 use Difra\View\HttpError;
+use JetBrains\PhpStorm\NoReturn;
 
 /**
  * Class View
@@ -12,29 +15,29 @@ use Difra\View\HttpError;
 class View
 {
     /** @var bool Page rendered status */
-    public static $rendered = false;
+    public static bool $rendered = false;
     /** @var string XSLT Resourcer instance */
-    public static $instance = 'main';
+    public static string $instance = 'main';
     // options
-    /** @var string Template instance */
-    private $templateInstance = null;
+    /** @var string|null Template instance */
+    private ?string $templateInstance;
     /** @var bool Echo output (return otherwise) */
-    private $echo = false;
-    /** @var bool Fill XML with various data */
-    private $fillXML = self::FILL_XML_NONE;
+    private bool $echo = false;
+    /** @var int Fill XML with various data */
+    private int $fillXML = self::FILL_XML_NONE;
     /** @var bool Normalize output HTML */
-    private $normalize = true;
-    /** @var \XSLTProcessor */
-    private $xslProcessor = null;
-    /** @var HTML */
-    private $html = null;
+    private bool $normalize = true;
+    /** @var \XSLTProcessor|null */
+    private ?\XSLTProcessor $xslProcessor = null;
+    /** @var ?HTML HTML */
+    private ?HTML $html = null;
 
-    const FILL_XML_NONE = 0;
-    const FILL_XML_LOCALE = 1;
-    const FILL_XML_MENU = 1 << 1;
-    const FILL_XML_OTHER = 1 << 2;
-    const FILL_XML_ALL = self::FILL_XML_LOCALE | self::FILL_XML_MENU | self::FILL_XML_OTHER;
-    const FILL_XML_PAGE = self::FILL_XML_ALL;
+    public const FILL_XML_NONE = 0;
+    public const FILL_XML_LOCALE = 1;
+    public const FILL_XML_MENU = 1 << 1;
+    public const FILL_XML_OTHER = 1 << 2;
+    public const FILL_XML_ALL = self::FILL_XML_LOCALE | self::FILL_XML_MENU | self::FILL_XML_OTHER;
+    public const FILL_XML_PAGE = self::FILL_XML_ALL;
 
     /**
      * View constructor
@@ -49,7 +52,7 @@ class View
      * @param string $templateInstance
      * @return View
      */
-    public function setTemplateInstance(string $templateInstance)
+    public function setTemplateInstance(string $templateInstance): static
     {
         if ($this->templateInstance !== $templateInstance) {
             $this->templateInstance = $templateInstance;
@@ -63,7 +66,7 @@ class View
      * @param bool $echo
      * @return View
      */
-    public function setEcho(bool $echo)
+    public function setEcho(bool $echo): static
     {
         if ($this->echo !== $echo) {
             $this->echo = $echo;
@@ -74,10 +77,10 @@ class View
 
     /**
      * Set fill XML flag
-     * @param int $fillXML
+     * @param int|bool $fillXML
      * @return View
      */
-    public function setFillXML($fillXML)
+    public function setFillXML(int|bool $fillXML): static
     {
         // backwards compatibility
         if ($fillXML === true) {
@@ -98,7 +101,7 @@ class View
      * @param bool $normalize
      * @return View
      */
-    public function setNormalize(bool $normalize)
+    public function setNormalize(bool $normalize): static
     {
         if ($this->normalize !== $normalize) {
             $this->normalize = $normalize;
@@ -109,25 +112,25 @@ class View
 
     /**
      * Render
-     * @param \DOMElement|\DOMNode $xml
+     * @param \DOMDocument|\DOMElement $xml
      * @return bool|string
-     * @throws Exception
+     * @throws \Difra\Exception
      */
-    public function process(&$xml)
+    public function process(\DOMDocument|\DOMElement $xml): bool|string
     {
-        Debugger::addLine("Render start (instance '{$this->templateInstance}')");
+        Debugger::addLine("Render start (instance '$this->templateInstance')");
 
         if (is_null($this->xslProcessor)) {
             if (!$resource = Resourcer::getInstance('xslt')->compile($this->templateInstance)) {
-                throw new Exception("XSLT resource not found");
+                throw new Exception('XSLT resource not found');
             }
 
             $time = microtime(true);
-            $xslDom = new \DomDocument;
+            $xslDom = new \DomDocument();
             $xslDom->resolveExternals = true;
             $xslDom->substituteEntities = true;
             if (!$xslDom->loadXML($resource)) {
-                throw new Exception("XSLT load problem for instance '{$this->templateInstance}'");
+                throw new Exception("XSLT load problem for instance '$this->templateInstance'");
             }
             Debugger::addLine('XSLT XML loaded in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
 
@@ -137,9 +140,7 @@ class View
             Debugger::addLine('XSLTProcessor initialized in ' . round(1000 * (microtime(true) - $time), 2) . 'ms');
         }
 
-        if ($this->html !== null) {
-            $this->html->getXML($xml->documentElement);
-        }
+        $this->html?->getXML($xml->documentElement);
 
         if (!HttpError::$error and !Debugger::$shutdown) {
             View\XML::fillXML($xml, $this->templateInstance, $this->fillXML);
@@ -167,8 +168,8 @@ class View
                 fastcgi_finish_request();
             }
         } else {
-            $errormsg = libxml_get_errors(); //error_get_last();
-            throw new Exception($errormsg ? $errormsg['message'] : "Can't render templates");
+            $errorMessage = libxml_get_errors(); //error_get_last();
+            throw new Exception($errorMessage ? $errorMessage['message'] : "Can't render templates");
         }
         return true;
     }
@@ -184,13 +185,13 @@ class View
      * @deprecated
      */
     public static function render(
-        &$xml,
-        $specificInstance = false,
-        $dontEcho = false,
-        $dontFillXML = false,
-        $normalize = true
-    ) {
-        $view = new self;
+        \DOMDocument $xml,
+        bool|string $specificInstance = false,
+        bool $dontEcho = false,
+        bool $dontFillXML = false,
+        bool $normalize = true
+    ): bool|string {
+        $view = new self();
         $view->setTemplateInstance($specificInstance);
         $view->setEcho(!$dontEcho);
         $view->setFillXML(!$dontFillXML);
@@ -199,11 +200,11 @@ class View
     }
 
     /**
-     * XSLT to HTML5 covertation
-     * @param $htmlDoc
+     * Convert XHTML to HTML5
+     * @param \DOMDocument $htmlDoc
      * @return string
      */
-    public static function normalize($htmlDoc)
+    public static function normalize(\DOMDocument $htmlDoc): string
     {
         $normalizerXml = View\Normalizer::getXML();
         $normalizerDoc = new \DOMDocument();
@@ -215,9 +216,11 @@ class View
 
     /**
      * HTTP redirect
-     * @param $url
+     * @param string $url
+     * @param ?bool $permanent
      */
-    public static function redirect($url, $permanent = false)
+    #[NoReturn]
+    public static function redirect(string $url, ?bool $permanent): void
     {
         self::$rendered = true;
         if ($permanent) {
@@ -234,27 +237,34 @@ class View
     public static function addExpires($ttl)
     {
         header('Expires: ' . gmdate('D, d M Y H:i:s', $ttl ? (time() + $ttl) : 0) . ' GMT');
-        if (isset($_SERVER['SERVER_SOFTWARE']) and substr($_SERVER['SERVER_SOFTWARE'], 0, 5) == 'nginx') {
-            header('X-Accel-Expires: ' . ($ttl ? $ttl : 'off'));
+        if (isset($_SERVER['SERVER_SOFTWARE']) and str_starts_with($_SERVER['SERVER_SOFTWARE'], 'nginx')) {
+            header('X-Accel-Expires: ' . ($ttl ?: 'off'));
         }
     }
 
     /**
-     * @param $instance
-     * @param $rootNodeName
+     * @param string $instance
+     * @param string $rootNodeName
      * @return bool|string
+     * @throws \Difra\Exception
      * @deprecated
      */
-    public static function simpleTemplate($instance, $rootNodeName)
+    public static function simpleTemplate(string $instance, string $rootNodeName): bool|string
     {
         $xml = new \DOMDocument();
         $xml->appendChild($xml->createElement($rootNodeName));
-        $view = new static;
+        $view = new static();
         $view->setTemplateInstance($instance);
         return $view->process($xml);
     }
 
-    public static function simpleRender($node, $template = 'modals')
+    /**
+     * @param \DOMElement $node
+     * @param string $template
+     * @return bool|string
+     * @throws \Difra\Exception
+     */
+    public static function simpleRender(\DOMElement $node, string $template = 'modals'): bool|string
     {
         $view = new static();
         $view->setFillXML(false);
@@ -264,6 +274,9 @@ class View
         return $view->process($node);
     }
 
+    /**
+     * @param \Difra\View\HTML\Element\HTML|null $html
+     */
     public function setHTML(?HTML $html): void
     {
         $this->html =& $html;

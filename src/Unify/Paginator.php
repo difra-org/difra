@@ -4,6 +4,7 @@ namespace Difra\Unify;
 
 use Difra\Envi\Action;
 use Difra\Exception;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Paginator
@@ -28,6 +29,7 @@ class Paginator
     /**
      * Constructor
      */
+    #[Pure]
     public function __construct()
     {
         $this->linkPrefix = Action::getControllerUri();
@@ -42,10 +44,11 @@ class Paginator
         return [($this->page - 1) * $this->perpage, $this->perpage];
     }
 
+    #[Pure]
     public function getSQL()
     {
         $limit = $this->getPaginatorLimit();
-        return " LIMIT {$limit[0]},{$limit[1]} ";
+        return " LIMIT $limit[0],$limit[1] ";
     }
 
     /**

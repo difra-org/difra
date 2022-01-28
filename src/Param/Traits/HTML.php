@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Param\Traits;
 
 use Difra\Libs\Vault;
@@ -10,27 +12,27 @@ use Difra\Libs\Vault;
  */
 trait HTML
 {
-    private $savedImages = false;
-    private $raw = '';
+    private bool $savedImages = false;
+    private string $raw = '';
 
     /**
      * Verify
      * @param string $value
-     * @return string
+     * @return bool
      */
-    public static function verify($value)
+    public static function verify($value): bool
     {
-        return trim($value);
+        return (bool) trim($value);
     }
 
     /**
      * Save images
      * @param string $path
      * @param string $urlPrefix
+     * @throws \Difra\DB\Exception|\Difra\Exception
      */
-    public function saveImages($path, $urlPrefix)
+    public function saveImages(string $path, string $urlPrefix)
     {
-        /** @noinspection PhpUndefinedFieldInspection */
         Vault::saveImages($this->value, $path, $urlPrefix);
         $this->savedImages = true;
     }
@@ -41,7 +43,7 @@ trait HTML
      * @param bool $quiet
      * @return string
      */
-    public function val($quiet = false)
+    public function val(bool $quiet = false): string
     {
 
         if (!$quiet and !$this->savedImages) {
@@ -50,7 +52,6 @@ trait HTML
                 E_USER_NOTICE
             );
         }
-        /** @noinspection PhpUndefinedFieldInspection */
         return $this->value;
     }
 
@@ -58,7 +59,7 @@ trait HTML
      * Get raw html
      * @return string
      */
-    function raw()
+    function raw(): string
     {
         return $this->raw;
     }

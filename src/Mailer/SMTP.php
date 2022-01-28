@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Mailer;
 
 use Difra\Envi;
@@ -16,24 +18,25 @@ class SMTP extends Common
     /**
      * Settings
      */
-    const CONNECT_TIMEOUT = 10; // connect timeout (seconds)
-    const READ_TIMEOUT = 5000; // default socket read timeout (milliseconds)
-    const READ_LIMIT = 10240; // maximum number of bytes to expect from server by default
+    protected const CONNECT_TIMEOUT = 10; // connect timeout (seconds)
+    protected const READ_TIMEOUT = 5000; // default socket read timeout (milliseconds)
+    protected const READ_LIMIT = 10240; // maximum number of bytes to expect from server by default
     /**
      * Fields
      */
     /** @var string SMTP host */
-    protected $host = 'tcp://127.0.0.1:25';
+    protected string $host = 'tcp://127.0.0.1:25';
     /** @var resource */
     protected static $connections = [];
     /** @var array Flushed data */
-    protected $flushed = [];
+    protected array $flushed = [];
 
     /**
      * Load config
      * @param array $config
+     * @throws \Difra\Exception
      */
-    public function loadConfig($config)
+    public function loadConfig(array $config): void
     {
         parent::loadConfig($config);
         if (!empty($config['host'])) {
@@ -45,9 +48,9 @@ class SMTP extends Common
      * Connect
      * @param bool $ping
      * @return resource
-     * @throws Temp
+     * @throws \Difra\Mailer\Exception\Temp|\Difra\Mailer\Exception\Fatal|\Difra\Exception
      */
-    protected function connect($ping = false)
+    protected function connect(bool $ping = false)
     {
         // use cached connection if exists
         if (!empty(self::$connections[$this->host]) and !feof(self::$connections[$this->host])) {
@@ -59,7 +62,7 @@ class SMTP extends Common
             try {
                 $this->command('NOOP');
                 return self::$connections[$this->host];
-            } catch (\Exception $e) {
+            } catch (\Exception) {
             }
         }
 
@@ -86,9 +89,9 @@ class SMTP extends Common
      * Write to stream
      * @param $string
      * @param bool $eol
-     * @throws Temp
+     * @throws \Difra\Mailer\Exception\Temp|\Difra\Mailer\Exception\Fatal|\Difra\Exception
      */
-    protected function write($string, $eol = true)
+    protected function write($string, bool $eol = true): void
     {
         if ($eol) {
             $string .= self::EOL;
@@ -108,10 +111,12 @@ class SMTP extends Common
      * @param int $limit
      * @param bool $parse
      * @param bool $exceptions
-     * @return Reply|string
-     * @throws Temp
+     * @return string|\Difra\Mailer\SMTP\Reply|null
+     * @throws \Difra\Exception
+     * @throws \Difra\Mailer\Exception\Fatal
+     * @throws \Difra\Mailer\Exception\Temp
      */
-    protected function read($timeout = 5000, $limit = self::READ_LIMIT, $parse = true, $exceptions = true)
+    protected function read(int $timeout = 5000, int $limit = self::READ_LIMIT, bool $parse = true, bool $exceptions = true): string|Reply|null
     {
         $connection = $this->connect();
 //        stream_set_timeout($connection, $timeout / 1000, 1000 * ($timeout % 1000));
@@ -136,6 +141,7 @@ class SMTP extends Common
 
     /**
      * Flush input
+     * @throws \Difra\Mailer\Exception\Temp|\Difra\Mailer\Exception\Fatal|\Difra\Exception
      */
     protected function flush()
     {
@@ -151,14 +157,16 @@ class SMTP extends Common
         }
     }
 
-    /** @noinspection PhpInconsistentReturnPointsInspection */
     /**
-     * @param $command
+     * @param string $command
      * @param int $timeout
      * @param bool $exceptions
-     * @return Reply
+     * @return \Difra\Mailer\SMTP\Reply|null
+     * @throws \Difra\Exception
+     * @throws \Difra\Mailer\Exception\Fatal
+     * @throws \Difra\Mailer\Exception\Temp
      */
-    protected function command($command, $timeout = self::READ_TIMEOUT, $exceptions = true)
+    protected function command(string $command, int $timeout = self::READ_TIMEOUT, bool $exceptions = true): Reply|null
     {
         $this->flush();
 //        echo "> ", $command, PHP_EOL;
@@ -178,8 +186,9 @@ class SMTP extends Common
 
     /**
      * Send mail
+     * @throws \Difra\Mailer\Exception\Temp|\Difra\Mailer\Exception\Fatal|\Difra\Exception
      */
-    public function send()
+    public function send(): void
     {
         $this->connect(true);
         // todo: move EHLO to connect()

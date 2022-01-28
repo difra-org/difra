@@ -102,7 +102,7 @@ class Reply
      * @throws Temp
      * @throws \Difra\Exception
      */
-    public static function parse($reply, $exceptions = true)
+    public static function parse(string $reply, bool$exceptions = true): static
     {
         $code = mb_substr($reply, 0, 3);
         if (mb_strlen($code) != 3 or !ctype_digit($code)) {
@@ -116,7 +116,7 @@ class Reply
         } else {
             throw new \Difra\Exception('Cannot parse SMTP server reply: ' . $reply);
         }
-        $obj = new static;
+        $obj = new static();
         $obj->source = $reply;
         $obj->code = $code;
         $obj->text = mb_substr($reply, 4);

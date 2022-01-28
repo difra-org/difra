@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Libs;
 
 /**
@@ -15,7 +17,7 @@ class Diff
      * @param string[] $array2
      * @return bool
      */
-    public static function diffArrays($array1, $array2)
+    public static function diffArrays(array $array1, array $array2): bool
     {
         $res = self::diffArraysSub($array1, $array2);
         return $res ? $res['data'] : false;
@@ -29,9 +31,9 @@ class Diff
      * @param int $i1
      * @param int $i2
      * @param int $depth
-     * @return array
+     * @return array|bool
      */
-    private static function diffArraysSub($array1, $array2, $result = [], $i1 = 0, $i2 = 0, $depth = 0)
+    private static function diffArraysSub(array $array1, array $array2, array $result = [], int $i1 = 0, int $i2 = 0, int $depth = 0): bool|array
     {
         // equal lines
         while (isset($array1[$i1]) and isset($array2[$i2]) and $array1[$i1] == $array2[$i2]) {

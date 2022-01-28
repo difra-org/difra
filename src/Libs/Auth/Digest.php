@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Libs\Auth;
 
 use Difra\Envi\Session;
@@ -13,31 +15,31 @@ use Difra\View\HttpError;
 class Digest
 {
     /** @var string Auth realm */
-    public $realm = 'Restricted area';
+    public string $realm = 'Restricted area';
     /** @var array Users list */
-    private $users = [];
+    private array $users;
     /** @var bool Stale */
-    private $stale = false;
+    private bool $stale = false;
 
     /**
      * Singleton
      * @param array $newUsers
      * @return Digest
      */
-    public static function getInstance($newUsers = [])
+    public static function getInstance(array $newUsers = []): Digest
     {
-        static $_instance = null;
-        if (!$_instance) {
-            $_instance = new self($newUsers);
+        static $instance = null;
+        if (!$instance) {
+            $instance = new self($newUsers);
         }
-        return $_instance;
+        return $instance;
     }
 
     /**
      * Constructor
      * @param array $newUsers
      */
-    public function __construct($newUsers = [])
+    public function __construct(array $newUsers = [])
     {
         $this->users = $newUsers;
     }
@@ -67,7 +69,7 @@ class Digest
      * Verify auth
      * @return bool
      */
-    public function verify()
+    public function verify(): bool
     {
         if (!isset($_SERVER['PHP_AUTH_DIGEST'])
             or !$data = $this->httpDigestParse($_SERVER['PHP_AUTH_DIGEST'])
@@ -95,9 +97,9 @@ class Digest
     /**
      * Digest auth parser
      * @param $txt
-     * @return array|bool
+     * @return array|null
      */
-    private function httpDigestParse($txt)
+    private function httpDigestParse($txt): ?array
     {
         // protect against missing data
         $needed_parts =
@@ -106,31 +108,32 @@ class Digest
 
         // php docs use @(\w+)=(?:([\'"])([^\2]+)\2|([^\s,]+))@ regexp, but it doesn't work
         preg_match_all('@(\w+)=[\'"]?([^\s,\'"]+)@', $txt, $matches, PREG_SET_ORDER);
-        foreach ($matches as $m) {
-            $data[$m[1]] = $m[2];
-            unset($needed_parts[$m[1]]);
+        foreach ($matches as $match) {
+            $data[$match[1]] = $match[2];
+            unset($needed_parts[$match[1]]);
         }
 
-        return !empty($needed_parts) ? false : $data;
+        return !empty($needed_parts) ? null : $data;
     }
 
     /**
      * Get nonce
      * @param bool $regen Force new nonce
-     * @return bool|string
+     * @return string|null
      */
-    private function getNonce($regen = false)
+    private function getNonce(bool $regen = false): ?string
     {
         Session::start();
         if ($regen) {
             $key = '';
+            // TODO: correct safe random sequence
             for ($i = 0; $i < 16; $i++) {
                 $key .= chr(rand(0, 255));
             }
             $_SESSION['digest_nonce'] = bin2hex($key);
             $_SESSION['digest_nc'] = 0;
         }
-        return isset($_SESSION['digest_nonce']) ? $_SESSION['digest_nonce'] : false;
+        return $_SESSION['digest_nonce'] ?? null;
     }
 
     /**
@@ -138,7 +141,7 @@ class Digest
      * @param $nc
      * @return bool
      */
-    private function checkNC($nc)
+    private function checkNC($nc): bool
     {
         Session::start();
         if (!isset($_SESSION['digest_nc']) or $_SESSION['digest_nc'] >= $nc) {

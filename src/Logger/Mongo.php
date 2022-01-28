@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Logger;
 
 /**
@@ -8,19 +10,19 @@ namespace Difra\Logger;
  */
 class Mongo extends Common
 {
-    const MONGO_DEFAULT_CONNECTION = 'mongodb://127.0.0.1:27017';
-    const MONGO_DEFAULT_SCOPE = 'logs';
-    const MONGO_DEFAULT_COLLECTION = 'main';
+    protected const MONGO_DEFAULT_CONNECTION = 'mongodb://127.0.0.1:27017';
+    protected const MONGO_DEFAULT_SCOPE = 'logs';
+    protected const MONGO_DEFAULT_COLLECTION = 'main';
 
-    /** @var \MongoDB\Client Mongo connection */
-    protected $connection = null;
-    /** @var \MongoDB\Collection */
-    protected $collection = null;
+    /** @var ?\MongoDB\Client Mongo connection */
+    protected ?\MongoDB\Client $connection = null;
+    /** @var ?\MongoDB\Collection */
+    protected ?\MongoDB\Collection $collection = null;
 
     /**
      * @inheritdoc
      */
-    protected function realWrite($message, $level)
+    protected function realWrite(string $message, int $level): void
     {
         $obj = $this->getLogObj($message);
         $this->getMongo()->insertOne($obj);
@@ -29,7 +31,7 @@ class Mongo extends Common
     /**
      * @return \MongoDB\Collection
      */
-    protected function getMongo()
+    protected function getMongo(): ?\MongoDB\Collection
     {
         if (!empty($this->collection)) {
             return $this->collection;

@@ -12,7 +12,7 @@ use Difra\Cache;
 class None extends Common
 {
     /** @var string Adapter name */
-    public $adapter = Cache::INST_NONE;
+    public ?string $adapter = Cache::INST_NONE;
 
     /**
      * Stub backend is always available. Or not.
@@ -30,7 +30,7 @@ class None extends Common
      * @param boolean $doNotTestCacheValidity
      * @return string
      */
-    public function realGet($id, $doNotTestCacheValidity = false)
+    public function realGet(string $id, $doNotTestCacheValidity = false)
     {
         return null;
     }
@@ -40,7 +40,7 @@ class None extends Common
      * @param string $id cache id
      * @return boolean
      */
-    public function test($id)
+    public function test(string $id)
     {
         return false;
     }
@@ -62,7 +62,7 @@ class None extends Common
      * @param string $id
      * @return boolean
      */
-    public function realRemove($id)
+    public function realRemove(string $id)
     {
         return false;
     }

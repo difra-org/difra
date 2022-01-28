@@ -27,15 +27,16 @@ abstract class Common
     const TYPE_DATE = 'date';
     // fields
     /** @var mixed */
-    protected $value = null;
+    protected mixed $value = null;
 
     /**
-     * @param string|array $value
+     * @param array|string $value
      * @throws Exception
      */
-    public function __construct($value = '')
+    public function __construct(array|string $value = '')
     {
         switch (static::type) {
+            case 'data':
             case 'file':
                 $this->value = $value;
                 return;
@@ -50,49 +51,25 @@ abstract class Common
                 }
                 $this->value = $files;
                 return;
-            case 'data':
-                $this->value = $value;
-                return;
         }
         $this->value = self::canonicalize($value);
-        switch (static::type) {
-            case 'string':
-                $this->value = Filter\Strings::sanitize($value);
-                break;
-            case 'int':
-                $this->value = Filter\Ints::sanitize($value);
-                break;
-            case 'float':
-                $this->value = Filter\Floats::sanitize($value);
-                break;
-            case 'url':
-                $this->value = Filter\URL::sanitize($value);
-                break;
-            case 'email':
-                $this->value = Filter\Email::sanitize($value);
-                break;
-            case 'ip':
-                $this->value = Filter\IP::sanitize($value);
-                break;
-            case 'datetime':
-                $this->value = Filter\Datetime::sanitize($value);
-                break;
-            case self::TYPE_DATE:
-                $this->value = Filter\Date::sanitize($value);
-                break;
-            case 'phone':
-                $this->value = Filter\Phone::sanitize($value);
-                break;
-            case 'bankcard':
-                $this->value = Filter\Bankcard::sanitize($value);
-                break;
-            default:
-                throw new Exception('No wrapper for type ' . (static::type) . ' in Param\Common constructor.');
-        }
+        $this->value = match (static::type) {
+            'string' => Filter\Strings::sanitize($value),
+            'int' => Filter\Ints::sanitize($value),
+            'float' => Filter\Floats::sanitize($value),
+            'url' => Filter\URL::sanitize($value),
+            'email' => Filter\Email::sanitize($value),
+            'ip' => Filter\IP::sanitize($value),
+            'datetime' => Filter\Datetime::sanitize($value),
+            self::TYPE_DATE => Filter\Date::sanitize($value),
+            'phone' => Filter\Phone::sanitize($value),
+            'bankcard' => Filter\Bankcard::sanitize($value),
+            default => throw new Exception('No wrapper for type ' . (static::type) . ' in Param\Common constructor.'),
+        };
     }
 
     /**
-     * @param $str
+     * @param string $str
      * @return string|null
      */
     private static function canonicalize(string $str): ?string
@@ -102,7 +79,7 @@ abstract class Common
                 return null;
             }
             return $str;
-        } catch (\Exception $ex) {
+        } catch (\Exception) {
             return null;
         }
     }
@@ -113,7 +90,7 @@ abstract class Common
      * @return bool
      * @throws Exception
      */
-    public static function verify($value)
+    public static function verify($value): bool
     {
         switch (static::type) {
             case 'file':
@@ -138,46 +115,35 @@ abstract class Common
             return false;
         }
         $value = self::canonicalize($value);
-        switch (static::type) {
-            case 'string':
-                return Filter\Strings::validate($value);
-            case 'int':
-                return Filter\Ints::validate($value);
-            case 'float':
-                return Filter\Floats::validate($value);
-            case 'url':
-                return Filter\URL::validate($value);
-            case 'email':
-                return Filter\Email::validate($value);
-            case 'ip':
-                return Filter\IP::validate($value);
-            case 'datetime':
-                return Filter\Datetime::validate($value);
-            case self::TYPE_DATE:
-                return Filter\Date::validate($value);
-            case 'phone':
-                return Filter\Phone::validate($value);
-            case 'bankcard':
-                return Filter\Bankcard::validate($value);
-            default:
-                throw new Exception('Can\'t check param of type: ' . static::type);
-        }
+        return match (static::type) {
+            'string' => Filter\Strings::validate($value),
+            'int' => Filter\Ints::validate($value),
+            'float' => Filter\Floats::validate($value),
+            'url' => Filter\URL::validate($value),
+            'email' => Filter\Email::validate($value),
+            'ip' => Filter\IP::validate($value),
+            'datetime' => Filter\Datetime::validate($value),
+            self::TYPE_DATE => Filter\Date::validate($value),
+            'phone' => Filter\Phone::validate($value),
+            'bankcard' => Filter\Bankcard::validate($value),
+            default => throw new Exception('Can\'t check param of type: ' . static::type),
+        };
     }
 
     /**
      * Get parameter source
-     * @return self::SOURCE_AJAX|self::SOURCE_QUERY
+     * @return string
      */
-    public static function getSource()
+    public static function getSource(): string
     {
         return static::source;
     }
 
     /**
      * Is named field
-     * @return self::NAMED_TRUE|self::NAMED_FALSE
+     * @return bool
      */
-    public static function isNamed()
+    public static function isNamed(): bool
     {
         return static::named;
     }
@@ -186,9 +152,9 @@ abstract class Common
      * Has auto value
      * @return bool
      */
-    public static function isAuto()
+    public static function isAuto(): bool
     {
-        return defined('static::auto') ? static::auto : false;
+        return defined('static::auto') && static::auto;
     }
 
     /**
@@ -208,7 +174,7 @@ abstract class Common
      * Get field value
      * @return mixed
      */
-    public function val()
+    public function val(): mixed
     {
         switch (static::type) {
             case 'file':
@@ -219,7 +185,7 @@ abstract class Common
             case 'files':
                 $res = [];
                 foreach ($this->value as $file) {
-                    /** @var $file AjaxFile */
+                    /** @var AjaxFile $file */
                     $res[] = $file->val();
                 }
                 return $res;
@@ -230,9 +196,9 @@ abstract class Common
 
     /**
      * Get raw $this->value value
-     * @return mixed|string
+     * @return mixed
      */
-    public function raw()
+    public function raw(): mixed
     {
         return $this->value;
     }

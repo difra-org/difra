@@ -22,13 +22,13 @@ class MemCache extends Common
     /** @var int TTL */
     private static $lifetime = 0;
     /** @var string Adapter name */
-    public $adapter = Cache::INST_MEMCACHE;
+    public ?string $adapter = Cache::INST_MEMCACHE;
 
     /**
      * Detect if backend is available
      * @return bool
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         if (!extension_loaded('memcache')) {
             return false;
@@ -40,7 +40,7 @@ class MemCache extends Common
             ['unix:///tmp/memcache', 0],
             ['127.0.0.1', 11211],
         ];
-        self::$memcache = new \MemCache;
+        self::$memcache = new \Memcache();
         foreach ($serverList as $serv) {
             if (@self::$memcache->pconnect($serv[0], $serv[1])) {
                 self::$server = $serv[0];
@@ -55,9 +55,9 @@ class MemCache extends Common
      * Get cache record implementation
      * @param string $id
      * @param bool $doNotTestCacheValidity
-     * @return mixed|null
+     * @return mixed
      */
-    public function realGet($id, $doNotTestCacheValidity = false)
+    public function realGet(string $id, $doNotTestCacheValidity = false): mixed
     {
         $data = @self::$memcache->get($id);
         return self::$serialize ? @unserialize($data) : $data;
@@ -68,9 +68,9 @@ class MemCache extends Common
      * @param string $id
      * @param mixed $data
      * @param bool $specificLifetime
-     * @return mixed
+     * @return bool
      */
-    public function realPut($id, $data, $specificLifetime = false)
+    public function realPut(string $id, mixed $data, bool $specificLifetime = false): bool
     {
         return self::$memcache->set(
             $id,
@@ -84,26 +84,26 @@ class MemCache extends Common
      * Delete cache record implementation
      * @param string $id
      */
-    public function realRemove($id)
+    public function realRemove(string $id)
     {
         @self::$memcache->delete($id);
     }
 
     /**
      * Test if cache record exists implementation
-     * @param string $key
+     * @param string $id
      * @return bool
      */
-    public function test($key)
+    public function test(string $id): bool
     {
-        return $this->get($key) ? true : false;
+        return (bool)$this->get($id);
     }
 
     /**
      * Define automatic cleaning is available
      * @return bool
      */
-    public function isAutomaticCleaningAvailable()
+    public function isAutomaticCleaningAvailable(): bool
     {
         return true;
     }

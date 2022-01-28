@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Cache;
 
 use Difra\Cache;
@@ -15,18 +17,19 @@ abstract class Common
 {
     //abstract static public function isAvailable();
 
-    /** @var string */
-    public $adapter = null;
+    /** @var string|null */
+    public ?string $adapter = null;
 
-    /** @var string Version for cache */
-    private $version = null;
-    /** @var string Cache prefix */
-    private $prefix = null;
+    /** @var string|null Version for cache */
+    private ?string $version = null;
+    /** @var string|null Cache prefix */
+    private ?string $prefix = null;
     /** @var string Session prefix */
-    private $sessionPrefix = 'session:';
+    private string $sessionPrefix = 'session:';
 
     /**
      * Constructor
+     * @throws \Difra\Exception
      */
     public function __construct()
     {
@@ -40,39 +43,30 @@ abstract class Common
 
     /**
      * Check if cache record exists
-     * @deprecated
      * @param string $id
      * @return bool
+     * @deprecated
      */
-    abstract public function test($id);
+    abstract public function test(string $id): bool;
 
     /**
      * Defines if cache backend supports automatic cleaning
      * @return bool
      */
-    abstract public function isAutomaticCleaningAvailable();
+    abstract public function isAutomaticCleaningAvailable(): bool;
 
     /**
      * Get cache record wrapper
      * @param $key
      * @param bool $versionCheck Check if version number changed
-     * @return mixed|null
+     * @return mixed
      */
-    public function get($key, $versionCheck = true)
+    public function get($key, bool $versionCheck = true): mixed
     {
         $data = $this->realGet($this->prefix . $key);
-        if (
-            !$data
-            or
-            !isset($data['expires']) or $data['expires'] < time()
-            or
-            (
-                $versionCheck and (
-                    !isset($data['version'])
-                    or
-                    $data['version'] != $this->version
-                )
-            )
+        if (!$data ||
+            !isset($data['expires']) or $data['expires'] < time() ||
+            ($versionCheck && (!isset($data['version']) || $data['version'] != $this->version))
         ) {
             return null;
         }
@@ -83,17 +77,17 @@ abstract class Common
      * Get cache record
      * @param string $id
      * @param bool $doNotTestCacheValidity
-     * @return mixed|null
+     * @return mixed
      */
-    abstract public function realGet($id, $doNotTestCacheValidity = false);
+    abstract public function realGet(string $id, bool $doNotTestCacheValidity = false): mixed;
 
     /**
      * Set cache record wrapper
      * @param string $key
-     * @param string $data
+     * @param mixed $data
      * @param int $ttl
      */
-    public function put($key, $data, $ttl = 300)
+    public function put(string $key, mixed $data, int $ttl = 300): void
     {
         $data = [
             'expires' => time() + $ttl,
@@ -109,13 +103,13 @@ abstract class Common
      * @param mixed $data
      * @param bool $specificLifetime
      */
-    abstract public function realPut($id, $data, $specificLifetime = false);
+    abstract public function realPut(string $id, mixed $data, bool $specificLifetime = false);
 
     /**
      * Delete cache record wrapper
      * @param string $key
      */
-    public function remove($key)
+    public function remove(string $key): void
     {
         $this->realRemove($this->prefix . $key);
     }
@@ -124,10 +118,11 @@ abstract class Common
      * Delete cache method
      * @param string $id
      */
-    abstract public function realRemove($id);
+    abstract public function realRemove(string $id): void;
 
     /**
      * Set session handler to use current cache, if available
+     * @throws \Difra\Exception
      */
     public function setSessionsInCache()
     {
@@ -135,11 +130,10 @@ abstract class Common
         if ($set) {
             return;
         }
-        if (Cache::getInstance()->adapter == Cache::INST_NONE) {
+        if (Cache::getInstance()->adapter === Cache::INST_NONE) {
             return;
         }
 
-        /** @noinspection PhpUnusedParameterInspection */
         session_set_save_handler(
         // open
             function ($s, $n) {

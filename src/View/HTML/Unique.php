@@ -8,7 +8,7 @@ use Difra\View\HTML\Element\Script;
 class Unique extends Element
 {
     /** @var bool */
-    protected static $unique = false;
+    protected static bool $unique = false;
 
     /**
      * Add script link

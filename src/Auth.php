@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 use Difra\Envi\Session;
@@ -14,19 +16,19 @@ use Difra\View\HttpError;
  */
 class Auth
 {
-    /** @var string */
-    private $email = null;
-    /** @var mixed[] */
-    private $data = null;
+    /** @var string|null */
+    private ?string $email = null;
+    /** @var mixed */
+    private mixed $data = null;
 
     /**
      * Singleton
      * @return Auth
      */
-    public static function getInstance()
+    public static function getInstance(): Auth
     {
-        static $_instance = null;
-        return $_instance ? $_instance : $_instance = new self;
+        static $instance = null;
+        return $instance ?? $instance = new self();
     }
 
     /**
@@ -39,29 +41,28 @@ class Auth
 
     /**
      * Get auth data as XML node
-     * @param \DOMNode|\DOMElement $node
+     * @param \DOMElement $node
      */
-    public function getAuthXML($node)
+    public function getAuthXML(\DOMElement $node): void
     {
         $authNode = $node->appendChild($node->ownerDocument->createElement('auth'));
         if (!$this->email) {
             $authNode->appendChild($node->ownerDocument->createElement('unauthorized'));
             return;
-        } else {
-            /** @var \DOMElement $subNode */
-            $subNode = $authNode->appendChild($node->ownerDocument->createElement('authorized'));
-            $subNode->setAttribute('email', $this->email);
-            $subNode->setAttribute('login', $this->getLogin());
-            $subNode->setAttribute('id', $this->getUserId());
         }
+        /** @var \DOMElement $subNode */
+        $subNode = $authNode->appendChild($node->ownerDocument->createElement('authorized'));
+        $subNode->setAttribute('email', $this->email);
+        $subNode->setAttribute('login', $this->getLogin());
+        $subNode->setAttribute('id', $this->getUserId());
     }
 
     /**
      * Log in
      * @param string $email
-     * @param array $data
+     * @param array|null $data
      */
-    public function login($email, $data = null)
+    public function login(string $email, array $data = null)
     {
         $this->email = $email;
         $this->data = $data;
@@ -97,68 +98,65 @@ class Auth
                 'email' => $this->email,
                 'data' => $this->data
             ];
-        } else {
-            if (isset($_SESSION['auth'])) {
-                unset($_SESSION['auth']);
-            }
+        } elseif (isset($_SESSION['auth'])) {
+            unset($_SESSION['auth']);
         }
     }
 
     /**
      * Get auth data from session
-     * @return bool
+     * @return void
      */
-    private function load()
+    private function load(): void
     {
         if (!isset($_SESSION['auth'])) {
-            return false;
+            return;
         }
         $this->email = $_SESSION['auth']['email'];
         $this->data = $_SESSION['auth']['data'];
-        return true;
     }
 
     /**
      * Get current user's e-mail.
-     * @return string
+     * @return string|null
      */
-    public function getEmail()
+    public function getEmail(): ?string
     {
         return $this->email;
     }
 
     /**
      * Get current user's login.
-     * @return mixed|null
+     * @return string|null
      */
-    public function getLogin()
+    public function getLogin(): ?string
     {
-        return isset($this->data['login']) ? $this->data['login'] : null;
+        return $this->data['login'] ?? null;
     }
 
     /**
      * Get user ID
-     * @return mixed|null
+     * @return int|null
      */
-    public function getUserId()
+    public function getUserId(): ?int
     {
-        return isset($this->data['id']) ? $this->data['id'] : null;
+        return $this->data['id'] ?? null;
     }
 
     /**
      * Get info array
-     * @return mixed
+     * @return array
      */
-    public function getInfo()
+    public function getInfo(): array
     {
-        return $this->data['info'];
+        return $this->data['info'] ?? [];
     }
 
     /**
      * Is user authorized?
      * @return bool
      */
-    public function isAuthorized()
+    public function isAuthorized(): bool
     {
         return (bool)$this->email;
     }
@@ -166,6 +164,7 @@ class Auth
     /**
      * Throws exception if user is not authorized.
      * For fast authorization check in methods, when methodnameAuthAction is not what you want.
+     * @throws \Difra\View\HttpError
      */
     public function required()
     {

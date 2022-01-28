@@ -12,7 +12,7 @@ use Difra\Cache;
 class XCache extends Common
 {
     /** @var string Adapter name */
-    public $adapter = Cache::INST_XCACHE;
+    public ?string $adapter = Cache::INST_XCACHE;
 
     /**
      * Detect if backend is available
@@ -40,7 +40,7 @@ class XCache extends Common
      * @param boolean $doNotTestCacheValidity
      * @return string
      */
-    public function realGet($id, $doNotTestCacheValidity = false)
+    public function realGet(string $id, $doNotTestCacheValidity = false)
     {
         if (xcache_isset($id)) {
             return xcache_get($id);
@@ -53,7 +53,7 @@ class XCache extends Common
      * @param string $id cache id
      * @return boolean
      */
-    public function test($id)
+    public function test(string $id)
     {
         return xcache_isset($id);
     }
@@ -75,7 +75,7 @@ class XCache extends Common
      * @param string $id
      * @return boolean
      */
-    public function realRemove($id)
+    public function realRemove(string $id)
     {
         return xcache_unset($id);
     }

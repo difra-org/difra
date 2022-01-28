@@ -1,11 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Mailer;
 
 use Difra\Envi;
 use Difra\Exception;
 use Difra\Locales;
 use Difra\View;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Common
@@ -13,31 +16,32 @@ use Difra\View;
  */
 abstract class Common
 {
-    const EOL = "\r\n";
-    /** @var string|[string,string] From address [string mail,string name] */
-    protected $from = [];
-    /** @var [string,string][] From addresses array */
-    protected $to = [];
-    /** @var [string,string][] CC addresses array */
-    protected $cc = [];
-    /** @var [string,string][] BCC addresses array */
-    protected $bcc = [];
+    protected const EOL = "\r\n";
+    /** @var string|array From address: string or [string mail,string name] */
+    protected string|array $from = [];
+    /** @var array From addresses array */
+    protected array $to = [];
+    /** @var array CC addresses array */
+    protected array $cc = [];
+    /** @var array BCC addresses array */
+    protected array $bcc = [];
     /** @var string Subject */
-    protected $subject = '';
+    protected string $subject = '';
     /** @var string Body */
-    protected $body = '';
+    protected string $body = '';
     /** @var string[] Additional headers */
-    protected $headers = [];
+    protected array $headers = [];
 
     /**
      * Send mail
-     * @return mixed
+     * @return void
      */
-    abstract public function send();
+    abstract public function send(): void;
 
     /**
      * Constructor.
      */
+    #[Pure]
     public function __construct()
     {
         $this->from = 'noreply@' . Envi::getHost(true);
@@ -46,8 +50,9 @@ abstract class Common
     /**
      * Load configuration
      * @param array $config
+     * @throws \Difra\Exception
      */
-    public function loadConfig($config)
+    public function loadConfig(array $config): void
     {
         if (!empty($config['from'])) {
             $this->setFrom($config['from']);
@@ -56,9 +61,10 @@ abstract class Common
 
     /**
      * Set From address
-     * @param string|array $address
+     * @param array|string $address
+     * @throws \Difra\Exception
      */
-    public function setFrom($address)
+    public function setFrom(array|string $address)
     {
         $this->from = $this->makeAddress($address);
     }
@@ -67,17 +73,18 @@ abstract class Common
      * Get headers
      * @param bool $implode
      * @param bool $full
-     * @return string|\string[]
+     * @return string|string[]
+     * @throws \Difra\Exception
      */
-    protected function getHeaders($implode = false, $full = false)
+    protected function getHeaders(bool $implode = false, bool $full = false): string|array
     {
         $from = $this->formatFrom();
         $to = $this->formatTo();
         $headers = array_merge([
-            "Mime-Version: 1.0",
+            'Mime-Version: 1.0',
             "Content-Type: text/html; charset=\"UTF-8\"",
-            "Date: " . date('r'),
-            "Message-Id: <" . md5(microtime()) . '-' . md5($from . implode('', $to)) . '@' . Envi::getHost(true) . '>',
+            'Date: ' . date('r'),
+            'Message-Id: <' . md5(microtime()) . '-' . md5($from . implode('', $to)) . '@' . Envi::getHost(true) . '>',
             'Content-Transfer-Encoding: 8bit',
             "From: $from"
         ], $this->headers);
@@ -85,7 +92,7 @@ abstract class Common
             foreach ($this->formatTo() as $to) {
                 $headers[] = "To: $to";
             }
-            $headers[] = "Subject: " . $this->formatSubject();
+            $headers[] = 'Subject: ' . $this->formatSubject();
         }
         return $implode ? implode(self::EOL, $headers) : $headers;
     }
@@ -94,7 +101,7 @@ abstract class Common
      * Add additional header
      * @param string $header
      */
-    public function addHeader($header)
+    public function addHeader(string $header): void
     {
         $this->headers[] = $header;
     }
@@ -102,19 +109,19 @@ abstract class Common
     /**
      * Clean additional headers
      */
-    public function cleanHeaders()
+    public function cleanHeaders(): void
     {
         $this->headers = [];
     }
 
     /**
      * Make address record from mail and name
-     * @param string|array $address
+     * @param array|string $address
      * @param bool $onlyMail
-     * @return mixed
+     * @return string
      * @throws Exception
      */
-    protected function formatAddress($address, $onlyMail = false)
+    protected function formatAddress(array|string $address, bool $onlyMail = false): string
     {
         if (!is_array($address)) {
             return $address;
@@ -123,18 +130,18 @@ abstract class Common
         } elseif (empty($address[1]) or $onlyMail) {
             return $address[0];
         } elseif (preg_match('/[\\x80-\\xff]+/', $address[1])) {
-            return '=?utf-8?B?' . base64_encode($address[1]) . "==?= <{$address[0]}>";
+            return '=?utf-8?B?' . base64_encode($address[1]) . "==?= <$address[0]>";
         } else {
-            return "{$address[1]} <{$address[0]}>";
+            return "$address[1] <$address[0]>";
         }
     }
 
     /**
      * Add To address
-     * @param string|array $address
+     * @param array|string $address
      * @throws Exception
      */
-    public function setTo($address)
+    public function setTo(array|string $address): void
     {
         $this->cleanTo();
         $this->to[] = $this->makeAddress($address);
@@ -142,10 +149,10 @@ abstract class Common
 
     /**
      * Add To address
-     * @param string|array $address
+     * @param array|string $address
      * @throws Exception
      */
-    public function addTo($address)
+    public function addTo(array|string $address): void
     {
         $this->to[] = $this->makeAddress($address);
     }
@@ -153,18 +160,18 @@ abstract class Common
     /**
      * Clean To addresses
      */
-    public function cleanTo()
+    public function cleanTo(): void
     {
         $this->to = [];
     }
 
     /**
      * Make address from string|array
-     * @param string|array $address
+     * @param array|string $address
      * @return array
      * @throws Exception
      */
-    protected function makeAddress($address)
+    protected function makeAddress(array|string $address): array
     {
         if (!is_array($address)) {
             return [$address];
@@ -181,8 +188,9 @@ abstract class Common
      * Get formatted To list
      * @param bool $onlyMail
      * @return \string[]
+     * @throws \Difra\Exception
      */
-    protected function formatTo($onlyMail = false)
+    protected function formatTo(bool $onlyMail = false): array
     {
         $res = [];
         foreach ($this->to as $to) {
@@ -195,8 +203,9 @@ abstract class Common
      * Get formatted From string
      * @param bool $onlyMail
      * @return string
+     * @throws \Difra\Exception
      */
-    protected function formatFrom($onlyMail = false)
+    protected function formatFrom(bool $onlyMail = false): string
     {
         return $this->formatAddress($this->from, $onlyMail);
     }
@@ -206,7 +215,7 @@ abstract class Common
      * @param string|null $subject
      * @return string
      */
-    public function formatSubject($subject = null)
+    public function formatSubject(?string $subject = null): string
     {
         if (!$subject) {
             $subject = $this->subject;
@@ -219,11 +228,11 @@ abstract class Common
         $length = 63;
         $avgLength = floor($length * ($mb_length / strlen($subject)) * .75);
         $encoded = [];
-        for ($i = 0; $i < $mb_length; $i += $offset) {
+        for ($position = 0; $position < $mb_length; $position += $offset) {
             $lookBack = 0;
             do {
                 $offset = $avgLength - $lookBack;
-                $chunk = mb_substr($subject, $i, $offset);
+                $chunk = mb_substr($subject, $position, $offset);
                 $chunk = base64_encode($chunk);
                 $lookBack++;
             } while (strlen($chunk) > $length);
@@ -236,7 +245,7 @@ abstract class Common
      * Set mail subject
      * @param string $subject
      */
-    public function setSubject($subject)
+    public function setSubject(string $subject): void
     {
         $this->subject = $subject;
     }
@@ -245,7 +254,7 @@ abstract class Common
      * Set mail body
      * @param string $body
      */
-    public function setBody($body)
+    public function setBody(string $body): void
     {
         $this->body = $body;
     }
@@ -255,7 +264,7 @@ abstract class Common
      * @param bool $binary
      * @return string
      */
-    protected function formatBody($binary = false)
+    protected function formatBody(bool $binary = false): string
     {
         $body = $this->body;
         // escape dots when it's line first character
@@ -273,7 +282,7 @@ abstract class Common
                     continue;
                 }
                 $newLine = '';
-                $words = preg_split('/([ ]+)/', $line, null, PREG_SPLIT_DELIM_CAPTURE);
+                $words = preg_split('/([ ]+)/', $line, flags: PREG_SPLIT_DELIM_CAPTURE);
                 foreach ($words as $word) {
                     if (strlen($newLine) + strlen($word) + 1 > $maxLength) {
                         if ($newLine) {
@@ -308,9 +317,10 @@ abstract class Common
      * @param string $to
      * @param string $template
      * @param array $data
+     * @throws \Difra\Exception
      * @deprecated
      */
-    public function createMail($to, $template, $data)
+    public function createMail(string $to, string $template, array $data)
     {
         // render template
         $xml = new \DOMDocument();
@@ -319,8 +329,8 @@ abstract class Common
         $root->setAttribute('host', Envi::getHost(true));
         Locales::getInstance()->getLocaleXML($root);
         if (!empty($data)) {
-            foreach ($data as $k => $v) {
-                $root->setAttribute($k, $v);
+            foreach ($data as $key => $value) {
+                $root->setAttribute($key, $value);
             }
         }
         $templateText = View::render($xml, $template, true);
@@ -353,8 +363,9 @@ abstract class Common
      * Render message body from template
      * @param string $template
      * @param array $data
+     * @throws \Difra\Exception
      */
-    public function render($template, $data)
+    public function render(string $template, array $data): void
     {
         $xml = new \DOMDocument();
         /** @var \DOMelement $root */
@@ -362,11 +373,11 @@ abstract class Common
         $root->setAttribute('host', Envi::getHost(true));
         Locales::getInstance()->getLocaleXML($root);
         if (!empty($data)) {
-            foreach ($data as $k => $v) {
-                $root->setAttribute($k, $v);
+            foreach ($data as $key => $value) {
+                $root->setAttribute($key, $value);
             }
         }
-        $view = new View;
+        $view = new View();
         $view->setTemplateInstance($template);
         $view->setFillXML(false);
         $view->setNormalize(true);

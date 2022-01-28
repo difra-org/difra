@@ -1,10 +1,13 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Unify;
 
 use Difra\Envi\Roots;
 use Difra\Exception;
 use Difra\MySQL;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Item
@@ -13,20 +16,21 @@ use Difra\MySQL;
 abstract class Item extends DBAPI
 {
     /** @var null|array Default search conditions */
-    static protected $defaultSearch = null;
-    static protected $defaultOrder = [];
-    static protected $defaultOrderDesc = [];
-    /** @var string[string $objKey][bool $full][] List of keys to load */
-    protected static $_objKeys = [];
-    protected $_data = null;
-    protected $_full = false;
-    protected $_modified = [];
-    protected $_tempPrimary = null;
+    protected static ?array $defaultSearch = null;
+    protected static array $defaultOrder = [];
+    protected static array $defaultOrderDesc = [];
+    /** @var array string[string $objKey][bool $full][] List of keys to load */
+    protected static array $_objKeys = [];
+    /** @var array|null */
+    protected ?array $_data = null;
+    protected bool $_full = false;
+    protected array $_modified = [];
+    protected ?bool $_tempPrimary = null;
     /**
      * Methods to override
      */
     protected $_new = false;
-    private $_saveImages = [];
+    private array $_saveImages = [];
 
     /**
      * Get default search conditions
@@ -41,7 +45,8 @@ abstract class Item extends DBAPI
      * Create new item
      * @return static
      */
-    public static function create()
+    #[Pure]
+    public static function create(): static
     {
 
         $obj = new static(true);
@@ -51,55 +56,53 @@ abstract class Item extends DBAPI
 
     /**
      * Get object by primary
-     * @param $primary
+     * @param bool $primary
      * @return Item
      */
-    public static function get($primary)
+    public static function get(bool $primary): Item
     {
         $objKey = static::getObjKey();
         if (isset(self::$objects[$objKey][$primary])) {
             return self::$objects[$objKey][$primary];
         }
-        $o = new static;
-        /** @var $o self */
-        $o->_tempPrimary = $primary;
+        $obj = new static();
+        $obj->_tempPrimary = $primary;
         if (!isset(self::$objects[$objKey])) {
             self::$objects[$objKey] = [];
         }
-        self::$objects[$objKey][$primary] = $o;
-        return $o;
+        self::$objects[$objKey][$primary] = $obj;
+        return $obj;
     }
 
     /**
      * Get (first) object by field value
      * @param string $field
      * @param string $value
-     * @return static
+     * @return static|null
      */
-    public static function getByField($field, $value)
+    public static function getByField(string $field, string $value): ?static
     {
         $objKey = static::getObjKey();
-        $o = new static;
-        /** @var $o self */
+        $obj = new static();
         try {
-            $o->loadByField($field, (string)$value);
+            $obj->loadByField($field, (string)$value);
         } catch (Exception $e) {
-            unset($o);
+            unset($obj);
             return null;
         }
-        if ($primary = $o->getPrimaryValue()) {
+        if ($primary = $obj->getPrimaryValue()) {
             if (!isset(self::$objects[$objKey])) {
                 self::$objects[$objKey] = [];
             }
             if (!isset(self::$objects[$objKey][$primary])) {
-                return self::$objects[$objKey][$primary] = $o;
+                return self::$objects[$objKey][$primary] = $obj;
             } else {
                 // this object already exists
-                unset($o);
+                unset($obj);
                 return self::$objects[$objKey][$primary];
             }
         }
-        return $o;
+        return $obj;
     }
 
     /**
@@ -133,7 +136,7 @@ abstract class Item extends DBAPI
      * @param bool $replace Make replace instead of insert
      * @throws Exception
      */
-    public function save($replace = false)
+    public function save(bool $replace = false)
     {
         if (!$this->_new and empty($this->_modified)) {
             return;
@@ -147,8 +150,8 @@ abstract class Item extends DBAPI
             if (!$primary = $this->getPrimaryValue()) {
                 throw new Exception('I don\'t know how to update Unify Item without primary value.');
             }
-            $query = 'UPDATE `' . $db->escape($this->getTable()) . '`';
-            $where[] = '`' . $db->escape($this->getPrimary()) . "`='" . $db->escape($primary) . "'";
+            $query = 'UPDATE `' . $db->escape(static::getTable()) . '`';
+            $where[] = '`' . $db->escape(static::getPrimary()) . "`='" . $db->escape($primary) . "'";
         } else {
             $query = ($replace ? 'REPLACE INTO `' : 'INSERT INTO `') . $this->getTable() . '`';
         }
@@ -274,9 +277,9 @@ abstract class Item extends DBAPI
             throw new Exception("Object '" . static::getObjKey() . "' has no property '$name'.");
         }
         $this->load(
-            isset(static::$propertiesList[$name]['autoload']) ? !static::$propertiesList[$name]['autoload'] : false
+            isset(static::$propertiesList[$name]['autoload']) && !static::$propertiesList[$name]['autoload']
         );
-        return isset($this->_data[$name]) ? $this->_data[$name] : null;
+        return $this->_data[$name] ?? null;
     }
 
     /**

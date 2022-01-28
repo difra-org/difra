@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 /**
@@ -10,24 +12,24 @@ namespace Difra;
 class Ajaxer
 {
     /** @var array Non-action responses */
-    private static $response = [];
+    private static array $response = [];
     /** @var array Action responses */
-    private static $actions = [];
+    private static array $actions = [];
     /** @var bool Form problem flag */
-    private static $problem = false;
+    private static bool $problem = false;
 
     /**
      * Returns ajaxer actions for Ajaxer.js
      * @return string
      */
-    public static function getResponse()
+    public static function getResponse(): string
     {
         self::setResponse('compatibility', \Difra\Envi\Version::getCompatibility());
         if (Debugger::isConsoleEnabled() !== Debugger::CONSOLE_DISABLED) {
             if (Debugger::hadError()) {
                 self::clean(true);
             }
-            self::load('#debug', Debugger::debugHTML(false));
+            self::load('#debug', Debugger::debugHTML());
         }
         if (!empty(self::$actions)) {
             self::setResponse('actions', self::$actions);
@@ -39,9 +41,8 @@ class Ajaxer
      * Adds ajax response
      * @param string $param Parameter name
      * @param mixed $value Parameter value
-     * @return void
      */
-    public static function setResponse($param, $value)
+    public static function setResponse(string $param, mixed $value)
     {
         self::$response[$param] = $value;
     }
@@ -50,7 +51,7 @@ class Ajaxer
      * Clean ajax answer data
      * @param bool $problem
      */
-    public static function clean($problem = false)
+    public static function clean(bool $problem = false): void
     {
         self::$actions = [];
         self::$response = [];
@@ -63,7 +64,7 @@ class Ajaxer
      * @param string $html Content for innerHTML
      * @param bool $replace Force replacing element with $html instead of smart content replace
      */
-    public static function load($target, $html, $replace = false)
+    public static function load(string $target, string $html, bool $replace = false): void
     {
         self::addAction(
             [
@@ -79,7 +80,7 @@ class Ajaxer
      * Adds ajaxer action to ajax reply data.
      * @param array $action Ajaxer actions array.
      */
-    private static function addAction($action)
+    private static function addAction(array $action): void
     {
         self::$actions[] = $action;
     }
@@ -88,7 +89,7 @@ class Ajaxer
      * Flags for json_encode() to generate JSON Ajaxer.js can decode
      * @return int
      */
-    public static function getJsonFlags()
+    public static function getJsonFlags(): int
     {
         static $jsonFlags = null;
         if (!is_null($jsonFlags)) {
@@ -105,7 +106,7 @@ class Ajaxer
      * Returns true if answer contains 'required' or 'invalid' answers.
      * @return bool
      */
-    public static function hasProblem()
+    public static function hasProblem(): bool
     {
         return self::$problem;
     }
@@ -113,13 +114,14 @@ class Ajaxer
     /**
      * Display notification message.
      * @param string $message Message text
+     * @throws \Difra\Exception
      */
-    public static function notify($message)
+    public static function notify(string $message): void
     {
         self::addAction(
             [
                 'action' => 'notify',
-                'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
+                'message' => htmlspecialchars($message, ENT_IGNORE),
                 'lang' => [
                     'close' => Locales::get('notifications/close')
                 ]
@@ -130,13 +132,14 @@ class Ajaxer
     /**
      * Display error message.
      * @param string $message Error message text.
+     * @throws \Difra\Exception
      */
-    public static function error($message)
+    public static function error(string $message): void
     {
         self::addAction(
             [
                 'action' => 'error',
-                'message' => htmlspecialchars($message, ENT_IGNORE, 'UTF-8'),
+                'message' => htmlspecialchars($message, ENT_IGNORE),
                 'lang' => [
                     'close' => Locales::get('notifications/close')
                 ]
@@ -150,7 +153,7 @@ class Ajaxer
      * Adds .problem class.
      * @param string $name Form field name
      */
-    public static function required($name)
+    public static function required(string $name): void
     {
         self::$problem = true;
         self::addAction(
@@ -165,7 +168,7 @@ class Ajaxer
      * Set incorrect field status for form element
      * @param string $name Form element name
      */
-    public static function invalid($name)
+    public static function invalid(string $name): void
     {
         self::$problem = true;
         self::addAction(['action' => 'invalid', 'name' => $name]);
@@ -183,7 +186,7 @@ class Ajaxer
      * @param string $message Message to display in .status element
      * @param string $class Class name to add to element
      */
-    public static function status($name, $message, $class = 'is-invalid')
+    public static function status(string $name, string $message, string $class = 'is-invalid'): void
     {
         self::addAction(
             [
@@ -208,7 +211,7 @@ class Ajaxer
      * @param string $url
      * @param bool $reload
      */
-    public static function redirect($url, $reload = false)
+    public static function redirect(string $url, bool $reload = false): void
     {
         self::addAction(
             [
@@ -222,7 +225,7 @@ class Ajaxer
     /**
      * Reload current page
      */
-    public static function reload()
+    public static function reload(): void
     {
         self::addAction(
             [
@@ -234,9 +237,9 @@ class Ajaxer
     /**
      * Show html content in overlay
      * @param string $html innerHTML content
-     * @param string $type type of overlay
+     * @param string|null $type type of overlay
      */
-    public static function display($html, $type = null)
+    public static function display(string $html, ?string $type = null): void
     {
         self::addAction(
             [
@@ -247,17 +250,17 @@ class Ajaxer
         );
     }
 
-    const MODAL_SIZE_SM = 'sm';     // 300px
-    const MODAL_SIZE_DEFAULT = '';  // 500px
-    const MODAL_SIZE_LARGE = 'lg';  // 800px
-    const MODAL_SIZE_XL = 'xl';     // 1140px
+    public const MODAL_SIZE_SM = 'sm';     // 300px
+    public const MODAL_SIZE_DEFAULT = '';  // 500px
+    public const MODAL_SIZE_LARGE = 'lg';  // 800px
+    public const MODAL_SIZE_XL = 'xl';     // 1140px
 
     /**
      * Show modal window
      * @param string $html  Modal content
      * @param string $size  Modal size
      */
-    public static function modal($html, $size = self::MODAL_SIZE_DEFAULT)
+    public static function modal(string $html, string $size = self::MODAL_SIZE_DEFAULT): void
     {
         self::addAction(
             [
@@ -271,7 +274,7 @@ class Ajaxer
     /**
      * Close overlay
      */
-    public static function close()
+    public static function close(): void
     {
         self::addAction(
             [
@@ -283,7 +286,7 @@ class Ajaxer
     /**
      * Clean form
      */
-    public static function reset()
+    public static function reset(): void
     {
         self::addAction(
             [
@@ -294,9 +297,10 @@ class Ajaxer
 
     /**
      * Display confirmation window (Are you sure? [Yes] [No])
-     * @param $text
+     * @param string $text
+     * @throws \Difra\Exception
      */
-    public static function confirm($text)
+    public static function confirm(string $text): void
     {
         self::addAction(
             [
@@ -316,10 +320,9 @@ class Ajaxer
 
     /**
      * Execute javascript code.
-     * This is dangerous! Don't use it if there is another way.
-     * @param $script
+     * @param string $script
      */
-    public static function exec($script)
+    public static function exec(string $script): void
     {
         self::addAction(
             [
@@ -331,9 +334,9 @@ class Ajaxer
 
     /**
      * Add custom action
-     * @param $action
+     * @param array $action
      */
-    public static function addCustomAction($action)
+    public static function addCustomAction(array $action): void
     {
         self::addAction($action);
     }
@@ -343,7 +346,7 @@ class Ajaxer
      * @param string $url
      * @param array $data
      */
-    public static function post($url, $data)
+    public static function post(string $url, array $data)
     {
         self::addAction(
             [

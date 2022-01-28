@@ -217,7 +217,7 @@ class UserAgent
             }
             self::$version = trim($version);
         }
-        if (sizeof($vv = explode('.', self::$version, 3)) >= 2) {
+        if (self::$version && sizeof($vv = explode('.', self::$version, 3)) >= 2) {
             self::$version = $vv[0] . '.' . $vv[1];
         }
         return self::$version;

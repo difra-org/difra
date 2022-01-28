@@ -1,8 +1,8 @@
 <?php
 
-namespace Difra\Mailer;
+declare(strict_types=1);
 
-use Drafton\Exception;
+namespace Difra\Mailer;
 
 /**
  * Class Mail
@@ -14,9 +14,9 @@ class Mail extends Common
     /**
      * Send mail
      * @return bool
-     * @throws Exception
+     * @throws \Exception
      */
-    public function send()
+    public function send(): bool
     {
         $tos = $this->formatTo();
         $headers = $this->getHeaders(true);
@@ -26,7 +26,7 @@ class Mail extends Common
         foreach ($tos as $to) {
             if (!mail($to, $subject, $body, $headers)) {
                 if (sizeof($this->to) == 1) {
-                    throw new Exception("Failed to send message.");
+                    throw new \Difra\Exception('Failed to send message.');
                 }
                 $success = false;
             }

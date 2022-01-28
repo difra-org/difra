@@ -7,5 +7,5 @@ use Difra\View\HTML\Unique;
 
 class Body extends Unique
 {
-    protected static $unique = true;
+    protected static bool $unique = true;
 }

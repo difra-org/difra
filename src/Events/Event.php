@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Events;
 
 use Difra\Debugger;
@@ -12,39 +14,39 @@ use Difra\Exception;
 class Event
 {
     /** Init core */
-    const EVENT_CORE_INIT = 'core-init';
+    public const EVENT_CORE_INIT = 'core-init';
     /** Load configuration */
-    const EVENT_CONFIG_LOAD = 'config';
+    public const EVENT_CONFIG_LOAD = 'config';
     /** For plugins system initialization */
-    const EVENT_PLUGIN_LOAD = 'plugins-load';
+    public const EVENT_PLUGIN_LOAD = 'plugins-load';
     /** For plugins' early hooks */
-    const EVENT_PLUGIN_INIT = 'plugins-init';
+    public const EVENT_PLUGIN_INIT = 'plugins-init';
     /** For events before action processing */
-    const EVENT_ACTION_REDEFINE = 'pre-action';
+    public const EVENT_ACTION_REDEFINE = 'pre-action';
     /** Search matching action event */
-    const EVENT_ACTION_SEARCH = 'action-find';
+    public const EVENT_ACTION_SEARCH = 'action-find';
     /** Run controller->dispatch() */
-    const EVENT_ACTION_DISPATCH = 'action-dispatch';
+    public const EVENT_ACTION_DISPATCH = 'action-dispatch';
     /** For events before action exec */
-    const EVENT_ACTION_PRE_RUN = 'init-done';
+    public const EVENT_ACTION_PRE_RUN = 'init-done';
     /** Action exec */
-    const EVENT_ACTION_RUN = 'action-run';
+    public const EVENT_ACTION_RUN = 'action-run';
     /** For events after action exec */
-    const EVENT_ACTION_ARRIVAL = 'action-arrival';
+    public const EVENT_ACTION_ARRIVAL = 'action-arrival';
     /** For events run last */
-    const EVENT_ACTION_DONE = 'dispatch';
+    public const EVENT_ACTION_DONE = 'dispatch';
     /** Initialize render data */
-    const EVENT_RENDER_INIT = 'render-init';
+    public const EVENT_RENDER_INIT = 'render-init';
     /** Run render */
-    const EVENT_RENDER_RUN = 'render-run';
+    public const EVENT_RENDER_RUN = 'render-run';
     /** For events to be run after render */
-    const EVENT_RENDER_DONE = 'done';
+    public const EVENT_RENDER_DONE = 'done';
     /** Run in all modes */
-    const RUN_ALL = 'all';
+    public const RUN_ALL = 'all';
     /** Run in web mode */
-    const RUN_WEB = 'web';
+    public const RUN_WEB = 'web';
     /** @var array */
-    protected static $systemEvents = [
+    protected static array $systemEvents = [
         self::EVENT_CORE_INIT => self::RUN_ALL,
         self::EVENT_CONFIG_LOAD => self::RUN_ALL,
         self::EVENT_PLUGIN_LOAD => self::RUN_ALL,
@@ -63,27 +65,28 @@ class Event
         self::EVENT_RENDER_DONE => self::RUN_WEB
     ];
     // event object fields
-    /** @var string Event name */
-    private $name = null;
+    /** @var string|null Event name */
+    private ?string $name;
     /** @var bool Event is running */
-    private $running = false;
+    private bool $running = false;
     /** @var bool Event completed */
-    private $completed = false;
+    private bool $completed = false;
     /** @var callable[] Event handlers */
-    private $handlers = [];
+    private array $handlers = [];
     /** @var callable[] Default handlers */
-    private $defaultHandlers = [];
+    private array $defaultHandlers = [];
     /** @var bool preventDefault() called */
-    private $preventDefault = false;
+    private bool $preventDefault = false;
     /** @var bool stopPropagation() called */
-    private $stopPropagation = false;
+    private bool $stopPropagation = false;
 
     /**
      * Factory
      * @param $name
-     * @return mixed|static
+     * @return \Difra\Events\System|\Difra\Events\Event
+     * @throws \Difra\Exception
      */
-    public static function getInstance($name)
+    public static function getInstance($name): Event|System
     {
         static $instances = [];
         if (isset($instances[$name])) {
@@ -100,7 +103,7 @@ class Event
      * Event constructor.
      * @param string $name
      */
-    protected function __construct($name)
+    protected function __construct(string $name)
     {
         $this->name = $name;
     }
@@ -108,7 +111,6 @@ class Event
     /**
      * Trigger custom event
      * @throws Exception
-     * @throws \Difra\View\HttpError
      */
     public function trigger()
     {
@@ -117,7 +119,6 @@ class Event
 
     /**
      * Call handlers
-     * @throws \Difra\View\HttpError
      * @throws Exception
      */
     protected function start()
@@ -134,11 +135,11 @@ class Event
                 }
                 Debugger::addEventLine(
                     is_string($handler)
-                        ? "Handler for {$this->name}: $handler started"
+                        ? "Handler for $this->name: $handler started"
                         : (
                     is_array($handler)
-                        ? "Handler for {$this->name}: {$handler[0]}::{$handler[1]} started"
-                        : "Handler for {$this->name}: [closure] started"
+                        ? "Handler for $this->name: $handler[0]::$handler[1] started"
+                        : "Handler for $this->name: [closure] started"
                     )
                 );
                 call_user_func($handler, $this);
@@ -151,11 +152,11 @@ class Event
                 }
                 Debugger::addEventLine(
                     is_string($handler)
-                        ? "Handler for {$this->name}: $handler started"
+                        ? "Handler for $this->name: $handler started"
                         : (
                     is_array($handler)
-                        ? "Handler for {$this->name}: {$handler[0]}::{$handler[1]} started"
-                        : "Handler for {$this->name}: [closure] started"
+                        ? "Handler for $this->name: $handler[0]::$handler[1] started"
+                        : "Handler for $this->name: [closure] started"
                     )
                 );
                 call_user_func($handler, $this);

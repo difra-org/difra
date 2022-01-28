@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Libs;
 
 use Difra\Debugger;
@@ -11,6 +13,7 @@ use Difra\Debugger;
  */
 class Less
 {
+    public const VERSION = \Less_Version::version;
     /**
      * Init Less.php library
      * @throws \Exception
@@ -29,8 +32,9 @@ class Less
      * Convert LESS to CSS
      * @param string $string
      * @return string
+     * @throws \Exception
      */
-    public static function compile($string)
+    public static function compile(string $string): string
     {
         self::init();
         $parser = new \Less_Parser();

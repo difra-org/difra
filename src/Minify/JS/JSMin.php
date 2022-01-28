@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Minify\JS;
 
 /**
@@ -10,35 +12,35 @@ namespace Difra\Minify\JS;
  */
 class JSMin
 {
-    const ACTION_KEEP_A = 1;
-    const ACTION_DELETE_A = 2;
-    const ACTION_DELETE_A_B = 3;
-    protected $a = '';
-    protected $b = '';
-    protected $input = '';
-    protected $inputIndex = 0;
-    protected $inputLength = 0;
-    protected $lookAhead = null;
-    protected $output = '';
+    protected const ACTION_KEEP_A = 1;
+    protected const ACTION_DELETE_A = 2;
+    protected const ACTION_DELETE_A_B = 3;
+    protected string $a = '';
+    protected string $b = '';
+    protected string $input = '';
+    protected int $inputIndex = 0;
+    protected int $inputLength = 0;
+    protected ?string $lookAhead = null;
+    protected string $output = '';
 
     /**
      * Minify Javascript
-     * @uses __construct()
-     * @uses min()
      * @param string $js Javascript to be minified
      * @return string
+     * @throws \Difra\Minify\JS\JSMinException
+     * @uses min()
+     * @uses __construct()
      */
-    public static function minify($js)
+    public static function minify(string $js): string
     {
-        $jsmin = new JSMin($js);
-        return $jsmin->min();
+        return (new JSMin($js))->min();
     }
 
     /**
      * Constructor
      * @param string $input Javascript to be minified
      */
-    public function __construct($input)
+    public function __construct(string $input)
     {
         $this->input = str_replace("\r", "\n", $input);
         $this->inputLength = strlen($this->input);
@@ -59,14 +61,12 @@ class JSMin
      *                     ACTION_DELETE_A    Copy B to A. Get the next B. (Delete A).
      *                     ACTION_DELETE_A_B  Get the next B. (Delete B).
      */
-    protected function action($command)
+    protected function action(int $command): void
     {
         switch ($command) {
-            /** @noinspection PhpMissingBreakStatementInspection */
             case self::ACTION_KEEP_A:
                 $this->output .= $this->a;
             // no break
-            /** @noinspection PhpMissingBreakStatementInspection */
             case self::ACTION_DELETE_A:
                 $this->a = $this->b;
 
@@ -137,18 +137,18 @@ class JSMin
      * Get next char. Convert ctrl char to space.
      * @return string|null
      */
-    protected function get()
+    protected function get(): ?string
     {
-        $c = $this->lookAhead;
+        $char = $this->lookAhead;
 
-        if ($c === null and $this->inputIndex < $this->inputLength) {
-            $c = $this->input{$this->inputIndex++};
+        if ($char === null && $this->inputIndex < $this->inputLength) {
+            $char = $this->input[$this->inputIndex++];
         } else {
             $this->lookAhead = null;
         }
 
-        if ($c >= ' ' or $c === null or $c === "\n") {
-            return $c;
+        if ($char >= ' ' || $char === null || $char === "\n") {
+            return $char;
         }
 
         return ' ';
@@ -159,7 +159,7 @@ class JSMin
      * @param $c
      * @return bool
      */
-    protected function isAlphaNum($c)
+    protected function isAlphaNum($c): bool
     {
         return
             ('a' <= $c and $c <= 'z') or
@@ -173,11 +173,12 @@ class JSMin
 
     /**
      * Perform minification, return result
-     * @uses action()
-     * @uses isAlphaNum()
      * @return string
+     * @throws \Difra\Minify\JS\JSMinException
+     * @uses       action()
+     * @uses       isAlphaNum()
      */
-    protected function min()
+    protected function min(): string
     {
         $this->a = "\n";
         $this->action(self::ACTION_DELETE_A_B);
@@ -263,25 +264,23 @@ class JSMin
      * @uses get()
      * @uses peek()
      * @throws JSMinException On unterminated comment.
-     * @return string
+     * @return ?string
      */
-    protected function next()
+    protected function next(): ?string
     {
-        $c = $this->get();
+        $char = $this->get();
 
-        if ($c === '/') {
+        if ($char === '/') {
             switch ($this->peek()) {
-                /** @noinspection PhpMissingBreakStatementInspection */
                 case '/':
                     while (true) {
-                        $c = $this->get();
+                        $char = $this->get();
 
-                        if ($c <= "\n") {
-                            return $c;
+                        if ($char <= "\n") {
+                            return $char;
                         }
                     }
                 // no break
-                /** @noinspection PhpMissingBreakStatementInspection */
                 case '*':
                     $this->get();
 
@@ -300,11 +299,11 @@ class JSMin
                     }
                 // no break
                 default:
-                    return $c;
+                    return $char;
             }
         }
 
-        return $c;
+        return $char;
     }
 
     /**
@@ -312,7 +311,7 @@ class JSMin
      * @uses get()
      * @return string|null
      */
-    protected function peek()
+    protected function peek(): ?string
     {
         return $this->lookAhead = $this->get();
     }

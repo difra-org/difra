@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 use Difra\Envi\Request;
@@ -11,53 +13,56 @@ use Difra\Envi\Request;
 class Debugger
 {
     /** Debugging is disabled */
-    const DEBUG_DISABLED = 0;
+    public const DEBUG_DISABLED = 0;
     /** Debugging is enabled */
-    const DEBUG_ENABLED = 1;
+    public const DEBUG_ENABLED = 1;
     /** Console is disabled */
-    const CONSOLE_DISABLED = 0;
+    public const CONSOLE_DISABLED = 0;
     /** Console is enabled, but switched off by developer */
-    const CONSOLE_OFF = 1;
+    public const CONSOLE_OFF = 1;
     /** Console is enabled */
-    const CONSOLE_ON = 2; // console disabled
+    public const CONSOLE_ON = 2; // console disabled
     /** Caches are disabled */
-    const CACHES_DISABLED = 0; // console enabled, but not active
+    public const CACHES_DISABLED = 0; // console enabled, but not active
     /** Caches are enabled */
-    const CACHES_ENABLED = 1; // console enabled and active
+    public const CACHES_ENABLED = 1; // console enabled and active
     /** Display errors */
-    const ERRORS_SHOW = 1;
+    public const ERRORS_SHOW = 1;
     /** Don't display errors */
-    const ERRORS_HIDE = 0;
+    public const ERRORS_HIDE = 0;
     /** @var int Debugger state */
-    private static $enabled = self::DEBUG_DISABLED;
+    private static int $enabled = self::DEBUG_DISABLED;
     /** @var int Console state */
-    private static $console = self::CONSOLE_DISABLED;
+    private static int $console = self::CONSOLE_DISABLED;
     /** @var int Caches state */
-    private static $caches = self::CACHES_ENABLED;
+    private static int $caches = self::CACHES_ENABLED;
     /** @var int Display errors state */
-    private static $errors = self::ERRORS_HIDE;
+    private static int $errors = self::ERRORS_HIDE;
     /** @var array Console data */
-    private static $output = [];
+    private static array $output = [];
     /** @var bool Error flag */
-    private static $hadError = false;
-    /** @var string If there was a handled exception, don't capture it on shutdown */
-    private static $handledByException = null;
-    /** @var array Last error message captured by captureNormal (let captureShutdown skip it) */
-    private static $handledByNormal = null;
+    private static bool $hadError = false;
+    /** @var string|null If there was a handled exception, don't capture it on shutdown */
+    private static ?string $handledByException = null;
+    /** @var array|null Last error message captured by captureNormal (let captureShutdown skip it) */
+    private static ?array $handledByNormal = null;
     /** @var bool Shut down flag (to prevent undesired output) */
-    static public $shutdown = false;
+    public static bool $shutdown = false;
 
     /**
      * Is debugging enabled?
      * @return bool
      */
-    public static function isEnabled()
+    public static function isEnabled(): bool
     {
         self::init();
         return (bool)self::$enabled;
     }
 
-    public static function init()
+    /**
+     * Init debugger
+     */
+    public static function init(): void
     {
         // run once
         static $initDone = false;
@@ -70,7 +75,10 @@ class Debugger
         self::apply();
     }
 
-    private static function configure()
+    /**
+     * Configure debugger
+     */
+    private static function configure(): void
     {
         // cli mode
         if (Envi::getMode() == 'cli') {
@@ -92,7 +100,7 @@ class Debugger
         }
 
         // got GET parameter debug=-1, emulate production but show errors
-        if (isset($_GET['debug']) and $_GET['debug'] == -1) {
+        if (isset($_GET['debug']) and $_GET['debug'] === '-1') {
             self::$enabled = self::DEBUG_DISABLED;
             self::$console = self::CONSOLE_DISABLED;
             self::$errors = self::ERRORS_SHOW;
@@ -133,19 +141,22 @@ class Debugger
         }
     }
 
-    private static function apply()
+    /**
+     * Apply php settings
+     */
+    private static function apply(): void
     {
         if (self::$errors == self::ERRORS_HIDE) {
             ini_set('display_errors', 'Off');
         } else {
             ini_set('display_errors', 'On');
-            ini_set('error_reporting', E_ALL);
+            error_reporting(E_ALL);
             ini_set('html_errors', (Envi::getMode() != 'web' or Request::isAjax()) ? 'Off' : 'On');
             ini_set('log_errors', 'On');
         }
         if (self::$console == self::CONSOLE_ON) {
             ini_set('display_errors', 'Off');
-            ini_set('error_reporting', E_ALL);
+            error_reporting(E_ALL);
             set_error_handler(['\Difra\Debugger', 'captureNormal']);
             set_exception_handler(['\Difra\Debugger', 'captureException']);
             register_shutdown_function(['\Difra\Debugger', 'captureShutdown']);
@@ -159,7 +170,7 @@ class Debugger
      * 2 — console is enabled
      * @return int
      */
-    public static function isConsoleEnabled()
+    public static function isConsoleEnabled(): int
     {
         self::init();
         return self::$console;
@@ -169,7 +180,7 @@ class Debugger
      * Is caching enabled?
      * @return bool
      */
-    public static function isCachesEnabled()
+    public static function isCachesEnabled(): bool
     {
         self::init();
         return (bool)self::$caches;
@@ -179,7 +190,7 @@ class Debugger
      * Add console log message
      * @param string $line
      */
-    public static function addLine($line)
+    public static function addLine(string $line)
     {
         self::$output[] = [
             'class' => 'messages',
@@ -192,7 +203,7 @@ class Debugger
      * Get running time
      * @return float
      */
-    public static function getTimer()
+    public static function getTimer(): float
     {
         return microtime(true) - $_SERVER['REQUEST_TIME_FLOAT'];
     }
@@ -201,7 +212,7 @@ class Debugger
      * Add console log event
      * @param string $line
      */
-    public static function addEventLine($line)
+    public static function addEventLine(string $line)
     {
         self::$output[] = [
             'class' => 'events',
@@ -210,8 +221,8 @@ class Debugger
         ];
     }
 
-    /** @var float DB request timer */
-    private static $dbTimer = null;
+    /** @var float|null DB request timer */
+    private static ?float $dbTimer = null;
 
     /**
      * DB request prepare
@@ -229,7 +240,7 @@ class Debugger
      * @param string $type
      * @param string $line
      */
-    public static function addDBLine($type, $line)
+    public static function addDBLine(string $type, string $line)
     {
         if (!self::$enabled) {
             return;
@@ -248,10 +259,10 @@ class Debugger
     /**
      * Callback for exceptions
      * @static
-     * @param Exception $exception
+     * @param \Exception $exception
      * @return bool
      */
-    public static function captureException($exception)
+    public static function captureException(\Exception $exception): bool
     {
         self::init();
         $err = [
@@ -299,13 +310,12 @@ class Debugger
      * @param $message
      * @param $file
      * @param $line
-     * @return bool
      */
-    public static function captureNormal($type, $message, $file, $line)
+    public static function captureNormal($type, $message, $file, $line): void
     {
         self::$handledByNormal = $message;
-        if (error_reporting() == 0) {
-            return false;
+        if (!error_reporting()) {
+            return;
         }
         $err = [
             'class' => 'errors',
@@ -319,11 +329,11 @@ class Debugger
         $err['traceback'] = debug_backtrace();
         array_shift($err['traceback']);
         self::addLineAsArray($err);
-        return false;
     }
 
     /**
      * Callback for fatal errors
+     * @throws \Difra\Exception
      */
     public static function captureShutdown()
     {
@@ -362,14 +372,14 @@ class Debugger
      * Render debug console HTML
      * @param bool $standalone Render console standalone page (looks like full screen console)
      * @return string
+     * @throws \Difra\Exception
      */
-    public static function debugHTML($standalone = false)
+    public static function debugHTML(bool $standalone = false): string
     {
         static $alreadyDidIt = false;
         if ($alreadyDidIt) {
             return '';
         }
-        /** @var $root \DOMElement */
         $xml = new \DOMDocument();
         $root = $xml->appendChild($xml->createElement('root'));
         self::debugXML($root, $standalone);
@@ -381,10 +391,10 @@ class Debugger
 
     /**
      * Add console data to output XML
-     * @param \DOMNode|\DOMElement $node
+     * @param \DOMElement $node
      * @param bool $standalone
      */
-    public static function debugXML($node, $standalone = false)
+    public static function debugXML(\DOMElement $node, bool $standalone = false)
     {
         self::init();
         $node->setAttribute('debug', self::$enabled ? '1' : '0');
@@ -393,7 +403,6 @@ class Debugger
         if (!self::$console) {
             return;
         }
-        /** @var $debugNode \DOMElement */
         $debugNode = $node->appendChild($node->ownerDocument->createElement('debug'));
         Libs\XML\DOM::array2domAttr($debugNode, self::$output, true);
         if ($standalone) {
@@ -405,14 +414,13 @@ class Debugger
      * Does console log contain errors?
      * @return bool
      */
-    public static function hadError()
+    public static function hadError(): bool
     {
         return self::$hadError;
     }
 
     /**
      * If page rendered too long, report to developers
-     * @throws Exception
      */
     public static function checkSlow()
     {
@@ -438,7 +446,7 @@ class Debugger
         foreach (self::$output as $line) {
             if (!isset($line['type'])) {
                 $line['type'] = null;
-            };
+            }
             $output .= "{$line['timer']}\t{$line['class']}\t{$line['type']}\t{$line['message']}\n";
         }
         $date = date('r');
@@ -466,11 +474,13 @@ $post
 $cookie
 MSG;
         $output .= '</pre>';
-        $mailer = Mailer::getInstance();
-        $mailer->setTo(self::getNotificationMail());
-        $mailer->setSubject('Slow script');
-        $mailer->setBody(print_r($output, true));
-        $mailer->send();
+        try {
+            $mailer = Mailer::getInstance();
+            $mailer->setTo(self::getNotificationMail());
+            $mailer->setSubject('Slow script');
+            $mailer->setBody(print_r($output, true));
+            $mailer->send();
+        } catch (\Exception) {}
     }
 
     /**
@@ -487,7 +497,7 @@ MSG;
      * Get e-mail for notifications
      * @return string|null
      */
-    public static function getNotificationMail()
+    public static function getNotificationMail(): ?string
     {
         return Config::getInstance()->getValue('email', 'errors');
     }

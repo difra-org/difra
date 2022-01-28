@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Envi;
 
 use Difra\Cache;
@@ -25,7 +27,7 @@ class Session
      */
     public function __destruct()
     {
-        $this->save();
+        static::save();
     }
 
     /**
@@ -36,7 +38,7 @@ class Session
     {
         static $instance = null;
         if (is_null($instance)) {
-            $instance = new self;
+            $instance = new self();
         }
     }
 

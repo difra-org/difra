@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Security\Filter;
 
 /**
@@ -13,7 +15,7 @@ class Bankcard implements Common
      * @param string $string
      * @return bool
      */
-    public static function validate($string)
+    public static function validate(string $string): bool
     {
         return (bool)\Difra\Libs\Bankcard::getType($string);
     }
@@ -21,13 +23,10 @@ class Bankcard implements Common
     /**
      * Sanitize input string
      * @param string $string
-     * @return string
+     * @return string|null
      */
-    public static function sanitize($string)
+    public static function sanitize(string $string): ?string
     {
-        if (!self::validate($string)) {
-            return null;
-        }
-        return str_replace([' ', '-'], '', $string);
+        return self::validate($string) ? str_replace([' ', '-'], '', $string) : null;
     }
 }

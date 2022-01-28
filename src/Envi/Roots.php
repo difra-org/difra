@@ -102,21 +102,21 @@ class Roots
 
     /**
      * Get user controlled roots (main, application, additional)
-     * @param bool $order
-     * @return array|null
+     * @param string $order
+     * @return array
      */
-    public static function getUserRoots($order = self::FIRST_FW)
+    public static function getUserRoots(string $order = self::FIRST_FW): array
     {
         $directories = null;
-        $directoriesReversed = null;
+        $reversed = null;
         if ($order == self::FIRST_APP) {
-            return $directoriesReversed ?: $directoriesReversed = array_reverse(self::getUserRoots(self::FIRST_FW));
+            return $reversed ?: array_reverse(self::getUserRoots());
         }
         if (!is_null($directories)) {
             return $directories;
         }
         $me = self::getInstance();
-        return $directories = array_merge(
+        return array_merge(
             [$me->main],
             $me->additional,
             $me->application ? [$me->application] : []

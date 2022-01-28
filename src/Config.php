@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 use Difra\Envi\Roots;
@@ -11,20 +13,20 @@ use Difra\Envi\Roots;
  */
 class Config
 {
-    /** @var array Current configuration */
-    private $config = null;
+    /** @var array|null Current configuration */
+    private ?array $config = null;
     /** @var bool Modified flag */
-    private $modified = false;
+    private bool $modified = false;
 
     /**
      * Singleton
      * @static
      * @return Config
      */
-    public static function getInstance()
+    public static function getInstance(): Config
     {
         static $instance = null;
-        return $instance ? $instance : $instance = new self;
+        return $instance ?? $instance = new self();
     }
 
     /**
@@ -39,7 +41,7 @@ class Config
      * Save configuration
      * @return bool
      */
-    public function save()
+    public function save(): bool
     {
         if (!$this->modified) {
             return true;
@@ -50,8 +52,8 @@ class Config
             $db->query('DELETE FROM `config`');
             $db->query('INSERT INTO `config` SET `config`=?', [serialize($diff)]);
             Cache::getInstance()->remove('config');
-        } catch (Exception $e) {
-            $e->notify();
+        } catch (Exception $exception) {
+            $exception->notify();
             return false;
         }
         $this->modified = false;
@@ -62,7 +64,7 @@ class Config
      * Finds difference between saved configuration and current one
      * @return array
      */
-    private function diff()
+    private function diff(): array
     {
         return $this->subDiff($this->loadFileConfigs(), $this->config);
     }
@@ -73,27 +75,26 @@ class Config
      * @param array $a2
      * @return array
      */
-    private function subDiff($a1, $a2)
+    private function subDiff(array $a1, array $a2): array
     {
         if (empty($a2)) {
             return [];
         }
         $diff = [];
-        foreach ($a2 as $k => $v) {
-            if (!isset($a1[$k])) {
-                $diff[$k] = $v;
-            } elseif (is_array($v)) {
-                $d = $this->subDiff($a1[$k], $a2[$k]);
-                if (!empty($d)) {
-                    $diff[$k] = $a2[$k];
+        foreach ($a2 as $key => $value) {
+            if (!isset($a1[$key])) {
+                $diff[$key] = $value;
+            } elseif (is_array($value)) {
+                if (!empty($this->subDiff($a1[$key], $value))) {
+                    $diff[$key] = $value;
                 }
-            } elseif ($a1[$k] !== $v) {
-                $diff[$k] = $v;
+            } elseif ($a1[$key] !== $value) {
+                $diff[$key] = $value;
             }
         }
-        foreach ($a1 as $k => $v) {
-            if (!isset($a2[$k])) {
-                $diff[$k] = null;
+        foreach ($a1 as $key => $value) {
+            if (!isset($a2[$key])) {
+                $diff[$key] = null;
             }
         }
         return $diff;
@@ -103,7 +104,7 @@ class Config
      * Get configuration from config.php
      * @return array
      */
-    private function loadFileConfigs()
+    private function loadFileConfigs(): array
     {
         static $config = null;
         if (!is_null($config)) {
@@ -112,7 +113,6 @@ class Config
         $config = [];
         foreach (Roots::get(Roots::FIRST_FW) as $root) {
             if (is_file($file = $root . '/config.php')) {
-                /** @noinspection PhpIncludeInspection */
                 $newConfig = include($file);
                 $config = $this->merge($config, $newConfig);
             }
@@ -124,20 +124,15 @@ class Config
      * Merge two configuration arrays
      * @param array $a1
      * @param array $a2
-     * @return mixed
+     * @return array
      */
-    private function merge($a1, $a2)
+    private function merge(array $a1, array $a2): array
     {
-        foreach ($a2 as $k => $v) {
-            switch ($k) {
-                case 'instances':
-                    // merge value
-                    $a1[$k] = array_merge($a1[$k] ?? [], $a2[$k]);
-                    break;
-                default:
-                    // replace value
-                    $a1[$k] = $v;
-            }
+        foreach ($a2 as $key => $value) {
+            $a1[$key] = match ($key) {
+                'instances' => array_merge($a1[$key] ?? [], $value),
+                default => $value,
+            };
         }
         return $a1;
     }
@@ -147,10 +142,10 @@ class Config
      * @param string $key
      * @return mixed
      */
-    public function get($key)
+    public function get(string $key): mixed
     {
         $this->load();
-        return isset($this->config[$key]) ? $this->config[$key] : null;
+        return $this->config[$key] ?? null;
     }
 
     /**
@@ -174,7 +169,7 @@ class Config
                 $this->config = $this->merge($this->config, $dynamicConfig);
             }
 //            $cache->put('config', $this->config);
-        } catch (Exception $ex) {
+        } catch (Exception) {
         }
     }
 
@@ -183,7 +178,7 @@ class Config
      * @param string $key
      * @param mixed $value
      */
-    public function set($key, $value)
+    public function set(string $key, mixed $value): void
     {
         $this->load();
         $this->config[$key] = $value;
@@ -196,10 +191,10 @@ class Config
      * @param string $arrayKey
      * @return mixed
      */
-    public function getValue($key, $arrayKey)
+    public function getValue(string $key, string $arrayKey): mixed
     {
         $this->load();
-        return isset($this->config[$key][$arrayKey]) ? $this->config[$key][$arrayKey] : null;
+        return $this->config[$key][$arrayKey] ?? null;
     }
 
     /**
@@ -208,7 +203,7 @@ class Config
      * @param string $arrayKey
      * @param mixed $arrayValue
      */
-    public function setValue($key, $arrayKey, $arrayValue)
+    public function setValue(string $key, string $arrayKey, mixed $arrayValue): void
     {
         $this->load();
         if (!isset($this->config[$key])) {
@@ -220,9 +215,9 @@ class Config
 
     /**
      * Get full configuration
-     * @return array
+     * @return array|null
      */
-    public function getConfig()
+    public function getConfig(): ?array
     {
         $this->load();
         return $this->config;
@@ -232,7 +227,7 @@ class Config
      * Get modified configuration items
      * @return array
      */
-    public function getDiff()
+    public function getDiff(): array
     {
         $this->load();
         return $this->diff();

@@ -19,23 +19,23 @@ class MemCached extends Common
     /** @var int TTL */
     private static $lifetime = 0;
     /** @var string Adapter name */
-    public $adapter = Cache::INST_MEMCACHED;
+    public ?string $adapter = Cache::INST_MEMCACHED;
 
     /**
      * Detect if backend is available
      * @return bool
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         try {
             if (!is_null(self::$memcache)) {
-                return self::$memcache ? true : false;
+                return (bool)self::$memcache;
             }
             if (!extension_loaded('memcached')) {
                 return self::$memcache = false;
             }
 
-            $memcache = new \MemCached;
+            $memcache = new \MemCached();
             // todo: load from config
             $memcache->addServer('127.0.0.1', '11211');
             // if ($memcache->getStats() < 0) { // returns ['127.0.0.1:11211'=>['pid'=>-1,...]]
@@ -44,7 +44,7 @@ class MemCached extends Common
             self::$memcache = $memcache;
 
             return true;
-        } catch (Exception $ex) {
+        } catch (Exception) {
             return false;
         }
     }
@@ -55,7 +55,7 @@ class MemCached extends Common
      * @param bool $doNotTestCacheValidity
      * @return mixed|null
      */
-    public function realGet($id, $doNotTestCacheValidity = false)
+    public function realGet(string $id, $doNotTestCacheValidity = false)
     {
         $data = @self::$memcache->get($id);
         return self::$serialize ? @unserialize($data) : $data;
@@ -66,7 +66,7 @@ class MemCached extends Common
      * @param string $id
      * @return bool
      */
-    public function test($id)
+    public function test(string $id)
     {
         $data = $this->get($id);
         return !empty($data);
@@ -93,7 +93,7 @@ class MemCached extends Common
      * @param string $id
      * @return bool
      */
-    public function realRemove($id)
+    public function realRemove(string $id)
     {
         return @self::$memcache->delete($id);
     }

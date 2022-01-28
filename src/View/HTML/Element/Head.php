@@ -8,5 +8,5 @@ namespace Difra\View\HTML\Element;
  */
 class Head extends \Difra\View\HTML\Unique
 {
-    protected static $unique = true;
+    protected static bool $unique = true;
 }

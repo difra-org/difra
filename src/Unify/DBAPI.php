@@ -427,16 +427,14 @@ class DBAPI extends Table
      * @throws Exception
      * @return string
      */
-    public static function getDbCreate()
+    public static function getDbCreate(): string
     {
         if (empty(static::$propertiesList)) {
             throw new Exception('Can\'t create table for empty object.');
         }
         $lines = [];
         $indexes = [];
-//		if( $createPrimary = static::getCreatePrimary() ) {
-//			$indexes[] = $createPrimary;
-//		}
+
         foreach (static::getColumns() as $name => $prop) {
             $lines[] = self::getColumnDefinition($name, $prop);
         }
@@ -444,13 +442,7 @@ class DBAPI extends Table
             $indexes[] = self::getIndexDefinition($name, $prop);
         }
         $lines = array_merge($lines, $indexes);
-        $create =
-            'CREATE TABLE `' .
-            static::getTable() .
-            "` (\n" .
-            implode(",\n", $lines) .
-            "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8";
-        return $create;
+        return 'CREATE TABLE `' . static::getTable() . "` (\n" . implode(",\n", $lines) . "\n) ENGINE=InnoDB DEFAULT CHARSET=utf8";
     }
 
     /**

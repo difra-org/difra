@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 use Difra\DB\Adapters\MySQL;
@@ -13,14 +15,14 @@ use Difra\DB\Adapters\Sqlite;
 class DB
 {
     /** @var array Configuration instances */
-    private static $adapters = [];
+    private static array $adapters = [];
 
     /**
      * @param string $instance
      * @return MySQL|Sqlite
      * @throws \Difra\DB\Exception
      */
-    public static function getInstance($instance = 'default')
+    public static function getInstance(string $instance = 'default'): Sqlite|MySQL
     {
         if (isset(self::$adapters[$instance])) {
             // TODO: ping db
@@ -31,28 +33,24 @@ class DB
         if (!isset($cfg[$instance]) and $instance != 'default') {
             return self::$adapters[$instance] = self::getInstance();
         }
-        switch (strtolower($cfg[$instance]['type'])) {
-            case 'mysql':
-                return self::$adapters[$instance] = new MySQL($cfg[$instance]);
-            case 'sqlite':
-                return self::$adapters[$instance] = new Sqlite($cfg[$instance]);
-            default:
-                throw new \Difra\DB\Exception("PDO adapter not found for '{$cfg[$instance]['type']}'");
-        }
+        return match (strtolower($cfg[$instance]['type'])) {
+            'mysql' => self::$adapters[$instance] = new MySQL($cfg[$instance]),
+            'sqlite' => self::$adapters[$instance] = new Sqlite($cfg[$instance]),
+            default => throw new \Difra\DB\Exception("PDO adapter not found for '{$cfg[$instance]['type']}'"),
+        };
     }
 
     /**
      * Get configuration
-     * @return mixed
+     * @return array|null
      */
-    private static function getConfig()
+    private static function getConfig(): ?array
     {
         static $cfg = null;
-        if (!is_null($cfg)) {
-            return $cfg;
+        if (is_null($cfg)) {
+            $cfg = Config::getInstance()->get('db') ?? false;
         }
-
-        return $cfg = Config::getInstance()->get('db');
+        return $cfg ?: null;
     }
 
     /**
@@ -67,8 +65,8 @@ class DB
     public static function getSetKeys($array) : string
     {
         $set = [];
-        foreach ($array as $k=>$v) {
-            $set[] = "`$k`=:$k";
+        foreach ($array as $key => $value) {
+            $set[] = "`$key`=:$key";
         }
         return implode(',', $set);
     }

@@ -3,6 +3,7 @@
 namespace Difra\Locales\Wordforms;
 
 use Difra\Locales\Wordforms;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Class ru_RU
@@ -301,8 +302,8 @@ class ru_RU extends Common
      * @return string
      */
     public function getForm(
-        $word,
-        $form = 0
+        string $word,
+        int $form = 0
     ) {
         $decline = $this->getDecline($word, $form);
         if ($decline != self::DECLINE_UNKNOWN) {
@@ -511,6 +512,7 @@ class ru_RU extends Common
      * @param int $form
      * @return int
      */
+    #[Pure]
     public function getDecline($word, $form)
     {
         switch ($form & Wordforms::MASK_GENDER) {

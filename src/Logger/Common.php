@@ -1,10 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Logger;
 
 use Difra\Auth;
-use Difra\Exception;
 use Difra\Logger;
+use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * Class Common
@@ -19,14 +21,14 @@ abstract class Common
      * @return void
      * @throws \Difra\Exception
      */
-    abstract protected function realWrite($message, $level);
+    abstract protected function realWrite(string $message, int $level): void;
 
     /**
      * Get logger
      * @param string $log Log name
      * @return static
      */
-    public static function get($log)
+    public static function get(string $log): static
     {
         static $instances = [];
         if (isset($instances[$log])) {
@@ -34,28 +36,22 @@ abstract class Common
         }
         $config = \Difra\Config::getInstance()->getValue('logs', $log);
         $type = $config['type'] ?? Logger::TYPE_NONE;
-        switch ($type) {
-            case Logger::TYPE_STDOUT:
-                return $instances[$log] = new Stdout($log, $config);
-            case Logger::TYPE_FILE:
-                return $instances[$log] = new File($log, $config);
-            case Logger::TYPE_MONGO:
-                return $instances[$log] = new Mongo($log, $config);
-            case Logger::TYPE_SYSLOG_UDP:
-                return $instances[$log] = new SyslogUDP($log, $config);
-            case Logger::TYPE_NONE:
-            default:
-                return $instances[$log] = new None($log, $config);
-        }
+        return match ($type) {
+            Logger::TYPE_STDOUT => $instances[$log] = new Stdout($log, $config),
+            Logger::TYPE_FILE => $instances[$log] = new File($log, $config),
+            Logger::TYPE_MONGO => $instances[$log] = new Mongo($log, $config),
+            Logger::TYPE_SYSLOG_UDP => $instances[$log] = new SyslogUDP($log, $config),
+            default => $instances[$log] = new None($log, $config),
+        };
     }
 
     /**
      * Configuration
      * @var array
      */
-    protected $config = [];
+    protected array $config = [];
     /** @var string */
-    protected $logName = 'default';
+    protected string $logName = 'default';
     /**
      * @var string
      * %d Date
@@ -63,16 +59,17 @@ abstract class Common
      * %u User name
      * %m Message
      */
-    protected $logFormat = "[%d\t%p\t%a\t%u]\t%m";
+    protected string $logFormat = "[%d\t%p\t%a\t%u]\t%m";
     /** @var int Minimum log level */
-    protected $logLevel = Logger::INFO;
+    protected int $logLevel = Logger::INFO;
 
     /**
      * Write log message
-     * @param $message
-     * @param $level
+     * @param string $message
+     * @param int $level
+     * @throws \Difra\Exception
      */
-    public function write($message, $level)
+    public function write(string $message, int $level): void
     {
         if ($level < $this->logLevel) {
             return;
@@ -89,10 +86,10 @@ abstract class Common
 
     /**
      * Format log string
-     * @param $message
+     * @param string $message
      * @return string
      */
-    protected function format($message)
+    protected function format(string $message): string
     {
         $obj = $this->getLogObj($message);
         $replace = [
@@ -103,40 +100,41 @@ abstract class Common
             '%m' => $obj['message'],
         ];
         $result = $this->logFormat;
-        foreach ($replace as $f => $t) {
-            $result = str_replace($f, $t, $result);
+        foreach ($replace as $fromStr => $toStr) {
+            $result = str_replace($fromStr, $toStr, $result);
         }
         return $result;
     }
 
     /**
      * Get log object
-     * @param $message
+     * @param string $message
      * @return array
      */
-    protected function getLogObj($message)
+    #[ArrayShape(['timestamp' => 'int', 'date' => 'string', 'message' => '', 'pid' => 'false|int', 'user' => 'mixed|null', 'ip' => 'string'])]
+    protected function getLogObj(string $message): array
     {
-        $obj = [
+        $result = [
             'timestamp' => time(),
             'date' => date('r'),
             'message' => $message,
             'pid' => getmypid()
         ];
         if (!empty($_SERVER['REMOTE_ADDR'])) {
-            $obj['ip'] = $_SERVER['REMOTE_ADDR'];
+            $result['ip'] = $_SERVER['REMOTE_ADDR'];
         }
-        if ($a = Auth::getInstance()->getLogin()) {
-            $obj['user'] = $a;
+        if ($login = Auth::getInstance()->getLogin()) {
+            $result['user'] = $login;
         }
-        return $obj;
+        return $result;
     }
 
     /**
      * Constructor
      * @param string $log
-     * @throws Exception
+     * @param array $config
      */
-    private function __construct($log, $config)
+    private function __construct(string $log, array $config)
     {
         $this->logName = $log;
         if (!empty($config['format'])) {

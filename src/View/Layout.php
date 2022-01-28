@@ -11,25 +11,25 @@ use Difra\Exception;
  */
 class Layout
 {
-    /** @var \DOMDocument */
-    private $xml;
-    /** @var \DOMElement */
-    private $realRoot;
+    /** @var \DOMDocument|null */
+    private ?\DOMDocument $xml;
+    /** @var \DOMElement|null */
+    private ?\DOMElement $realRoot;
 
     /** @var \DOMElement[] */
-    private $elements = [];
+    private array $elements = [];
 
-    /** @var \Difra\View\HTML\Element\HTML */
-    private $html = null;
+    /** @var \Difra\View\HTML\Element\HTML|null */
+    private ?HTML\Element\HTML $html;
 
     /**
      * Singleton
-     * @return Layout
+     * @return static
      */
-    public static function getInstance()
+    public static function getInstance(): static
     {
         static $instance = null;
-        return $instance ?: $instance = new self;
+        return $instance ?: $instance = new static();
     }
 
     /**
@@ -39,7 +39,7 @@ class Layout
     private function __construct()
     {
         // create output XML
-        $this->xml = new \DOMDocument;
+        $this->xml = new \DOMDocument();
         $this->realRoot = $this->xml->appendChild($this->xml->createElement('root'));
 
         $this->html = new \Difra\View\HTML\Element\HTML();
@@ -65,7 +65,7 @@ class Layout
      * Link layout elements to controller
      * @param \Difra\Controller $controller
      */
-    public function linkController($controller)
+    public function linkController(\Difra\Controller $controller)
     {
         $controller->xml =& $this->xml;
         $controller->realRoot =& $this->realRoot;
@@ -85,7 +85,7 @@ class Layout
      * @param $name
      * @return \DOMElement
      */
-    public static function &getElement($name)
+    public static function &getElement($name): \DOMElement
     {
         if ($name == 'root') {
             return self::getInstance()->realRoot;
@@ -101,7 +101,7 @@ class Layout
      * Get all layout elements
      * @return \DOMElement[]
      */
-    public static function &getAll()
+    public static function &getAll(): array
     {
         return self::getInstance()->elements;
     }

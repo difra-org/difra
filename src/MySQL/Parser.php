@@ -65,7 +65,7 @@ class Parser
                 $files = scandir($path . '/bin/db');
                 if (!empty($files)) {
                     foreach ($files as $file) {
-                        if (is_readable($path . '/bin/db/' . $file) and $file{0} !== '.') {
+                        if (is_readable($path . '/bin/db/' . $file) and $file[0] !== '.') {
                             $tables[] = file_get_contents($path . '/bin/db/' . $file);
                         }
                     }
@@ -234,16 +234,11 @@ class Parser
                     $next = '';
                 }
                 $shards[] = $a;
-                continue;
             } elseif (!\Difra\Libs\Strings::isWhitespace($a)) {
                 $next .= $a;
-                continue;
-            } else {
-                if ($next !== '') {
-                    $shards[] = $next;
-                    $next = '';
-                    continue;
-                }
+            } elseif ($next !== '') {
+                $shards[] = $next;
+                $next = '';
             }
         }
         if ($next !== '') {

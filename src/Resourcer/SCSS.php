@@ -12,7 +12,7 @@ class SCSS extends Abstracts\Plain
     protected function __construct()
     {
         if (\Difra\Debugger::isEnabled()) {
-            $this->printSequenceDebug = true;
+            $this->showSequence = true;
         }
     }
 

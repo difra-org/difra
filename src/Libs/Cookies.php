@@ -1,9 +1,12 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Libs;
 
 use Difra\Envi;
 use Difra\Locales;
+use JetBrains\PhpStorm\Pure;
 
 /**
  * Cookies
@@ -15,15 +18,16 @@ use Difra\Locales;
 class Cookies
 {
     /** @var int Cookie expiration */
-    private $expireTime = 0;
-    /** @var string Cookie domain */
-    private $domain = null;
-    /** @var string Cookie path */
-    private $path = null;
+    private int $expireTime = 0;
+    /** @var string|null Cookie domain */
+    private ?string $domain;
+    /** @var string|null Cookie path */
+    private ?string $path;
 
     /**
      * Constructor
      */
+    #[Pure]
     private function __construct()
     {
         $this->domain = '.' . Envi::getHost(true);
@@ -34,18 +38,17 @@ class Cookies
      * Singleton
      * @return Cookies
      */
-    public static function getInstance()
+    public static function getInstance(): Cookies
     {
-        static $_instance = null;
-        return $_instance ? $_instance : $_instance = new self;
+        static $instance = null;
+        return $instance ?? $instance = new self();
     }
 
     /**
      * Set cookies path
      * @param string $path
-     * @return void
      */
-    public function setPath($path)
+    public function setPath(string $path): void
     {
         $this->path = $path;
     }
@@ -55,17 +58,16 @@ class Cookies
      * @param string $domain
      * @return void
      */
-    public function setDomain($domain)
+    public function setDomain(string $domain): void
     {
         $this->domain = $domain;
     }
 
     /**
      * Set cookies expire time
-     * @param integer $expireTime
-     * @return void
+     * @param int $expireTime
      */
-    public function setExpire($expireTime)
+    public function setExpire(int $expireTime): void
     {
         $this->expireTime = $expireTime;
     }
@@ -73,9 +75,9 @@ class Cookies
     /**
      * Remove cookie
      * @param string $name
-     * @return boolean
+     * @return bool
      */
-    public function remove($name)
+    public function remove(string $name): bool
     {
         return setrawcookie($name, '', time() - 108000, $this->path, $this->domain);
     }
@@ -84,8 +86,9 @@ class Cookies
      * Sets cookie that makes Ajaxer show notification popup
      * @param string $message
      * @param bool|string $error
+     * @throws \Difra\Exception
      */
-    public function notify($message, $error = false)
+    public function notify(string $message, bool|string $error = false)
     {
         if ($error === false) {
             $error = 'ok';
@@ -96,7 +99,7 @@ class Cookies
             'notify',
             [
                 'type' => $error,
-                'message' => (string)$message,
+                'message' => $message,
                 'lang' => [
                     'close' => Locales::get('notifications/close')
                 ]
@@ -107,10 +110,10 @@ class Cookies
     /**
      * Set cookie
      * @param string $name
-     * @param string|array $value
-     * @return boolean
+     * @param array|string $value
+     * @return bool
      */
-    public function set($name, $value)
+    public function set(string $name, array|string $value): bool
     {
         if (is_array($value)) {
             $value = json_encode($value);
@@ -121,9 +124,8 @@ class Cookies
     /**
      * Set Ajaxer.js request cookie
      * @param $url
-     * @return void
      */
-    public function query($url)
+    public function query($url): void
     {
         $this->set('query', ['url' => $url]);
     }

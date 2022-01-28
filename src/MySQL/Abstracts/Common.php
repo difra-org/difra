@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\MySQL\Abstracts;
 
 use Difra\Config;
@@ -15,13 +17,13 @@ use Difra\Exception;
 abstract class Common
 {
     /** @var int */
-    public $queries = 0;
+    public int $queries = 0;
     /** @var array|null */
-    protected $config = null;
+    protected ?array $config = null;
     /** @var bool */
-    protected $connected = null;
+    protected ?bool $connected = null;
     /** @var string|null */
-    protected $error = null;
+    protected ?string $error = null;
 
     /**
      * Constructor
@@ -47,7 +49,7 @@ abstract class Common
      * Detect if this MySQL adapter is useable
      * @return bool
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         return false;
     }
@@ -56,11 +58,11 @@ abstract class Common
      * Query database
      * If array is passed as a parameter, queries from array will be commited in single transaction. If any query
      * fail during transaction, all transaction will be cancelled.
-     * @throws Exception
-     * @param string|array $query
+     * @param array|string $query
      * @return void
+     *@throws Exception
      */
-    public function query($query)
+    public function query(array|string $query): void
     {
         if (!is_array($query)) {
             $this->connect();
@@ -121,17 +123,20 @@ abstract class Common
 
     /**
      * Initiate database connection
+     * @throws \Exception
      */
     abstract protected function realConnect();
 
     /**
      * Do query
      * @param string $query
+     * @throws \Exception
      */
-    abstract protected function realQuery($query);
+    abstract protected function realQuery(string $query): void;
 
     /**
      * Start transaction
+     * @throws \Exception
      */
     protected function transactionStart()
     {
@@ -139,6 +144,7 @@ abstract class Common
 
     /**
      * Commit transaction
+     * @throws \Exception
      */
     protected function transactionCommit()
     {
@@ -146,6 +152,7 @@ abstract class Common
 
     /**
      * Cancel transaction
+     * @throws \Exception
      */
     protected function transactionCancel()
     {
@@ -153,48 +160,50 @@ abstract class Common
 
     /**
      * Escape string(s) for SQL safety
-     * @param string|array $data
+     * @param array|string $data
      * @return string|array
+     * @throws \Difra\Exception
      */
-    public function escape($data)
+    public function escape(array|string $data): array|string
     {
         $this->connect();
         if (!is_array($data)) {
             return $this->realEscape((string)$data);
         }
-        $t = [];
-        foreach ($data as $k => $v) {
-            $t[$this->escape($k)] = $this->escape((string)$v);
+        $result = [];
+        foreach ($data as $key => $value) {
+            $result[$this->escape($key)] = $this->escape((string)$value);
         }
-        return $t;
+        return $result;
     }
 
     /**
      * Escapes string for safe SQL usage
-     * @param $string
+     * @param string $string
      * @return string
+     * @throws \Exception
      */
-    abstract protected function realEscape($string);
+    abstract protected function realEscape(string $string): string;
 
     /**
      * Test connection to MySQL server
      * @return bool
      */
-    public function isConnected()
+    public function isConnected(): bool
     {
         try {
             $this->connect();
         } catch (Exception $ex) {
             return false;
         }
-        return $this->connected ? true : false;
+        return (bool)$this->connected;
     }
 
     /**
      * Get MySQL error text
      * @return string|null
      */
-    public function getError()
+    public function getError(): ?string
     {
         return $this->error;
     }
@@ -204,12 +213,13 @@ abstract class Common
      * @param string $query SQL-query
      * @param bool $replica Allow reading data from MySQL replica
      * @return array
+     * @throws \Difra\Exception
      */
     public function fetchWithId(
-        $query,
+        string $query,
         /** @noinspection PhpUnusedParameterInspection */
-        $replica = false
-    ) {
+        bool $replica = false
+    ): array {
         $this->connect();
         $result = $this->fetch($query);
         $sorted = [];
@@ -226,15 +236,16 @@ abstract class Common
      * @param string $query
      * @param bool $replica Allow reading data from db replica
      * @return array
+     * @throws \Difra\Exception
      */
-    public function fetch($query, $replica = false)
+    public function fetch(string $query, bool $replica = false): array
     {
         $this->connect();
         Debugger::prepareDBLine();
         $result = $this->realFetch($query, $replica);
         Debugger::addDBLine('MySQL', $query);
         $this->queries++;
-        return $result;
+        return $result ?? [];
     }
 
     /**
@@ -243,47 +254,41 @@ abstract class Common
      * @param bool $replica
      * @return array|null
      */
-    abstract protected function realFetch($query, $replica = false);
+    abstract protected function realFetch(string $query, bool $replica = false): ?array;
 
     /**
      * Fetch data as XML tree
-     * @param \DOMNode $node XML Node
+     * @param \DOMElement $node XML Node
      * @param string $query query
      * @param bool $replica Позволить читать данные из реплики
      * @return bool
+     * @throws \Difra\Exception
      */
-    public function fetchXML($node, $query, $replica = false)
+    public function fetchXML(\DOMElement $node, string $query, bool $replica = false): bool
     {
         $data = $this->fetch($query, $replica);
         if (empty($data)) {
             return false;
         }
         foreach ($data as $row) {
-            $subnode = $node->appendChild($node->ownerDocument->createElement('item'));
-            $this->getRowAsXML($subnode, $row);
+            $this->getRowAsXML($node->appendChild($node->ownerDocument->createElement('item')), $row);
         }
         return true;
     }
 
     /**
      * Get result row as array and put it to DOM
-     * @param \DOMElement|\DOMNode $node
-     * @param                      $row
+     * @param \DOMElement $node
+     * @param array $row
      * @return bool
      */
-    private function getRowAsXML($node, $row)
+    private function getRowAsXML(\DOMElement $node, array $row): bool
     {
         if (empty($row)) {
             return false;
         }
-        foreach ($row as $k => $v) {
-            if (trim($v) and preg_match('/^(i|s|a|o|d)(.*);/si', $v)) { // serialize!
-                $arr = @unserialize($v);
-                $subnode = $node->appendChild($node->ownerDocument->createElement($k));
-                $this->getRowAsXML($subnode, $arr);
-            } else {
-                $node->setAttribute($k, $v);
-            }
+        foreach ($row as $key => $value) {
+            $node->setAttribute($key, $value);
         }
         return true;
     }
@@ -295,7 +300,7 @@ abstract class Common
      * @param bool $replica
      * @return bool
      */
-    public function fetchRowXML($node, $query, $replica = false)
+    public function fetchRowXML(\DOMElement $node, string $query, bool $replica = false): bool
     {
         $row = $this->fetchRow($query, $replica);
         return $this->getRowAsXML($node, $row);
@@ -305,30 +310,32 @@ abstract class Common
      * Fetch single row from MySQL
      * @param string $query SQL-query
      * @param bool $replica Allow reading data from MySQL replica
-     * @return array|bool
+     * @return array|null
+     * @throws \Difra\Exception
      */
-    public function fetchRow($query, $replica = false)
+    public function fetchRow(string $query, bool $replica = false): ?array
     {
         $data = $this->fetch($query, $replica);
-        return isset($data[0]) ? $data[0] : false;
+        return $data[0] ?? null;
     }
 
     /**
      * Get found_rows()
-     * @return int
+     * @return int|null
      */
-    public function getFoundRows()
+    public function getFoundRows(): ?int
     {
-        return $this->fetchOne("SELECT FOUND_ROWS()");
+        return $this->fetchOne('SELECT FOUND_ROWS()');
     }
 
     /**
      * Fetch single cell from MySQL
      * @param string $query SQL-query
      * @param bool $replica Allow reading data from MySQL replica
-     * @return mixed|null
+     * @return mixed
+     * @throws \Difra\Exception
      */
-    public function fetchOne($query, $replica = false)
+    public function fetchOne(string $query, bool $replica = false): mixed
     {
         $data = $this->fetchRow($query, $replica);
         return !empty($data) ? array_shift($data) : null;
@@ -338,21 +345,21 @@ abstract class Common
      * Get last auto_increment value for last inserted row
      * @return int
      */
-    abstract protected function getLastId();
+    abstract public function getLastId(): int;
 
     /**
      * Get affected rows number
      * @return int
      */
-    abstract protected function getAffectedRows();
+    abstract public function getAffectedRows(): int;
 
     /**
      * Detect if mysqlnd is available
      * @return bool
      */
-    protected function isND()
+    protected function isND(): bool
     {
         static $nd = null;
-        return $nd ? $nd : $nd = extension_loaded('mysqlnd');
+        return $nd ?? $nd = extension_loaded('mysqlnd');
     }
 }

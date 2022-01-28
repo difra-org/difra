@@ -1,40 +1,42 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\MySQL\Abstracts;
 
 use Difra\Exception;
 
 /**
- * Адаптер MySQLi
+ * MySQLi Adapter
  * Class MySQLi
  * @package Difra\MySQL
  */
 class MySQLi extends Common
 {
     /**
-     * Возвращает доступность модуля
+     * Check module availability
      * @return bool
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         return extension_loaded('mysqli');
     }
 
     /**
-     * Объект соединения
-     * @var \mysqli
+     * Database connection object
+     * @var \mysqli|null
      */
-    public $db = null;
+    public ?\mysqli $db = null;
 
     /**
-     * Реализация установки соединения с базой
+     * Connect to the database (implementation)
      * @throws Exception
      */
     protected function realConnect()
     {
         $this->db =
-            @new \mysqli(
-                !empty($this->config['hostname']) ? 'p:' . $this->config['hostname'] : '',
+            new \mysqli(
+                $this->config['hostname'] ?? '',
                 $this->config['username'],
                 $this->config['password']
             );
@@ -48,7 +50,7 @@ class MySQLi extends Common
     }
 
     /**
-     * Реализация запроса в базу
+     * Database query (implementation)
      * @param string $query
      * @throws Exception
      */
@@ -61,23 +63,23 @@ class MySQLi extends Common
     }
 
     /**
-     * Реализация получения данных из базы
+     * Database fetch (implementation)
      * @param string $query
      * @param bool $replica
-     * @return array|mixed|null
+     * @return array
      * @throws Exception
      */
-    protected function realFetch($query, $replica = false)
+    protected function realFetch(string $query, $replica = false): array
     {
         $res = $this->db->query($query);
         if ($err = $this->db->error) {
             throw new Exception('MySQL: ' . $err);
         }
         if ($this->isND()) {
-            // при наличии mysqlnd
+            // mysqlnd is available
             return $res->fetch_all(MYSQLI_ASSOC);
         } else {
-            // иначе собираем массив обычным методом
+            // gather array otherwise
             $table = [];
             while ($row = $res->fetch_array(MYSQLI_ASSOC)) {
                 $table[] = $row;
@@ -87,7 +89,7 @@ class MySQLi extends Common
     }
 
     /**
-     * Реализация начала транзакции
+     * Begin transaction
      */
     protected function transactionStart()
     {
@@ -95,7 +97,7 @@ class MySQLi extends Common
     }
 
     /**
-     * Реализация окончания транзакции
+     * Commit transaction
      */
     protected function transactionCommit()
     {
@@ -103,7 +105,7 @@ class MySQLi extends Common
     }
 
     /**
-     * Реализация отмены транзакции
+     * Cancel transaction
      */
     protected function transactionCancel()
     {
@@ -112,29 +114,29 @@ class MySQLi extends Common
     }
 
     /**
-     * Реализация обезопасивания строки
-     * @param $string
+     * Escape string
+     * @param string $string
      * @return string
      */
-    protected function realEscape($string)
+    protected function realEscape(string $string): string
     {
         return $this->db->real_escape_string($string);
     }
 
     /**
-     * Реализация last_insert_id()
+     * Call last_insert_id()
      * @return int
      */
-    public function getLastId()
+    public function getLastId(): int
     {
         return $this->db->insert_id;
     }
 
     /**
-     * Реализация affected_rows()
+     * Call affected_rows()
      * @return int
      */
-    public function getAffectedRows()
+    public function getAffectedRows(): int
     {
         return $this->db->affected_rows;
     }

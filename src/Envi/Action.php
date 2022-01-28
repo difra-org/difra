@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Envi;
 
 use Difra\Cache;
@@ -19,27 +21,27 @@ use Difra\View\HttpError;
 class Action
 {
     /** @var string[] */
-    private static $parameters = [];
+    private static array $parameters = [];
+    /** @var string|array|null */
+    private static string|array|null $controllerClass = null;
     /** @var string */
-    private static $controllerClass = null;
-    /** @var string */
-    private static $controllerFile = '';
-    /** @var Controller */
-    private static $controllerObj = null;
-    /** @var string */
-    private static $controllerUri = null;
-    /** @var string */
-    private static $actionUri = null;
-    /** @var string */
-    public static $method = null;
-    /** @var string */
-    public static $methodAuth = null;
-    /** @var string */
-    public static $methodAjax = null;
-    /** @var string */
-    public static $methodAjaxAuth = null;
-    /** @var array */
-    public static $methodTypes = [
+    private static string $controllerFile = '';
+    /** @var ?Controller */
+    private static ?Controller $controllerObj = null;
+    /** @var ?string */
+    private static ?string $controllerUri = null;
+    /** @var ?string */
+    private static ?string $actionUri = null;
+    /** @var ?string */
+    public static ?string $method = null;
+    /** @var ?string */
+    public static ?string $methodAuth = null;
+    /** @var ?string */
+    public static ?string $methodAjax = null;
+    /** @var ?string */
+    public static ?string $methodAjaxAuth = null;
+    /** @var array[] */
+    public static array $methodTypes = [
         ['', ''],
         ['', 'Auth'],
         ['Ajax', ''],
@@ -63,7 +65,7 @@ class Action
 
         self::getResource($parts);
 
-        $controllerUriParts = $parts;
+        $uriParts = $parts;
         if (!self::$controllerFile = self::findController($parts)) {
             self::saveCache('404');
             if (!Debugger::isEnabled()) {
@@ -74,10 +76,9 @@ class Action
         }
         self::$controllerUri = self::$actionUri = '/' . implode(
                 '/',
-                sizeof($parts) ? array_slice($controllerUriParts, 0, -sizeof($parts)) : $controllerUriParts
+                sizeof($parts) ? array_slice($uriParts, 0, -sizeof($parts)) : $uriParts
             );
 
-        /** @noinspection PhpIncludeInspection */
         include_once(self::$controllerFile);
         if (!class_exists(self::$controllerClass)) {
             throw new Exception('Error! Controller class ' . self::$controllerClass . ' not found');
@@ -86,7 +87,7 @@ class Action
         self::findAction($parts);
         self::$parameters = $parts;
 
-        self::saveCache('action');
+        self::saveCache();
         Debugger::addLine('Selected controller ' . self::$controllerClass . ' from ' . self::$controllerFile);
     }
 
@@ -95,16 +96,16 @@ class Action
      * @throws \Difra\View\HttpError
      * @return bool
      */
-    private static function loadCache()
+    private static function loadCache(): bool
     {
         if (!$data = Cache::getInstance()->get(self::getCacheKey())) {
             return false;
         }
         switch ($data['result']) {
             case 'action':
-                /** @noinspection PhpIncludeInspection */
-                foreach ($data['vars'] as $k => $v) {
-                    self::${$k} = $v;
+                foreach ($data['vars'] as $key => $value) {
+                    /** @noinspection PhpVariableVariableInspection */
+                    self::${$key} = $value;
                 }
                 include_once(self::$controllerFile);
                 break;
@@ -118,7 +119,7 @@ class Action
      * Cache data
      * @param string $result Result type: 'action' or '404'
      */
-    private static function saveCache($result = 'action')
+    private static function saveCache(string $result = 'action')
     {
         if ($result != '404') {
             // save main variables
@@ -133,7 +134,8 @@ class Action
             ];
             // save action types variables
             foreach (self::$methodTypes as $methodType) {
-                $methodVar = "method{$methodType[0]}{$methodType[1]}";
+                $methodVar = "method$methodType[0]$methodType[1]";
+                /** @noinspection PhpVariableVariableInspection */
                 $match['vars'][$methodVar] = self::${$methodVar};
             }
         } else {
@@ -142,19 +144,19 @@ class Action
             ];
         }
 
-        Cache::getInstance()->put(self::getCacheKey(), $match, 300);
+        Cache::getInstance()->put(self::getCacheKey(), $match);
     }
 
     /**
      * Resource (JS, CSS, etc.) request processor
      * @param string[] $parts
-     * @throws \Difra\View\HttpError
-     * @return bool
+     * @return void
+     * @throws \Difra\View\HttpError|\Difra\Exception
      */
-    private static function getResource($parts)
+    private static function getResource(array $parts): void
     {
         if (sizeof($parts) != 2) {
-            return false;
+            return;
         }
         $resourcer = Resourcer::getInstance($parts[0], true);
         if ($resourcer and $resourcer->isPrintable()) {
@@ -164,15 +166,15 @@ class Action
                 }
                 View::$rendered = true;
                 die();
-            } catch (Exception $ex) {
+            } catch (Exception) {
                 throw new HttpError(404);
             }
         }
-        return false;
     }
 
     /**
      * Get controller object
+     * @throws \Difra\Exception|\Difra\View\HttpError
      */
     public static function getController()
     {
@@ -192,15 +194,15 @@ class Action
      * Get list of controllers directories
      * @return string[]
      */
-    public static function getControllerPaths()
+    public static function getControllerPaths(): array
     {
         static $controllerDirs = null;
         if (!is_null($controllerDirs)) {
             return $controllerDirs;
         }
         $controllerDirs = Roots::get(Roots::FIRST_APP);
-        foreach ($controllerDirs as $k => $v) {
-            $controllerDirs[$k] = $v . '/controllers';
+        foreach ($controllerDirs as $key => $value) {
+            $controllerDirs[$key] = $value . '/controllers';
         }
         return $controllerDirs;
     }
@@ -209,17 +211,17 @@ class Action
      * Get cache record key
      * @return string
      */
-    private static function getCacheKey()
+    private static function getCacheKey(): string
     {
         return 'action:uri:' . Envi::getUri();
     }
 
     /**
-     * Find deppest controller directory path for current REQUEST
+     * Find the deepest controller directory path for current REQUEST
      * @param string[] $parts
      * @return string[]
      */
-    private static function findControllerDirs(&$parts)
+    private static function findControllerDirs(array &$parts): array
     {
         $path = '';
         $depth = 0;
@@ -248,24 +250,24 @@ class Action
      * @param $parts
      * @return null|string
      */
-    private static function findController(&$parts)
+    private static function findController(&$parts): ?string
     {
         $dirs = self::findControllerDirs($parts);
         $cName = $controllerFile = null;
         if (!empty($parts)) {
             foreach ($dirs as $tmpDir) {
-                if (is_file("$tmpDir/{$parts[0]}.php")) {
+                if (is_file("$tmpDir/$parts[0].php")) {
                     $cName = $parts[0];
-                    $controllerFile = "{$tmpDir}/{$cName}.php";
+                    $controllerFile = "$tmpDir/$cName.php";
                     break;
                 }
             }
         }
         if (!$cName) {
             foreach ($dirs as $tmpDir) {
-                if (is_file($tmpDir . '/index.php')) {
+                if (is_file("$tmpDir/index.php")) {
                     $cName = 'index';
-                    $controllerFile = "{$tmpDir}/index.php";
+                    $controllerFile = "$tmpDir/index.php";
                     break;
                 }
             }
@@ -277,9 +279,9 @@ class Action
             array_shift($parts);
         }
         self::$controllerClass[] = $cName;
-        foreach (self::$controllerClass as $k => $v) {
-            self::$controllerClass[$k] = ucFirst($v);
-        };
+        foreach (self::$controllerClass as $key => $value) {
+            self::$controllerClass[$key] = ucfirst($value);
+        }
         self::$controllerClass = '\\Controller\\' . implode('\\', self::$controllerClass);
         return $controllerFile;
     }
@@ -287,9 +289,9 @@ class Action
     /**
      * Find matching action for current URI
      * @param string[] $parts
-     * @return bool|string
+     * @return void
      */
-    private static function findAction(&$parts)
+    private static function findAction(array &$parts): void
     {
         $foundMethod = false;
         $methodNames = !empty($parts) ? [$parts[0], 'index'] : ['index'];
@@ -297,11 +299,12 @@ class Action
             foreach (self::$methodTypes as $methodType) {
                 if (method_exists(
                     self::$controllerClass,
-                    $m = $methodTmp . $methodType[0] . 'Action' . $methodType[1]
+                    $method = $methodTmp . $methodType[0] . 'Action' . $methodType[1]
                 )) {
                     $foundMethod = $methodTmp;
-                    $methodVar = "method{$methodType[0]}{$methodType[1]}";
-                    self::${$methodVar} = $m;
+                    $methodVar = "method$methodType[0]$methodType[1]";
+                    /** @noinspection PhpVariableVariableInspection */
+                    self::${$methodVar} = $method;
                 }
             }
             if ($foundMethod and $foundMethod != 'index') {
@@ -309,14 +312,13 @@ class Action
                 break;
             }
         }
-        return $foundMethod;
     }
 
     /**
      * Get matched controller name
-     * @return null|string
+     * @return array|string|null
      */
-    public static function getControllerClass()
+    public static function getControllerClass(): array|string|null
     {
         return self::$controllerClass;
     }
@@ -327,7 +329,7 @@ class Action
      * @param string $actionMethod
      * @param array $parameters
      */
-    public static function setCustomAction($controllerClass, $actionMethod, $parameters = [])
+    public static function setCustomAction(string $controllerClass, string $actionMethod, array $parameters = [])
     {
         self::$controllerClass = $controllerClass;
         self::$method = $actionMethod;
@@ -337,14 +339,18 @@ class Action
     /**
      * Get URI matching current controller
      * Useful for relative paths.
-     * @return string
+     * @return ?string
      */
-    public static function getControllerUri()
+    public static function getControllerUri(): ?string
     {
         return self::$controllerUri;
     }
 
-    public static function getActionUri()
+    /**
+     * Get URI matching current action
+     * @return string|null
+     */
+    public static function getActionUri(): ?string
     {
         return self::$actionUri;
     }

@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer\Abstracts;
 
 use Difra\Cache;
@@ -18,37 +20,43 @@ use Difra\View;
  */
 abstract class Common
 {
-    protected $type = null;
-    protected $printable = false;
-    protected $contentType = null;
-    protected $instancesOrdered = false;
-    protected $reverseIncludes = true;
+    protected ?string $type = null;
+    protected bool $printable = false;
+    protected ?string $contentType = null;
+    protected bool $instancesOrdered = false;
+    protected bool $reverseIncludes = true;
 
     /**
      * Resource processor
      * @param string $instance
      * @return mixed
      */
-    abstract protected function processData($instance);
+    abstract protected function processData(string $instance): mixed;
 
-    protected $resources = [];
-    const CACHE_TTL = 86400;
+    protected array $resources = [];
+    public const CACHE_TTL = 86400;
 
     /**
      * Singleton
-     * @return self
+     * @return static
      */
-    public static function getInstance()
+    public static function getInstance(): static
     {
-        static $_instances = [];
+        static $instances = [];
         $name = get_called_class();
-        return isset($_instances[$name]) ? $_instances[$name] : $_instances[$name] = new $name();
+        return $instances[$name] ?? $instances[$name] = new $name();
     }
 
+    /**
+     * Prevent direct creation
+     */
     protected function __construct()
     {
     }
 
+    /**
+     * Prevent cloning
+     */
     protected function __clone()
     {
     }
@@ -59,7 +67,7 @@ abstract class Common
      * @return bool
      * @throws Exception
      */
-    private function checkInstance($instance)
+    private function checkInstance($instance): bool
     {
         if (!preg_match('/^[a-z0-9_-]+$/i', $instance)) {
             throw new Exception("Bad Resourcer instance name: '$instance'");
@@ -73,10 +81,10 @@ abstract class Common
      * @return bool
      * @throws Exception
      */
-    public function view($instance)
+    public function view($instance): bool
     {
         if (!$this->isPrintable()) {
-            throw new Exception("Resource of type '{$this->type}' is not printable");
+            throw new Exception("Resource of type '$this->type' is not printable");
         }
         // Cut extension
         $parts = explode('.', $instance);
@@ -113,7 +121,7 @@ abstract class Common
         */
         $enc = 'gzip';
 
-        if ($enc == 'gzip' and $data = $this->compileGZ($instance)) {
+        if ($enc === 'gzip' and $data = $this->compileGZ($instance)) {
             // header( 'Vary: Accept-Encoding' );
             header('Content-Encoding: gzip');
         } else {
@@ -137,7 +145,7 @@ abstract class Common
      * Is resource suitable for direct output?
      * @return bool
      */
-    public function isPrintable()
+    public function isPrintable(): bool
     {
         return $this->printable;
     }
@@ -145,16 +153,17 @@ abstract class Common
     /**
      * Create gz version for resource
      * @param $instance
-     * @return string
+     * @return ?string
+     * @throws \Difra\Exception
      */
-    public function compileGZ($instance)
+    public function compileGZ($instance): ?string
     {
         $cache = Cache::getInstance();
         if ($cache->adapter == Cache::INST_NONE) {
-            return false;
+            return null;
         }
 
-        $cacheKey = "{$instance}_{$this->type}";
+        $cacheKey = "{$instance}_$this->type";
         if ($cached = $cache->get($cacheKey . '_gz')) {
             if ($cache->get($cacheKey . '_gz_build') == Version::getBuild()) {
                 return $cached;
@@ -194,24 +203,25 @@ abstract class Common
 
     /**
      * Get compiled resource
-     * @param      $instance
+     * @param string $instance
      * @param bool $withSources
-     * @return bool|null
+     * @return string|null
+     * @throws \Difra\Exception
      */
-    public function compile($instance, $withSources = false)
+    public function compile(string $instance, bool $withSources = false): ?string
     {
         if (!$this->checkInstance($instance)) {
-            return false;
+            return null;
         }
 
         // get compiled from cache if available
         $cache = Cache::getInstance();
 
         if ($cache->adapter != Cache::INST_NONE) {
-            $cacheKey = "{$instance}_{$this->type}";
+            $cacheKey = "{$instance}_$this->type";
             if (!is_null($cached = $cache->get($cacheKey))) {
                 if ($cache->get($cacheKey . '_build') == Version::getBuild()) {
-                    Debugger::addLine("Using cached resource {$this->type}/{$instance}");
+                    Debugger::addLine("Using cached resource $this->type/$instance");
                     return $cached;
                 }
             }
@@ -262,31 +272,29 @@ abstract class Common
      * Compile resource
      * @param string $instance
      * @param bool $withSources
-     * @throws Exception
      * @return string
      */
-    private function realCompile($instance, $withSources = false)
+    private function realCompile(string $instance, bool $withSources = false): string
     {
         $time = microtime(true);
-        $res = false;
+        $res = null;
         if ($this->find($instance)) {
             $this->processDirs($instance);
-            /** @noinspection PhpMethodParametersCountMismatchInspection */
-            $res = $this->processData($instance, $withSources);
+            $res = $this->processData($instance);
         }
         $res = $this->processText($res);
         Debugger::addLine(
-            "Resource {$this->type}/{$instance} compiled in " . round(1000 * (microtime(true) - $time), 2) . 'ms'
+            "Resource $this->type/$instance compiled in " . round(1000 * (microtime(true) - $time), 2) . 'ms'
         );
         return $res;
     }
 
     /**
      * Search for resource directories
-     * @param string $instance
+     * @param $parentInstance
      * @return bool
      */
-    private function find($parentInstance)
+    private function find($parentInstance): bool
     {
         $found = false;
         $paths = Roots::get(Roots::FIRST_APP);
@@ -295,18 +303,18 @@ abstract class Common
         if ($this->instancesOrdered) {
             foreach ($instances as $instance) {
                 foreach ($paths as $dir) {
-                    if (is_dir($d = "{$dir}/{$this->type}/{$instance}")) {
+                    if (is_dir($dirPath = "$dir/$this->type/$instance")) {
                         $found = true;
-                        $directories[] = $d;
+                        $directories[] = $dirPath;
                     }
                 }
             }
         } else {
             foreach ($paths as $dir) {
                 foreach ($instances as $instance) {
-                    if (is_dir($d = "{$dir}/{$this->type}/{$instance}")) {
+                    if (is_dir($dirPath = "$dir/$this->type/$instance")) {
                         $found = true;
-                        $directories[] = $d;
+                        $directories[] = $dirPath;
                     }
                 }
             }
@@ -323,7 +331,7 @@ abstract class Common
      * @param $instance
      * @return string[]
      */
-    protected function getIncludes($instance)
+    protected function getIncludes($instance): array
     {
         static $dependencies = null;
         if (is_null($dependencies)) {
@@ -340,7 +348,7 @@ abstract class Common
                     continue;
                 }
                 ++$priority;
-                if (empty($dependencies[$instance]) or empty($dependencies[$instance]['include'])) {
+                if (empty($dependencies[$instance]) || empty($dependencies[$instance]['include'])) {
                     $instances[$instance] = $priority;
                     continue;
                 }
@@ -363,20 +371,20 @@ abstract class Common
     /**
      * Find all possible instances for selected resource
      * Warning: this is slow! Do not use it except for administrator area or cron scripts etc.
-     * @return array|bool
+     * @return array
      */
-    public function findInstances()
+    public function findInstances(): array
     {
         $instances = [];
         foreach (Roots::get(Roots::FIRST_FW) as $parent) {
-            $path = "$parent/{$this->type}";
+            $path = "$parent/$this->type";
             if (!is_dir($path)) {
                 continue;
             }
             $dir = opendir($path);
-            while (false !== ($subdir = readdir($dir))) {
-                if ($subdir[0] != '.' and is_dir($path . '/' . $subdir)) {
-                    $instances[$subdir] = 1;
+            while (false !== ($subDir = readdir($dir))) {
+                if ($subDir[0] != '.' and is_dir($path . '/' . $subDir)) {
+                    $instances[$subDir] = 1;
                 }
             }
         }
@@ -386,9 +394,9 @@ abstract class Common
     /**
      * Add directories to search list
      * @param string $instance
-     * @param string|array $dirs
+     * @param array|string $dirs
      */
-    private function addDirs($instance, $dirs)
+    private function addDirs(string $instance, array|string $dirs)
     {
         if (!is_array($dirs)) {
             $dirs = [$dirs];
@@ -407,7 +415,7 @@ abstract class Common
      * Search resources by directories
      * @param $instance
      */
-    public function processDirs($instance)
+    public function processDirs($instance): void
     {
         if (empty($this->resources[$instance]['dirs'])) {
             return;
@@ -471,9 +479,9 @@ abstract class Common
     /**
      * Get list of all matching files
      * @param string $instance
-     * @return string[]
+     * @return string[][]
      */
-    public function getFiles($instance)
+    public function getFiles(string $instance): array
     {
         $files = [];
         if (!empty($this->resources[$instance]['specials'])) {
@@ -494,7 +502,7 @@ abstract class Common
      * @param string $text
      * @return string
      */
-    public function processText($text)
+    public function processText(string $text): string
     {
         return $text;
     }

@@ -11,7 +11,7 @@ class Stdout extends Common
     /**
      * @inheritdoc
      */
-    protected function realWrite($message, $level)
+    protected function realWrite(string $message, int $level): void
     {
         echo $this->format($message), PHP_EOL;
     }

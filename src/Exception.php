@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 /**
  * Class Exception
  * @package Difra
  */
-class Exception extends \exception
+class Exception extends \Exception
 {
     /**
      * Wrapper for sending e-mails about exceptions which should never happen.
@@ -21,7 +23,7 @@ class Exception extends \exception
      * @static
      * @param \Difra\Exception|\exception $exception
      */
-    public static function sendNotification($exception)
+    public static function sendNotification(Exception|\Exception $exception)
     {
         // TODO: merge this method with Exception::sendNotification()
 

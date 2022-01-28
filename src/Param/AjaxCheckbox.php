@@ -18,6 +18,6 @@ class AjaxCheckbox extends Common
      */
     public function __construct($value = '')
     {
-        $this->value = $value ? true : false;
+        $this->value = (bool)$value;
     }
 }

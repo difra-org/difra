@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 /**
@@ -10,36 +12,37 @@ namespace Difra;
 class Cache
 {
     /** Auto detect */
-    const INST_AUTO = 'Auto detect';
+    public const INST_AUTO = 'Auto';
     /** Memcached module */
-    const INST_MEMCACHED = 'MemCached';
+    public const INST_MEMCACHED = 'MemCached';
     /** Memcache module */
-    const INST_MEMCACHE = 'Memcache';
+    public const INST_MEMCACHE = 'Memcache';
     /** Xcache */
-    const INST_XCACHE = 'XCache';
+    public const INST_XCACHE = 'XCache';
     /** Shared memory */
-    const INST_SHAREDMEM = 'Shared Memory';
+    public const INST_SHAREDMEM = 'Shared Memory';
     /** APCu */
-    const INST_APCU = 'APCu';
+    public const INST_APCU = 'APCu';
     /** Stub */
-    const INST_NONE = 'None';
+    public const INST_NONE = 'None';
     /** Default */
-    const INST_DEFAULT = self::INST_AUTO;
+    public const INST_DEFAULT = self::INST_AUTO;
     /** Default TTL (seconds) */
-    const DEFAULT_TTL = 300;
+    public const DEFAULT_TTL = 300;
     /**
      * Configured cache adapters.
      * @var array
      */
-    private static $adapters = [];
+    private static array $adapters = [];
 
     /**
      * Builds new cache adapter or returns
      * existing one.
      * @param string $configName
-     * @return \Difra\Cache\Common
+     * @return \Difra\Cache\APCu|\Difra\Cache\MemCache|\Difra\Cache\MemCached|\Difra\Cache\None|\Difra\Cache\SharedMemory|\Difra\Cache\XCache
+     * @throws \Difra\Exception
      */
-    public static function getInstance($configName = self::INST_DEFAULT)
+    public static function getInstance(string $configName = self::INST_DEFAULT): Cache\APCu|Cache\MemCache|Cache\MemCached|Cache\None|Cache\SharedMemory|Cache\XCache
     {
         if ($configName == self::INST_AUTO) {
             $configName = self::detect();
@@ -51,7 +54,7 @@ class Cache
      * Detect available adapter
      * @return string
      */
-    private static function detect()
+    private static function detect(): string
     {
         static $autoDetected = null;
         if ($autoDetected) {
@@ -87,27 +90,20 @@ class Cache
      * @return Cache\MemCache|Cache\MemCached|Cache\None|Cache\SharedMemory|Cache\XCache|Cache\APCu
      * @throws Exception
      */
-    private static function getAdapter($configName)
+    private static function getAdapter(string $configName): Cache\APCu|Cache\XCache|Cache\MemCached|Cache\SharedMemory|Cache\MemCache|Cache\None
     {
         if (isset(self::$adapters[$configName])) {
             return self::$adapters[$configName];
         }
 
-        switch ($configName) {
-            case self::INST_APCU:
-                return self::$adapters[$configName] = new Cache\APCu();
-            case self::INST_XCACHE:
-                return self::$adapters[$configName] = new Cache\XCache();
-            case self::INST_SHAREDMEM:
-                return self::$adapters[$configName] = new Cache\SharedMemory();
-            case self::INST_MEMCACHED:
-                return self::$adapters[$configName] = new Cache\MemCached();
-            case self::INST_MEMCACHE:
-                return self::$adapters[$configName] = new Cache\MemCache();
-            case self::INST_NONE:
-                return self::$adapters[$configName] = new Cache\None();
-            default:
-                throw new Exception("Unknown cache adapter type: $configName");
-        }
+        return match ($configName) {
+            self::INST_APCU => self::$adapters[$configName] = new Cache\APCu(),
+            self::INST_XCACHE => self::$adapters[$configName] = new Cache\XCache(),
+            self::INST_SHAREDMEM => self::$adapters[$configName] = new Cache\SharedMemory(),
+            self::INST_MEMCACHED => self::$adapters[$configName] = new Cache\MemCached(),
+            self::INST_MEMCACHE => self::$adapters[$configName] = new Cache\MemCache(),
+            self::INST_NONE => self::$adapters[$configName] = new Cache\None(),
+            default => throw new Exception("Unknown cache adapter type: $configName"),
+        };
     }
 }

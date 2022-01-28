@@ -13,7 +13,7 @@ abstract class XSLT extends Common
     /**
      * @inheritdoc
      */
-    protected function processData($instance)
+    protected function processData(string $instance)
     {
         /*
         <!DOCTYPE xsl:stylesheet [

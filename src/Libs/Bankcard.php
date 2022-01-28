@@ -44,7 +44,7 @@ class Bankcard
         // check number (luhn)
         $sum = 0;
         for ($i = 0; $i < $len; $i++) {
-            $digit = $num{$i};
+            $digit = $num[$i];
             if ($i % 2 == ($len % 2)) {
                 $digit *= 2;
                 if ($digit > 9) {

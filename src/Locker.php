@@ -26,7 +26,6 @@ class Locker
     /** @var int */
     private $rnd = null;
 
-    /** @noinspection PhpInconsistentReturnPointsInspection */
     /**
      * Lock
      * @param string $skey

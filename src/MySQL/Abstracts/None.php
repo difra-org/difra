@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\MySQL\Abstracts;
 
 /**
@@ -8,7 +10,11 @@ namespace Difra\MySQL\Abstracts;
  */
 class None extends Common
 {
-    protected function realConnect()
+    /**
+     * Initiate database connection
+     * @throws \Exception
+     */
+    protected function realConnect(): void
     {
         $this->connected = false;
     }
@@ -16,8 +22,9 @@ class None extends Common
     /**
      * realQuery stub
      * @param string $query
+     * @return void
      */
-    protected function realQuery($query)
+    protected function realQuery(string $query): void
     {
     }
 
@@ -27,16 +34,16 @@ class None extends Common
      * @param bool $replica
      * @return array|null
      */
-    protected function realFetch($query, $replica = false)
+    protected function realFetch(string $query, bool $replica = false): ?array
     {
-        return null;
+        return [];
     }
 
     /**
      * getAffectedRows stub
      * @return int
      */
-    protected function getAffectedRows()
+    public function getAffectedRows(): int
     {
         return 0;
     }
@@ -45,7 +52,7 @@ class None extends Common
      * getLastId stub
      * @return int
      */
-    protected function getLastId()
+    public function getLastId(): int
     {
         return 0;
     }
@@ -55,7 +62,7 @@ class None extends Common
      * @param $string
      * @return string
      */
-    protected function realEscape($string)
+    protected function realEscape($string): string
     {
         return $string;
     }
