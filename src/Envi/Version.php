@@ -12,7 +12,7 @@ use Difra\Envi;
 class Version
 {
     /** Framework version */
-    const VERSION = '7.0.0-alpha6';
+    const VERSION = '8.0';
     private static $compatibility = 0;
 
     /**
