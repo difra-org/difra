@@ -14,7 +14,7 @@
     "homepage": "https://www.difra.org",
     "license": "BSD-2-Clause",
     "require": {
-        "php": "7.x",
+        "php": "8.x",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-date": "*",
