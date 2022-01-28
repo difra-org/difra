@@ -22,7 +22,7 @@ class Setup
         }
         $done = true;
         if (function_exists('mb_internal_encoding')) {
-            mb_internal_encoding('UTF-8');
+            mb_internal_encoding(self::getEncoding());
         }
         ini_set('short_open_tag', false);
         ini_set('asp_tags', false);
@@ -61,8 +61,8 @@ class Setup
             }
         }
         self::$locale = $locale ?: 'ru_RU';
-        setlocale(LC_ALL, [self::$locale . '.UTF-8', self::$locale . '.utf8']);
-        setlocale(LC_NUMERIC, ['en_US.UTF-8', 'en_US.utf8']);
+        setlocale(LC_ALL, [self::$locale . '.' . self::getEncoding(), self::$locale . '.UTF-8', self::$locale . '.utf8']);
+        setlocale(LC_NUMERIC, ['en_US.' . self::getEncoding(), 'en_US.UTF-8', 'en_US.utf8']);
     }
 
     /**
@@ -72,6 +72,25 @@ class Setup
     public static function getLocale()
     {
         return self::$locale;
+    }
+
+    /** @var string Encoding */
+    static private string $encoding = 'UTF-8';
+
+    /**
+     * Set encoding
+     * @param string $encoding
+     */
+    public static function setEncoding(string $encoding = 'UTF-8'): void {
+        self::$encoding = $encoding;
+    }
+
+    /**
+     * Get encoding
+     * @return string
+     */
+    public static function getEncoding(): string {
+        return self::$encoding;
     }
 
     /**
