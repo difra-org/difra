@@ -2,8 +2,8 @@
 
 namespace Difra\Param;
 
+use Difra\Envi\Setup;
 use Difra\Exception;
-use Difra\Libs\ESAPI;
 use Difra\Security\Filter;
 
 /**
@@ -95,10 +95,13 @@ abstract class Common
      * @param $str
      * @return string|null
      */
-    private static function canonicalize($str)
+    private static function canonicalize(string $str): ?string
     {
         try {
-            return @ESAPI::encoder()->canonicalize($str);
+            if (!mb_check_encoding($str, Setup::getEncoding())) {
+                return null;
+            }
+            return $str;
         } catch (\Exception $ex) {
             return null;
         }

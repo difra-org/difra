@@ -3,7 +3,6 @@
 namespace Difra\Param\Filters;
 
 use Difra\Envi;
-use Difra\Libs\ESAPI;
 use Difra\Libs\XML\DOM;
 
 /**
@@ -86,12 +85,6 @@ class HTML
         if (!trim($source)) {
             return '';
         }
-
-        /*try {
-            $source = \Difra\Libs\ESAPI::encoder()->canonicalize( $source );
-        } catch( \Exception $ex ) {
-            return false;
-        }*/
 
         // html to dom conversion
         $html = new \DOMDocument('1.0');
@@ -221,16 +214,21 @@ class HTML
      */
     private function cleanLink($link)
     {
-        if (ESAPI::validateURL($link)) {
-            return ESAPI::encoder()->encodeForHTMLAttribute($link);
-        }
-        if (mb_substr($link, 0, 1) == '/') {
-            $newLink = 'http://' . Envi::getHost() . $link;
-            if (ESAPI::validateURL($newLink)) {
-                return ESAPI::encoder()->encodeForHTMLAttribute($newLink);
-            }
-        }
-        return '#';
+        // TODO
+        trigger_error('New HTML::cleanLink() needs to be written, please do not rely on it.', E_USER_WARNING);
+        return $link;
+    }
+
+    /**
+     * Encode string to get a proper CSS parameter value
+     * @param string $str
+     * @return string
+     */
+    private function encodeForCSS(string $str):string
+    {
+        // TODO
+        trigger_error('New HTML::encodeForCSS() needs to be written, please do not rely on it.', E_USER_WARNING);
+        return $str;
     }
 
     /** @noinspection PhpUnusedPrivateMethodInspection */
@@ -257,7 +255,7 @@ class HTML
                 // проверяем значение
                 if ($this->allowedStyles[$styleElements[0]] === true) {
                     $returnStyle[] =
-                        $styleElements[0] . ': ' . ESAPI::encoder()->encodeForCSS($styleElements[1]);
+                        $styleElements[0] . ': ' . self::encodeForCSS($styleElements[1]);
                 } elseif (is_array($this->allowedStyles[$styleElements[0]])
                           and in_array($styleElements[1], $this->allowedStyles[$styleElements[0]])
                 ) {
