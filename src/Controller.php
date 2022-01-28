@@ -180,7 +180,7 @@ abstract class Controller
         // get named REQUEST_URI parameters list
         $namedParameters = [];
         foreach ($actionParameters as $parameter) {
-            $class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
+            $class = $parameter->getType()?->getName() ?? 'Difra\Param\NamedString';
             if (call_user_func(["$class", "getSource"]) == 'query' and call_user_func(["$class", "isNamed"])) {
                 $namedParameters[] = $parameter->getName();
             }
@@ -190,7 +190,7 @@ abstract class Controller
         $callParameters = [];
         foreach ($actionParameters as $parameter) {
             $name = $parameter->getName();
-            $class = $parameter->getClass() ? $parameter->getClass()->name : 'Difra\Param\NamedString';
+            $class = $parameter->getType()?->getName() ?? 'Difra\Param\NamedString';
             switch (call_user_func(["$class", "getSource"])) {
                 // query parameters
                 case 'query':
