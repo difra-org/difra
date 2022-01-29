@@ -101,9 +101,9 @@ abstract class Common
      * Set cache record
      * @param string $id
      * @param mixed $data
-     * @param bool $specificLifetime
+     * @param ?int $specificLifetime
      */
-    abstract public function realPut(string $id, mixed $data, bool $specificLifetime = false);
+    abstract public function realPut(string $id, mixed $data, ?int $specificLifetime = null);
 
     /**
      * Delete cache record wrapper

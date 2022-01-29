@@ -11,17 +11,17 @@ use Difra\Cache;
  */
 class MemCache extends Common
 {
-    /** @var \Memcache */
-    private static $memcache = null;
-    /** @var string Memcached server */
-    private static $server = false;
+    /** @var \Memcache|null */
+    private static ?\Memcache $memcache = null;
+    /** @var string|null Memcached server */
+    private static ?string $server = null;
     /** @var int Memcached port */
-    private static $port = 0;
+    private static int $port = 0;
     /** @var bool Serialize values? */
-    private static $serialize = false;
+    private static bool $serialize = false;
     /** @var int TTL */
-    private static $lifetime = 0;
-    /** @var string Adapter name */
+    private static int $lifetime = 0;
+    /** @var string|null Adapter name */
     public ?string $adapter = Cache::INST_MEMCACHE;
 
     /**
@@ -57,7 +57,7 @@ class MemCache extends Common
      * @param bool $doNotTestCacheValidity
      * @return mixed
      */
-    public function realGet(string $id, $doNotTestCacheValidity = false): mixed
+    public function realGet(string $id, bool $doNotTestCacheValidity = false): mixed
     {
         $data = @self::$memcache->get($id);
         return self::$serialize ? @unserialize($data) : $data;
@@ -67,10 +67,10 @@ class MemCache extends Common
      * Set cache record implementation
      * @param string $id
      * @param mixed $data
-     * @param bool $specificLifetime
+     * @param int|null $specificLifetime
      * @return bool
      */
-    public function realPut(string $id, mixed $data, bool $specificLifetime = false): bool
+    public function realPut(string $id, mixed $data, ?int $specificLifetime = null): bool
     {
         return self::$memcache->set(
             $id,
@@ -84,7 +84,7 @@ class MemCache extends Common
      * Delete cache record implementation
      * @param string $id
      */
-    public function realRemove(string $id)
+    public function realRemove(string $id): void
     {
         @self::$memcache->delete($id);
     }

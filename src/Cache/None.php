@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Cache;
 
 use Difra\Cache;
@@ -11,7 +13,7 @@ use Difra\Cache;
  */
 class None extends Common
 {
-    /** @var string Adapter name */
+    /** @var string|null Adapter name */
     public ?string $adapter = Cache::INST_NONE;
 
     /**
@@ -19,7 +21,7 @@ class None extends Common
      * Depends on your point of view, but let adapter be available anyways.
      * @return bool
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         return true;
     }
@@ -27,10 +29,10 @@ class None extends Common
     /**
      * Get cache record pseudo-implementation
      * @param string $id
-     * @param boolean $doNotTestCacheValidity
+     * @param bool $doNotTestCacheValidity
      * @return string
      */
-    public function realGet(string $id, $doNotTestCacheValidity = false)
+    public function realGet(string $id, bool $doNotTestCacheValidity = false): mixed
     {
         return null;
     }
@@ -38,9 +40,9 @@ class None extends Common
     /**
      * Test if cache record exists pseudo-implementation
      * @param string $id cache id
-     * @return boolean
+     * @return bool
      */
-    public function test(string $id)
+    public function test(string $id): bool
     {
         return false;
     }
@@ -49,10 +51,10 @@ class None extends Common
      * Set cache record pseudo-implementation
      * @param string $id
      * @param string $data
-     * @param bool|int $specificLifetime
-     * @return boolean
+     * @param int|null $specificLifetime
+     * @return bool
      */
-    public function realPut($id, $data, $specificLifetime = false)
+    public function realPut(string $id, mixed $data, int|null $specificLifetime = null): bool
     {
         return false;
     }
@@ -60,18 +62,16 @@ class None extends Common
     /**
      * Delete cache record pseudo-implementation
      * @param string $id
-     * @return boolean
      */
-    public function realRemove(string $id)
+    public function realRemove(string $id): void
     {
-        return false;
     }
 
     /**
      * Let it be
-     * @return boolean
+     * @return bool
      */
-    public function isAutomaticCleaningAvailable()
+    public function isAutomaticCleaningAvailable(): bool
     {
         return true;
     }

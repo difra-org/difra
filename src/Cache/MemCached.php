@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Cache;
 
 use Difra\Cache;
@@ -12,13 +14,13 @@ use Difra\Exception;
  */
 class MemCached extends Common
 {
-    /** @var \Memcached */
-    private static $memcache = null;
-    /** @var string Serialize data flag */
-    private static $serialize = true;
+    /** @var \Memcached|bool|null */
+    private static \Memcached|bool|null $memcache = null;
+    /** @var bool Serialize data flag */
+    private static bool $serialize = true;
     /** @var int TTL */
-    private static $lifetime = 0;
-    /** @var string Adapter name */
+    private static int $lifetime = 0;
+    /** @var string|null Adapter name */
     public ?string $adapter = Cache::INST_MEMCACHED;
 
     /**
@@ -53,9 +55,9 @@ class MemCached extends Common
      * Get cache record implementation
      * @param string $id
      * @param bool $doNotTestCacheValidity
-     * @return mixed|null
+     * @return mixed
      */
-    public function realGet(string $id, $doNotTestCacheValidity = false)
+    public function realGet(string $id, bool $doNotTestCacheValidity = false): mixed
     {
         $data = @self::$memcache->get($id);
         return self::$serialize ? @unserialize($data) : $data;
@@ -65,8 +67,9 @@ class MemCached extends Common
      * Test if cache record exists implementation
      * @param string $id
      * @return bool
+     * @deprecated
      */
-    public function test(string $id)
+    public function test(string $id): bool
     {
         $data = $this->get($id);
         return !empty($data);
@@ -76,33 +79,33 @@ class MemCached extends Common
      * Put cache record implementation
      * @param string $id
      * @param mixed $data
-     * @param bool $specificLifetime
+     * @param int|null $specificLifetime
      * @return bool
      */
-    public function realPut($id, $data, $specificLifetime = false)
+    public function realPut(string $id, mixed $data, int $specificLifetime = null): bool
     {
         return self::$memcache->set(
             $id,
             self::$serialize ? serialize($data) : $data,
-            $specificLifetime !== false ? $specificLifetime : self::$lifetime
+            $specificLifetime ?: self::$lifetime
         );
     }
 
     /**
      * Delete cache record implementation
      * @param string $id
-     * @return bool
+     * @return void
      */
-    public function realRemove(string $id)
+    public function realRemove(string $id): void
     {
-        return @self::$memcache->delete($id);
+        @self::$memcache->delete($id);
     }
 
     /**
      * Define automatic cache cleaning as available
      * @return bool
      */
-    public function isAutomaticCleaningAvailable()
+    public function isAutomaticCleaningAvailable(): bool
     {
         return true;
     }
