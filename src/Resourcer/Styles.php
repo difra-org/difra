@@ -1,12 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer;
 
-use Difra\Cache;
-use Difra\Controller;
 use Difra\Resourcer;
-use Difra\View;
 
+/**
+ * Styles resourcer
+ */
 class Styles
 {
     /**
@@ -18,7 +20,12 @@ class Styles
         return $instance ?? $instance = new self();
     }
 
-    public function view($instance)
+    /**
+     * @param string $instance
+     * @return bool
+     * @throws \Difra\Exception
+     */
+    public function view(string $instance): bool
     {
         $parts = explode('.', $instance);
         if (sizeof($parts) === 2) {
@@ -52,7 +59,10 @@ class Styles
         return true;
     }
 
-    public function isPrintable()
+    /**
+     * @return bool
+     */
+    public function isPrintable(): bool
     {
         return true;
     }

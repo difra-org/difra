@@ -21,7 +21,7 @@ abstract class XML extends Common
 
         $newXml = new \SimpleXMLElement("<$this->type></$this->type>");
         foreach ($files as $file) {
-            $filename = $withFilenames ? $file['raw'] : false;
+            $filename = $withFilenames ? $file['raw'] : null;
             $xml = simplexml_load_file($file['raw']);
             $this->mergeXML($newXml, $xml, $filename);
             foreach ($xml->attributes() as $key => $value) {
@@ -38,10 +38,10 @@ abstract class XML extends Common
      * Recursively merge two XML trees
      * @param \SimpleXMLElement $xml1
      * @param \SimpleXMLElement $xml2
-     * @param string $filename
+     * @param ?string $filename
      * @noinspection PhpVariableVariableInspection
      */
-    private function mergeXML(\SimpleXMLElement $xml1, \SimpleXMLElement $xml2, string &$filename)
+    private function mergeXML(\SimpleXMLElement $xml1, \SimpleXMLElement $xml2, ?string $filename = null)
     {
         /** @var \SimpleXMLElement $node */
         foreach ($xml2 as $name => $node) {
@@ -56,7 +56,7 @@ abstract class XML extends Common
                 }
                 $this->mergeXML($xml1->$name, $node, $filename);
             } else {
-                $new = $xml1->addChild($name, trim($node) ? $node : '');
+                $new = $xml1->addChild($name, (string) $node ?: '');
                 if ($filename) {
                     $new->addAttribute('source', $filename);
                 }

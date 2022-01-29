@@ -272,9 +272,9 @@ abstract class Common
      * Compile resource
      * @param string $instance
      * @param bool $withSources
-     * @return string
+     * @return ?string
      */
-    private function realCompile(string $instance, bool $withSources = false): string
+    private function realCompile(string $instance, bool $withSources = false): ?string
     {
         $time = microtime(true);
         $res = null;
@@ -282,7 +282,9 @@ abstract class Common
             $this->processDirs($instance);
             $res = $this->processData($instance);
         }
-        $res = $this->processText($res);
+        if ($res) {
+            $res = $this->processText($res);
+        }
         Debugger::addLine(
             "Resource $this->type/$instance compiled in " . round(1000 * (microtime(true) - $time), 2) . 'ms'
         );

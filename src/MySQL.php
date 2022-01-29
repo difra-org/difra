@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 use Difra\MySQL\Abstracts\MySQLi;
@@ -15,22 +17,22 @@ use Difra\MySQL\Abstracts\None;
 class MySQL
 {
     /** Auto detect adapter */
-    const INST_AUTO = 'auto';
+    public const INST_AUTO = 'auto';
     /** MySQLi */
-    const INST_MYSQLI = 'MySQLi';
+    public const INST_MYSQLI = 'MySQLi';
     /** Stub */
-    const INST_NONE = 'none';
+    public const INST_NONE = 'none';
     /** Default adapter */
-    const INST_DEFAULT = self::INST_AUTO;
+    public const INST_DEFAULT = self::INST_AUTO;
     /** @var array Adapters registry */
-    private static $adapters = [];
+    private static array $adapters = [];
 
     /**
      * @param string $adapter
      * @param bool $new
      * @return MySQL\Abstracts\MySQLi|MySQL\Abstracts\None
      */
-    public static function getInstance($adapter = self::INST_DEFAULT, $new = false)
+    public static function getInstance(string $adapter = self::INST_DEFAULT, bool $new = false): None|MySQLi
     {
         if ($adapter == self::INST_AUTO) {
             static $auto = null;
@@ -39,10 +41,10 @@ class MySQL
             }
 
             if (MySQLi::isAvailable()) {
-                Debugger::addLine("MySQL module: MySQLi");
+                Debugger::addLine('MySQL module: MySQLi');
                 return self::getInstance($auto = self::INST_MYSQLI, $new);
             } else {
-                Debugger::addLine("No suitable MySQL module detected");
+                Debugger::addLine('No suitable MySQL module detected');
                 return self::getInstance($auto = self::INST_NONE, $new);
             }
         }
@@ -51,13 +53,10 @@ class MySQL
             return self::$adapters[$adapter];
         }
 
-        switch ($adapter) {
-            case self::INST_MYSQLI:
-                $obj = new MySQLi();
-                break;
-            default:
-                $obj = new None();
-        }
+        $obj = match ($adapter) {
+            self::INST_MYSQLI => new MySQLi(),
+            default => new None(),
+        };
         if (!$new) {
             self::$adapters[$adapter] = $obj;
         }

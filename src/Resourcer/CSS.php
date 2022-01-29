@@ -27,6 +27,7 @@ class CSS extends Abstracts\Plain
      * Resource postprocessing
      * @param string $text
      * @return string
+     * @throws \Exception
      */
     public function processText(string $text): string
     {

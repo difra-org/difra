@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\DB\Adapters;
 
 /**
@@ -12,7 +14,7 @@ class MySQL extends Common
     /**
      * @inherit
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         return extension_loaded('pdo_mysql');
     }
@@ -20,9 +22,8 @@ class MySQL extends Common
     /**
      * @inherit
      */
-    protected function getConnectionString()
+    protected function getConnectionString(): string
     {
-        return
-            "{$this->config['type']}:host={$this->config['hostname']};dbname={$this->config['database']};charset=utf8";
+        return "{$this->config['type']}:host={$this->config['hostname']};dbname={$this->config['database']};charset=utf8";
     }
 }

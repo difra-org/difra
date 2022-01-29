@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer;
 
 /**
@@ -8,6 +10,6 @@ namespace Difra\Resourcer;
  */
 class XSLT extends Abstracts\XSLT
 {
-    protected $type = 'xslt';
-    protected $printable = false;
+    protected ?string $type = 'xslt';
+    protected bool $printable = false;
 }

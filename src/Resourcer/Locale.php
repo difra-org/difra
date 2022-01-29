@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer;
 
 /**
@@ -8,6 +10,6 @@ namespace Difra\Resourcer;
  */
 class Locale extends Abstracts\XML
 {
-    protected $type = 'locale';
-    protected $printable = false;
+    protected ?string $type = 'locale';
+    protected bool $printable = false;
 }

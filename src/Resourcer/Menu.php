@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer;
 
 use Difra\Debugger;
@@ -10,16 +12,16 @@ use Difra\Debugger;
  */
 class Menu extends Abstracts\XML
 {
-    /** @var string Menu resourcer */
-    protected $type = 'menu';
+    /** @var string|null Menu resourcer */
+    protected ?string $type = 'menu';
     /** @var bool Don't view resource */
-    protected $printable = false;
+    protected bool $printable = false;
 
     /**
      * @param \SimpleXMLElement $xml
      * @param string $instance
      */
-    protected function postprocess($xml, $instance)
+    protected function postprocess(\SimpleXMLElement $xml, string $instance)
     {
         $xml->addAttribute('instance', $instance);
         if ($xml->attributes()->prefix) {
@@ -37,21 +39,21 @@ class Menu extends Abstracts\XML
      * @param string $instance
      * @internal param string $url
      */
-    private function recursiveProcessor($node, $href, $prefix, $instance)
+    private function recursiveProcessor(\SimpleXMLElement $node, string $href, string $prefix, string $instance)
     {
         /** @var \SimpleXMLElement $subNode */
-        foreach ($node as $subname => $subNode) {
+        foreach ($node as $subName => $subNode) {
             if ($subNode->attributes()->sup and $subNode->attributes()->sup == '1') {
                 if (!Debugger::isEnabled()) {
                     $subNode->addAttribute('hidden', 1);
                 }
             }
-            $newHref = "$href/$subname";
-            $newPrefix = "{$prefix}_{$subname}";
+            $newHref = "$href/$subName";
+            $newPrefix = "{$prefix}_$subName";
             $subNode->addAttribute('id', $newPrefix);
             if (!isset($subNode->attributes()->href)) {
                 $subNode->addAttribute('href', $newHref);
-            };
+            }
             $subNode->addAttribute('pseudoHref', $newHref);
             $subNode->addAttribute('xpath', 'locale/menu/' . $instance . '/' . $newPrefix);
             $this->recursiveProcessor($subNode, $newHref, $newPrefix, $instance);

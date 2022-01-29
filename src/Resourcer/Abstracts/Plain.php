@@ -61,10 +61,10 @@ abstract class Plain extends Common
 
     /**
      * Choose most suitable file
-     * @param $file
+     * @param array $file
      * @return string
      */
-    protected function getFile($file): string
+    protected function getFile(array $file): string
     {
         $debuggerEnabled = Debugger::isEnabled();
         if (!$debuggerEnabled) {

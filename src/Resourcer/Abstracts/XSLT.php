@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer\Abstracts;
 
 /**
@@ -8,12 +10,12 @@ namespace Difra\Resourcer\Abstracts;
  */
 abstract class XSLT extends Common
 {
-    protected $reverseIncludes = false;
+    protected bool $reverseIncludes = false;
     
     /**
      * @inheritdoc
      */
-    protected function processData(string $instance)
+    protected function processData(string $instance): string|bool
     {
         /*
         <!DOCTYPE xsl:stylesheet [
@@ -59,23 +61,23 @@ abstract class XSLT extends Common
                 }
                 if ($child->nodeName == 'xsl:template') {
                     if ($child->hasAttribute('match')) {
-                        $m = $child->getAttribute('match');
+                        $match = $child->getAttribute('match');
                         if ($child->hasAttribute('mode')) {
-                            $m .= ':' . $child->getAttribute('mode');
+                            $match .= ':' . $child->getAttribute('mode');
                         }
-                        if (in_array($m, $usedMatches)) {
+                        if (in_array($match, $usedMatches)) {
                             continue;
                         }
-                        $usedMatches[] = $m;
+                        $usedMatches[] = $match;
                     } elseif ($child->hasAttribute('name')) {
-                        $n = $child->getAttribute('name');
+                        $name = $child->getAttribute('name');
                         if ($child->hasAttribute('mode')) {
-                            $n .= ':' . $child->getAttribute('mode');
+                            $name .= ':' . $child->getAttribute('mode');
                         }
-                        if (in_array($n, $usedNames)) {
+                        if (in_array($name, $usedNames)) {
                             continue;
                         }
-                        $usedNames[] = $n;
+                        $usedNames[] = $name;
                     } else {
                         continue;
                     }
@@ -86,8 +88,8 @@ abstract class XSLT extends Common
             }
         }
         if (!empty($namespaces)) {
-            foreach ($namespaces as $k => $v) {
-                $dom->documentElement->setAttribute($k, $v);
+            foreach ($namespaces as $key => $value) {
+                $dom->documentElement->setAttribute($key, $value);
             }
         }
 

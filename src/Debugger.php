@@ -259,10 +259,10 @@ class Debugger
     /**
      * Callback for exceptions
      * @static
-     * @param \Exception $exception
+     * @param mixed $exception
      * @return bool
      */
-    public static function captureException(\Exception $exception): bool
+    public static function captureException(mixed $exception): bool
     {
         self::init();
         $err = [
@@ -398,7 +398,7 @@ class Debugger
     {
         self::init();
         $node->setAttribute('debug', self::$enabled ? '1' : '0');
-        $node->setAttribute('debugConsole', self::$console);
+        $node->setAttribute('debugConsole', (string) self::$console);
         $node->setAttribute('caches', self::$caches ? '1' : '0');
         if (!self::$console) {
             return;
@@ -406,7 +406,7 @@ class Debugger
         $debugNode = $node->appendChild($node->ownerDocument->createElement('debug'));
         Libs\XML\DOM::array2domAttr($debugNode, self::$output, true);
         if ($standalone) {
-            $node->setAttribute('standalone', 1);
+            $node->setAttribute('standalone', '1');
         }
     }
 

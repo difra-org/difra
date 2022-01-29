@@ -1,22 +1,33 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Resourcer;
 
+/**
+ * SCSS resourcer
+ */
 class SCSS extends Abstracts\Plain
 {
-    protected $type = 'scss';
-    protected $printable = true;
-    protected $contentType = 'text/css';
-    protected $instancesOrdered = true;
+    protected ?string $type = 'scss';
+    protected bool $printable = true;
+    protected ?string $contentType = 'text/css';
+    protected bool $instancesOrdered = true;
 
     protected function __construct()
     {
+        parent::__construct();
         if (\Difra\Debugger::isEnabled()) {
             $this->showSequence = true;
         }
     }
 
-    protected function getFile($file)
+    /**
+     * Choose most suitable file
+     * @param array $file
+     * @return string
+     */
+    protected function getFile(array $file): string
     {
         echo $file['raw'] . "\n";
         static $scssCompiler = null;
