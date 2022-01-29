@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Envi;
 
 use Difra\Plugin;
@@ -10,39 +12,40 @@ use Difra\Plugin;
  */
 class Roots
 {
-    const FIRST_FW = 'asc';
-    const FIRST_APP = 'desc';
+    public const FIRST_FW = 'asc';
+    public const FIRST_APP = 'desc';
 
-    /** @var string Framework root */
-    private $fw = null;
+    /** @var ?string Framework root */
+    private ?string $fw;
     /** @var string[] Plugin roots */
-    private $plugins = [];
-    /** @var string Main application root */
-    private $main = null;
-    /** @var string Selected application root */
-    private $application = null;
+    private array $plugins;
+    /** @var string|null Main application root */
+    private ?string $main;
+    /** @var string|null Selected application root */
+    private ?string $application;
     /** @var string[] Additional application root */
-    private $additional = [];
-    /** @var string Data directory */
-    private $data = null;
+    private array $additional = [];
+    /** @var string|null Data directory */
+    private ?string $data;
+
+    protected static ?array $directories = null;
+    protected static ?array $directoriesRev = null;
 
     /**
      * Get roots list
-     * @param bool $order
+     * @param string $order
      * @return string[]
      */
-    public static function get($order)
+    public static function get(string $order): array
     {
-        $directories = null;
-        $directoriesReversed = null;
-        if ($order == self::FIRST_APP) {
-            return $directoriesReversed ?: $directoriesReversed = array_reverse(self::get(self::FIRST_FW));
+        if ($order === self::FIRST_APP) {
+            return self::$directoriesRev ?? self::$directoriesRev = array_reverse(self::get(self::FIRST_FW));
         }
-        if (!is_null($directories)) {
-            return $directories;
+        if (!is_null(self::$directories)) {
+            return self::$directories;
         }
         $me = self::getInstance();
-        return $directories = array_merge(
+        return self::$directories = array_merge(
             [$me->fw],
             $me->plugins,
             self::getUserRoots($order)
@@ -53,10 +56,10 @@ class Roots
      * Singleton
      * @return Roots
      */
-    private static function getInstance()
+    private static function getInstance(): Roots
     {
         static $instance = null;
-        return $instance ?: $instance = new self();
+        return $instance ?? $instance = new self();
     }
 
     /**
@@ -127,7 +130,7 @@ class Roots
      * Get project root
      * @return string
      */
-    public static function getRoot()
+    public static function getRoot(): string
     {
         return self::getInstance()->main;
     }
@@ -136,7 +139,7 @@ class Roots
      * Get application root
      * @return string
      */
-    public static function getApplication()
+    public static function getApplication(): string
     {
         return self::getInstance()->application;
     }
@@ -145,7 +148,7 @@ class Roots
      * Get framework root
      * @return string
      */
-    public static function getFW()
+    public static function getFW(): string
     {
         return self::getInstance()->fw;
     }
@@ -154,16 +157,16 @@ class Roots
      * Get data dir path
      * @return string
      */
-    public static function getData()
+    public static function getData(): string
     {
         return self::getInstance()->data;
     }
 
     /**
      * Set data dir path
-     * @param $path
+     * @param string $path
      */
-    public static function setData($path)
+    public static function setData(string $path): void
     {
         self::getInstance()->data = $path;
     }

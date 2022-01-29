@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 /**
@@ -11,24 +13,23 @@ abstract class Plugin
 {
     // storage
     /** @var self[] Plugins registry */
-    static private $plugins = [];
+    private static array $plugins = [];
     /** @var string[] Plugin class to name translations */
-    static private $classes = [];
+    private static array $classes = [];
     // fields
-    /** @var string Plugin name */
-    private $name = null;
+    /** @var string|null Plugin name */
+    private ?string $name;
     /** @var bool Enabled flag */
-    private $enabled = false;
-    /** @var string Class */
-    private $class = null;
-    /** @var string Path */
-    private $path = null;
+    private bool $enabled = false;
+    /** @var string|null Class */
+    private ?string $class;
+    /** @var string|null Path */
+    private ?string $path;
 
     /**
      * Plugin init
-     * @return mixed
      */
-    abstract protected function init();
+    abstract protected function init(): void;
 
     /**
      * Enable plugin
@@ -38,7 +39,7 @@ abstract class Plugin
         if (isset(self::$classes[static::class])) {
             return;
         }
-        $plugin = new static;
+        $plugin = new static();
         self::$plugins[$plugin->name] = $plugin;
         self::$classes[$plugin->class] = $plugin;
         $plugin->enabled = true;
@@ -46,6 +47,7 @@ abstract class Plugin
 
     /**
      * Protected constructor.
+     * @throws \ReflectionException
      */
     final private function __construct()
     {
@@ -62,9 +64,9 @@ abstract class Plugin
 
     /**
      * Get all plugins' paths
-     * @return array|null
+     * @return array
      */
-    public static function getPaths()
+    public static function getPaths(): array
     {
         static $paths = null;
         if (!is_null($paths)) {
@@ -98,20 +100,10 @@ abstract class Plugin
     }
 
     /**
-     * Don't use it anymore
-     * @deprecated
-     * @return bool
-     */
-    final public function getSitemap()
-    {
-        return false;
-    }
-
-    /**
      * Get plugins array
      * @return Plugin[]
      */
-    public static function getList()
+    public static function getList(): array
     {
         return self::$plugins;
     }
@@ -120,16 +112,16 @@ abstract class Plugin
      * Is plugin enabled?
      * @return bool
      */
-    public function isEnabled()
+    public function isEnabled(): bool
     {
-        return (bool)$this->enabled;
+        return $this->enabled;
     }
 
     /**
      * Get plugin name
-     * @return mixed|string
+     * @return string|null
      */
-    public function getName()
+    public function getName(): ?string
     {
         return $this->name;
     }

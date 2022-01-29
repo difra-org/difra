@@ -25,7 +25,7 @@ abstract class Item extends DBAPI
     protected ?array $_data = null;
     protected bool $_full = false;
     protected array $_modified = [];
-    protected ?bool $_tempPrimary = null;
+    protected ?int $_tempPrimary = null;
     /**
      * Methods to override
      */

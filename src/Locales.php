@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 use Difra\Envi\Setup;
@@ -11,18 +13,16 @@ use Difra\Envi\Setup;
 class Locales
 {
     /** @var string Default locale */
-    public $locale = 'en_US';
-    /**
-     * @var \DOMDocument
-     */
-    public $localeXML = null;
+    public string $locale = 'en_US';
+    /** @var \DOMDocument|null */
+    public ?\DOMDocument $localeXML = null;
     // TODO: replace this values with locale's built in methods?
     /** @var array Date formats */
-    public $dateFormats = ['ru_RU' => 'd.m.y', 'en_US' => 'm-d-y'];
+    public array $dateFormats = ['ru_RU' => 'd.m.y', 'en_US' => 'm-d-y'];
     /** @var array Date and time formats */
-    public $dateTimeFormats = ['ru_RU' => 'd.m.y H:i:s', 'en_US' => 'm-d-y h:i:s A'];
+    public array $dateTimeFormats = ['ru_RU' => 'd.m.y H:i:s', 'en_US' => 'm-d-y h:i:s A'];
     /** @var bool Locale is loaded flag */
-    private $loaded = false;
+    private bool $loaded = false;
 
     /**
      * Constructor
@@ -43,13 +43,12 @@ class Locales
     /**
      * Get text string from current locale (short form)
      * @param $xpath
-     * @return bool|string
+     * @return string|null
      * @throws Exception
      */
-    public static function get($xpath)
+    public static function get($xpath): ?string
     {
-        /** @noinspection PhpDeprecationInspection */
-        return @self::getInstance()->getXPath($xpath);
+        return self::getInstance()->getXPath($xpath);
     }
 
     /**
@@ -57,22 +56,22 @@ class Locales
      * NOT DEPRECATED. Marked as deprecated to get rid of old \Difra\Locales::getInstance()->getXPath( ... ) calls
      * in favor of \Difra\Locales::get( ... ) calls.
      * @param string $xpath
-     * @return string|bool
-     * @throws Exception
+     * @return string|null
+     * @throws \Difra\Exception
      * @deprecated
      */
-    public function getXPath($xpath)
+    public function getXPath(string $xpath): ?string
     {
         static $simpleXML = null;
         if (is_null($simpleXML)) {
             $this->load();
             $simpleXML = simplexml_import_dom($this->localeXML);
         }
-        $s = $simpleXML->xpath($xpath);
-        if (empty($s) and Debugger::isEnabled()) {
-            $s = ['No language item for: ' . $xpath];
+        $string = $simpleXML->xpath($xpath);
+        if (empty($string) and Debugger::isEnabled()) {
+            $string = ['No language item for: ' . $xpath];
         }
-        return sizeof($s) ? (string)$s[0] : false;
+        return (string)$string[0] ?? null;
     }
 
     /**
@@ -93,7 +92,7 @@ class Locales
      * @param null $locale
      * @return Locales
      */
-    public static function getInstance($locale = null)
+    public static function getInstance($locale = null): Locales
     {
         static $locales = [];
         if (!$locale) {
@@ -112,7 +111,7 @@ class Locales
      * @return void
      * @throws Exception
      */
-    public function getLocaleXML($node)
+    public function getLocaleXML(\DOMElement $node)
     {
         $this->load();
         if (!is_null($this->localeXML)) {
@@ -125,7 +124,7 @@ class Locales
      * @param string $locale
      * @return void
      */
-    public function setLocale($locale)
+    public function setLocale(string $locale)
     {
         $this->locale = $locale;
     }
@@ -135,7 +134,7 @@ class Locales
      * @param $string
      * @return bool
      */
-    public function isDate($string)
+    public function isDate($string): bool
     {
         if (!$date = $this->parseDate($string)) {
             return false;
@@ -147,15 +146,15 @@ class Locales
      * Parse date string
      * Returns array [ 0 => Y, 1 => m, 2 => d ]
      * @param string $string
-     * @param string|bool $locale
-     * @return array|bool
+     * @param string|null $locale
+     * @return array|null
      */
-    public function parseDate($string, $locale = false)
+    public function parseDate(string $string, ?string $locale = null): ?array
     {
         $string = str_replace(['.', '-'], '/', $string);
         $pt = explode('/', $string);
         if (sizeof($pt) != 3) {
-            return false;
+            return null;
         }
         // returns $date[year,month,day] depending on current locale and dateFormats.
         $date = [0, 0, 0];
@@ -175,16 +174,16 @@ class Locales
 
     /**
      * Convert local date string to MySQL date string
-     * @param string $dateString if ommited, current date is used
-     * @return string|false
+     * @param string|null $dateString if ommited, current date is used
+     * @return string|null
      */
-    public function getMysqlDate($dateString = null)
+    public function getMysqlDate(?string $dateString = null): ?string
     {
         if (!$dateString) {
             return date('%Y-%m-%d');
         }
         if (!$date = $this->parseDate($dateString)) {
-            return false;
+            return null;
         }
         return implode('-', $date);
     }
@@ -203,10 +202,10 @@ class Locales
     /**
      * Convert MySQL date string to localized date string
      * @param string $date
-     * @param boolean $withTime
+     * @param bool $withTime
      * @return string
      */
-    public function getDateFromMysql($date, $withTime = false)
+    public function getDateFromMysql(string $date, bool $withTime = false): string
     {
         $date = explode(' ', $date);
         $date[0] = explode('-', $date[0]);
@@ -222,10 +221,10 @@ class Locales
 
     /**
      * Get localized date and time from timestamp
-     * @param $timestamp
+     * @param int $timestamp
      * @return string
      */
-    public function getDateTime($timestamp)
+    public function getDateTime(int $timestamp): string
     {
         return date($this->dateTimeFormats[$this->locale], $timestamp);
     }
@@ -235,7 +234,7 @@ class Locales
      * @param int $timestamp
      * @return string
      */
-    public function getDate($timestamp)
+    public function getDate(int $timestamp): string
     {
         return date($this->dateFormats[$this->locale], $timestamp);
     }
@@ -246,7 +245,7 @@ class Locales
      * @param string $string
      * @return string
      */
-    public function makeLink($string)
+    public function makeLink(string $string): string
     {
         $link = '';
         // This string is UTF-8!
@@ -267,7 +266,7 @@ class Locales
      * @param string $currency 3-letter ISO 4217 currency code
      * @return string
      */
-    public static function formatCurrency(float $value, string $currency)
+    public static function formatCurrency(float $value, string $currency): string
     {
         $locales = self::getInstance();
         /** @var \NumberFormatter[] $nFormats */

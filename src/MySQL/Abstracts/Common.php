@@ -60,7 +60,9 @@ abstract class Common
      * fail during transaction, all transaction will be cancelled.
      * @param array|string $query
      * @return void
-     *@throws Exception
+     * @throws \Difra\DB\Exception
+     * @throws \Difra\Exception
+     * @throws \Exception
      */
     public function query(array|string $query): void
     {
@@ -79,7 +81,7 @@ abstract class Common
                 foreach ($query as $subQuery) {
                     $this->realQuery($subQuery);
                     $this->queries++;
-                    Debugger::addDBLine('MySQL', $query);
+                    Debugger::addDBLine('MySQL', $subQuery);
                 }
                 $this->transactionCommit();
                 if (Debugger::isEnabled()) {
@@ -123,7 +125,7 @@ abstract class Common
 
     /**
      * Initiate database connection
-     * @throws \Exception
+     * @throws \Difra\DB\Exception
      */
     abstract protected function realConnect();
 

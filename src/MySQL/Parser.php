@@ -53,7 +53,7 @@ class Parser
      * Get contents of bin/db.sql files
      * @return string
      */
-    public static function getGoalSQL()
+    public static function getGoalSQL(): string
     {
         $paths = Roots::get(Roots::FIRST_FW);
         $tables = [];

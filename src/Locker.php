@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra;
 
 /**
@@ -11,20 +13,20 @@ namespace Difra;
 class Locker
 {
     /** Cache prefix */
-    const PREFIX = 'lock:';
+    protected const PREFIX = 'lock:';
     /** Lock try timeout, seconds */
-    const TIMEOUT = 10;
+    protected const TIMEOUT = 10;
     /** Prevent cache rewrite race condition delay, microseconds */
-    const DELAY_S = 10000;
+    protected const DELAY_S = 10000;
     /** Waiting for lock release delay, microseconds */
-    const DELAY_L = 50000; // microseconds
+    protected const DELAY_L = 50000; // microseconds
     /** Maximum lock release wait time */
-    const TTL = 5; // seconds
+    protected const TTL = 5; // seconds
 
-    /** @var string */
-    private $key = null;
-    /** @var int */
-    private $rnd = null;
+    /** @var string|null */
+    private ?string $key = null;
+    /** @var int|null */
+    private ?int $rnd = null;
 
     /**
      * Lock
@@ -32,7 +34,7 @@ class Locker
      * @return Locker
      * @throws \Exception
      */
-    public static function create($skey)
+    public static function create(string $skey): Locker
     {
         $rnd = mt_rand(100000000, 999999999);
         $key = self::PREFIX . $skey;
@@ -48,7 +50,7 @@ class Locker
                 $cache->put($key, $rnd, self::TTL);
                 usleep(self::DELAY_S);
             } elseif ($state == $rnd) { // got lock
-                $lock = new self;
+                $lock = new self();
                 $lock->key = $key;
                 $lock->rnd = $rnd;
                 return $lock;
@@ -64,6 +66,7 @@ class Locker
 
     /**
      * Unlock
+     * @throws \Difra\Exception
      */
     public function remove()
     {
@@ -82,6 +85,7 @@ class Locker
 
     /**
      * Destructor
+     * @throws \Difra\Exception
      */
     public function __destruct()
     {
