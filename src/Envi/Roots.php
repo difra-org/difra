@@ -22,7 +22,7 @@ class Roots
     /** @var string|null Main application root */
     private ?string $main;
     /** @var string|null Selected application root */
-    private ?string $application;
+    private ?string $application = null;
     /** @var string[] Additional application root */
     private array $additional = [];
     /** @var string|null Data directory */
