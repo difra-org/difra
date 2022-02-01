@@ -1,5 +1,7 @@
 <?php
-use Difra\Envi\Roots;
+
+declare(strict_types=1);
+
 use Difra\Events\System;
 
 /**

@@ -1,9 +1,10 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Locales\Wordforms;
 
 use Difra\Locales\Wordforms;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Class ru_RU
@@ -304,7 +305,7 @@ class ru_RU extends Common
     public function getForm(
         string $word,
         int $form = 0
-    ) {
+    ): string {
         $decline = $this->getDecline($word, $form);
         if ($decline != self::DECLINE_UNKNOWN) {
             $ending = self::getEnding($word, true);
@@ -480,7 +481,7 @@ class ru_RU extends Common
      * @param int $quantity
      * @return string
      */
-    public function getQuantityForm($word, $form, $quantity)
+    public function getQuantityForm(string $word, int $form, int $quantity): string
     {
         if ($form & Wordforms::CASE_NOMINATIVE) {
             $number = Wordforms::NUMBER_MULTIPLE;
@@ -507,13 +508,12 @@ class ru_RU extends Common
     }
 
     /**
-     * Get lingustic decline
+     * Get linguistic decline
      * @param string $word
      * @param int $form
-     * @return int
+     * @return string
      */
-    #[Pure]
-    public function getDecline($word, $form)
+    public function getDecline(string $word, int $form): string
     {
         switch ($form & Wordforms::MASK_GENDER) {
             case Wordforms::GENDER_MALE: // мужской род — 1, 2 склонение
@@ -547,16 +547,17 @@ class ru_RU extends Common
     /**
      * Get word ending
      * @param string $word
-     * @return bool|string
+     * @param bool $withSoftSign
+     * @return string|null
      */
-    public static function getEnding($word, $withSoftSign = false)
+    public static function getEnding(string $word, bool $withSoftSign = false): ?string
     {
         $last1 = mb_substr($word, -1);
 
         if (in_array($last1, ['а', 'я', 'о', 'е']) or ($withSoftSign and $last1 == 'ь')) {
             return $last1;
         } else {
-            return false;
+            return null;
         }
     }
 }

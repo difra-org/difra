@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Param;
 
 use Difra\Unify\Paginator;
@@ -18,6 +20,7 @@ class NamedPaginator extends Common
     /**
      * Constructor
      * @param string $value
+     * @throws \Difra\Exception
      */
     public function __construct($value = '')
     {
@@ -36,7 +39,7 @@ class NamedPaginator extends Common
     /**
      * @return Paginator
      */
-    public function val()
+    public function val(): Paginator
     {
         return $this->value;
     }

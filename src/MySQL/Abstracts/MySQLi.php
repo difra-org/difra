@@ -54,7 +54,7 @@ class MySQLi extends Common
      * @param string $query
      * @throws Exception
      */
-    protected function realQuery($query)
+    protected function realQuery(string $query): void
     {
         $this->db->query($query);
         if ($err = $this->db->error) {

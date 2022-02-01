@@ -6,7 +6,6 @@ namespace Difra;
 
 use Difra\Envi\Roots;
 use JetBrains\PhpStorm\ArrayShape;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Envi
@@ -193,7 +192,6 @@ class Envi
      * @param bool $main
      * @return string
      */
-    #[Pure]
     public static function getURLPrefix(bool $main = false): string
     {
         return self::getProtocol() . '://' . self::getHost($main);

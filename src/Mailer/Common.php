@@ -8,7 +8,6 @@ use Difra\Envi;
 use Difra\Exception;
 use Difra\Locales;
 use Difra\View;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Common
@@ -34,14 +33,13 @@ abstract class Common
 
     /**
      * Send mail
-     * @return void
+     * @return bool|null
      */
-    abstract public function send(): void;
+    abstract public function send(): ?bool;
 
     /**
      * Constructor.
      */
-    #[Pure]
     public function __construct()
     {
         $this->from = 'noreply@' . Envi::getHost(true);

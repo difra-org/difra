@@ -6,7 +6,6 @@ namespace Difra\Libs;
 
 use Difra\Envi;
 use Difra\Locales;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Cookies
@@ -27,7 +26,6 @@ class Cookies
     /**
      * Constructor
      */
-    #[Pure]
     private function __construct()
     {
         $this->domain = '.' . Envi::getHost(true);

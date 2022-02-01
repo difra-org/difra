@@ -220,7 +220,7 @@ class View
      * @param ?bool $permanent
      */
     #[NoReturn]
-    public static function redirect(string $url, ?bool $permanent): void
+    public static function redirect(string $url, ?bool $permanent = null): void
     {
         self::$rendered = true;
         if ($permanent) {

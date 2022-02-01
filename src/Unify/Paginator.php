@@ -1,10 +1,11 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Unify;
 
 use Difra\Envi\Action;
 use Difra\Exception;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Paginator
@@ -14,22 +15,21 @@ use JetBrains\PhpStorm\Pure;
 class Paginator
 {
     /** @var int Items per page */
-    protected $perpage = 20;
+    protected int $perpage = 20;
     /** @var int|null Current page */
-    protected $page = 1;
-    /** @var int Total items number */
-    protected $total = null;
-    /** @var int Pages number */
-    protected $pages = null;
-    /** @var string Link prefix */
-    protected $linkPrefix = '';
+    protected ?int $page = 1;
+    /** @var int|null Total items number */
+    protected ?int $total = null;
+    /** @var int|null Pages number */
+    protected ?int $pages = null;
+    /** @var string|null Link prefix */
+    protected ?string $linkPrefix = '';
     /** @var string|bool Character for get parameter */
-    protected $get = false;
+    protected string|bool $get = false;
 
     /**
      * Constructor
      */
-    #[Pure]
     public function __construct()
     {
         $this->linkPrefix = Action::getControllerUri();
@@ -39,13 +39,12 @@ class Paginator
      * Return LIMIT values for SQL
      * @return array
      */
-    public function getPaginatorLimit()
+    public function getPaginatorLimit(): array
     {
         return [($this->page - 1) * $this->perpage, $this->perpage];
     }
 
-    #[Pure]
-    public function getSQL()
+    public function getSQL(): string
     {
         $limit = $this->getPaginatorLimit();
         return " LIMIT $limit[0],$limit[1] ";
@@ -55,7 +54,7 @@ class Paginator
      * Set total elements number
      * @param int $count
      */
-    public function setTotal($count)
+    public function setTotal(int $count)
     {
         $this->total = $count;
         $this->pages = floor(($count - 1) / $this->perpage) + 1;
@@ -63,20 +62,19 @@ class Paginator
 
     /**
      * Get pages number
-     * @return int
+     * @return int|null
      */
-    public function getPages()
+    public function getPages(): ?int
     {
         return $this->pages;
     }
 
     /**
      * Add paginator node to XML
-     * @param \DOMNode $node
+     * @param \DOMElement $node
      */
-    public function getPaginatorXML($node)
+    public function getPaginatorXML(\DOMElement $node)
     {
-        /** @var \DOMElement $pNode */
         $pNode = $node->appendChild($node->ownerDocument->createElement('paginator'));
         $pNode->setAttribute('page', $this->page);
         $pNode->setAttribute('pages', $this->pages);
@@ -112,9 +110,9 @@ class Paginator
      * '?' -> $linkPrefix?page=$page
      * '&' -> $linkPrefix&page=$page
      * etc.
-     * @param string|false $get
+     * @param bool|string $get
      */
-    public function setGet($get)
+    public function setGet(bool|string $get)
     {
         $this->get = $get;
     }
@@ -123,16 +121,16 @@ class Paginator
      * Links prefix
      * @param string $linkPrefix
      */
-    public function setLinkPrefix($linkPrefix)
+    public function setLinkPrefix(string $linkPrefix)
     {
         $this->linkPrefix = $linkPrefix;
     }
 
     /**
      * Get links prefix
-     * @return string
+     * @return string|null
      */
-    public function getLinkPrefix()
+    public function getLinkPrefix(): ?string
     {
         return $this->linkPrefix;
     }
@@ -141,7 +139,7 @@ class Paginator
      * Set items number per page
      * @param int $perpage
      */
-    public function setPerpage($perpage)
+    public function setPerpage(int $perpage)
     {
         $this->perpage = $perpage;
     }

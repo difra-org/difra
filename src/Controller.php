@@ -9,7 +9,6 @@ use Difra\Envi\Request;
 use Difra\View\HTML\Element\HTML;
 use Difra\View\Layout;
 use Difra\View\Output;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Abstract controller
@@ -308,7 +307,6 @@ abstract class Controller
     /**
      * Get controller URI shortcut
      */
-    #[Pure]
     protected function getUri(): ?string
     {
         return Action::getControllerUri();

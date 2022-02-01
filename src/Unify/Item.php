@@ -7,7 +7,6 @@ namespace Difra\Unify;
 use Difra\Envi\Roots;
 use Difra\Exception;
 use Difra\MySQL;
-use JetBrains\PhpStorm\Pure;
 
 /**
  * Class Item
@@ -45,11 +44,10 @@ abstract class Item extends DBAPI
      * Create new item
      * @return static
      */
-    #[Pure]
     public static function create(): static
     {
 
-        $obj = new static(true);
+        $obj = new static();
         $obj->_new = true;
         return $obj;
     }

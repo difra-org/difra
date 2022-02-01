@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Difra\Param\Filters;
 
-use Difra\Envi;
 use Difra\Libs\XML\DOM;
 
 /**

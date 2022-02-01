@@ -13,7 +13,6 @@ class Mail extends Common
 {
     /**
      * Send mail
-     * @return bool
      * @throws \Exception
      */
     public function send(): bool

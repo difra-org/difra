@@ -15,7 +15,7 @@ class en_US extends Common
      * @param int $quantity
      * @return string
      */
-    public function getQuantityForm($word, $form, $quantity)
+    public function getQuantityForm(string $word, int $form, int $quantity): string
     {
         if ($quantity == 1) {
             return $word;

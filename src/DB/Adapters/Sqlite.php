@@ -12,7 +12,7 @@ class Sqlite extends Common
     /**
      * @inherit
      */
-    public static function isAvailable()
+    public static function isAvailable(): bool
     {
         return extension_loaded('pdo_sqlite');
     }
@@ -20,7 +20,7 @@ class Sqlite extends Common
     /**
      * @inherit
      */
-    protected function getConnectionString()
+    protected function getConnectionString(): string
     {
         return
             "sqlite:{$this->config['file']}";
