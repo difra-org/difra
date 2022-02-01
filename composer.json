@@ -2,20 +2,21 @@
     "name": "difra/difra",
     "description": "Difra framework",
     "keywords": [
+        "difra",
         "framework",
         "php"
     ],
+    "homepage": "https://www.difra.org",
+    "license": "BSD-2-Clause",
     "repositories": [
         {
             "type": "vcs",
             "url": "git@github.com:difra-org/cms.git"
         }
     ],
-    "homepage": "https://www.difra.org",
-    "license": "BSD-2-Clause",
     "require": {
         "difra/lib-security": "1.0.*",
-        "php": "8.x",
+        "php": "^8.1",
         "ext-ctype": "*",
         "ext-curl": "*",
         "ext-date": "*",
@@ -34,7 +35,9 @@
         "scssphp/scssphp": "1.1"
     },
     "autoload": {
-        "classmap": ["src/main.php"],
+        "classmap": [
+            "src/main.php"
+        ],
         "psr-4": {
             "Difra\\": "src"
         }
