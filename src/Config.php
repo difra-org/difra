@@ -164,12 +164,14 @@ class Config
         $this->config = $this->loadFileConfigs();
         try {
             $conf = DB::getInstance()->fetchOne('SELECT `config` FROM `config` LIMIT 1');
-            $dynamicConfig = @unserialize($conf);
-            if (is_array($dynamicConfig)) {
-                $this->config = $this->merge($this->config, $dynamicConfig);
+            if ($conf) {
+                $dynamicConfig = unserialize($conf);
+                if (is_array($dynamicConfig)) {
+                    $this->config = $this->merge($this->config, $dynamicConfig);
+                }
             }
 //            $cache->put('config', $this->config);
-        } catch (Exception) {
+        } catch (DB\Exception) {
         }
     }
 
