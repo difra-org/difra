@@ -25,7 +25,11 @@ jobs:
         run: "composer update --ansi --no-interaction --no-progress"
 
       - name: "Run phpunit"
-        run: composer run-script test
+        uses: php-actions/phpunit@v3
+        with:
+          php_version: "8.1",
+          php_extensions: "ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xsl zlib",
+          configuration: "build/phpunit.xml"
 
     #      - name: Validate composer.json and composer.lock
     #        run: composer validate --strict
