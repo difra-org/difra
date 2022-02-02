@@ -27,7 +27,6 @@
         "ext-json": "*",
         "ext-libxml": "*",
         "ext-mbstring": "*",
-        "ext-pdo_mysql": "*",
         "ext-Reflection": "*",
         "ext-session": "*",
         "ext-simplexml": "*",
@@ -43,5 +42,8 @@
         "psr-4": {
             "Difra\\": "src"
         }
+    },
+    "scripts": {
+        "test": "vendor/bin/phpunit -c build/phpunit.xml"
     }
 }

@@ -2,4 +2,5 @@
 
 declare(strict_types=1);
 
-include_once(__DIR__ . '/../fw/lib/bootstrap.php');
+require_once(__DIR__ . '/../../../../vendor/autoload.php');
+\Difra::main();
