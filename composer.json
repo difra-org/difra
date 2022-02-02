@@ -8,6 +8,10 @@
     ],
     "homepage": "https://www.difra.org",
     "license": "BSD-2-Clause",
+    "dist": {
+        "url": "https://github.com/difra-org/difra/archive/refs/tags/8.0.1.zip",
+        "type": "zip"
+    },
     "repositories": [
         {
             "type": "vcs",
