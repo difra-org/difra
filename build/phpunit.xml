@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" bootstrap="../tests/bootstrap.php" backupGlobals="false" backupStaticAttributes="false" verbose="true" xsi:noNamespaceSchemaLocation="https://schema.phpunit.de/9.3/phpunit.xsd">
-    <coverage includeUncoveredFiles="true" ignoreDeprecatedCodeUnits="true">
+    <coverage cacheDirectory=".phpunit.cache/code-coverage" includeUncoveredFiles="true" ignoreDeprecatedCodeUnits="true">
         <include>
             <directory suffix=".php">../src</directory>
         </include>
         <report>
             <html outputDirectory="coverage" lowUpperBound="50" highLowerBound="90"/>
+            <clover outputFile="clover.xml" />
         </report>
     </coverage>
     <testsuites>

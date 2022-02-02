@@ -18,7 +18,6 @@ jobs:
         with:
           php-version: "8.1"
           extensions: "ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib"
-          coverage: "pcov"
           tools: composer
 
       - name: "Install dependencies"
@@ -28,5 +27,7 @@ jobs:
         uses: php-actions/phpunit@v3
         with:
           php_version: 8.1
-          php_extensions: ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xsl zlib
+          php_extensions: ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xdebug xsl zlib
           configuration: build/phpunit.xml
+        env:
+          XDEBUG_MODE: coverage
