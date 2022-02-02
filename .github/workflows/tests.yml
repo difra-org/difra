@@ -27,9 +27,9 @@ jobs:
       - name: "Run phpunit"
         uses: php-actions/phpunit@v3
         with:
-          php_version: "8.1",
-          php_extensions: "ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xsl zlib",
-          configuration: "build/phpunit.xml"
+          php_version: 8.1,
+          php_extensions: ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xsl zlib,
+          configuration: build/phpunit.xml
 
     #      - name: Validate composer.json and composer.lock
     #        run: composer validate --strict
