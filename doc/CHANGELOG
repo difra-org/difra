@@ -7,6 +7,7 @@
  * Moved Difra\Security to difra/lib-security
  * Moved build/ configs to github.com/difra/tests
  - Removed obsolete XCache and SharedMemory support
+ - Removed very old methods from Difra\Locales
 
 7.0.0
  + New Plugin system: install plugins with composer
