@@ -14,4 +14,12 @@ class ConfigTest extends TestCase
         $value = $config->get('test');
         $this->assertNull($value);
     }
+
+    public function testSet()
+    {
+        $config = \Difra\Config::getInstance();
+        $config->set('testField', 'testValue');
+        $value = $config->get('testField');
+        $this->assertNull('testValue', $value);
+    }
 }
