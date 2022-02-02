@@ -1,2 +1,0 @@
-This folder is for framework features only. For example, it is a good place for Capcha or LESS.
-This folder SHOULD NOT BE USED for functions and classes collections. Some code of this code is already here, it is deprecated and will be removed soon.
