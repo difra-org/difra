@@ -418,71 +418,7 @@ class Debugger
     {
         return self::$hadError;
     }
-
-    /**
-     * If page rendered too long, report to developers
-     */
-    public static function checkSlow()
-    {
-        // TODO: merge this method with Exception::sendNotification()
-
-        $time = self::getTimer();
-        if (!$time <= 1) {
-            return;
-        }
-
-        // don't send notifications on development environment
-        if (!Envi::isProduction()) {
-            return;
-        }
-
-        $notificationMail = self::getNotificationMail();
-        // no notification mail is set
-        if (!$notificationMail) {
-            return;
-        }
-
-        $output = '<pre>';
-        foreach (self::$output as $line) {
-            if (!isset($line['type'])) {
-                $line['type'] = null;
-            }
-            $output .= "{$line['timer']}\t{$line['class']}\t{$line['type']}\t{$line['message']}\n";
-        }
-        $date = date('r');
-        $server = print_r($_SERVER, true);
-        $post = print_r($_POST, true);
-        $cookie = print_r($_COOKIE, true);
-        $host = Envi::getHost();
-        $uri = Envi::getUri();
-        $user = Auth::getInstance()->getEmail();
-
-        $output .= <<<MSG
-
-Page:	$uri
-Time:	$date
-Host:	$host
-User:	$user
-
-\$_SERVER:
-$server
-
-\$_POST:
-$post
-
-\$_COOKIE:
-$cookie
-MSG;
-        $output .= '</pre>';
-        try {
-            $mailer = Mailer::getInstance();
-            $mailer->setTo(self::getNotificationMail());
-            $mailer->setSubject('Slow script');
-            $mailer->setBody(print_r($output, true));
-            $mailer->send();
-        } catch (\Exception) {}
-    }
-
+    
     /**
      * Disable Debugger
      * (for unit tests only)
