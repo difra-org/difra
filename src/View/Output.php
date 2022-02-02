@@ -6,7 +6,6 @@ use Difra\Ajaxer;
 use Difra\Controller;
 use Difra\Debugger;
 use Difra\Envi\Request;
-use Difra\Envi\UserAgent;
 use Difra\View;
 
 /**
@@ -45,13 +44,7 @@ class Output
             if ($_GET['xml'] == '2') {
                 View\XML::fillXML();
             }
-            switch (UserAgent::getAgent()) {
-                case UserAgent::AGENT_SAFARI:
-                    header('Content-Type: text/plain; charset="utf-8"');
-                    break;
-                default:
-                    header('Content-Type: text/xml; charset="utf-8"');
-            }
+            header('Content-Type: text/xml; charset="utf-8"');
             $controller->xml->formatOutput = true;
             $controller->xml->encoding = 'utf-8';
             echo rawurldecode($controller->xml->saveXML());

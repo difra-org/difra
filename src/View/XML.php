@@ -70,8 +70,6 @@ class XML
             if ($host != $mainhost) {
                 $node->setAttribute('urlprefix', Envi::getURLPrefix(true));
             }
-            // get user agent
-            Envi\UserAgent::getUserAgentXML($node);
             // ajax flag
             $node->setAttribute(
                 'ajax',

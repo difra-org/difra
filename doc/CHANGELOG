@@ -1,4 +1,5 @@
 8.0.2
+ - Removed Difra\Envi\UserAgent
 
 8.0.1
  * Bumped PHP version requirement to 8.1
