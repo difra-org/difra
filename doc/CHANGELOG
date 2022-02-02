@@ -1,9 +1,11 @@
-8.0.0
+8.0.1
  * Bumped PHP version requirement to 8.1
  * Removed ESAPI library
  * Moved Difra\Cache to difra/lib-cache
  * Moved Difra\DB to difra/lib-db
  * Moved Difra\Locales\Wordforms to difra/lib-wordforms
+ * Moved Difra\Logger to difra/lib-logger
+ * Moved Difra\Mailer to difra/lib-mailer
  * Moved Difra\Security to difra/lib-security
  * Moved build/ configs to github.com/difra/tests
  - Removed obsolete XCache and SharedMemory support
