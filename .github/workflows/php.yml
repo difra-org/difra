@@ -1,4 +1,4 @@
-name: Unit tests
+name: "Unit tests"
 
 on:
   push:
@@ -14,15 +14,15 @@ jobs:
         uses: actions/checkout@v2
 
       - name: "Install PHP"
-          uses: "shivammathur/setup-php@v2"
-          with:
-            php-version: "8.1"
-            extensions: "ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib"
-            coverage: "pcov"
-            tools: composer
+        uses: "shivammathur/setup-php@v2"
+        with:
+          php-version: "8.1"
+          extensions: "ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib"
+          coverage: "pcov"
+          tools: composer
 
       - name: "Install dependencies"
-          run: "composer update --ansi --no-interaction --no-progress"
+        run: "composer update --ansi --no-interaction --no-progress"
 
       - name: "Run phpunit"
         run: composer run-script test
