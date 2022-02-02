@@ -200,12 +200,15 @@ class Config
      * @param string $key
      * @param string $arrayKey
      * @param mixed $arrayValue
+     * @throws \Difra\Exception
      */
     public function setValue(string $key, string $arrayKey, mixed $arrayValue): void
     {
         $this->load();
         if (!isset($this->config[$key])) {
             $this->config[$key] = [];
+        } elseif (!is_array($this->config[$key])) {
+            throw new \Difra\Exception('An attempt to set sub-item on non-array config value');
         }
         $this->config[$key][$arrayKey] = $arrayValue;
         $this->modified = true;
