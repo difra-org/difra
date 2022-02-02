@@ -24,7 +24,6 @@ class Ajaxer
      */
     public static function getResponse(): string
     {
-        self::setResponse('compatibility', \Difra\Envi\Version::getCompatibility());
         if (Debugger::isConsoleEnabled() !== Debugger::CONSOLE_DISABLED) {
             if (Debugger::hadError()) {
                 self::clean(true);

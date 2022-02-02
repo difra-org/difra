@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Difra\Envi;
 
 use Difra\Config;
@@ -12,29 +14,25 @@ use Difra\Envi;
 class Version
 {
     /** Framework version */
-    const VERSION = '8.0';
-    private static $compatibility = 0;
+    protected const VERSION = '8.0';
 
     /**
      * Get site or framework version
+     * @param bool $short
      * @return string
      */
-    public static function getBuild(bool $short = false)
+    public static function getBuild(bool $short = false): string
     {
-//        static $revision = null;
-//        if (!is_null($revision)) {
-//            return $revision;
-//        }
-        if ($revision = Config::getInstance()->get('version')) {
-        } else {
-            $revision = self::VERSION;
+        static $revision = null;
+        if (is_null($revision)) {
+            $revision = Config::getInstance()->get('version') ?: self::VERSION;
         }
         if (!$short && !Envi::isProduction()) {
-            static $time = null;
-            if (!$time) {
-                $time = time();
+            static $shortRevision = null;
+            if (is_null($shortRevision)) {
+                $shortRevision = $revision . '/' . time();
             }
-            $revision .= '/' . $time;
+            return $shortRevision;
         }
         return $revision;
     }
@@ -55,26 +53,5 @@ class Version
     public static function getMajorVersion()
     {
         return (int)substr(self::VERSION, 0, strpos(self::VERSION,'.'));
-    }
-
-    /**
-     * Get compatibility version
-     */
-    public static function getCompatibility()
-    {
-        if (self::$compatibility) {
-            return self::$compatibility;
-        }
-        $instanceCfg = Config::getInstance()->getValue('instances', \Difra\View::$instance);
-        return self::$compatibility = ($instanceCfg['compatibility'] ?? self::getMajorVersion());
-    }
-
-    /**
-     * Set compatibility version
-     * @param int $compatibility
-     */
-    public static function setCompatibility($compatibility)
-    {
-        self::$compatibility = $compatibility;
     }
 }

@@ -123,13 +123,14 @@ class Envi
      * 2. By Host names sub.subdomain.domain.com www.sub.subdomain.domain.com subdomain.domain.com
      *    www.subdomain.domain.com domain.com www.domain.com.
      * 3. "default" subsite name.
-     * @return string|bool
+     * @param bool $cache
+     * @return string|null
      */
-    public static function getSubsite(): bool|string
+    public static function getSubsite(bool $cache = true): ?string
     {
         static $site = null;
-        if (!is_null($site)) {
-            return $site;
+        if ($cache && !is_null($site)) {
+            return null;
         }
 
         // default behavior: site is defined by web server
@@ -152,7 +153,7 @@ class Envi
                 return $site = 'www.' . $host;
             }
             $host = explode('.', $host, 2);
-            $host = !empty($host[1]) ? $host[1] : false;
+            $host = !empty($host[1]) ? $host[1] : null;
         }
         return $site = 'default';
     }

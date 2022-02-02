@@ -15,7 +15,6 @@ ajaxer.setup = {
         'X-Requested-With': 'XMLHttpRequest'
     }
 };
-ajaxer.compatibility = 999;
 
 /**
  * Ajax request
@@ -78,12 +77,7 @@ ajaxer.process = function (data, form) {
         if (typeof dataObj.actions === 'undefined') {
             dataObj.actions = [];
         }
-        if (typeof dataObj.compatibility !== 'undefined') {
-            ajaxer.compatibility = dataObj.compatibility;
-            if (ajaxer.compatibility < 7 && typeof debug !== 'undefined') {
-                console.log('ajaxer: compatibility < 7 (' + ajaxer.compatibility + ') is deprecated, please update your code');
-            }
-        }
+
         for (var key in dataObj.actions) {
             //noinspection JSUnfilteredForInLoop
             var action = dataObj.actions[key];
