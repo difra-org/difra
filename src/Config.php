@@ -39,12 +39,11 @@ class Config
 
     /**
      * Save configuration
-     * @return bool
      */
-    public function save(): bool
+    public function save(): void
     {
         if (!$this->modified) {
-            return true;
+            return;
         }
         $diff = $this->diff();
         try {
@@ -52,12 +51,9 @@ class Config
             $db->query('DELETE FROM `config`');
             $db->query('INSERT INTO `config` SET `config`=?', [serialize($diff)]);
             Cache::getInstance()->remove('config');
-        } catch (Exception $exception) {
-            $exception->notify();
-            return false;
+            $this->modified = false;
+        } catch (\Difra\DB\Exception | Cache\Exception) {
         }
-        $this->modified = false;
-        return true;
     }
 
     /**
