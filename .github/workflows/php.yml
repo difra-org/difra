@@ -7,20 +7,24 @@ on:
     branches: [ master ]
 
 jobs:
-  build-test:
+  tests:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - name: "Checkout"
+        uses: actions/checkout@v2
 
-      - uses: php-actions/composer@v6
-        with:
-          php_version: '8.1'
-          php_extensions: ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib
+      - name: "Install PHP"
+          uses: "shivammathur/setup-php@v2"
+          with:
+            php-version: "8.1"
+            extensions: "ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib"
+            coverage: "pcov"
+            tools: composer
 
-      - name: Install dependencies
-        run: composer update --dev --no-progress
+      - name: "Install dependencies"
+          run: "composer update --ansi --no-interaction --no-progress"
 
-      - name: Run phpunit
+      - name: "Run phpunit"
         run: composer run-script test
 
     #      - name: Validate composer.json and composer.lock
