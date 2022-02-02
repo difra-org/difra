@@ -1,4 +1,4 @@
-name: PHP Composer
+name: Unit tests
 
 on:
   push:
@@ -12,12 +12,10 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: php-actions/composer@v6
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - uses: shivammathur/setup-php@v2
         with:
           php-version: '8.1'
-          extensions: ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib
+          php-extensions: ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib
           coverage: pcov
 
       - name: Cache Composer packages
