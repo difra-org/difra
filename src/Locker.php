@@ -66,7 +66,7 @@ class Locker
 
     /**
      * Unlock
-     * @throws \Difra\Exception
+     * @throws \Difra\Cache\Exception
      */
     public function remove()
     {
@@ -85,10 +85,13 @@ class Locker
 
     /**
      * Destructor
-     * @throws \Difra\Exception
      */
     public function __destruct()
     {
-        $this->remove();
+        try {
+            $this->remove();
+        } catch (\Difra\Cache\Exception)
+        {
+        }
     }
 }

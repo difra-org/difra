@@ -188,7 +188,7 @@ class SMTP extends Common
      * Send mail
      * @throws \Difra\Mailer\Exception\Temp|\Difra\Mailer\Exception\Fatal|\Difra\Exception
      */
-    public function send(): void
+    public function send(): ?bool
     {
         $this->connect(true);
         // todo: move EHLO to connect()
