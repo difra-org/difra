@@ -30,16 +30,3 @@ jobs:
           php_version: 8.1
           php_extensions: ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xsl zlib
           configuration: build/phpunit.xml
-
-    #      - name: Validate composer.json and composer.lock
-    #        run: composer validate --strict
-    #
-    #
-    #      - name: Install dependencies
-    #        run: composer install --prefer-dist --no-progress
-
-    # Add a test script to composer.json, for instance: "test": "vendor/bin/phpunit"
-    # Docs: https://getcomposer.org/doc/articles/scripts.md
-
-    # - name: Run test suite
-    #   run: composer run-script test
