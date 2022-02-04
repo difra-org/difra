@@ -17,11 +17,11 @@ jobs:
         uses: "shivammathur/setup-php@v2"
         with:
           php-version: "8.1"
-          extensions: "ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib"
+          #extensions: "ctype, curl, date, dom, imagick, intl, json, libxml, mbstring, Reflection, session, SimpleXML, xsl, zlib"
           tools: composer
 
       - name: "Install dependencies"
-        run: "composer update --ansi --no-interaction --no-progress"
+        run: "composer update --ansi --no-interaction --no-progress --ignore-platform-reqs"
 
       - name: "Run phpunit"
         uses: php-actions/phpunit@v3
