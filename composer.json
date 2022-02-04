@@ -47,7 +47,9 @@
             "Difra\\": "src"
         }
     },
-    "scripts": {
-        "test": "phpunit -c build/phpunit.xml"
+    "extra": {
+        "branch-alias": {
+            "dev-master": "8.0.x-dev"
+        }
     }
 }
