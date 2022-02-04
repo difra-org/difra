@@ -13,6 +13,7 @@ class Exception extends \Exception
     /**
      * Wrapper for sending e-mails about exceptions which should never happen.
      * Just call $exception->notify() in catch section.
+     * @deprecated
      */
     public function notify()
     {
@@ -22,6 +23,7 @@ class Exception extends \Exception
     /**
      * @static
      * @param \Difra\Exception|\exception $exception
+     * @deprecated
      */
     public static function sendNotification(Exception|\Exception $exception)
     {
