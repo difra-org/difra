@@ -27,7 +27,9 @@ jobs:
         uses: php-actions/phpunit@v3
         with:
           php_version: 8.1
-          php_extensions: ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xdebug xsl zlib
+          #php_extensions: ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xdebug xsl zlib
+          php_extensions: ctype curl date dom imagick intl json libxml mbstring Reflection session SimpleXML xsl zlib
           configuration: build/phpunit.xml
-        env:
-          XDEBUG_MODE: coverage
+          args: --no-coverage
+        #env:
+          #XDEBUG_MODE: coverage
