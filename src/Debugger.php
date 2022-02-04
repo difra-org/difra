@@ -44,8 +44,8 @@ class Debugger
     private static bool $hadError = false;
     /** @var string|null If there was a handled exception, don't capture it on shutdown */
     private static ?string $handledByException = null;
-    /** @var array|null Last error message captured by captureNormal (let captureShutdown skip it) */
-    private static ?array $handledByNormal = null;
+    /** @var string|null Last error message captured by captureNormal (let captureShutdown skip it) */
+    private static ?string $handledByNormal = null;
     /** @var bool Shut down flag (to prevent undesired output) */
     public static bool $shutdown = false;
 
