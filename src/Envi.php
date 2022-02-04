@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace Difra;
 
 use Difra\Envi\Roots;
-use JetBrains\PhpStorm\ArrayShape;
 
 /**
  * Class Envi
@@ -88,22 +87,15 @@ class Envi
     {
         $config = self::getState();
         foreach ($config as $key => $value) {
-            $node->setAttribute($key, $value);
+            if (!is_null($value)) {
+                $node->setAttribute($key, $value);
+            }
         }
     }
 
     /**
      * Get some configuration variables as array
      */
-    #[ArrayShape([
-        'locale' => 'bool|string',
-        'host' => 'bool|string',
-        'hostname' => 'string',
-        'mainhost' => 'string',
-        'fullhost' => 'string',
-        'build' => 'string',
-        'buildShort' => 'string'
-    ])]
     public static function getState(): array
     {
         return [
@@ -112,8 +104,8 @@ class Envi
             'hostname' => self::getHost(),
             'mainhost' => self::getHost(true),
             'fullhost' => self::getURLPrefix(),
-	    'build' => Envi\Version::getBuild(),
-	    'buildShort' => Envi\Version::getBuild(true)
+            'build' => Envi\Version::getBuild(),
+            'buildShort' => Envi\Version::getBuild(true)
         ];
     }
 

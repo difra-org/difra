@@ -58,7 +58,7 @@ class XML
             // TODO: sync this with Envi::getState()
             $node->setAttribute('lang', Envi\Setup::getLocale());
             $node->setAttribute('langShort', Envi\Setup::getLocaleLang());
-            $node->setAttribute('site', Envi::getSubsite());
+            !Envi::getSubsite() ?: $node->setAttribute('site', Envi::getSubsite());
             $node->setAttribute('host', $host = Envi::getHost());
             $node->setAttribute('mainhost', $mainhost = Envi::getHost(true));
             $node->setAttribute('protocol', Envi::getProtocol());
@@ -99,8 +99,8 @@ class XML
 	    $dateValues = explode('|', date('d|j|l|D|m|F|M|Y|y|D M d H:i:s Y|m/d/y|H|i|s'));
             $dateCombined = array_combine($dateKeys, $dateValues);
             $dateNode->setAttribute('ts', time());
-            foreach ($dateCombined as $k => $v) {
-                $dateNode->setAttribute($k, $v);
+            foreach ($dateCombined as $key => $value) {
+                $dateNode->setAttribute($key, $value);
             }
             // debug flag
             $node->setAttribute('debug', Debugger::isEnabled() ? '1' : '0');
@@ -112,8 +112,10 @@ class XML
             // Add config js object
             $config = Envi::getState();
             $confJS = '';
-            foreach ($config as $k => $v) {
-                $confJS .= "config.{$k}='" . addslashes($v) . "';";
+            foreach ($config as $key => $value) {
+                if (!is_null($value)) {
+                    $confJS .= "config.{$key}='" . addslashes($value) . "';";
+                }
             }
             $node->setAttribute('jsConfig', $confJS);
         }
