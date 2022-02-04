@@ -21,6 +21,7 @@
     "require": {
         "difra/lib-cache": "~8.0.0",
         "difra/lib-db": "~8.0.0",
+        "difra/lib-events": "~8.0.0",
         "difra/lib-security": "~8.0.0",
         "php": "^8.1",
         "ext-ctype": "*",
