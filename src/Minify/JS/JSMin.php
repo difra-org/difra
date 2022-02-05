@@ -15,8 +15,8 @@ class JSMin
     protected const ACTION_KEEP_A = 1;
     protected const ACTION_DELETE_A = 2;
     protected const ACTION_DELETE_A_B = 3;
-    protected string $a = '';
-    protected string $b = '';
+    protected ?string $a = '';
+    protected ?string $b = '';
     protected string $input = '';
     protected int $inputIndex = 0;
     protected int $inputLength = 0;
