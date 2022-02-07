@@ -6,7 +6,6 @@ namespace Difra;
 
 use Difra\View\HTML\Element\HTML;
 use Difra\View\HttpError;
-use JetBrains\PhpStorm\NoReturn;
 
 /**
  * Class View
@@ -219,7 +218,6 @@ class View
      * @param string $url
      * @param ?bool $permanent
      */
-    #[NoReturn]
     public static function redirect(string $url, ?bool $permanent = null): void
     {
         self::$rendered = true;
